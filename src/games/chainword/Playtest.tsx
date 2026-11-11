@@ -26,7 +26,7 @@ type Stage =
   | { kind: 'play'; state: ChainwordState; code: string | null }
 
 function describeSettings(settings: ChainwordSettings): string {
-  return `${settings.wordLength} letters, ${settings.chainLength} words`
+  return `${settings.wordLength} letters, ${settings.chainLength} words${settings.hardMode ? ', hard mode' : ''}`
 }
 
 function startGame(settings: ChainwordSettings, random: () => number, code: string | null): Stage {
@@ -91,7 +91,7 @@ function StartChoices({ onJoin, onMakeCode, onSolo }: StartChoicesProps) {
     event.preventDefault()
     const shared = readChainCode(typed)
     if (!shared) {
-      setError('Chain codes are 4 letters and 2 numbers, like KPDT53.')
+      setError('Chain codes are 4 letters and 2 numbers, sometimes with an H, like KPDT53 or KPDT53H.')
       return
     }
     onJoin(shared.code)
@@ -100,9 +100,7 @@ function StartChoices({ onJoin, onMakeCode, onSolo }: StartChoicesProps) {
   return (
     <>
       <ChainwordTitle />
-      <p className="cw-start__rules">
-        Hard mode: green letters stay in place, and letters you find must be used again. 6 guesses per word.
-      </p>
+      <p className="cw-start__rules">6 guesses per word. Fewest guesses in the whole chain wins.</p>
 
       <form className="phone-form cw-start__join" noValidate onSubmit={join}>
         <div className="cue-card">
@@ -143,6 +141,14 @@ function StartChoices({ onJoin, onMakeCode, onSolo }: StartChoicesProps) {
           value={settings.chainLength}
           onSelect={(chainLength) => setSettings({ ...settings, chainLength })}
         />
+        <ChoiceRow
+          id="cw-hard"
+          name="Hard mode"
+          options={['off', 'on'] as const}
+          value={settings.hardMode ? 'on' : 'off'}
+          onSelect={(choice) => setSettings({ ...settings, hardMode: choice === 'on' })}
+        />
+        <p className="cw-start__rules">Hard mode: green letters stay in place, and letters you find must be used again.</p>
         <button type="button" className="phone-button" data-testid="cw-make-code" onClick={() => onMakeCode(settings)}>
           Make a code for everyone
         </button>
@@ -159,7 +165,7 @@ function StartChoices({ onJoin, onMakeCode, onSolo }: StartChoicesProps) {
   )
 }
 
-interface ChoiceRowProps<Value extends number> {
+interface ChoiceRowProps<Value extends string | number> {
   id: string
   name: string
   options: readonly Value[]
@@ -167,8 +173,8 @@ interface ChoiceRowProps<Value extends number> {
   onSelect: (value: Value) => void
 }
 
-/** A labelled row of pressed/unpressed number buttons. */
-function ChoiceRow<Value extends number>({ id, name, options, value, onSelect }: ChoiceRowProps<Value>) {
+/** A labelled row of pressed/unpressed choice buttons. */
+function ChoiceRow<Value extends string | number>({ id, name, options, value, onSelect }: ChoiceRowProps<Value>) {
   return (
     <div className="cw-choice" role="group" aria-labelledby={`${id}-name`}>
       <span className="cw-choice__name" id={`${id}-name`}>

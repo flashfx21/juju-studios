@@ -53,6 +53,7 @@
   font-family: var(--font-body);
   font-weight: 700;
   font-size: 22px;
+  text-transform: capitalize;
   cursor: pointer;
 }
 

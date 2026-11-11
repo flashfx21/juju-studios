@@ -1,4 +1,4 @@
-// ABOUTME: Chainword's rulebook: everyone races the same chain of hidden words (4 to 7 letters) in hard mode.
+// ABOUTME: Chainword's rulebook: everyone races the same chain of hidden words (4 to 7 letters), with hard mode as an option.
 // ABOUTME: Fewest total guesses wins (a missed word counts as 7); ties go to the faster total time.
 import answerPack from '../../../packs/chainword/answers.json'
 import guessPack from '../../../packs/chainword/guesses.json'
@@ -17,9 +17,11 @@ export const WORD_LENGTHS: readonly WordLength[] = [4, 5, 6, 7]
 export interface ChainwordSettings {
   chainLength: ChainLength
   wordLength: WordLength
+  /** Greens stay in place and revealed letters must be used again. */
+  hardMode: boolean
 }
 
-export const DEFAULT_SETTINGS: ChainwordSettings = { chainLength: 3, wordLength: 5 }
+export const DEFAULT_SETTINGS: ChainwordSettings = { chainLength: 3, wordLength: 5, hardMode: false }
 
 export interface GuessInput {
   type: 'guess'
@@ -46,6 +48,7 @@ export interface PlayerRun {
 
 export interface ChainwordState {
   wordLength: WordLength
+  hardMode: boolean
   chain: string[]
   startedAt: number
   runs: Record<PlayerId, PlayerRun>
@@ -141,7 +144,7 @@ export function checkGuess(state: ChainwordState, player: PlayerId, word: string
   const guess = normalize(word)
   if (guess.length !== state.wordLength) return { kind: 'wrong-length' }
   if (!acceptedWords(state.wordLength).has(guess)) return { kind: 'not-a-word' }
-  return hardModeProblem(guess, currentAttempt(run))
+  return state.hardMode ? hardModeProblem(guess, currentAttempt(run)) : null
 }
 
 function emptyAttempt(): WordAttempt {
@@ -163,7 +166,13 @@ function dealChain(settings: ChainwordSettings, random: () => number): string[] 
 function setup(players: readonly PlayerId[], settings: ChainwordSettings, ctx: RulesContext): ChainwordState {
   const runs: Record<PlayerId, PlayerRun> = {}
   for (const player of players) runs[player] = { attempts: [emptyAttempt()], finishedAt: null }
-  return { wordLength: settings.wordLength, chain: dealChain(settings, ctx.random), startedAt: ctx.now, runs }
+  return {
+    wordLength: settings.wordLength,
+    hardMode: settings.hardMode,
+    chain: dealChain(settings, ctx.random),
+    startedAt: ctx.now,
+    runs,
+  }
 }
 
 function onInput(state: ChainwordState, player: PlayerId, input: ChainwordInput, ctx: RulesContext): ChainwordState {

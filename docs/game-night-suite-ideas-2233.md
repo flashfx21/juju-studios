@@ -73,7 +73,7 @@ Full specs per game live in `games/`. Summary:
 - **No Filler (keep):** name 3 before time runs out, no filler words. Easy 1 / Medium 2 / Hard 3; first to 15; others vote Clean or Filler. Also a prompt test bench.
 - **Dial It In (approved):** private guesses on a spectrum; number entry 1 to 50 or 1 to 100; experiment with a dial. Open: individual or team-average scoring.
 - **Closest Without Going Over (liked):** guess a price, year or number; closest without going over. Open: content and penalty.
-- **Chainword (working name):** chain of 3 or 5 words, hard mode, fewest guesses wins. Open: name, hard mode scope, caps and tiebreakers.
+- **Chainword (working name):** chain of 3 or 5 words, fewest guesses wins; hard mode is an option, off by default (Nov 11). Open: name, hard mode scope, caps and tiebreakers.
 - **Sketch Showdown:** two teams, two drawers, same clue; first team to guess wins; both sketches shown after. Open: can teams see each other's sketch.
 - **Pin Drop:** photos only; Wikimedia Commons and Mapillary to explore; OpenStreetMap on the phone.
 - **One-word clue game (added Nov 10):** matching clues cancel; individual mode plus a team defense mode, likely 2 clues per person. Open: defense balance, matching rules, scoring.

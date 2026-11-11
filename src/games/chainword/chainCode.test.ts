@@ -23,13 +23,19 @@ describe('seededRandom', () => {
 
 describe('chain codes', () => {
   it('makes a 4-letter code ending in the word length and chain length', () => {
-    const code = makeChainCode({ wordLength: 6, chainLength: 5 }, Math.random)
+    const code = makeChainCode({ wordLength: 6, chainLength: 5, hardMode: false }, Math.random)
     expect(code).toMatch(/^[BCDFGHJKLMNPQRSTVWXZ]{4}65$/)
   })
 
+  it('ends the code with H when hard mode is on', () => {
+    const code = makeChainCode({ wordLength: 5, chainLength: 3, hardMode: true }, Math.random)
+    expect(code).toMatch(/^[BCDFGHJKLMNPQRSTVWXZ]{4}53H$/)
+  })
+
   it('reads the settings back out of a code', () => {
-    expect(readChainCode('kpdt53')?.settings).toEqual({ wordLength: 5, chainLength: 3 })
-    expect(readChainCode('KPDT 7-5')?.settings).toEqual({ wordLength: 7, chainLength: 5 })
+    expect(readChainCode('kpdt53')?.settings).toEqual({ wordLength: 5, chainLength: 3, hardMode: false })
+    expect(readChainCode('KPDT 7-5')?.settings).toEqual({ wordLength: 7, chainLength: 5, hardMode: false })
+    expect(readChainCode('kpdt53h')?.settings).toEqual({ wordLength: 5, chainLength: 3, hardMode: true })
   })
 
   it('refuses codes with the wrong shape or settings the game does not offer', () => {
@@ -37,6 +43,7 @@ describe('chain codes', () => {
     expect(readChainCode('KPD53')).toBeNull()
     expect(readChainCode('KPDT83')).toBeNull()
     expect(readChainCode('KPDT54')).toBeNull()
+    expect(readChainCode('KPDT53X')).toBeNull()
   })
 
   it('deals the same chain for the same code, however it is typed', () => {

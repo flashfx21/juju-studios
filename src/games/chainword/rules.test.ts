@@ -26,8 +26,8 @@ function at(now: number): RulesContext {
 }
 
 /** A game with a known chain, started at START. */
-function game(players: string[], chain = ['chain', 'spice', 'grape']): ChainwordState {
-  const state = rules.setup(players, { chainLength: chain.length as 3 | 5, wordLength: 5 }, at(START))
+function game(players: string[], chain = ['chain', 'spice', 'grape'], hardMode = false): ChainwordState {
+  const state = rules.setup(players, { chainLength: chain.length as 3 | 5, wordLength: 5, hardMode }, at(START))
   return { ...state, chain }
 }
 
@@ -57,22 +57,23 @@ describe('word packs', () => {
 })
 
 describe('setup', () => {
-  it('defaults to 3 words of 5 letters', () => {
+  it('defaults to 3 words of 5 letters, hard mode off', () => {
     const state = rules.setup(['ann'], DEFAULT_SETTINGS, at(START))
     expect(state.chain).toHaveLength(3)
     expect(state.chain.every((word) => word.length === 5)).toBe(true)
+    expect(state.hardMode).toBe(false)
   })
 
   it.each(WORD_LENGTHS)('deals 5 distinct %i-letter answers when asked', (wordLength) => {
     let n = 0
     const random = () => (n++ * 0.37) % 1
-    const state = rules.setup(['ann'], { chainLength: 5, wordLength }, { now: START, random })
+    const state = rules.setup(['ann'], { chainLength: 5, wordLength, hardMode: false }, { now: START, random })
     expect(new Set(state.chain).size).toBe(5)
     expect(state.chain.every((word) => answersFor(wordLength).includes(word))).toBe(true)
   })
 
   it('checks guesses against the chosen word length', () => {
-    const state = rules.setup(['ann'], { chainLength: 3, wordLength: 7 }, at(START))
+    const state = rules.setup(['ann'], { chainLength: 3, wordLength: 7, hardMode: false }, at(START))
     expect(checkGuess(state, 'ann', 'chain')).toEqual({ kind: 'wrong-length' })
     expect(checkGuess(state, 'ann', 'kitchen')).toBeNull()
   })
@@ -110,20 +111,26 @@ describe('checkGuess', () => {
     expect(checkGuess(game(['ann']), 'zed', 'chair')).toEqual({ kind: 'not-playing' })
   })
 
-  it('hard mode: greens must stay in place', () => {
+  it('normal mode: any listed word is allowed, whatever the earlier hints', () => {
     const state = guess(game(['ann']), 'ann', 'chair')
+    expect(checkGuess(state, 'ann', 'stone')).toBeNull()
+    expect(guess(state, 'ann', 'stone').runs.ann.attempts[0].guesses).toEqual(['chair', 'stone'])
+  })
+
+  it('hard mode: greens must stay in place', () => {
+    const state = guess(game(['ann'], undefined, true), 'ann', 'chair')
     expect(checkGuess(state, 'ann', 'cheap')).toEqual({ kind: 'keep-green', letter: 'a', position: 2 })
   })
 
   it('hard mode: yellow letters must be used again', () => {
     const chain = ['spice', 'chain', 'grape']
-    const state = guess(game(['ann'], chain), 'ann', 'piano')
+    const state = guess(game(['ann'], chain, true), 'ann', 'piano')
     expect(checkGuess(state, 'ann', 'stone')).toEqual({ kind: 'use-letter', letter: 'p', count: 1 })
     expect(checkGuess(state, 'ann', 'spine')).toBeNull()
   })
 
   it('hard mode: hints from one word do not carry to the next', () => {
-    const state = guessAll(game(['ann']), 'ann', ['chair', 'chain'])
+    const state = guessAll(game(['ann'], undefined, true), 'ann', ['chair', 'chain'])
     expect(checkGuess(state, 'ann', 'stone')).toBeNull()
   })
 })

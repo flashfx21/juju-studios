@@ -40,7 +40,7 @@ export const LINEUP: LineupGame[] = [
     id: 'chainword',
     title: 'Chainword',
     tag: 'Words',
-    pitch: 'Race a chain of words in hard mode. Fewest guesses wins.',
+    pitch: 'Race a chain of hidden words. Fewest guesses wins.',
     status: 'coming-soon',
   },
   {
