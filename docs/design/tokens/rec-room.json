@@ -1,0 +1,317 @@
+{
+  "name": "rec-room",
+  "label": "70s rec room",
+  "color": {
+    "background": {
+      "hex": "#5A3A22",
+      "role": "Wood-panel background"
+    },
+    "surface": {
+      "hex": "#F3EBD3",
+      "role": "Cards, notepads, phone card"
+    },
+    "surfaceRaised": {
+      "hex": "#FBF6E8",
+      "role": "Index cards: room code, QR, code tiles"
+    },
+    "footer": {
+      "hex": "#C8551F",
+      "role": "Shag rug footer"
+    },
+    "frame": {
+      "hex": "#3D2716",
+      "role": "Card headers, shelves, felt-table rim"
+    },
+    "text": {
+      "hex": "#F3EBD3",
+      "role": "Text on the wood background"
+    },
+    "textOnSurface": {
+      "hex": "#24356B",
+      "role": "Handwriting ink on cards and notepads"
+    },
+    "textStrong": {
+      "hex": "#F3EBD3",
+      "role": "Screen titles on wood (with #3D2716 drop)"
+    },
+    "textMuted": {
+      "hex": "#5A3A22",
+      "role": "Courier labels and helper text on cream"
+    },
+    "field": {
+      "hex": "#FBF6E8",
+      "role": "Code tiles; text fields are a 2px #3A2A1A underline"
+    },
+    "fieldBorder": {
+      "hex": "#3A2A1A",
+      "role": "Field underline and code-tile ring"
+    },
+    "line": {
+      "hex": "#A9BFD9",
+      "role": "Notebook ruled lines and row dividers (margin line #D0603E)"
+    },
+    "accent": {
+      "hex": "#D9A21B",
+      "role": "Stickers, seals, tri-stripe, secondary phone buttons"
+    },
+    "accentInk": {
+      "hex": "#3D2716",
+      "role": "Text on accent"
+    },
+    "primary": {
+      "hex": "#B4481A",
+      "role": "Primary buttons, highlights"
+    },
+    "primaryInk": {
+      "hex": "#F3EBD3",
+      "role": "Text on primary"
+    },
+    "primaryShade": {
+      "hex": "#7A2E0D",
+      "role": "Hard drop under primary buttons"
+    },
+    "secondary": {
+      "hex": "#F3EBD3",
+      "role": "TV slab buttons"
+    },
+    "secondaryInk": {
+      "hex": "#3D2716",
+      "role": "Text on secondary"
+    },
+    "secondaryShade": {
+      "hex": "rgba(0,0,0,.35)",
+      "role": "Offset under TV slab buttons"
+    },
+    "info": null,
+    "success": {
+      "hex": "#5F6E2A",
+      "role": "Verified, \"You're ready\" state"
+    },
+    "danger": {
+      "hex": "#B4481A",
+      "role": "Expired / error stickers, host disconnected"
+    },
+    "dangerInk": {
+      "hex": "#F3EBD3",
+      "role": "Text on danger"
+    }
+  },
+  "palette": {
+    "games": [
+      "#0B0B0B",
+      "#B0461A",
+      "#F3EBD3",
+      "#D9A21B",
+      "#5F6E2A",
+      "#2F4A4F"
+    ],
+    "gameInk": [
+      "#F5D000",
+      "#F3EBD3",
+      "#A23F15",
+      "#3D2716",
+      "#F3EBD3",
+      "#E3B23C"
+    ],
+    "players": {
+      "red": "#B4481A",
+      "gold": "#D9A21B",
+      "teal": "#2F6F6A",
+      "blue": "#2E4F8F",
+      "pink": "#B8456E",
+      "olive": "#7A8B3A"
+    },
+    "comingSoon": [
+      "#7A2E0D",
+      "#2E4F8F",
+      "#D9A21B",
+      "#2F4A4F",
+      "#5F6E2A",
+      "#B8456E"
+    ],
+    "comingSoonTeaser": null,
+    "triStripe": [
+      "#D9A21B",
+      "#C8551F",
+      "#7A8B3A"
+    ],
+    "felt": [
+      "#8A9C45",
+      "#6A7A30"
+    ]
+  },
+  "font": {
+    "logo": {
+      "family": "Righteous",
+      "googleFont": "Righteous",
+      "weights": [
+        400
+      ],
+      "fallback": "sans-serif"
+    },
+    "display": {
+      "family": "Righteous",
+      "googleFont": "Righteous",
+      "weights": [
+        400
+      ],
+      "fallback": "sans-serif"
+    },
+    "label": {
+      "family": "Courier Prime",
+      "googleFont": "Courier Prime",
+      "weights": [
+        400,
+        700
+      ],
+      "fallback": "monospace",
+      "letterSpacing": "0.06em–0.16em"
+    },
+    "body": {
+      "family": "Caveat",
+      "googleFont": "Caveat",
+      "weights": [
+        500,
+        700
+      ],
+      "fallback": "cursive"
+    },
+    "extra": [
+      {
+        "family": "Anton",
+        "googleFont": "Anton",
+        "weights": [
+          400
+        ],
+        "use": "No Filler game box only"
+      }
+    ]
+  },
+  "type": {
+    "tv": {
+      "logo": {
+        "min": 22,
+        "max": 66
+      },
+      "screenTitle": {
+        "min": 44,
+        "max": 60
+      },
+      "gameTitle": {
+        "min": 24,
+        "max": 54
+      },
+      "label": {
+        "min": 11,
+        "max": 17
+      },
+      "body": {
+        "min": 14,
+        "max": 38
+      },
+      "number": {
+        "min": 40,
+        "max": 112
+      },
+      "button": {
+        "min": 21,
+        "max": 26
+      }
+    },
+    "phone": {
+      "logo": {
+        "min": 28,
+        "max": 28
+      },
+      "screenTitle": {
+        "min": 34,
+        "max": 52
+      },
+      "gameTitle": {
+        "min": 17,
+        "max": 36
+      },
+      "label": {
+        "min": 11,
+        "max": 14
+      },
+      "body": {
+        "min": 12,
+        "max": 30
+      },
+      "number": {
+        "min": 38,
+        "max": 92
+      },
+      "button": {
+        "min": 20,
+        "max": 26
+      }
+    }
+  },
+  "space": {
+    "tvMarginX": {
+      "min": 40,
+      "max": 56
+    },
+    "tvHeaderTop": 20,
+    "tvHeaderHeight": 80,
+    "tvFooterHeight": 96,
+    "phonePadTop": 48,
+    "phonePadX": 16,
+    "phonePadBottom": 24,
+    "phoneCardPadding": {
+      "top": 16,
+      "x": 22,
+      "bottom": 20
+    },
+    "gap": {
+      "xs": 6,
+      "sm": 10,
+      "md": 16,
+      "lg": 28,
+      "xl": 60
+    },
+    "hitTargetMin": 44
+  },
+  "radius": {
+    "tile": 3,
+    "card": 0,
+    "field": 0,
+    "buttonTv": 0,
+    "buttonPhone": 12,
+    "codeTile": 8,
+    "feature": 26,
+    "round": "50%",
+    "device": 44
+  },
+  "shadow": {
+    "button": "0 5px 0 #7A2E0D",
+    "buttonSecondary": "4px 5px 0 rgba(0,0,0,.35)",
+    "tile": "6px 6px 0 rgba(0,0,0,.35)",
+    "card": "10px 12px 0 rgba(0,0,0,.3)",
+    "frame": "0 0 0 12px #3D2716, 10px 14px 0 12px rgba(0,0,0,.3)",
+    "glow": null,
+    "textHeadline": "3px 3px 0 #3D2716"
+  },
+  "motion": {
+    "chase": null,
+    "flicker": null,
+    "blink": null,
+    "notReadyNote": {
+      "duration": "1.6s",
+      "use": "Coming-soon \"not ready yet\" note"
+    },
+    "liftSelected": "translateY(-12px) rotate(-1.5deg) scale(1.03)",
+    "tilt": "-3deg to 3deg"
+  },
+  "texture": {
+    "background": "Wood panel: #5A3A22 with repeating-linear-gradient(90deg) grooves every 128px (98px on phone)",
+    "footer": "Shag rug: #C8551F with repeating-linear-gradient(100deg) fibres",
+    "feature": "Felt table: radial-gradient(ellipse at 50% 40%,#8A9C45,#6A7A30 75%) with 12px #3D2716 rim, 26px radius",
+    "comingSoon": "Shrink-wrap sheen: linear-gradient(115deg) white highlights over the box color",
+    "comingSoonTeaser": null,
+    "overlay": null,
+    "paper": "Notepad: #F3EBD3, ruled #A9BFD9 lines every 47px, #D0603E margin line at 62px"
+  }
+}

@@ -1,0 +1,298 @@
+{
+  "name": "game-show",
+  "label": "Retro game show",
+  "color": {
+    "background": {
+      "hex": "#12204A",
+      "role": "Screen background, TV and phone"
+    },
+    "surface": {
+      "hex": "#0B1533",
+      "role": "Inset panels, tile wells, outer ring of the gold frame"
+    },
+    "surfaceRaised": {
+      "hex": "#1A2B5E",
+      "role": "Unselected toggles and filter chips, leaderboard rows 4th and below"
+    },
+    "footer": {
+      "hex": "#0C1636",
+      "role": "TV footer bar (lobby stripes with #0F1B42)"
+    },
+    "frame": {
+      "hex": "#F2B630",
+      "role": "Panel frame and 5px footer rule"
+    },
+    "text": {
+      "hex": "#F6E7C8",
+      "role": "Body text on background"
+    },
+    "textOnSurface": {
+      "hex": "#F6E7C8",
+      "role": "Body text on surface"
+    },
+    "textStrong": {
+      "hex": "#FFF6D6",
+      "role": "Headlines, number bulbs, lit bulbs"
+    },
+    "textMuted": null,
+    "field": {
+      "hex": "#FFFDF6",
+      "role": "Form fields on cue cards"
+    },
+    "fieldBorder": {
+      "hex": "#12204A",
+      "role": "2px ring around fields"
+    },
+    "line": {
+      "hex": "#E0473A",
+      "role": "Rule under cue-card headers"
+    },
+    "accent": {
+      "hex": "#F2B630",
+      "role": "Labels, logo badge, vote counts, leader accents"
+    },
+    "accentInk": {
+      "hex": "#12204A",
+      "role": "Text on accent"
+    },
+    "primary": {
+      "hex": "#F0592A",
+      "role": "Primary buttons, marquee face, headline drop shadow"
+    },
+    "primaryInk": {
+      "hex": "#FFF6D6",
+      "role": "Text on primary"
+    },
+    "primaryShade": {
+      "hex": "#7A2508",
+      "role": "Hard drop under primary buttons"
+    },
+    "secondary": {
+      "hex": "#F6E7C8",
+      "role": "Secondary buttons, tote-board tiles, cue cards"
+    },
+    "secondaryInk": {
+      "hex": "#12204A",
+      "role": "Text on secondary"
+    },
+    "secondaryShade": {
+      "hex": "#8A7A5A",
+      "role": "Hard drop under secondary buttons"
+    },
+    "info": null,
+    "success": {
+      "hex": "#177A74",
+      "role": "\"You're ready\" button state"
+    },
+    "danger": {
+      "hex": "#C2302B",
+      "role": "Error stamps, host-disconnected marquee, \"In the lead\" ink"
+    },
+    "dangerInk": {
+      "hex": "#FFF6D6",
+      "role": "Text on danger"
+    }
+  },
+  "palette": {
+    "games": [
+      "#F0592A",
+      "#F2B630",
+      "#F6E7C8",
+      "#177A74",
+      "#C2302B",
+      "#3563C7"
+    ],
+    "gameInk": [
+      "#12204A",
+      "#12204A",
+      "#12204A",
+      "#FFF6D6",
+      "#FFF6D6",
+      "#FFF6D6"
+    ],
+    "players": {
+      "red": "#C2302B",
+      "gold": "#F2B630",
+      "teal": "#177A74",
+      "blue": "#3D6FD9",
+      "pink": "#E8489A",
+      "olive": "#7A8B3A"
+    },
+    "comingSoon": [
+      "#0B1533",
+      "#13204A"
+    ],
+    "comingSoonTeaser": [
+      "#8E1F1A",
+      "#A8271F"
+    ]
+  },
+  "font": {
+    "logo": {
+      "family": "Shrikhand",
+      "googleFont": "Shrikhand",
+      "weights": [
+        400
+      ],
+      "fallback": "serif"
+    },
+    "display": {
+      "family": "Shrikhand",
+      "googleFont": "Shrikhand",
+      "weights": [
+        400
+      ],
+      "fallback": "serif"
+    },
+    "label": {
+      "family": "Bebas Neue",
+      "googleFont": "Bebas Neue",
+      "weights": [
+        400
+      ],
+      "fallback": "sans-serif",
+      "letterSpacing": "0.04em–0.24em"
+    },
+    "body": {
+      "family": "Oswald",
+      "googleFont": "Oswald",
+      "weights": [
+        400,
+        500
+      ],
+      "fallback": "sans-serif",
+      "lineHeight": "1.25–1.4"
+    },
+    "extra": []
+  },
+  "type": {
+    "tv": {
+      "logo": {
+        "min": 66,
+        "max": 78
+      },
+      "screenTitle": {
+        "min": 48,
+        "max": 48
+      },
+      "gameTitle": {
+        "min": 22,
+        "max": 34
+      },
+      "label": {
+        "min": 15,
+        "max": 30
+      },
+      "body": {
+        "min": 15,
+        "max": 28
+      },
+      "number": {
+        "min": 36,
+        "max": 92
+      },
+      "button": {
+        "min": 26,
+        "max": 30
+      }
+    },
+    "phone": {
+      "logo": {
+        "min": 38,
+        "max": 40
+      },
+      "screenTitle": {
+        "min": 30,
+        "max": 46
+      },
+      "gameTitle": {
+        "min": 17,
+        "max": 24
+      },
+      "label": {
+        "min": 14,
+        "max": 24
+      },
+      "body": {
+        "min": 14,
+        "max": 19
+      },
+      "number": {
+        "min": 20,
+        "max": 72
+      },
+      "button": {
+        "min": 20,
+        "max": 28
+      }
+    }
+  },
+  "space": {
+    "tvMarginX": 40,
+    "tvHeaderTop": {
+      "min": 18,
+      "max": 22
+    },
+    "tvHeaderHeight": 90,
+    "tvFooterHeight": {
+      "min": 64,
+      "max": 106
+    },
+    "phonePadTop": 54,
+    "phonePadX": {
+      "min": 18,
+      "max": 20
+    },
+    "phonePadBottom": 26,
+    "gap": {
+      "xs": 4,
+      "sm": 8,
+      "md": 12,
+      "lg": 18,
+      "xl": 40
+    },
+    "hitTargetMin": 44
+  },
+  "radius": {
+    "tile": 0,
+    "card": 0,
+    "field": 0,
+    "buttonTv": 0,
+    "buttonPhone": 0,
+    "codeTile": 0,
+    "feature": 0,
+    "round": "50%",
+    "device": 44
+  },
+  "shadow": {
+    "button": "0 6px 0 #7A2508",
+    "buttonSecondary": "0 5px 0 #8A7A5A",
+    "tile": "inset 0 -7px 0 rgba(0,0,0,.2)",
+    "card": "6px 8px 0 rgba(0,0,0,.3)",
+    "frame": "0 0 0 4px #F2B630, 0 0 0 10px #0B1533",
+    "glow": null,
+    "textHeadline": "4px 4px 0 #F0592A"
+  },
+  "motion": {
+    "chase": {
+      "duration": "0.8s",
+      "easing": "linear",
+      "iteration": "infinite",
+      "use": "Marquee bulb frame"
+    },
+    "flicker": null,
+    "blink": null,
+    "notReadyNote": {
+      "duration": "1.6s",
+      "use": "Coming-soon \"Not ready yet\" note"
+    }
+  },
+  "texture": {
+    "background": "radial-gradient(ellipse 60% 60% at 50% -15%, rgba(255,246,214,.16), rgba(255,246,214,0) 70%)",
+    "footer": "repeating-linear-gradient(90deg,#0c1636 0 64px,#0f1b42 64px 128px)",
+    "feature": "Marquee bulb frame: #2A1D08 base, radial bulbs #FFF6D6 lit / #6B5320 unlit on a 44px grid, 14px padding",
+    "comingSoon": "repeating-linear-gradient(135deg,#0B1533 0 10px,#13204A 10px 20px)",
+    "comingSoonTeaser": "repeating-linear-gradient(90deg,#8E1F1A 0 14px,#A8271F 14px 28px)",
+    "overlay": null
+  }
+}

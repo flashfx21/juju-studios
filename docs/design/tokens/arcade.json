@@ -1,0 +1,317 @@
+{
+  "name": "arcade",
+  "label": "90s arcade",
+  "color": {
+    "background": {
+      "hex": "#07060B",
+      "role": "Screen background, TV and phone"
+    },
+    "surface": {
+      "hex": "#111019",
+      "role": "Fields, stat rows, mode panels, message boxes"
+    },
+    "surfaceRaised": {
+      "hex": "#16141E",
+      "role": "Coin doors, coming-soon marquees and chips"
+    },
+    "footer": {
+      "hex": "#120E26",
+      "role": "Carpet footer base"
+    },
+    "frame": {
+      "hex": "#FF2EA6",
+      "role": "Pause frame, code-block drop"
+    },
+    "text": {
+      "hex": "#FFFFFF",
+      "role": "Body text"
+    },
+    "textOnSurface": {
+      "hex": "#FFFFFF",
+      "role": "Body text on surface"
+    },
+    "textStrong": {
+      "hex": "#FFE600",
+      "role": "Screen titles, scores"
+    },
+    "textMuted": {
+      "hex": "#B9B4CC",
+      "role": "Helper text, out-of-order titles"
+    },
+    "field": {
+      "hex": "#111019",
+      "role": "Form fields"
+    },
+    "fieldBorder": {
+      "hex": "#3A3550",
+      "role": "2px ring around fields"
+    },
+    "line": {
+      "hex": "#2A2733",
+      "role": "Row dividers, unlit signal bars"
+    },
+    "accent": {
+      "hex": "#22E4FF",
+      "role": "Labels, info lines, secondary outlines"
+    },
+    "accentInk": {
+      "hex": "#07060B",
+      "role": "Text on accent"
+    },
+    "primary": {
+      "hex": "#FFE600",
+      "role": "Primary buttons, room code block"
+    },
+    "primaryInk": {
+      "hex": "#07060B",
+      "role": "Text on primary"
+    },
+    "primaryShade": {
+      "hex": "#FF2EA6",
+      "role": "Hard offset under primary buttons"
+    },
+    "secondary": {
+      "hex": "#07060B",
+      "role": "Secondary button fill (with accent ring)"
+    },
+    "secondaryInk": {
+      "hex": "#22E4FF",
+      "role": "Text on secondary"
+    },
+    "secondaryShade": null,
+    "info": {
+      "hex": "#22E4FF",
+      "role": "Info text"
+    },
+    "success": {
+      "hex": "#39FF6A",
+      "role": "Ready status, points earned, verified, link sent"
+    },
+    "danger": {
+      "hex": "#FF4F45",
+      "role": "Lag status, error badges, bad code"
+    },
+    "dangerInk": {
+      "hex": "#07060B",
+      "role": "Text on danger"
+    }
+  },
+  "palette": {
+    "games": [
+      "#141414",
+      "#FF6A13",
+      "#22E4FF",
+      "#FFE600",
+      "#FF2EA6",
+      "#2E2A3A"
+    ],
+    "gameInk": [
+      "#FFE600",
+      "#22E4FF",
+      "#07060B",
+      "#07060B",
+      "#07060B",
+      "#07060B"
+    ],
+    "players": {
+      "red": "#FF4F45",
+      "gold": "#FFE600",
+      "teal": "#22E4FF",
+      "blue": "#7B93FF",
+      "pink": "#FF2EA6",
+      "olive": "#39FF6A"
+    },
+    "comingSoon": [
+      "#2E2A3A",
+      "#16141E"
+    ],
+    "comingSoonTeaser": [
+      "#FF2EA6",
+      "#FFD1EC"
+    ],
+    "neonTube": {
+      "pink": "#FFD1EC",
+      "cyan": "#D8FBFF"
+    }
+  },
+  "font": {
+    "logo": {
+      "family": "Monoton",
+      "googleFont": "Monoton",
+      "weights": [
+        400
+      ],
+      "fallback": "sans-serif"
+    },
+    "display": {
+      "family": "Bungee",
+      "googleFont": "Bungee",
+      "weights": [
+        400
+      ],
+      "fallback": "sans-serif"
+    },
+    "label": {
+      "family": "Press Start 2P",
+      "googleFont": "Press Start 2P",
+      "weights": [
+        400
+      ],
+      "fallback": "monospace",
+      "case": "uppercase"
+    },
+    "body": {
+      "family": "VT323",
+      "googleFont": "VT323",
+      "weights": [
+        400
+      ],
+      "fallback": "monospace",
+      "lineHeight": "1–1.05"
+    },
+    "extra": [
+      {
+        "family": "Anton",
+        "googleFont": "Anton",
+        "weights": [
+          400
+        ],
+        "use": "No Filler cabinet marquee only"
+      }
+    ]
+  },
+  "type": {
+    "tv": {
+      "logo": {
+        "min": 34,
+        "max": 84
+      },
+      "screenTitle": {
+        "min": 26,
+        "max": 40
+      },
+      "gameTitle": {
+        "min": 14,
+        "max": 30
+      },
+      "label": {
+        "min": 8,
+        "max": 16
+      },
+      "body": {
+        "min": 19,
+        "max": 44
+      },
+      "number": {
+        "min": 16,
+        "max": 96
+      },
+      "button": {
+        "min": 13,
+        "max": 20
+      }
+    },
+    "phone": {
+      "logo": {
+        "min": 36,
+        "max": 46
+      },
+      "screenTitle": {
+        "min": 14,
+        "max": 24
+      },
+      "gameTitle": {
+        "min": 14,
+        "max": 36
+      },
+      "label": {
+        "min": 8,
+        "max": 12
+      },
+      "body": {
+        "min": 19,
+        "max": 30
+      },
+      "number": {
+        "min": 16,
+        "max": 64
+      },
+      "button": {
+        "min": 10,
+        "max": 18
+      }
+    }
+  },
+  "space": {
+    "tvMarginX": 40,
+    "tvHeaderTop": {
+      "min": 24,
+      "max": 30
+    },
+    "tvHeaderHeight": null,
+    "tvFooterHeight": {
+      "min": 72,
+      "max": 104
+    },
+    "phonePadTop": 54,
+    "phonePadX": {
+      "min": 20,
+      "max": 22
+    },
+    "phonePadBottom": 28,
+    "gap": {
+      "xs": 6,
+      "sm": 10,
+      "md": 14,
+      "lg": 19,
+      "xl": 48
+    },
+    "hitTargetMin": 44
+  },
+  "radius": {
+    "tile": 0,
+    "card": 0,
+    "field": 0,
+    "buttonTv": 0,
+    "buttonPhone": 0,
+    "codeTile": 0,
+    "feature": 8,
+    "round": "50%",
+    "device": 44
+  },
+  "shadow": {
+    "button": "6px 6px 0 #FF2EA6",
+    "buttonSecondary": "inset 0 0 0 2px #22E4FF",
+    "tile": "0 0 34px <game glow color>",
+    "card": "inset 0 0 0 2px #3A3550",
+    "frame": "8px 8px 0 #FF2EA6",
+    "glow": "0 0 6px #FF2EA6, 0 0 20px #FF2EA6",
+    "textHeadline": "0 0 6px #FF2EA6, 0 0 20px #FF2EA6"
+  },
+  "motion": {
+    "chase": null,
+    "flicker": {
+      "duration": "3.2s",
+      "iteration": "infinite",
+      "use": "One letter of the neon \"Studios\" sign"
+    },
+    "blink": {
+      "duration": "1s–1.4s",
+      "easing": "steps(1)",
+      "iteration": "infinite",
+      "use": "Cursor, INSERT COIN (1.2s), PAUSED (1.4s), PRESS START"
+    },
+    "notReadyNote": {
+      "duration": "1.6s",
+      "use": "Coming-soon \"NOT READY YET\" note"
+    }
+  },
+  "texture": {
+    "background": "radial-gradient(ellipse 50% 40% at 50% 12%, rgba(34,228,255,.14), rgba(34,228,255,0) 70%)",
+    "footer": "Carpet: #120E26 base with pink, cyan, yellow and green radial-gradient dots and rings, 132×84px tile",
+    "feature": "Neon text-shadow glow",
+    "comingSoon": "Out-of-order cabinet: #2E2A3A body, #16141E marquee",
+    "comingSoonTeaser": "Pink glowing marquee text (0 0 8px #FF2EA6)",
+    "overlay": "Scanlines: repeating-linear-gradient(180deg,rgba(0,0,0,.28) 0 1px,rgba(0,0,0,0) 1px 3px) + radial vignette to rgba(0,0,0,.55). Host setting toggles it."
+  }
+}
