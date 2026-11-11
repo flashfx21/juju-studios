@@ -23,6 +23,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 - Addresses stand in for the design's QR codes (see `docs/later.md`).
 - TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.
 - The game lineup is `src/games/lineup.ts`. Every game is "coming soon".
+- Chainword has its rules and tests (`src/games/chainword/`, word pack in `packs/chainword/words.json`) but no screens yet.
 
 ## Run it locally
 
@@ -34,6 +35,7 @@ npm run dev      # dev server at http://localhost:5173/juju-studios/
 npm run build    # type-check and build into dist/
 npm run preview  # serve the built dist/ folder
 npm run lint     # ESLint
+npm test         # game rules tests (Vitest)
 ```
 
 ## Deploy
@@ -52,7 +54,9 @@ src/
   games/
     lineup.ts     the 12 games shown in the picker, with status
     _template/    starting point for a new game
+    types.ts      draft cartridge contract: manifest and rules shapes
     no-filler/    one folder per game
+    chainword/    Chainword manifest and rules (no screens yet)
 packs/            content packs, one folder per game
 docs/             requirements, tech stack, game specs, design handoff
 .github/workflows/deploy.yml

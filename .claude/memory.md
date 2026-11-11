@@ -18,6 +18,9 @@
 - 2026-11-11: Game-show swatch teal uses the token `#177A74` (design open question 19 had `#1E8C86` on the settings card).
 - 2026-11-11: CSS approach: shared markup, per-style CSS under `:root[data-theme=...]`. Per-style wording lives in small data maps at the top of each screen file (`useLobbyStyle()` context). Style cards carry their own `data-theme` to preview a style.
 - 2026-11-11: Focus rings: always a different color from the selection ring; inside cream cards (game-show cue card, rec-room phone card) they switch to the card's dark ink.
+- 2026-11-11: Vitest adopted as the test runner (Julian OK'd), `npm test` runs `vitest run`.
+- 2026-11-11: Draft cartridge types live in `src/games/types.ts` (made on game/chainword). Rules get a `RulesContext` ({ now, random }) as a last argument so they stay pure and testable; this adds to the tech stack doc section 7 signatures. Finishing order is `PlayerId[][]` (each inner list is one place; ties share a place). Other game branches should use the same file.
+- 2026-11-11: Chainword: hard mode keeps greens in place and reuses revealed letters as many times as revealed; refused guesses are not counted (`checkGuess` tells the phone why). No round timer. TV gets `tvProgress()`: marks only, no letters.
 - Working rules in effect: W1, W3, W5, W6 (recorded in CLAUDE.md).
 
 ## Preferences
@@ -37,11 +40,12 @@
 - Next options: a first playable game wired as a live example (Julian wants this eventually), more designed screens (waiting room, leaderboard, instructions, pause, game over, errors), or step 2 Firebase once sign-in is decided.
 - Not created yet, by design: `firebase.json`, `database.rules.json` (step 2); `src/games/registry.ts` and `_template/` contents (step 6, cartridge contract).
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).
-- No unit test runner yet. Vitest is "Proposed" in the tech stack doc and needs Julian's OK as a new dependency.
+- Vitest installed. Chainword rules and tests done on branch game/chainword; screens not started.
 
 ## Development Log
 ### Week of 2026-11-09
 - Done: docs and lobby design handoff committed; folder structure; Pages deploy workflow; Host settings (style, game choice, scanlines); game picker (TV) and vote (phone) with all games coming soon; Host or join (TV + phone); TV host sign-in; phone sign-in in four states; Join with validation; shared TV header, phone frame, form fields.
+- Chainword rules, word pack and tests (branch game/chainword); draft `src/games/types.ts`.
 - In progress: none.
 - Blockers: sign-in method decision before Firebase auth work.
 - Next: Julian's pick (live example game, more screens, or Firebase).
