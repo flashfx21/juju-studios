@@ -65,14 +65,14 @@
 - Vitest installed (`npm test`). Chainword rules, tests, phone screen and level 1 playtest (chain codes, word lengths 4 to 7, End game) are done and on main. TV screen and Instructions not started. Next for Chainword: a real level 1 playtest on phones.
 - Design handoffs live in `docs/handoffs/`.
 - Game branches `game/dial-it-in` and `game/chainword` live in worktrees `../juju-studios-dial-it-in` and `../juju-studios-chainword`. Both are pushed.
-- Dial It In (game/dial-it-in): main merged in, own types.ts dropped, rules adapted to main's contract. Rules, tests and spectrum pack done. Rules merged to main on 2026-11-11 (Julian's call) with status still "coming soon"; later Dial It In work continues on game/dial-it-in. Phone screen and single-player playtest merged to main and live on 2026-11-11 (Julian testing on his phone). TV screen, Instructions and registry line still to do.
+- Dial It In (game/dial-it-in): main merged in, own types.ts dropped, rules adapted to main's contract. Rules, tests and spectrum pack done. Rules merged to main on 2026-11-11 (Julian's call) with status still "coming soon"; later Dial It In work continues on game/dial-it-in. Phone screen and single-player playtest merged to main and live on 2026-11-11 (Julian testing on his phone). Safe-style guess dial merged to main and live on 2026-11-11 for a phone test of the touch feel. TV screen, Instructions and registry line still to do.
 - `manifest.ts` repeats each game's title, tag and pitch from `src/games/lineup.ts`. Once `registry.ts` exists, the lineup should read them from manifests.
 
 ## Development Log
 ### Week of 2026-11-09
 - Done: docs and lobby design handoff committed; folder structure; Pages deploy workflow; Host settings (style, game choice, scanlines); game picker (TV) and vote (phone) with all games coming soon; Host or join (TV + phone); TV host sign-in; phone sign-in in four states; Join with validation; shared TV header, phone frame, form fields.
 - Chainword rules, word pack and tests (branch game/chainword); draft `src/games/types.ts`; Chainword practice phone screen.
-- Dial It In rules, tests and spectrum pack (branch game/dial-it-in), adapted to main's contract and merged to main. Phone screen and single-player playtest on the branch.
+- Dial It In rules, tests and spectrum pack (branch game/dial-it-in), adapted to main's contract and merged to main. Phone screen, single-player playtest and safe-style guess dial merged to main and live.
 - In progress: none.
 - Blockers: sign-in method decision before Firebase auth work.
 - Next: Julian's pick (live example game, more screens, or Firebase).
