@@ -1,8 +1,9 @@
 // ABOUTME: Dial It In on a player's phone: the spectrum card, the secret target for the clue giver,
-// ABOUTME: private number entry for guessers, the round reveal and the final standings.
+// ABOUTME: a safe-style dial (with typing as a backup) for guessers, the round reveal and the final standings.
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Field } from '../../ui/TextField'
 import type { PlayerId } from '../types'
+import { GuessDial } from './GuessDial'
 import {
   currentRound,
   guessersFor,
@@ -79,14 +80,22 @@ interface GuessFormProps {
   onGuess: (value: number) => void
 }
 
+/** The typed text as a guess, or null if it isn't a whole number from 1 to range. */
+function readGuess(typed: string, range: number): number | null {
+  const value = Number(typed.trim())
+  return typed.trim() !== '' && Number.isInteger(value) && value >= 1 && value <= range ? value : null
+}
+
+/** The dial and the typed box always show the same guess; the dial starts in the middle. */
 function GuessForm({ range, onGuess }: GuessFormProps) {
-  const [typed, setTyped] = useState('')
+  const [dialed, setDialed] = useState(Math.round(range / 2))
+  const [typed, setTyped] = useState(String(Math.round(range / 2)))
   const [error, setError] = useState('')
 
   function submit(event: FormEvent) {
     event.preventDefault()
-    const value = Number(typed.trim())
-    if (typed.trim() === '' || !Number.isInteger(value) || value < 1 || value > range) {
+    const value = readGuess(typed, range)
+    if (value === null) {
       setError(`Enter a whole number from 1 to ${range}.`)
       return
     }
@@ -95,9 +104,19 @@ function GuessForm({ range, onGuess }: GuessFormProps) {
 
   return (
     <form className="dii-guess" noValidate onSubmit={submit}>
+      <GuessDial
+        value={dialed}
+        range={range}
+        label={`Dial your guess, 1 to ${range}`}
+        onChange={(value) => {
+          setDialed(value)
+          setTyped(String(value))
+          setError('')
+        }}
+      />
       {/* Inside a cue card, like every shared field: the field takes its text color from the card. */}
       <div className="cue-card">
-        <Field id="dii-guess" label={`Your guess, 1 to ${range}`} error={error}>
+        <Field id="dii-guess" label={`Or type your guess, 1 to ${range}`} error={error}>
           <div className="field__box">
             <input
               id="dii-guess"
@@ -113,6 +132,8 @@ function GuessForm({ range, onGuess }: GuessFormProps) {
               onChange={(event) => {
                 setTyped(event.target.value)
                 setError('')
+                const value = readGuess(event.target.value, range)
+                if (value !== null) setDialed(value)
               }}
             />
           </div>

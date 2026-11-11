@@ -35,6 +35,7 @@
 - 2026-11-11: Chainword phone play screen: on-screen QWERTY keyboard fills the boxes (no text box), keys colored per current word, chain progress bar, result panel after each word, End game is a modal dialog. Game screens use `PhoneFrame fit` (exactly one screen tall, `100dvh`, no scroll); the board sizes tiles with container query units.
 - 2026-11-11: Dial It In rules: per-player closeness scoring, no team mode. Points: 10 for a bullseye, minus 1 per step away (step is 2 on 1 to 100, 1 on 1 to 50), floor 0. A guess is final once submitted. The round reveals when every guesser is in, or on the timer; the next timer starts the next clue giver. Clue givers rotate in player order, one round each. All rounds (card and target) are dealt at setup with `ctx.random`. Phones default to number entry; the dial is a later experiment.
 - 2026-11-11: Dial It In playtest (Julian): single-player interface test only, at `#/playtest/dial-it-in` behind the playtest code. You plus two bots (random guesses); a dashed Dev box stands in for other phones and the engine timer (Bots lock in, Time's up, Next round). `PhoneScreen.tsx` takes state, player, names and onGuess so it can serve real play later. Number entry sits in a cue card because shared fields take their text color from the card. No Dial It In design exists; the layout is extrapolated from the shared phone pieces.
+- 2026-11-11: Dial It In guess dial (Julian asked for a safe-style touch control, typing kept as a backup): drag the face; clockwise counts up (volume-knob convention, the reverse of a real safe); one turn covers the whole range; dragging wraps past either end, arrow keys stop at the ends (slider semantics). Starts mid-range. Dial and typed box always show the same number. Arithmetic lives in `dialTurns.ts` with tests. 1 has a tick but no label, since it would overlap the top number.
 - 2026-11-11: Dial It In state holds secrets (every round's target). Whatever publishes state to `rooms/{code}/state` must strip targets and send the current one only to the clue giver's `private/{uid}`.
 - Working rules in effect: W1, W3, W5, W6 (recorded in CLAUDE.md).
 
@@ -53,6 +54,8 @@
 - Synthetic Enter key presses over the DevTools protocol need `text: "\r"` to activate a button.
 - Bebas Neue (game-show label font) has no lowercase. Never set the site address in it: the `/juju-studios` path is case-sensitive on GitHub Pages, so an all-caps address would 404 if typed.
 - Python isn't installed on this PC; use node for one-off scripts.
+- Never clean up headless test browsers with `taskkill /IM msedge.exe`: it closes Julian's own Edge windows too. Kill only the spawned process tree by PID (`taskkill /PID <pid> /T /F`).
+- Headless Edge touch drags (`Input.dispatchTouchEvent`) sometimes stall a run; a retry passes. Give scripts their own timeout so a stall can't hang the shell.
 
 ## Current State
 - Build order step 1 done. Ahead of order: Host settings, game picker, Host or join, host sign-in, phone sign-in (4 states), Join.

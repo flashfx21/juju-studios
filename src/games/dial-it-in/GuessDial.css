@@ -1,0 +1,93 @@
+/* ABOUTME: Safe-style guess dial: a turning face with ticks and numbers, a fixed mark at the top and the value in the hub. */
+/* ABOUTME: Colors come from the style's card tokens so the dial reads on wood, cream and black alike. */
+
+.dii-dial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.dii-dial__control {
+  position: relative;
+  width: min(220px, 58vw);
+  aspect-ratio: 1;
+  margin-top: 18px;
+  border-radius: 50%;
+  /* The page must not scroll while a finger turns the dial. */
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+
+.dii-dial__control:active {
+  cursor: grabbing;
+}
+
+.dii-dial__control:focus-visible {
+  outline: 4px solid var(--focus-ring, currentColor);
+  outline-offset: 4px;
+}
+
+.dii-dial__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.dii-dial__face {
+  fill: var(--color-secondary);
+  stroke: var(--color-secondary-ink);
+  stroke-width: 3;
+}
+
+.dii-dial__tick {
+  stroke: var(--color-secondary-ink);
+  stroke-width: 1;
+}
+
+.dii-dial__tick--long {
+  stroke-width: 2.5;
+}
+
+.dii-dial__number {
+  fill: var(--color-secondary-ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.dii-dial__hub {
+  fill: var(--color-primary);
+  stroke: var(--color-secondary-ink);
+  stroke-width: 3;
+}
+
+.dii-dial__value {
+  fill: var(--color-primary-ink);
+  font-family: var(--font-display);
+  font-size: 34px;
+}
+
+/* The fixed mark at the top: the number under it is the guess. */
+.dii-dial__mark {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 16px solid currentColor;
+}
+
+.dii-dial__hint {
+  margin: 0;
+  font-size: 14px;
+  text-align: center;
+}
+
+:root[data-theme='arcade'] .dii-dial__value {
+  font-size: 26px;
+}

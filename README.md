@@ -48,7 +48,7 @@ Games still in testing open at `#/playtest` (phone front door: **Playtest a game
 
 **Chainword playtest, no server:** one person taps **Make a code for everyone** (pick letters per word and words in the chain first) and reads the code out, for example `KPDT53`. Everyone else types it under **Got a chain code?** and gets the same words. Say go, play, then compare totals: fewest guesses wins, faster time breaks a tie. **End game** stops early (the word you're on and any left count 7 each). Everyone should load the site fresh first: a code deals from the word lists, so phones on different versions of the site can get different words.
 
-**Dial It In playtest, one player:** an interface test on one phone. Pick 1 to 100 or 1 to 50, then play three rounds against two bots that guess at random; you give the clue in round 1. The dashed **Dev** box stands in for the other phones and the timer: **Bots lock in**, **Time's up** (ends guessing; anyone who hasn't guessed scores 0) and **Next round**.
+**Dial It In playtest, one player:** an interface test on one phone. Pick 1 to 100 or 1 to 50, then play three rounds against two bots that guess at random; you give the clue in round 1. To guess, turn the safe-style dial (clockwise goes up, counterclockwise goes down, and it wraps past the top like a safe) or type the number in the box under it. The dashed **Dev** box stands in for the other phones and the timer: **Bots lock in**, **Time's up** (ends guessing; anyone who hasn't guessed scores 0) and **Next round**.
 
 **To change the playtest code**, run this in the project folder with the new code in place of `newcode`, then put the number it prints into `PLAYTEST_CODE_HASH` in `src/app/playtestCode.ts`. Every device then asks for the new code.
 
