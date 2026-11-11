@@ -11,6 +11,7 @@ import {
   type ChainwordState,
   type GuessProblem,
   type Mark,
+  type PlayerRun,
   type WordAttempt,
 } from './rules'
 import '../../ui/PhoneForm.css'
@@ -200,22 +201,51 @@ function Keyboard({ marks, onLetter, onDelete, onEnter }: KeyboardProps) {
   )
 }
 
-/** One segment per chain word: solved, missed, the one on screen, or still to come. */
-function ChainProgress({ state, attempts, shown }: { state: ChainwordState; attempts: WordAttempt[]; shown: number }) {
+interface ChainStep {
+  status: 'solved' | 'missed' | 'current' | 'todo'
+  /** What the word adds to the total: guesses so far, or 7 for a miss. Null before the first guess. */
+  count: number | null
+  spoken: string
+}
+
+/** Where each chain word stands. Once the run is over, every word is settled (ended early counts as missed). */
+function chainSteps(state: ChainwordState, run: PlayerRun, shown: number): ChainStep[] {
+  const over = run.finishedAt !== null
+  return state.chain.map((_, i) => {
+    const attempt = run.attempts[i]
+    const word = `Word ${i + 1}`
+    if (attempt && (isWordDone(attempt) || over)) {
+      return attempt.solved
+        ? { status: 'solved', count: attempt.guesses.length, spoken: `${word}, solved in ${guessCount(attempt.guesses.length)}` }
+        : { status: 'missed', count: MISSED_WORD_COST, spoken: `${word}, missed, counts ${MISSED_WORD_COST}` }
+    }
+    if (i === shown && attempt) {
+      const made = attempt.guesses.length
+      return { status: 'current', count: made || null, spoken: `${word}, ${guessCount(made)} so far` }
+    }
+    return { status: 'todo', count: null, spoken: `${word}, not started` }
+  })
+}
+
+/** One numbered segment per chain word, and the running total. */
+function ChainProgress({ state, run, shown }: { state: ChainwordState; run: PlayerRun; shown: number }) {
   const finishedAll = shown >= state.chain.length
+  const total = totalGuesses(run)
   return (
     <div className="cw-chain">
       <p className="cw-chain__label" data-testid="cw-progress">
         {finishedAll ? 'Chain done' : `Word ${shown + 1} of ${state.chain.length}`}
       </p>
-      <ol className="cw-chain__bar" aria-hidden="true">
-        {state.chain.map((_, i) => {
-          const attempt = attempts[i]
-          const done = attempt && isWordDone(attempt)
-          const status = done ? (attempt.solved ? 'solved' : 'missed') : i === shown ? 'current' : 'todo'
-          return <li key={i} className="cw-chain__step" data-status={status} />
-        })}
+      <ol className="cw-chain__bar" aria-label="Guesses per word" data-testid="cw-chain-bar">
+        {chainSteps(state, run, shown).map((step, i) => (
+          <li key={i} className="cw-chain__step" data-status={step.status} aria-label={step.spoken}>
+            <span aria-hidden="true">{step.count ?? ''}</span>
+          </li>
+        ))}
       </ol>
+      <p className="cw-chain__total" data-testid="cw-running-total" aria-label={`${guessCount(total)} in total`}>
+        Total {total}
+      </p>
     </div>
   )
 }
@@ -327,7 +357,7 @@ export function PhoneScreen({ state, player, onGuess, topAction, summaryAction }
           <ChainwordTitle />
           {topAction && <div className="cw-top__action">{topAction}</div>}
         </div>
-        <ChainProgress state={state} attempts={run.attempts} shown={shownIndex} />
+        <ChainProgress state={state} run={run} shown={shownIndex} />
       </header>
 
       {finished && !reviewing ? (

@@ -65,8 +65,24 @@
 
 .cw-chain__step {
   flex: 1;
-  height: 10px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 2px solid color-mix(in srgb, currentColor 45%, transparent);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.cw-chain__total {
+  flex: none;
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .cw-chain__step[data-status='current'] {
@@ -76,11 +92,13 @@
 .cw-chain__step[data-status='solved'] {
   border-color: var(--cw-green);
   background: var(--cw-green);
+  color: var(--cw-light-ink);
 }
 
 .cw-chain__step[data-status='missed'] {
   border-color: var(--cw-gray);
   background: var(--cw-gray);
+  color: var(--cw-light-ink);
 }
 
 /* ---------- Board: tiles sized to the space left, never taller than it ---------- */
@@ -314,6 +332,13 @@
 }
 
 /* Arcade's pixel label font runs wide; keep the progress label compact. */
-:root[data-theme='arcade'] .cw-chain__label {
+:root[data-theme='arcade'] .cw-chain__label,
+:root[data-theme='arcade'] .cw-chain__total {
   font-size: 11px;
+}
+
+/* Rec room's handwritten body font runs small; segment numbers use its label font instead. */
+:root[data-theme='rec-room'] .cw-chain__step {
+  font-family: var(--font-label);
+  font-size: 16px;
 }
