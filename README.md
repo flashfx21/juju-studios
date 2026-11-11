@@ -78,7 +78,7 @@ src/
     no-filler/    one folder per game
     chainword/    Chainword manifest, rules, phone screen and playtest
     dial-it-in/   Dial It In manifest, rules, phone screen and playtest
-packs/            content packs, one folder per game
+packs/            content packs, one folder per game; shared/ holds the English word list (ENABLE) any game can load
 docs/             requirements, tech stack, game specs, design handoff
 .github/workflows/deploy.yml
 ```

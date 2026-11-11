@@ -8,7 +8,7 @@ A suite of phone party games for family and friends, played like Jackbox: one sh
 - `src/app/` routing (host vs. phone), sign-in, profile, settings.
 - `src/ui/` shared components and the three lobby styles: retro game show, 90s arcade, 70s rec room.
 - `src/games/<game-id>/` one folder per game. `src/games/_template/` is the starting point for a new game. `src/games/registry.ts` lists installed games.
-- `packs/<game-id>/` content packs (prompts, words, questions, photos).
+- `packs/<game-id>/` content packs (prompts, words, questions, photos). `packs/shared/` holds content any game can use, such as the English word list loaded by `src/engine/dictionary.ts`.
 - `docs/` requirements, tech stack, design handoffs. `docs/design/` exported designs and tokens.
 
 ## Rules for games (the cartridge contract)
