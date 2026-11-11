@@ -1,0 +1,556 @@
+/* ABOUTME: Host settings screen styles at the 1280x720 design size, one section per lobby style. */
+/* ABOUTME: Values come from docs/design/source (screen 8); tokens are used wherever they match. */
+
+/* Page-level rules use :root[data-theme] so they never leak into the style cards,
+   which carry their own data-theme to preview each style. */
+
+/* ---------- Shared layout (retro game show is the base look) ---------- */
+.host-settings {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+.host-settings::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% -15%, rgba(255, 246, 214, 0.16), rgba(255, 246, 214, 0) 70%);
+}
+
+.host-settings__header {
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  top: 22px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.host-settings__brand {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.host-settings__logo {
+  font-family: var(--font-logo);
+  font-size: 30px;
+  color: var(--color-background);
+  background: var(--color-accent);
+  padding: 6px 16px 10px;
+}
+
+.host-settings__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 48px;
+  color: var(--color-text);
+}
+
+.host-settings__back {
+  display: inline-flex;
+  align-items: center;
+  height: 52px;
+  padding: 4px 22px 0;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-family: var(--font-label);
+  font-size: 28px;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  box-shadow: 0 5px 0 #8a5a0e;
+}
+
+.host-settings__body {
+  position: absolute;
+  left: 40px;
+  top: 128px;
+  width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.host-settings__styles {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.host-settings__heading {
+  margin: 0;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 28px;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+}
+
+.style-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.host-settings__options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.setting-row {
+  height: 72px;
+  padding: 0 12px 0 24px;
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setting-row__text {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.setting-row__name {
+  font-family: var(--font-label);
+  font-size: 32px;
+  letter-spacing: 0.06em;
+  color: var(--color-text);
+}
+
+.setting-row__note {
+  font-size: 18px;
+  color: var(--color-accent);
+}
+
+.setting-row__choices {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--color-background);
+}
+
+.setting-row__choice {
+  min-width: 130px;
+  height: 48px;
+  padding: 0 18px;
+  border: 0;
+  cursor: pointer;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-family: var(--font-label);
+  font-size: 24px;
+  letter-spacing: 0.08em;
+}
+
+.setting-row__choice[aria-pressed='true'] {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.host-settings__floor {
+  display: none;
+}
+
+/* ---------- 90s arcade ---------- */
+:root[data-theme='arcade'] .host-settings::before {
+  background: radial-gradient(ellipse 50% 40% at 50% 12%, rgba(34, 228, 255, 0.14), rgba(34, 228, 255, 0) 70%);
+}
+
+:root[data-theme='arcade'] .host-settings__header {
+  top: 30px;
+  height: 56px;
+}
+
+:root[data-theme='arcade'] .host-settings__brand {
+  gap: 24px;
+}
+
+:root[data-theme='arcade'] .host-settings__logo {
+  font-size: 34px;
+  color: #ffd1ec;
+  background: none;
+  padding: 0;
+  text-shadow: 0 0 6px #ff2ea6, 0 0 18px #ff2ea6;
+}
+
+:root[data-theme='arcade'] .host-settings__logo-rest {
+  display: none;
+}
+
+:root[data-theme='arcade'] .host-settings__title {
+  font-family: var(--font-label);
+  font-size: 28px;
+  color: var(--color-text-strong);
+  text-transform: uppercase;
+}
+
+:root[data-theme='arcade'] .host-settings__back {
+  height: 56px;
+  padding: 0 20px;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  box-shadow: 6px 6px 0 #ff2ea6;
+}
+
+:root[data-theme='arcade'] .host-settings__body {
+  top: 122px;
+}
+
+:root[data-theme='arcade'] .host-settings__heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+:root[data-theme='arcade'] .host-settings__heading-sep {
+  display: none;
+}
+
+:root[data-theme='arcade'] .host-settings__heading-note {
+  font-family: var(--font-body);
+  font-size: 26px;
+  color: var(--color-text-muted);
+  text-transform: none;
+}
+
+:root[data-theme='arcade'] .setting-row {
+  box-shadow: inset 0 0 0 2px var(--color-field-border);
+}
+
+:root[data-theme='arcade'] .setting-row__text {
+  align-items: center;
+  gap: 18px;
+}
+
+:root[data-theme='arcade'] .setting-row__name {
+  font-size: 15px;
+  letter-spacing: 0;
+  color: var(--color-text-strong);
+  text-transform: uppercase;
+}
+
+:root[data-theme='arcade'] .setting-row__note {
+  font-size: 28px;
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='arcade'] .setting-row__choices {
+  gap: 6px;
+  padding: 0;
+  background: none;
+}
+
+:root[data-theme='arcade'] .setting-row__choice {
+  min-width: 110px;
+  padding: 0 16px;
+  background: var(--color-background);
+  color: var(--color-accent);
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='arcade'] .setting-row__choice[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+}
+
+:root[data-theme='arcade'] .host-settings__floor {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30px;
+  background-color: var(--color-footer);
+  background-image:
+    radial-gradient(circle at 20px 30px, #ff2ea6 0 5px, rgba(0, 0, 0, 0) 6px),
+    radial-gradient(circle at 84px 66px, #22e4ff 0 3px, rgba(0, 0, 0, 0) 4px),
+    radial-gradient(circle at 60px 20px, rgba(0, 0, 0, 0) 0 8px, #ffe600 9px 11px, rgba(0, 0, 0, 0) 12px),
+    radial-gradient(circle at 112px 50px, rgba(0, 0, 0, 0) 0 5px, #39ff6a 6px 7px, rgba(0, 0, 0, 0) 8px);
+  background-size: 132px 84px;
+}
+
+/* ---------- 70s rec room ---------- */
+:root[data-theme='rec-room'] .host-settings {
+  background-image:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.28) 0 3px, rgba(0, 0, 0, 0) 3px 128px),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0 22px,
+      rgba(255, 220, 170, 0.05) 22px 40px,
+      rgba(0, 0, 0, 0.06) 40px 71px,
+      rgba(255, 255, 255, 0) 71px 128px
+    );
+  font-family: var(--font-label);
+}
+
+:root[data-theme='rec-room'] .host-settings::before {
+  background: radial-gradient(ellipse 60% 55% at 50% 30%, rgba(255, 214, 150, 0.16), rgba(255, 214, 150, 0) 70%);
+}
+
+:root[data-theme='rec-room'] .host-settings__header {
+  left: 44px;
+  right: 44px;
+  top: 26px;
+  height: 80px;
+}
+
+:root[data-theme='rec-room'] .host-settings__logo {
+  font-size: 22px;
+  color: var(--color-background);
+  background: var(--color-surface);
+  padding: 8px 14px;
+  transform: rotate(-2deg);
+  box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .host-settings__title {
+  font-size: 46px;
+  color: var(--color-text);
+  text-shadow: var(--shadow-text-headline);
+}
+
+:root[data-theme='rec-room'] .host-settings__back {
+  padding: 0 22px;
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0;
+  transform: rotate(2deg);
+  box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .host-settings__body {
+  top: 118px;
+  gap: 12px;
+}
+
+:root[data-theme='rec-room'] .host-settings__styles {
+  gap: 12px;
+}
+
+:root[data-theme='rec-room'] .host-settings__heading {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+:root[data-theme='rec-room'] .host-settings__options {
+  margin: 38px 16px 0;
+  padding: 14px 30px;
+  gap: 0;
+  border-radius: 22px;
+  background: radial-gradient(ellipse at 50% 40%, #6f8038, #56652a 75%);
+  box-shadow:
+    0 0 0 12px var(--color-frame),
+    10px 14px 0 12px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .setting-row {
+  height: 66px;
+  padding: 0;
+  background: none;
+  border-bottom: 2px dashed rgba(243, 235, 211, 0.35);
+}
+
+:root[data-theme='rec-room'] .setting-row__name {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='rec-room'] .setting-row__note {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--color-text);
+  text-transform: lowercase;
+}
+
+:root[data-theme='rec-room'] .setting-row__choices {
+  gap: 10px;
+  padding: 0;
+  background: none;
+}
+
+:root[data-theme='rec-room'] .setting-row__choice {
+  min-width: 120px;
+  padding: 0 16px;
+  background: rgba(0, 0, 0, 0.32);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='rec-room'] .setting-row__choice[aria-pressed='true'] {
+  background: var(--color-surface);
+  color: var(--color-text-on-surface);
+  transform: rotate(-1.5deg);
+  box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme='rec-room'] .host-settings__floor {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 96px;
+  background-color: var(--color-footer);
+  background-image: repeating-linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 0.14) 0 2px,
+    rgba(0, 0, 0, 0) 2px 5px,
+    rgba(255, 200, 140, 0.18) 5px 7px,
+    rgba(0, 0, 0, 0) 7px 9px
+  );
+}
+
+/* ---------- Style cards: each previews its own style via its data-theme ---------- */
+.style-card {
+  position: relative;
+  height: 200px;
+  padding: 22px 24px;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  text-align: left;
+  background: var(--color-background);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.18);
+}
+
+.style-card[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 4px var(--selection-ring),
+    0 0 0 8px rgba(0, 0, 0, 0.35);
+}
+
+.style-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.style-card__swatches {
+  display: flex;
+  gap: 6px;
+}
+
+.style-card__swatch {
+  width: 30px;
+  height: 30px;
+}
+
+.style-card__badge {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+}
+
+.style-card[data-theme='game-show'] .style-card__label {
+  font-family: var(--font-label);
+  font-size: 22px;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+}
+
+.style-card[data-theme='game-show'] .style-card__logo {
+  font-family: var(--font-logo);
+  font-size: 40px;
+  line-height: 1.15;
+  color: var(--color-text-strong);
+  text-shadow: 3px 3px 0 var(--color-primary);
+}
+
+.style-card[data-theme='game-show'] .style-card__badge {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-family: var(--font-label);
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  padding: 4px 10px 2px;
+}
+
+.style-card[data-theme='arcade'] .style-card__text {
+  gap: 10px;
+}
+
+.style-card[data-theme='arcade'] .style-card__label {
+  font-family: var(--font-label);
+  font-size: 12px;
+  color: var(--color-text-strong);
+  text-transform: uppercase;
+}
+
+.style-card[data-theme='arcade'] .style-card__logo {
+  font-family: var(--font-logo);
+  font-size: 36px;
+  line-height: 1.1;
+  color: #ffd1ec;
+  text-shadow: 0 0 4px #ff2ea6, 0 0 14px #ff2ea6;
+}
+
+.style-card[data-theme='arcade'] .style-card__badge {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-family: var(--font-label);
+  font-size: 10px;
+  padding: 7px 8px;
+  text-transform: uppercase;
+}
+
+.style-card[data-theme='rec-room'] {
+  background-image: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.28) 0 3px, rgba(0, 0, 0, 0) 3px 98px);
+}
+
+.style-card[data-theme='rec-room'] .style-card__label {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--color-accent);
+}
+
+.style-card[data-theme='rec-room'] .style-card__logo {
+  font-family: var(--font-logo);
+  font-size: 42px;
+  line-height: 1.15;
+  color: var(--color-text);
+  text-shadow: var(--shadow-text-headline);
+}
+
+.style-card[data-theme='rec-room'] .style-card__badge {
+  background: var(--color-surface);
+  color: var(--color-frame);
+  font-family: var(--font-display);
+  font-size: 16px;
+  padding: 5px 10px;
+  transform: rotate(4deg);
+}

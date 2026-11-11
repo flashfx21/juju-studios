@@ -1,5 +1,5 @@
 /* ABOUTME: Base page styles shared by every screen, built on the theme tokens. */
-/* ABOUTME: Includes the holding page shown until the lobby is built. */
+/* ABOUTME: Also the focus and selection ring colors per style, and the arcade scanlines overlay. */
 *,
 *::before,
 *::after {
@@ -14,35 +14,38 @@ body {
   font-family: var(--font-body);
 }
 
-.holding-page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--gap-lg);
-  padding: var(--gap-xl) var(--space-phone-pad-x-min);
-  text-align: center;
+/* Ring colors follow the active style on <html>, even inside elements that preview another style.
+   The focus ring is always a different color from the selection ring, so keyboard focus and
+   "In use" never look alike. */
+:root[data-theme='game-show'] {
+  --selection-ring: #f2b630;
+  --focus-ring: #fff6d6;
 }
 
-.holding-page__logo {
-  margin: 0;
-  font-family: var(--font-logo);
-  font-weight: 400;
-  font-size: clamp(var(--type-phone-logo-min), 8vw, var(--type-tv-logo-max));
-  color: var(--color-text-strong);
-  text-shadow: var(--shadow-text-headline);
+:root[data-theme='arcade'] {
+  --selection-ring: #ffe600;
+  --focus-ring: #22e4ff;
 }
 
-.holding-page__tagline {
-  margin: 0;
-  font-size: clamp(var(--type-phone-body-max), 3vw, var(--type-tv-body-max));
+:root[data-theme='rec-room'] {
+  --selection-ring: #f3ebd3;
+  --focus-ring: #d9a21b;
 }
 
-.holding-page__version {
-  margin: 0;
-  font-family: var(--font-label);
-  font-size: var(--type-phone-label-max);
-  letter-spacing: 0.12em;
-  color: var(--color-accent);
+a:focus-visible,
+button:focus-visible {
+  outline: 4px solid var(--focus-ring);
+  outline-offset: 6px;
+}
+
+/* CRT scanlines and vignette over every screen, arcade style only (Host settings toggle). */
+:root[data-theme='arcade'][data-scanlines='on'] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.28) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+    radial-gradient(ellipse 75% 70% at 50% 50%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.55));
 }

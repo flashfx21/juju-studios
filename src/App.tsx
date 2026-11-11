@@ -1,17 +1,18 @@
-// ABOUTME: Top-level screen. For now a holding page with the studio name and build version.
-// ABOUTME: Host and phone routing will live in src/app once the engine exists.
-import packageInfo from '../package.json'
+// ABOUTME: Top-level screen switch: applies the host's settings and shows the screen named in the URL hash.
+// ABOUTME: Host and phone routing will grow here as the lobby and engine screens arrive.
+import { HoldingPage } from './app/HoldingPage'
+import { HostSettings } from './app/HostSettings'
+import { useHostSettings } from './app/useHostSettings'
+import { useHashRoute } from './app/useHashRoute'
 
 function App() {
-  return (
-    <main className="holding-page">
-      <h1 className="holding-page__logo">JuJu Studios</h1>
-      <p className="holding-page__tagline">Game night is being built. Check back soon.</p>
-      <p className="holding-page__version" data-testid="app-version">
-        v{packageInfo.version}
-      </p>
-    </main>
-  )
+  const [settings, updateSettings] = useHostSettings()
+  const route = useHashRoute()
+
+  if (route === 'settings') {
+    return <HostSettings settings={settings} onChange={updateSettings} />
+  }
+  return <HoldingPage />
 }
 
 export default App

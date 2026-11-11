@@ -1,0 +1,18 @@
+/* ABOUTME: Layout for the scaled 1280x720 TV frame. */
+/* ABOUTME: The window behind the frame stays black, like a TV's letterbox bars. */
+.tv-stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+}
+
+.tv-stage__screen {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  transform-origin: center;
+}

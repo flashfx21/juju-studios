@@ -4,6 +4,12 @@ Phone party games for family and friends. One shared screen (TV or laptop) hosts
 
 Live site: https://flashfx21.github.io/juju-studios/ (currently a holding page; no games yet).
 
+## What works so far
+
+- **Holding page** (`#/`): studio name, a Host settings button, and the build version.
+- **Host settings** (`#/settings`): pick the lobby style (retro game show, 90s arcade, 70s rec room) and turn the arcade CRT scanlines on or off. Every screen restyles at once. Choices are saved in this browser until rooms exist.
+- TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.
+
 ## Run it locally
 
 Needs Node.js (CI uses Node 26).
@@ -24,11 +30,11 @@ Every push to `main` runs `.github/workflows/deploy.yml`, which lints, builds an
 
 ```
 src/
-  app/            routing (host vs. phone), sign-in, profile, settings
+  app/            screens and routing (holding page, Host settings), later sign-in and profile
   engine/         rooms, presence, timer, voting, turns, teams, scoring, results
     net/          the only code that talks to the backend (Firebase)
-  ui/
-    themes/       design tokens for the three lobby styles
+  ui/             shared pieces, e.g. TvStage (the scaled 1280x720 TV frame)
+    themes/       design tokens and the list of lobby styles
   games/
     _template/    starting point for a new game
     no-filler/    one folder per game
