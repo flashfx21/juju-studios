@@ -16,9 +16,11 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 | Join (profile setup) | `#/join` | | Room code, username, email, color (arcade adds initials) |
 | Lobby placeholder | `#/lobby` | Links to the game picker and Host settings, plus the version | same |
 | Game picker | `#/picker` | Full lineup, all coming soon | Coming-soon list, nothing to vote on |
-| Host settings | `#/settings` | Lobby style, game choice (group vote / leader pick), CRT scanlines | |
+| Host settings | `#/settings` | Your style, game choice (group vote / leader pick), CRT scanlines | |
+| Profile | `#/profile` | | Initials, username, email, color, **your style**, stats |
 
-- Sign-in and joining are **not connected yet**: forms check their fields and move on, but nothing is sent. Each screen says so.
+- **Everyone picks their own style.** The TV shows the host's style; each phone shows its own user's, changed on Profile (or in Host settings on the TV). It's saved on the device until profiles move to the backend.
+- Sign-in and joining are **not connected yet**: forms check their fields and move on, but nothing is sent. Each screen says so. Join remembers your profile on this phone; "Sign out of this phone" clears it.
 - Host settings are saved in this browser until rooms exist.
 - Addresses stand in for the design's QR codes (see `docs/later.md`).
 - TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.

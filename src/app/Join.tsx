@@ -16,6 +16,7 @@ import {
   lettersOnly,
   ROOM_CODE_LENGTH,
 } from './formRules'
+import { saveProfile } from './localProfile'
 import { savePendingEmail } from './pendingEmail'
 import { goTo } from './useHashRoute'
 import './Join.css'
@@ -59,6 +60,12 @@ export function Join() {
       return
     }
     savePendingEmail(email.trim())
+    saveProfile({
+      username: username.trim(),
+      initials: initials || lettersOnly(username, INITIALS_LENGTH),
+      color,
+      email: email.trim(),
+    })
     goTo('sign-in', 'sent')
   }
 
