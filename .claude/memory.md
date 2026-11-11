@@ -26,6 +26,8 @@
 - 2026-11-11: Draft cartridge types live in `src/games/types.ts` (made on game/chainword). Rules get a `RulesContext` ({ now, random }) as a last argument so they stay pure and testable; this adds to the tech stack doc section 7 signatures. Finishing order is `PlayerId[][]` (each inner list is one place; ties share a place). Other game branches should use the same file.
 - 2026-11-11: Chainword: hard mode keeps greens in place and reuses revealed letters as many times as revealed; refused guesses are not counted (`checkGuess` tells the phone why). No round timer. TV gets `tvProgress()`: marks only, no letters.
 - 2026-11-11: Chainword practice (`#/practice/chainword`, Julian's call): one player in the browser running the real rules, no backend. `src/games/chainword/PhoneScreen.tsx` takes state, player and onGuess so the same screen serves real play later. Typed guesses use the phone keyboard, no on-screen keyboard. Tile colors are fixed across styles (green #2f7a3a, yellow #e6b422 with a dot, gray #5c6066) and pass contrast. No Chainword design exists; the layout is an extrapolation from the shared phone pieces.
+- 2026-11-11: Chainword is the first cartridge (phase 1); No Filler moved to a later release, phase not set (Julian). Phase plan, build order and specs updated.
+- 2026-11-11: Chainword's `src/games/types.ts` is the draft contract on main (Julian chose to merge game/chainword into main). Dial It In adopts it when resumed.
 - Working rules in effect: W1, W3, W5, W6 (recorded in CLAUDE.md).
 
 ## Preferences
@@ -47,7 +49,7 @@
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).
 - Vitest installed (`npm test`). Chainword rules, tests and one-player practice phone screen done on branch game/chainword; TV screen and Instructions not started.
 - Design handoffs live in `docs/handoffs/`.
-- Game branches `game/dial-it-in` and `game/chainword` live in worktrees `../juju-studios-dial-it-in` and `../juju-studios-chainword`. Both are pushed. Each added Vitest and its own `src/games/types.ts` (they differ). Dial It In is paused by Julian until the contract is settled; its pause note recommends adopting Chainword's contract.
+- Game branches `game/dial-it-in` and `game/chainword` live in worktrees `../juju-studios-dial-it-in` and `../juju-studios-chainword`. Both are pushed. Each added Vitest and its own `src/games/types.ts` (they differ). Dial It In is paused by Julian. On resume: merge main into game/dial-it-in, delete its own types.ts in favor of main's, and adapt: players are PlayerId strings, rules take a last `ctx` ({ now, random }), manifest uses `minutes` and a `settings` list. Vitest is already on main, so keep main's package.json/lock.
 
 ## Development Log
 ### Week of 2026-11-09
