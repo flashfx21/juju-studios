@@ -1,5 +1,5 @@
 // ABOUTME: Chainword's cartridge label: title, pitch, player counts and the host's word and chain length settings.
-// ABOUTME: Player count and length are placeholders from docs/games/chainword.md.
+// ABOUTME: Player count and length are placeholders from docs/games/04-chainword.md.
 import type { GameManifest } from '../types'
 
 export const manifest: GameManifest = {

@@ -1,5 +1,5 @@
 // ABOUTME: Dial It In's cartridge label: title, pitch, player counts and the host's dial range setting.
-// ABOUTME: Player count and length are placeholders from docs/games/dial-it-in.md.
+// ABOUTME: Player count and length are placeholders from docs/games/02-dial-it-in.md.
 import type { GameManifest } from '../types'
 
 export const manifest: GameManifest = {

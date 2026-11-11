@@ -1,5 +1,5 @@
 // ABOUTME: The full game lineup shown in the game picker, in picker order, with each game's status.
-// ABOUTME: Ids match docs/games/<id>.md. A game becomes "playable" only after its tests pass and a local playtest.
+// ABOUTME: Ids match docs/games/<nn>-<id>.md, where nn is the game's lineup number. A game becomes "playable" only after its tests pass and a local playtest.
 
 export type GameStatus = 'playable' | 'coming-soon'
 

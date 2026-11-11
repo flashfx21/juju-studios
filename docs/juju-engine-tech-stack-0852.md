@@ -103,7 +103,7 @@ juju-studios/
 | Three styles from Settings | `ui/themes`: one set of colors and fonts per style |
 
 ## 7. How games are added (the cartridge contract)
-Every game is one folder that plugs into the engine. The engine is the console; the game is a cartridge with a label, a rulebook and two screens. Each game's spec lives in `docs/games/{game}.md`.
+Every game is one folder that plugs into the engine. The engine is the console; the game is a cartridge with a label, a rulebook and two screens. Each game's spec lives in `docs/games/{nn}-{game}.md` (nn is the two-digit lineup number).
 
 **A game folder contains:**
 1. **`manifest.ts`: the label.** ID, title, pitch, tag, players (min/max), length, modes, status (playable / coming soon), and its few settings.
