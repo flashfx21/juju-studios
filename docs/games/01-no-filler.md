@@ -1,7 +1,7 @@
 # No Filler
 
 **Game ID:** `no-filler`  
-**Status:** Playable, later release (phase not set)  
+**Status:** Playable, phase 2  
 **Players:** 4 to 10 (placeholder)  
 **Length:** 15 min (placeholder)  
 **Modes:** Individual

@@ -1,7 +1,7 @@
 # JuJu Studios Engine: Requirements (Draft)
 
 The shared engine behind the JuJu Studios game night suite: lobby, profiles, host controls, connection, game framework, leaderboard. Each game plugs into it like a cartridge.
-Goal: expedited launch. Engine + Chainword first, then a few more games, aiming for a few weeks. No Filler is a later release.
+Goal: expedited launch. Engine + phase 1 games first (Dial It In, Chainword, the one-word clue game, Pin Drop), aiming for a few weeks. No Filler and Sketch Showdown are phase 2.
 Status: draft, updated Nov 11, 2026. Decisions from Julian marked **Decided**; Claude's suggestions marked **Proposed**.
 Related: `juju-engine-tech-stack-0852.md` (stack and architecture), `game-night-suite-ideas-2233.md` (games and phases), `games/` (one spec per game).
 
@@ -68,7 +68,7 @@ Connection strength is feasible: the host pings each phone every few seconds and
 | Every game reports a **final finishing order** (players or teams, with ties) | Launch | Proposed |
 | Every game provides its instructions screen and its (minimal) settings | Launch | Decided |
 | Pause and restart work the same in every game | Launch | Decided |
-| Team builder with auto-balance | Later (phase 3) | Proposed |
+| Team builder with auto-balance | Later (phase 2) | Proposed |
 
 ## 6. Leaderboard
 | Requirement | Priority | Status |

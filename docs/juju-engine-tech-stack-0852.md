@@ -141,7 +141,7 @@ Work on one game per branch (e.g. `game/dial-it-in`) and merge to `main` when it
 5. Engine pieces: session controls, timer, voting, scoring, results, leaderboard
 6. The cartridge contract and `_template/`
 7. Chainword as the first cartridge
-8. A real game night test, then phase 2 games (No Filler is a later release)
+8. The rest of phase 1 (Dial It In, the one-word clue game, Pin Drop), a real game night test, then phase 2 (No Filler, Sketch Showdown)
 
 ## 9. Verified limits and the sign-in decision (Nov 11)
 From Firebase's published limits:

@@ -1,7 +1,7 @@
 # Word Agents
 
 **Game ID:** `word-agents`  
-**Status:** Later (deep dive; Julian's twist pending)  
+**Status:** Phase 3 (deep dive; Julian's twist pending)  
 **Players:** 4 to 10 (placeholder)  
 **Length:** 20 min (placeholder)  
 **Modes:** Teams

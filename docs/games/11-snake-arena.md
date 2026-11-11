@@ -1,7 +1,7 @@
 # Snake arena (name open)
 
 **Game ID:** `snake-arena`  
-**Status:** Backlog  
+**Status:** Phase 3, last (backlog; reuses maze chase tech)  
 **Players:** 2 to 10 (placeholder)  
 **Length:** 5 min (placeholder)  
 **Modes:** Individual

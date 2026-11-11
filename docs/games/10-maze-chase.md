@@ -1,7 +1,7 @@
 # Maze chase (name open)
 
 **Game ID:** `maze-chase`  
-**Status:** Later (real-time tech)  
+**Status:** Phase 3 (real-time tech)  
 **Players:** 2 to 10 (placeholder)  
 **Length:** 10 min (placeholder)  
 **Modes:** Teams or individual (open)

@@ -1,7 +1,7 @@
 # Dial It In
 
 **Game ID:** `dial-it-in`  
-**Status:** Playable, phase 2  
+**Status:** Playable, phase 1  
 **Players:** 3 to 10 (placeholder)  
 **Length:** 20 min (placeholder)  
 **Modes:** Individual (team average is an open option)

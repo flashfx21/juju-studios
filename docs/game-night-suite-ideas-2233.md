@@ -25,7 +25,7 @@ The point of phasing: each phase should add as few new engine pieces as possible
 | Chainword (working name) | Active | Private text entry, per-player progress on TV | Word list | M |
 | Sketch Showdown | Active | Teams, live drawing sent phone to TV | Clue list | M to L |
 | Pin Drop | To test | Map on phone, photo packs | Photo packs with locations | M |
-| One-word clue game (name open) | New, not phased | Private text entry, duplicate matching, teams (for team mode) | Mystery word list | S to M |
+| One-word clue game (name open) | New, phase 1 | Private text entry, duplicate matching, teams (for team mode) | Mystery word list | S to M |
 | Hidden traitor (working title) | Marquee candidate | Secret roles, multi-step rounds, missions borrowed from other games | Mission set | L |
 | Word Agents | Deep dive later | Teams, secret key on some phones, grid on TV | Word list | M |
 | Curated board game | Deep dive later | Board on TV, spinner, choices, longer saves | Board, events, careers | L to XL |
@@ -35,25 +35,24 @@ The point of phasing: each phase should add as few new engine pieces as possible
 *Relative effort is Claude's estimate, not a schedule: S = small, M = medium, L = large.
 
 ### Phases (set Nov 10, reordered Nov 11)
-Julian's goal: the engine and a few games ready **in a few weeks, if possible**. Phases 1 to 3 are the realistic plan; everything else is one "later" bucket.
+Julian's goal: the engine and a few games ready **in a few weeks, if possible**. Phase order reset by Julian on Nov 11.
 
-**Phase 1: Engine + Chainword**
-Lobby (designed in Claude Design), room codes, phones joining, profiles, timer, private input on each phone, game-pick voting, content packs, leaderboard. Chainword as the first game. (Nov 11: Julian moved No Filler to a later release; Chainword takes the first slot.)
+**Phase 1 (current): Engine + four games**
+Lobby (designed in Claude Design), room codes, phones joining, profiles, timer, private input on each phone, game-pick voting, content packs, leaderboard. Games: Dial It In, Chainword, the one-word clue game (new name coming) and Pin Drop. Chainword is the first cartridge. The one-word clue game ships its individual mode here; team mode waits for teams in phase 2. Pin Drop brings maps and photo packs.
 
-**Phase 2: Quick private-input games**
-Dial It In, Closest Without Going Over. Both reuse the private input built for Chainword.
+**Phase 2: No Filler, Sketch Showdown**
+No Filler brings turns and Clean / Filler voting. Sketch Showdown brings teams and live drawing; teams also unlock the one-word clue game's team mode.
 
-**Phase 3: Teams and media**
-Sketch Showdown (teams + live drawing), Pin Drop (maps + photo packs).
+**Phase 3: Everything else, in suggested build order**
+Each game reuses what an earlier one built.
+1. Closest Without Going Over: private number entry from Dial It In; the smallest game left
+2. Word Agents: teams from phase 2, plus a secret key on some phones
+3. Hidden traitor marquee game: secret roles and multi-step rounds; its missions borrow from other games, so it comes after several exist
+4. Curated board game: the biggest scope item
+5. Maze chase: real-time controls and a fast connection
+6. Snake arena: reuses maze chase's real-time tech
 
-**Phase 4: Later (combined)**
-Hidden traitor marquee game, Word Agents, the curated board game, maze chase, snake arena.
-
-**No Filler: later release, phase not set.** It brings turns and Clean / Filler voting to the engine.
-
-**Not yet placed:** one-word clue game. Its individual mode uses only phase 2 pieces, so it could join phase 2; team mode needs phase 3's teams.
-
-Scope note (Claude): "a few weeks" fits phase 1 plus part of phase 2 more comfortably than all of phases 1 to 3. Treat phases 2 and 3 as stretch until the engine is proven at a real game night.
+Scope note (Nov 11): phase 1 is now four games on top of the engine, and Pin Drop needs a map (likely a new dependency) and photo packs. "A few weeks" fits the engine plus two or three phase 1 games; treat Pin Drop as the stretch until the engine is proven at a real game night.
 
 ---
 
@@ -106,8 +105,8 @@ Wavelength, Codenames, Wordle, Just One, The Traitors, Pac-Man, Candy Land, Chut
 
 ## Open questions for review
 - Sign-in method (tech stack doc, section 9)
-- One-word clue game: name; defense balance; matching rules; scoring; phase placement
-- Chainword: name; hard mode scope; guess cap, miss penalty, tiebreaker
+- One-word clue game: name; defense balance; matching rules; scoring
+- Chainword: name; guess cap, miss penalty, tiebreaker
 - Sketch Showdown: can teams see each other's sketch; drawer rotation; scoring
 - Dial It In: individual scoring or team average?
 - Closest Without Going Over: what gets guessed; going-over penalty

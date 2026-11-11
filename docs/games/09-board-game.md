@@ -1,7 +1,7 @@
 # Curated board game (name open)
 
 **Game ID:** `board-game`  
-**Status:** Later (deep dive; biggest scope item)  
+**Status:** Phase 3 (deep dive; biggest scope item)  
 **Players:** 2 to 8 (placeholder)  
 **Length:** 45 min (placeholder)  
 **Modes:** Individual

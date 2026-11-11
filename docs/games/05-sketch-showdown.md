@@ -1,7 +1,7 @@
 # Sketch Showdown
 
 **Game ID:** `sketch-showdown`  
-**Status:** Playable, phase 3  
+**Status:** Playable, phase 2  
 **Players:** 4 to 10 (placeholder)  
 **Length:** 15 min (placeholder)  
 **Modes:** Teams

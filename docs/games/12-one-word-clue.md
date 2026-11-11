@@ -1,7 +1,7 @@
 # One-word clue game (name open)
 
 **Game ID:** `one-word-clue`  
-**Status:** Not phased; individual mode could join phase 2, team mode needs phase 3 teams  
+**Status:** Playable, phase 1 (individual mode; team mode follows teams in phase 2)  
 **Players:** 3 to 10 (placeholder)  
 **Length:** 15 min (placeholder)  
 **Modes:** Individual and Team (defense)

@@ -1,7 +1,7 @@
 # Closest Without Going Over (working title)
 
 **Game ID:** `closest-without-going-over`  
-**Status:** Playable, phase 2  
+**Status:** Playable, phase 3  
 **Players:** 3 to 10 (placeholder)  
 **Length:** 10 min (placeholder)  
 **Modes:** Individual

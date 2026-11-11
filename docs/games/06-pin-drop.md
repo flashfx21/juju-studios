@@ -1,7 +1,7 @@
 # Pin Drop (working title)
 
 **Game ID:** `pin-drop`  
-**Status:** Playable, phase 3  
+**Status:** Playable, phase 1  
 **Players:** 2 to 10 (placeholder)  
 **Length:** 15 min (placeholder)  
 **Modes:** Individual
