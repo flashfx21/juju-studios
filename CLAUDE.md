@@ -23,11 +23,13 @@ A suite of phone party games for family and friends, played like Jackbox: one sh
 - Leaderboard: overall and per game; default sort by total, toggle to average; show games played. Average sort ranks only players with 3+ games.
 
 ## Stack
-- TypeScript, Vite, React. Deploy to GitHub Pages with GitHub Actions.
-- Backend: **not final.** Firebase (Realtime Database + email-link sign-in) is the leading option; Convex is being considered. Keep backend calls behind `src/engine/net/` so it can be swapped.
-- Sign-in: email link, any provider. No guest play. Profiles: username, color, initials.
+- TypeScript, Vite, React. Deploy to GitHub Pages with GitHub Actions (`.github/workflows/deploy.yml`, every push to `main`). Site: https://flashfx21.github.io/juju-studios/ (Vite `base` is `/juju-studios/`).
+- Backend: **Firebase** (decided Nov 11), Spark free plan, Realtime Database. Keep backend calls behind `src/engine/net/` so it can be swapped. Full stack and data model: `docs/juju-engine-tech-stack-0852.md`.
+- Sign-in: verified email, any provider. No guest play. Profiles: username, color, initials. Method is **open**: email link vs. email + password (tech stack doc, section 9).
+- Lobby styles: tokens in `src/ui/themes/themes.css` (copied from `docs/design/tokens/`), selected with `data-theme` on `<html>`.
 
 ## Working style
+**Working rules in effect:** W1, W3, W5, W6
 - Julian learns best with simple examples and comparisons. Explain new concepts briefly.
 - Keep scope tight. Push back on feature additions; log them in `docs/later.md` instead.
 - Small commits with clear messages. Ask before adding a dependency.
