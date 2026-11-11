@@ -8,6 +8,8 @@ Ideas and features deliberately left out for now. Each line says why it waits.
 
 ## Waiting on another piece
 
+- **Playing from a PC as a player.** On hold (Julian, Nov 11) while phone playtests come first. Today a wide landscape screen always gets the TV screens; the proposal is that joining makes you a player on any device and hosting makes you the TV. Fits with the rooms work.
+
 - **Real QR codes** on the Host or join, Host sign-in and lobby screens. Screens show the address as text for now; scannable codes need a QR library (a new dependency).
 - **Forgot your password** flow. Not designed (design open question 4), and the sign-in method is still undecided.
 - **"New" badge** on Pin Drop's picker tile. Only shown on playable games, and every game is coming soon for now.

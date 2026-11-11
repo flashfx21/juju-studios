@@ -28,6 +28,10 @@
 - 2026-11-11: Chainword practice (`#/practice/chainword`, Julian's call): one player in the browser running the real rules, no backend. `src/games/chainword/PhoneScreen.tsx` takes state, player and onGuess so the same screen serves real play later. Typed guesses use the phone keyboard, no on-screen keyboard. Tile colors are fixed across styles (green #2f7a3a, yellow #e6b422 with a dot, gray #5c6066) and pass contrast. No Chainword design exists; the layout is an extrapolation from the shared phone pieces.
 - 2026-11-11: Chainword is the first cartridge (phase 1); No Filler moved to a later release, phase not set (Julian). Phase plan, build order and specs updated.
 - 2026-11-11: Chainword's `src/games/types.ts` is the draft contract on main (Julian chose to merge game/chainword into main). Dial It In adopts it when resumed.
+- 2026-11-11: Playtests (Julian): games in testing open at `#/playtest/<game-id>` behind one playtest code ("April" for now), reused for every game. Stored as an FNV hash in `src/app/playtestCode.ts` (not security; crypto.subtle was avoided because it fails over plain http on the home Wi-Fi). Unlock remembered per device. Pages are lazy-loaded from `src/app/playtests.ts`.
+- 2026-11-11: Chainword level 1 playtest (Julian): no backend. A chain code (4 consonants + letters per word + words in chain, e.g. KPDT53) seeds the deal, so every phone gets the same chain; players compare totals out loud. Word length is a setting: 4, 5, 6 or 7, default 5. 6 guesses at every length. End game counts the current word and every unreached word as 7.
+- 2026-11-11: Chainword word lists: answers curated by hand per length (`packs/chainword/answers.json`); accepted guesses from ENABLE (public domain) plus answers (`guesses.json`, one string per length). ENABLE was downloaded once; the build script is not kept in the repo.
+- 2026-11-11: No database work yet, and PC-as-player is on hold (Julian). Phone playtest first.
 - Working rules in effect: W1, W3, W5, W6 (recorded in CLAUDE.md).
 
 ## Preferences
@@ -35,6 +39,8 @@
 - Julian prefers getting to visible UI early rather than waiting on backend decisions.
 
 ## Lessons Learned
+- Don't put JS template literals (backticks) inside `node -e "..."` in the Bash tool: bash runs them as commands and silently blanks the text. Write the edit script to a file in the scratchpad instead.
+- Most repo files use CRLF line endings; scripted find-and-replace must match `\r\n` (or normalize first).
 - Headless Edge screenshots below about 500px wide are clipped by its minimum window size. Set the viewport over the DevTools protocol instead (`Emulation.setDeviceMetricsOverride`).
 - Windows file names are case-insensitive: `HostSettings.tsx` and `hostSettings.ts` collide. Hooks live in `useX.ts` files, which avoids it.
 - Stopping a background `npx vite preview` task leaves the node child running on its port. Find it with `Get-NetTCPConnection -LocalPort 4173` and stop that PID.
@@ -47,7 +53,7 @@
 - Next options: a first playable game wired as a live example (Julian wants this eventually), more designed screens (waiting room, leaderboard, instructions, pause, game over, errors), or step 2 Firebase once sign-in is decided.
 - Not created yet, by design: `firebase.json`, `database.rules.json` (step 2); `src/games/registry.ts` and `_template/` contents (step 6, cartridge contract).
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).
-- Vitest installed (`npm test`). Chainword rules, tests and one-player practice phone screen done on branch game/chainword; TV screen and Instructions not started.
+- Vitest installed (`npm test`). Chainword rules, tests, phone screen and level 1 playtest (chain codes, word lengths 4 to 7, End game) are done and on main. TV screen and Instructions not started. Next for Chainword: a real level 1 playtest on phones.
 - Design handoffs live in `docs/handoffs/`.
 - Game branches `game/dial-it-in` and `game/chainword` live in worktrees `../juju-studios-dial-it-in` and `../juju-studios-chainword`. Both are pushed. Each added Vitest and its own `src/games/types.ts` (they differ). Dial It In is paused by Julian. On resume: merge main into game/dial-it-in, delete its own types.ts in favor of main's, and adapt: players are PlayerId strings, rules take a last `ctx` ({ now, random }), manifest uses `minutes` and a `settings` list. Vitest is already on main, so keep main's package.json/lock.
 
