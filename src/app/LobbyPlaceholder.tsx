@@ -16,6 +16,9 @@ export function LobbyPlaceholder() {
         <a className="lobby-placeholder__button" href={href('settings')} data-testid="open-host-settings">
           Host settings
         </a>
+        <a className="lobby-placeholder__button" href={href('practice', 'chainword')} data-testid="open-chainword-practice">
+          Practice Chainword
+        </a>
       </nav>
       <p className="lobby-placeholder__version" data-testid="app-version">
         v{packageInfo.version}

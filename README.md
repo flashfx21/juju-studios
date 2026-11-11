@@ -14,7 +14,8 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 | Host sign-in | `#/host` | "Finish on your phone" | Sign-in form |
 | Sign in | `#/sign-in`, `/password`, `/sent`, `/expired` | | Email link, password, check your email, link expired |
 | Join (profile setup) | `#/join` | | Room code, username, email, color (arcade adds initials) |
-| Lobby placeholder | `#/lobby` | Links to the game picker and Host settings, plus the version | same |
+| Lobby placeholder | `#/lobby` | Links to the game picker, Host settings and Chainword practice, plus the version | same |
+| Chainword practice | `#/practice/chainword` | | One player, on this device: 3 or 5 words, hard mode, nothing saved |
 | Game picker | `#/picker` | Full lineup, all coming soon | Coming-soon list, nothing to vote on |
 | Host settings | `#/settings` | Lobby style, game choice (group vote / leader pick), CRT scanlines | |
 
@@ -23,7 +24,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 - Addresses stand in for the design's QR codes (see `docs/later.md`).
 - TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.
 - The game lineup is `src/games/lineup.ts`. Every game is "coming soon".
-- Chainword has its rules and tests (`src/games/chainword/`, word pack in `packs/chainword/words.json`) but no screens yet.
+- Chainword has its rules and tests (`src/games/chainword/`, word pack in `packs/chainword/words.json`) and a one-player practice page (phone screen only, no room needed). No TV screen yet.
 
 ## Run it locally
 
@@ -56,7 +57,7 @@ src/
     _template/    starting point for a new game
     types.ts      draft cartridge contract: manifest and rules shapes
     no-filler/    one folder per game
-    chainword/    Chainword manifest and rules (no screens yet)
+    chainword/    Chainword manifest, rules and phone screen
 packs/            content packs, one folder per game
 docs/             requirements, tech stack, game specs, design handoff
 .github/workflows/deploy.yml

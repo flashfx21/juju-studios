@@ -1,5 +1,6 @@
 // ABOUTME: Top-level screen switch: applies the host's settings and shows the screen named in the URL hash.
 // ABOUTME: Screens with a TV and a phone version pick one by screen shape (see useScreenKind).
+import { ChainwordPractice } from './app/ChainwordPractice'
 import { GamePicker } from './app/GamePicker'
 import { GameVote } from './app/GameVote'
 import { HostOrJoinPhone, HostOrJoinTv } from './app/HostOrJoin'
@@ -36,6 +37,8 @@ function CurrentScreen({ route, kind, settings, updateSettings }: ScreenProps) {
       return <SignIn step={route.step} />
     case 'join':
       return <Join />
+    case 'practice':
+      return <ChainwordPractice />
     case 'lobby':
       return <LobbyPlaceholder />
     default:
