@@ -168,3 +168,8 @@
 :root[data-theme='rec-room'] .cw-summary__big {
   color: inherit;
 }
+
+/* Game show fields are cream and usually sit on its cream cue card; out here the typed letters need the card's ink. */
+:root[data-theme='game-show'] .cw-form__input {
+  color: var(--color-secondary-ink);
+}
