@@ -15,6 +15,6 @@ One spec per game. Source of truth for ideas and history: `../game-night-suite-i
 | Curated board game (name open) | `09-board-game.md` | Phase 3 (deep dive; biggest scope item) |
 | Maze chase (name open) | `10-maze-chase.md` | Phase 3 (real-time tech) |
 | Snake arena (name open) | `11-snake-arena.md` | Phase 3, last (backlog; reuses maze chase tech) |
-| One-word clue game (name open) | `12-one-word-clue.md` | Playable, phase 1 (individual mode; team mode follows teams in phase 2) |
+| Don't Jinx It | `12-dont-jinx-it.md` | Playable, phase 1 (individual mode; team mode follows teams in phase 2) |
 
 Archived (not in this folder): Fib Finder, The Odd One, Hot takes, Family trivia, Story chain. Removed: Quick-reaction party.

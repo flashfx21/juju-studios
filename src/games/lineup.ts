@@ -94,8 +94,8 @@ export const LINEUP: LineupGame[] = [
     status: 'coming-soon',
   },
   {
-    id: 'one-word-clue',
-    title: 'One-word clue game',
+    id: 'dont-jinx-it',
+    title: "Don't Jinx It",
     tag: 'Words',
     pitch: 'Give one-word clues to the guesser. Matching clues cancel out.',
     status: 'coming-soon',

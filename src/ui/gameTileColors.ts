@@ -45,7 +45,7 @@ export const GAME_TILE_COLORS: Record<LobbyStyleId, Record<string, TileColors>> 
     'board-game': { bg: '#D9A21B', ink: '#3D2716' },
     'maze-chase': { bg: '#2F4A4F', ink: '#E3B23C' },
     'snake-arena': { bg: '#5F6E2A', ink: '#F3EBD3' },
-    'one-word-clue': { bg: '#B8456E', ink: '#F3EBD3' },
+    'dont-jinx-it': { bg: '#B8456E', ink: '#F3EBD3' },
   },
 }
 

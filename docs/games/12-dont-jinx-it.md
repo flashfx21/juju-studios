@@ -1,6 +1,6 @@
-# One-word clue game (name open)
+# Don't Jinx It
 
-**Game ID:** `one-word-clue`  
+**Game ID:** `dont-jinx-it`  
 **Status:** Playable, phase 1 (individual mode; team mode follows teams in phase 2)  
 **Players:** 3 to 10 (placeholder)  
 **Length:** 15 min (placeholder)  
@@ -10,6 +10,7 @@
 One player guesses a mystery word; everyone else gives a one-word clue; matching clues cancel out before the guesser sees them.
 
 ## Decided
+- Name: Don't Jinx It (Julian, Nov 11)
 - Individual mode: clue givers write clues privately; duplicates are removed; the guesser sees what's left
 - Team mode: one team guesses, the other plays defense, writing clues to match and cancel the guessing team's clues
 - Team mode: likely 2 clues per person so the guesser still has enough clues (e.g. 4 on 4)
@@ -21,7 +22,6 @@ One player guesses a mystery word; everyone else gives a one-word clue; matching
 - Matching: exact word only, or close forms (car / cars)?
 - Scoring: points for a correct guess; does defense score per cancel, or for a wrong guess?
 - Guesser rotation; do teams swap roles each round?
-- Name
 
 ## Engine pieces it needs
 - Private text input, duplicate matching, private per-player data (the word is hidden from the guesser), teams

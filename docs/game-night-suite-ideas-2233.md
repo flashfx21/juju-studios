@@ -25,7 +25,7 @@ The point of phasing: each phase should add as few new engine pieces as possible
 | Chainword (working name) | Active | Private text entry, per-player progress on TV | Word list | M |
 | Sketch Showdown | Active | Teams, live drawing sent phone to TV | Clue list | M to L |
 | Pin Drop | To test | Map on phone, photo packs | Photo packs with locations | M |
-| One-word clue game (name open) | New, phase 1 | Private text entry, duplicate matching, teams (for team mode) | Mystery word list | S to M |
+| Don't Jinx It (one-word clue game) | New, phase 1 | Private text entry, duplicate matching, teams (for team mode) | Mystery word list | S to M |
 | Hidden traitor (working title) | Marquee candidate | Secret roles, multi-step rounds, missions borrowed from other games | Mission set | L |
 | Word Agents | Deep dive later | Teams, secret key on some phones, grid on TV | Word list | M |
 | Curated board game | Deep dive later | Board on TV, spinner, choices, longer saves | Board, events, careers | L to XL |
@@ -38,10 +38,10 @@ The point of phasing: each phase should add as few new engine pieces as possible
 Julian's goal: the engine and a few games ready **in a few weeks, if possible**. Phase order reset by Julian on Nov 11.
 
 **Phase 1 (current): Engine + four games**
-Lobby (designed in Claude Design), room codes, phones joining, profiles, timer, private input on each phone, game-pick voting, content packs, leaderboard. Games: Dial It In, Chainword, the one-word clue game (new name coming) and Pin Drop. Chainword is the first cartridge. The one-word clue game ships its individual mode here; team mode waits for teams in phase 2. Pin Drop brings maps and photo packs.
+Lobby (designed in Claude Design), room codes, phones joining, profiles, timer, private input on each phone, game-pick voting, content packs, leaderboard. Games: Dial It In, Chainword, Don't Jinx It (the one-word clue game) and Pin Drop. Chainword is the first cartridge. Don't Jinx It ships its individual mode here; team mode waits for teams in phase 2. Pin Drop brings maps and photo packs.
 
 **Phase 2: No Filler, Sketch Showdown**
-No Filler brings turns and Clean / Filler voting. Sketch Showdown brings teams and live drawing; teams also unlock the one-word clue game's team mode.
+No Filler brings turns and Clean / Filler voting. Sketch Showdown brings teams and live drawing; teams also unlock Don't Jinx It's team mode.
 
 **Phase 3: Everything else, in suggested build order**
 Each game reuses what an earlier one built.
@@ -75,7 +75,7 @@ Full specs per game live in `games/`. Summary:
 - **Chainword (working name):** chain of 3 or 5 words, fewest guesses wins; hard mode is an option, off by default (Nov 11). Open: name, hard mode scope, caps and tiebreakers.
 - **Sketch Showdown:** two teams, two drawers, same clue; first team to guess wins; both sketches shown after. Open: can teams see each other's sketch.
 - **Pin Drop:** photos only; Wikimedia Commons and Mapillary to explore; OpenStreetMap on the phone.
-- **One-word clue game (added Nov 10):** matching clues cancel; individual mode plus a team defense mode, likely 2 clues per person. Open: defense balance, matching rules, scoring.
+- **Don't Jinx It (one-word clue game, added Nov 10, named Nov 11):** matching clues cancel; individual mode plus a team defense mode, likely 2 clues per person. Open: defense balance, matching rules, scoring.
 - **Hidden traitor (marquee):** secret roles, missions grow a pot, roundtable banishment, night eliminations, ghosts keep playing. Needs its own design pass.
 - **Word Agents:** team word grid with spymasters; Julian's twist to come.
 - **Curated board game:** start-to-finish path with life choices.
@@ -105,7 +105,7 @@ Wavelength, Codenames, Wordle, Just One, The Traitors, Pac-Man, Candy Land, Chut
 
 ## Open questions for review
 - Sign-in method (tech stack doc, section 9)
-- One-word clue game: name; defense balance; matching rules; scoring
+- Don't Jinx It: defense balance; matching rules; scoring
 - Chainword: name; guess cap, miss penalty, tiebreaker
 - Sketch Showdown: can teams see each other's sketch; drawer rotation; scoring
 - Dial It In: individual scoring or team average?
