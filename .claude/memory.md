@@ -38,7 +38,7 @@
 - 2026-11-11: Dial It In playtest (Julian): single-player interface test only, at `#/playtest/dial-it-in` behind the playtest code. You plus two bots (random guesses); a dashed Dev box stands in for other phones and the engine timer (Bots lock in, Time's up, Next round). `PhoneScreen.tsx` takes state, player, names and onGuess so it can serve real play later. Number entry sits in a cue card because shared fields take their text color from the card. No Dial It In design exists; the layout is extrapolated from the shared phone pieces.
 - 2026-11-11: Dial It In guess dial (Julian asked for a safe-style touch control, typing kept as a backup): drag the face; clockwise counts up (volume-knob convention, the reverse of a real safe); one turn covers the whole range; dragging wraps past either end, arrow keys stop at the ends (slider semantics). Starts mid-range. Dial and typed box always show the same number. Arithmetic lives in `dialTurns.ts` with tests. 1 has a tick but no label, since it would overlap the top number.
 - 2026-11-11: Dial It In state holds secrets (every round's target). Whatever publishes state to `rooms/{code}/state` must strip targets and send the current one only to the clue giver's `private/{uid}`.
-- 2026-11-11: Don't Jinx It (Julian): design handoff in `docs/handoffs/design_handoff_dont_jinx_it/` (brief's rules win, README's visuals win). Branch `game/dont-jinx-it` in worktree `../juju-studios-dont-jinx-it`. Individual mode first. First playtest is you plus bots (Dial It In style). Individual-mode close calls are auto-jinxed, no vote. Dictionary for "Is this a name?" is the full ENABLE list, lazy-loaded. Spec `docs/games/12-dont-jinx-it.md` holds the decided rules.
+- 2026-11-11: Don't Jinx It (Julian): design handoff in `docs/handoffs/design_handoff_dont_jinx_it/` (brief's rules win, README's visuals win). Branch `game/dont-jinx-it` in worktree `../juju-studios-dont-jinx-it`. Individual mode first. First playtest is you plus bots (Dial It In style). Individual-mode close calls are auto-jinxed, no vote. Dictionary for "Is this a name?" is the full ENABLE list, a shared resource for any game (`packs/shared/`, loaded on demand via `src/engine/dictionary.ts`). Spec `docs/games/12-dont-jinx-it.md` holds the decided rules.
 - Working rules in effect: W1, W3, W5, W6 (recorded in CLAUDE.md).
 
 ## Preferences
@@ -61,6 +61,7 @@
 
 ## Current State
 - Build order step 1 done. Ahead of order: Host settings, game picker, Host or join, host sign-in, phone sign-in (4 states), Join.
+- 2026-11-11 plan (Julian): single-device playtests with bots and Dev boxes are for UI confirmation only. Once Don't Jinx It and 1 or 2 more games are UI-tested, integrate the database and test profile creation and settings, then test the games' full multiplayer spec. The sign-in method (tech stack doc section 9) must be decided before that.
 - Next options: a first playable game wired as a live example (Julian wants this eventually), more designed screens (waiting room, leaderboard, instructions, pause, game over, errors), or step 2 Firebase once sign-in is decided.
 - Not created yet, by design: `firebase.json`, `database.rules.json` (step 2); `src/games/registry.ts` and `_template/` contents (step 6, cartridge contract).
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).

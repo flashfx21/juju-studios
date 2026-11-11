@@ -18,7 +18,7 @@ One player guesses a mystery word; everyone else gives a one-word clue; matching
 - One guess per turn, or pass. Team mode: correct gives the guessing team +1; a miss or pass gives the defense +1
 - Individual mode (phase 1): everyone except the guesser writes 1 clue (2 each with 3 players). Correct guess: guesser +2 and each player whose clue survived +1. Finishing order by points. Turns = players, doubled for a long game; the guesser rotates
 - Clue checks, in order: empty, letters only, the mystery word, part of the mystery word (3+ letters), your two clues match, then "Is this a name?" (Use it / Edit) for words not in the dictionary
-- Dictionary: the full ENABLE word list (public domain), loaded only when the game opens (Julian, Nov 11)
+- Dictionary: the full ENABLE word list (public domain), shared so other games can use it: `packs/shared/`, loaded on demand through `src/engine/dictionary.ts` (Julian, Nov 11)
 - Close calls (soft matches such as towel / towels, run / ran, bird / birdhouse): team mode, the defense votes Same / Different (10 s, no vote counts as Different). Individual mode: no vote, every soft match is jinxed automatically (Julian, Nov 11)
 - Skip word: once per turn, usable in the first 15 s
 - The guesser's phone never gets the word, the pile or clue authors; the TV never shows the word or a jinxed clue's text before the full reveal. Survivors reach every screen at the same moment, without authors
