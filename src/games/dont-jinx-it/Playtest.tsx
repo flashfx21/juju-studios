@@ -1,10 +1,13 @@
-// ABOUTME: Don't Jinx It interface playtest on one phone: you plus bots, no room or server, for checking the screens.
-// ABOUTME: A dev box stands in for the other phones and the engine timer: type or deal bot clues, bot guesses, time's up.
-import { useEffect, useState } from 'react'
+// ABOUTME: Don't Jinx It interface playtest: you plus bots, no room or server, for checking the screens.
+// ABOUTME: On a phone it shows your phone; in a TV-shaped window it shows the TV, your phone and the dev box side by side.
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { loadDictionary, type Dictionary } from '../../engine/dictionary'
 import { PhoneFrame } from '../../ui/PhoneFrame'
+import { useScreenKind } from '../../ui/useScreenKind'
 import type { PlayerId, RulesContext } from '../types'
-import { DontJinxItTitle, PhoneScreen, type Seat } from './PhoneScreen'
+import { Instructions } from './Instructions'
+import { DontJinxItTitle, PhoneScreen } from './PhoneScreen'
+import type { Seat } from './Pieces'
 import {
   clueProblems,
   cluesPerWriter,
@@ -13,10 +16,13 @@ import {
   phaseSeconds,
   playerView,
   rules,
+  tvView,
   writersFor,
   type DontJinxItInput,
+  type DontJinxItSettings,
   type DontJinxItState,
 } from './rules'
+import { TvScreen } from './TvScreen'
 import '../../ui/PhoneForm.css'
 import './Playtest.css'
 
@@ -68,10 +74,44 @@ function useNow(): number {
   return now
 }
 
+const STAGE_WIDTH = 1280
+const STAGE_HEIGHT = 720
+
+/** The 1280x720 TV screen scaled to fill its box, for the side-by-side desk view. */
+function TvPreview({ children }: { children: ReactNode }) {
+  const box = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(0.5)
+  useEffect(() => {
+    const element = box.current
+    if (!element) return
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setScale(Math.min(width / STAGE_WIDTH, height / STAGE_HEIGHT))
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+  return (
+    <div className="dji-desk__tv" ref={box}>
+      <div className="dji-desk__stage" style={{ width: STAGE_WIDTH * scale, height: STAGE_HEIGHT * scale }}>
+        <div
+          className="dji-desk__screen"
+          style={{ width: STAGE_WIDTH, height: STAGE_HEIGHT, transform: `scale(${scale})` }}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function Playtest() {
   const [play, setPlay] = useState<Play | null>(null)
   const [dictionary, setDictionary] = useState<Dictionary | null>(null)
+  const [settings, setSettings] = useState<DontJinxItSettings>(DEFAULT_SETTINGS)
+  const [playerCount, setPlayerCount] = useState(5)
   const now = useNow()
+  const screen = useScreenKind()
 
   useEffect(() => {
     loadDictionary().then(setDictionary, () => setDictionary(null))
@@ -85,15 +125,53 @@ export function Playtest() {
     })
   }
 
+  function start(count: number, chosen: DontJinxItSettings) {
+    const players = Object.keys(SEATS).slice(0, count)
+    setPlay({ game: rules.setup(players, chosen, context()), phaseStartedAt: Date.now() })
+  }
+
+  if (!play && screen === 'tv') {
+    return (
+      <main className="dji-desk" aria-label="Don't Jinx It playtest">
+        <TvPreview>
+          <Instructions
+            playerCount={playerCount}
+            settings={settings}
+            onChange={setSettings}
+            onStart={() => start(playerCount, settings)}
+          />
+        </TvPreview>
+        <div className="dji-desk__side">
+          <div className="dji-desk__phone">
+            <DontJinxItTitle />
+            <p className="cue-card__text">Interface test: you plus bots. Set the game up on the TV, then Start game.</p>
+          </div>
+          <section className="dji-dev" aria-label="Playtest controls">
+            <h2 className="dji-dev__heading">Dev · players</h2>
+            <div className="dji-dev__buttons">
+              {PLAYER_COUNTS.map((count) => (
+                <button
+                  key={count}
+                  type="button"
+                  className="dji-dev__button"
+                  aria-pressed={count === playerCount}
+                  data-testid={`dji-dev-players-${count}`}
+                  onClick={() => setPlayerCount(count)}
+                >
+                  {count} players
+                </button>
+              ))}
+            </div>
+          </section>
+        </div>
+      </main>
+    )
+  }
+
   if (!play) {
     return (
       <PhoneFrame label="Don't Jinx It playtest" cardTag="Playtest">
-        <Start
-          onStart={(count) => {
-            const players = Object.keys(SEATS).slice(0, count)
-            setPlay({ game: rules.setup(players, DEFAULT_SETTINGS, context()), phaseStartedAt: Date.now() })
-          }}
-        />
+        <Start onStart={(count) => start(count, DEFAULT_SETTINGS)} />
       </PhoneFrame>
     )
   }
@@ -102,10 +180,10 @@ export function Playtest() {
   const seconds = phaseSeconds(game)
   const secondsLeft = seconds === null ? null : Math.max(0, seconds - Math.floor((now - phaseStartedAt) / 1000))
   const send = (input: DontJinxItInput) => apply(rules.onInput(game, YOU, input, context()))
+  const timeUp = () => apply(rules.onTimer(game, context()))
 
-  return (
-    <PhoneFrame label="Don't Jinx It playtest" cardTag="Playtest" fit>
-      <PhoneScreen
+  const phone = (
+    <PhoneScreen
         view={playerView(game, YOU, now)}
         player={YOU}
         seats={SEATS}
@@ -122,6 +200,31 @@ export function Playtest() {
           </button>
         }
       />
+  )
+
+  if (screen === 'tv') {
+    return (
+      <main className="dji-desk" aria-label="Don't Jinx It playtest">
+        <TvPreview>
+          <TvScreen
+            view={tvView(game)}
+            seats={SEATS}
+            secondsLeft={secondsLeft}
+            standings={rules.isOver(game) ? rules.finishingOrder(game) : null}
+            onNext={timeUp}
+          />
+        </TvPreview>
+        <div className="dji-desk__side">
+          <div className="dji-desk__phone">{phone}</div>
+          <DevBox game={game} onChange={apply} />
+        </div>
+      </main>
+    )
+  }
+
+  return (
+    <PhoneFrame label="Don't Jinx It playtest" cardTag="Playtest" fit>
+      {phone}
       <DevBox game={game} onChange={apply} />
     </PhoneFrame>
   )

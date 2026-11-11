@@ -383,6 +383,8 @@ export interface PlayerView {
 /** One face-down card on the TV during the clue drop. */
 export interface TvCard {
   fate: ClueFate
+  /** The writer, for jinxed cards (their stamp names the writers) and every card at the reveal; null for survivors before. */
+  by: PlayerId | null
   matchedWith: PlayerId[]
   /** Only for survivors, and only once the cards flip at the guess; every word at the reveal. */
   word: string | null
@@ -396,6 +398,7 @@ export interface TvView {
   guesser: PlayerId
   /** Null until the reveal. */
   word: string | null
+  cluesNeeded: number
   progress: WriterProgress[]
   cards: TvCard[] | null
   survivors: string[] | null
@@ -449,6 +452,7 @@ export function tvView(state: DontJinxItState): TvView {
   const cards = reached(state, 'pile')
     ? resolvePile(state, turn).map((clue) => ({
         fate: clue.fate,
+        by: revealed || clue.fate !== 'survived' ? clue.by : null,
         matchedWith: clue.matchedWith,
         word: revealed || (flipped && clue.fate === 'survived') ? clue.word : null,
       }))
@@ -459,6 +463,7 @@ export function tvView(state: DontJinxItState): TvView {
     turnCount: state.turns.length,
     guesser: turn.guesser,
     word: revealed ? turn.word : null,
+    cluesNeeded: cluesPerWriter(state.players.length),
     progress: writerProgress(state, turn),
     cards,
     survivors: flipped ? survivors(state, turn) : null,

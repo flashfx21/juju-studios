@@ -28,7 +28,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 - The game lineup is `src/games/lineup.ts`. Every game is "coming soon".
 - Chainword has its rules, tests and a phone playtest (see Playtests below). No TV screen yet.
 - Dial It In has its rules, tests, a phone screen and a single-player interface playtest (see Playtests below). No TV screen yet. Spectrum cards live in `packs/dial-it-in/spectrums.json`.
-- Don't Jinx It (branch `game/dont-jinx-it`) has its individual-mode rules, tests, a phone screen (game-show style) and a single-player interface playtest (see Playtests below). No TV screen yet. Mystery words and irregular word forms live in `packs/dont-jinx-it/`.
+- Don't Jinx It (branch `game/dont-jinx-it`) has its individual-mode rules, tests, phone and TV screens with instructions and host settings (game-show style), and a single-player interface playtest (see Playtests below). Mystery words and irregular word forms live in `packs/dont-jinx-it/`.
 
 ## Run it locally
 
@@ -51,7 +51,7 @@ Games still in testing open at `#/playtest` (phone front door: **Playtest a game
 
 **Dial It In playtest, one player:** an interface test on one phone. Pick 1 to 100 or 1 to 50, then play three rounds against two bots that guess at random; you give the clue in round 1. To guess, turn the safe-style dial (clockwise goes up, counterclockwise goes down, and it wraps past the top like a safe) or type the number in the box under it. The dashed **Dev** box stands in for the other phones and the timer: **Bots lock in**, **Time's up** (ends guessing; anyone who hasn't guessed scores 0) and **Next round**.
 
-**Don't Jinx It playtest, one player:** an interface test on one phone, for checking the screens. Pick 3, 5 or 7 players; the rest are bots. You guess on turn 1 and write a clue on every turn after. The dashed **Dev** box stands in for the other phones and the timer: type a bot's clue (or leave it blank to deal a common word, so jinxes happen), **Bots send**, a bot guesser's **Bot guesses** / **Guess right** / **Pass**, and the timer button (**Time's up**, **Pile done**, **Show reveal**, **Next turn**). The shared word list loads with the game, so an unknown clue asks "Is this a name?".
+**Don't Jinx It playtest, one player:** an interface test for checking the screens. On a phone it shows your phone: pick 3, 5 or 7 players; the rest are bots. On a laptop (a wide window) it shows the TV, your phone and the dev box side by side: pick the player count in the dev box and the pace and long game on the TV, then **Start game**. You guess on turn 1 and write a clue on every turn after. The dashed **Dev** box stands in for the other phones and the timer: type a bot's clue (or leave it blank to deal a common word, so jinxes happen), **Bots send**, a bot guesser's **Bot guesses** / **Guess right** / **Pass**, and the timer button (**Time's up**, **Pile done**, **Show reveal**, **Next turn**). The shared word list loads with the game, so an unknown clue asks "Is this a name?".
 
 **To change the playtest code**, run this in the project folder with the new code in place of `newcode`, then put the number it prints into `PLAYTEST_CODE_HASH` in `src/app/playtestCode.ts`. Every device then asks for the new code.
 

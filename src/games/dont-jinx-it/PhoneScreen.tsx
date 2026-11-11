@@ -1,19 +1,14 @@
 // ABOUTME: Don't Jinx It on a player's phone (individual mode), laid out from docs/handoffs/design_handoff_dont_jinx_it:
 // ABOUTME: writing clues, the guesser's wait, the pile, survivors and the guess, the verdict, your result, final standings.
-import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react'
+import { useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { Field } from '../../ui/TextField'
-import { inkOn, PLAYER_COLORS, type PlayerColorId } from '../../ui/playerColors'
-import { useLobbyStyle } from '../../ui/themes/useLobbyStyle'
 import type { FinishingOrder, PlayerId } from '../types'
+import { clock, jinxedBy, nameList, ordinal, pointsText, standingOf } from './format'
+import { Chip, WordTiles, type Seat } from './Pieces'
 import { clueProblems, type ClueProblem, type GuessResult, type PileClue, type PlayerView } from './rules'
+import { LAST_PILE_STEP, usePileStep } from './usePileStep'
 import '../../ui/PhoneForm.css'
 import './PhoneScreen.css'
-
-/** How a player appears on screen. */
-export interface Seat {
-  name: string
-  color: PlayerColorId
-}
 
 interface PhoneScreenProps {
   view: PlayerView
@@ -41,35 +36,11 @@ const PROBLEM_TEXT: Record<ClueProblem, string> = {
   'clues-match': 'Your two clues match',
 }
 
-/** One step of the pile every this many milliseconds, about 10 s for a whole turn's pile on the TV. */
-const PILE_STEP_MS = 1700
+/** Tile sizes for the word: the full size on the writing screen, smaller where it shares a row. */
+const TILES = { medium: { tile: 36, room: 250 }, small: { tile: 24, room: 190 } }
 
-function clock(seconds: number): string {
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
-}
-
-function pointsText(points: number): string {
-  return `${points} ${points === 1 ? 'point' : 'points'}`
-}
-
-function ordinal(n: number): string {
-  const suffix = n % 100 >= 11 && n % 100 <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] ?? 'th')
-  return `${n}${suffix}`
-}
-
-/** "Bo", "Bo and Cy", "Bo, Cy and Di". */
-function nameList(names: string[]): string {
-  return names.length < 2 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`
-}
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/)
-  return (parts.length > 1 ? parts[0][0] + parts[1][0] : name.slice(0, 2)).toUpperCase()
-}
-
-function useReducedMotion(): boolean {
-  const [reduced] = useState(() => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false)
-  return reduced
+function namesOf(seats: Record<PlayerId, Seat>): Record<PlayerId, string> {
+  return Object.fromEntries(Object.entries(seats).map(([id, seat]) => [id, seat.name]))
 }
 
 export function DontJinxItTitle() {
@@ -80,36 +51,6 @@ export function DontJinxItTitle() {
       </span>
       <h1 className="phone-top__title">Don't Jinx It</h1>
     </div>
-  )
-}
-
-/** A player's color circle with their initials. Decorative: the name always sits beside it. */
-function Chip({ seat, size = 'small' }: { seat: Seat; size?: 'small' | 'large' }) {
-  const style = useLobbyStyle()
-  const background = PLAYER_COLORS[style][seat.color]
-  return (
-    <span className={`dji-chip dji-chip--${size}`} style={{ background, color: inkOn(background) }} aria-hidden="true">
-      {initials(seat.name)}
-    </span>
-  )
-}
-
-const TILE_GAP = 4
-const TILE_SIZES = { small: { width: 24, room: 190 }, medium: { width: 36, room: 250 } }
-
-/** The word in letter tiles, shrunk to fit long words. Screen readers get the word once, not letter by letter. */
-function WordTiles({ word, size = 'medium' }: { word: string; size?: 'small' | 'medium' }) {
-  const { width, room } = TILE_SIZES[size]
-  const tile = Math.min(width, Math.floor((room + TILE_GAP) / word.length) - TILE_GAP)
-  return (
-    <span className="dji-tiles" style={{ '--tile': `${tile}px` } as CSSProperties} data-testid="dji-word">
-      <span className="visually-hidden">{word}</span>
-      {[...word].map((letter, i) => (
-        <span key={i} className="dji-tiles__tile" aria-hidden="true">
-          {letter}
-        </span>
-      ))}
-    </span>
   )
 }
 
@@ -187,7 +128,7 @@ function Write({ view, word, secondsLeft, isKnownWord, onClues, onSkip }: WriteP
       <div className="dji-word-row">
         <div>
           <span className="dji-label">The word</span>
-          <WordTiles word={word} />
+          <WordTiles word={word} {...TILES.medium} />
         </div>
         <Timer label="Time" secondsLeft={secondsLeft} />
       </div>
@@ -293,7 +234,7 @@ function Submitted({ view, word, secondsLeft }: { view: PlayerView; word: string
       <div className="dji-word-row">
         <div>
           <span className="dji-label">The word</span>
-          <WordTiles word={word} />
+          <WordTiles word={word} {...TILES.medium} />
         </div>
         <Timer label="Time" secondsLeft={secondsLeft} />
       </div>
@@ -321,7 +262,7 @@ function Submitted({ view, word, secondsLeft }: { view: PlayerView; word: string
 function GuesserWait({ view, seat }: { view: PlayerView; seat: Seat }) {
   return (
     <div className="dji-wait" data-testid="dji-guesser-wait">
-      <Chip seat={seat} size="large" />
+      <Chip seat={seat} size={110} ringed />
       <h2 className="dji-headline">You're guessing</h2>
       <p className="dji-wait__text">Don't look at anyone's phone.</p>
       {view.phase === 'write' && (
@@ -338,27 +279,6 @@ function GuesserWait({ view, seat }: { view: PlayerView; seat: Seat }) {
 }
 
 // ---------- P6: the pile ----------
-
-/** 0 every clue, 1 matches found, 2 jinxed clues stamped, 3 only the survivors. Reduced motion jumps to 3. */
-function usePileStep(): number {
-  const reduced = useReducedMotion()
-  const [step, setStep] = useState(0)
-  useEffect(() => {
-    if (reduced || step >= 3) return
-    const timeout = setTimeout(() => setStep(step + 1), PILE_STEP_MS)
-    return () => clearTimeout(timeout)
-  }, [step, reduced])
-  return reduced ? 3 : step
-}
-
-/** Exact matches name every writer of the word in turn order, so matching rows carry the same stamp. */
-function jinxText(clue: PileClue, seats: Record<PlayerId, Seat>, turnOrder: PlayerId[]): string {
-  if (clue.fate === 'close-call') {
-    return `JINXED! · close call with ${nameList(clue.matchedWith.map((id) => seats[id].name))}`
-  }
-  const writers = turnOrder.filter((id) => id === clue.by || clue.matchedWith.includes(id))
-  return `JINXED! · ${writers.map((id) => seats[id].name).join(' + ')}`
-}
 
 interface PileRowProps {
   clue: PileClue
@@ -379,12 +299,14 @@ function PileRow({ clue, seats, turnOrder, step }: PileRowProps) {
   return (
     <li className={`dji-pile__row dji-pile__row--${state}`} data-fate={clue.fate} data-testid="dji-pile-row">
       <div className="dji-pile__line">
-        <Chip seat={seats[clue.by]} />
+        <Chip seat={seats[clue.by]} size={28} />
         <span className="dji-pile__word">{clue.word}</span>
         <span className="dji-pile__by">{seats[clue.by].name}</span>
         {tag && <span className={`dji-tag dji-tag--${clue.fate}`}>{tag}</span>}
       </div>
-      {state === 'jinxed' && <span className="dji-pile__stamp">{jinxText(clue, seats, turnOrder)}</span>}
+      {state === 'jinxed' && (
+        <span className="dji-pile__stamp">JINXED! · {jinxedBy(clue, namesOf(seats), turnOrder)}</span>
+      )}
     </li>
   )
 }
@@ -393,7 +315,7 @@ function Pile({ view, word, seats }: { view: PlayerView; word: string; seats: Re
   const step = usePileStep()
   const pile = view.pile ?? []
   const kept = pile.filter((clue) => clue.fate === 'survived')
-  const shown = step === 3 ? kept : pile
+  const shown = step === LAST_PILE_STEP ? kept : pile
   const jinxedWords = [...new Set(pile.filter((clue) => clue.fate !== 'survived').map((clue) => clue.word))]
 
   let status: string
@@ -407,9 +329,9 @@ function Pile({ view, word, seats }: { view: PlayerView; word: string; seats: Re
       <div className="dji-word-row">
         <div>
           <span className="dji-label">The word</span>
-          <WordTiles word={word} size="small" />
+          <WordTiles word={word} {...TILES.small} />
         </div>
-        <h2 className="dji-pile__title">{step === 3 ? "What's left" : 'The pile'}</h2>
+        <h2 className="dji-pile__title">{step === LAST_PILE_STEP ? "What's left" : 'The pile'}</h2>
       </div>
       {shown.length > 0 ? (
         <ol className="dji-pile__list" aria-label="Every clue" data-testid="dji-pile">
@@ -581,15 +503,6 @@ function whoWroteLine(clue: PileClue, seats: Record<PlayerId, Seat>): ReactNode 
   )
 }
 
-/** A player's place by points (1 plus everyone ahead) and whether anyone shares it. */
-function standingOf(scores: Record<PlayerId, number>, player: PlayerId): { place: number; tied: boolean } {
-  const points = Object.values(scores)
-  return {
-    place: 1 + points.filter((p) => p > scores[player]).length,
-    tied: points.filter((p) => p === scores[player]).length > 1,
-  }
-}
-
 function ScoreBar({ view, player }: { view: PlayerView; player: PlayerId }) {
   const { place, tied } = standingOf(view.scores, player)
   return (
@@ -612,7 +525,7 @@ function Result({ view, player, seats }: { view: PlayerView; player: PlayerId; s
     <div className="dji-result" data-testid="dji-result">
       <h2 className="dji-headline dji-headline--left">{view.isGuesser ? 'Here is what happened' : 'Your result'}</h2>
       <div className="dji-result__word">
-        {view.word && <WordTiles word={view.word} size="small" />}
+        {view.word && <WordTiles word={view.word} {...TILES.small} />}
         <span className="dji-label">{RESULT_TEXT[view.result ?? 'pass']}</span>
       </div>
       {view.isGuesser ? (
@@ -661,7 +574,7 @@ function GameOver({ view, player, seats, standings, summaryAction }: PhoneScreen
         {places.map((place, i) =>
           place.map((id) => (
             <li key={id} className="dji-standings__row" data-testid={`dji-final-${id}`}>
-              <Chip seat={seats[id]} />
+              <Chip seat={seats[id]} size={28} />
               <span>
                 {place.length > 1 ? `Tied ${ordinal(rankOf(i))}` : ordinal(rankOf(i))} · {seats[id].name}
               </span>

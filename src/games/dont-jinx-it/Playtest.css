@@ -68,6 +68,70 @@
   cursor: pointer;
 }
 
+.dji-dev__button[aria-pressed='true'] {
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+}
+
 :root[data-theme='arcade'] .dji-dev__heading {
   font-size: 11px;
+}
+
+/* ---------- Desk view: TV, your phone and the dev box side by side (TV-shaped windows) ---------- */
+.dji-desk {
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr 390px;
+  gap: 16px;
+  padding: 16px;
+  background: #000;
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+.dji-desk__tv {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dji-desk__stage {
+  position: relative;
+  overflow: hidden;
+}
+
+.dji-desk__screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+
+.dji-desk__side {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* A phone-sized screen: the game's phone layout fills it without scrolling. */
+.dji-desk__phone {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 844px;
+  padding: 14px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--color-background);
+}
+
+.dji-desk .dji-dev {
+  margin-top: 0;
+  background: var(--color-background);
 }

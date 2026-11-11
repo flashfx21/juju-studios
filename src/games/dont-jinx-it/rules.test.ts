@@ -374,6 +374,14 @@ describe('what each screen may know', () => {
     expect(tvView(timeUp(pile)).survivors).toEqual(['shells'])
   })
 
+  it("names the writers of jinxed cards on the TV, but never a survivor's writer before the reveal", () => {
+    const pile = samplePile()
+    expect(tvView(pile).cards?.map((card) => card.by)).toEqual(['bo', 'cy', 'di', 'ed', null])
+    expect(tvView(timeUp(pile)).cards?.[4].by).toBeNull()
+    const reveal = timeUp(send(timeUp(pile), 'ana', { type: 'pass' }))
+    expect(tvView(reveal).cards?.[4].by).toBe('fy')
+  })
+
   it('gives survivors to every screen at the same moment, without writers', () => {
     const pile = samplePile()
     expect(playerView(pile, 'ana', START).survivors).toBeNull()

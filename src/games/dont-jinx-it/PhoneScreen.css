@@ -60,13 +60,7 @@
   text-align: left;
 }
 
-/* ---------- Tiles, totes, chips, loader ---------- */
-.dji-tiles {
-  display: inline-flex;
-  gap: 4px;
-}
-
-.dji-tiles__tile,
+/* ---------- Totes, timers, loader ---------- */
 .dji-tote {
   display: inline-flex;
   align-items: center;
@@ -76,16 +70,6 @@
   font-family: var(--font-label);
   box-shadow: var(--shadow-tile);
   text-transform: uppercase;
-}
-
-/* --tile is set per word so long words shrink to fit. */
-.dji-tiles .dji-tiles__tile {
-  width: var(--tile);
-  height: calc(var(--tile) * 1.28);
-  font-size: calc(var(--tile) * 0.94);
-}
-
-.dji-tote {
   min-width: 64px;
   padding: 2px 8px 0;
   font-size: 30px;
@@ -110,31 +94,6 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 10px;
-}
-
-.dji-chip {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-family: var(--font-label);
-  box-shadow: 0 0 0 2px var(--color-background);
-}
-
-.dji-chip--small {
-  width: 28px;
-  height: 28px;
-  font-size: 15px;
-}
-
-.dji-chip--large {
-  width: 110px;
-  height: 110px;
-  font-size: 54px;
-  box-shadow:
-    0 0 0 5px var(--color-background),
-    0 0 0 9px var(--color-accent);
 }
 
 .dji-loader {

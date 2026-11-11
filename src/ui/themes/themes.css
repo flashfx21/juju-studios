@@ -29,6 +29,9 @@
   --color-success: #177A74;
   --color-danger: #C2302B;
   --color-danger-ink: #FFF6D6;
+  --color-card-back-stripe: #22356E;
+  --color-card-jinxed: #D9CCAE;
+  --color-verdict-drop: #050B1F;
   --game-1: #F0592A;
   --game-1-ink: #12204A;
   --game-2: #F2B630;
@@ -141,6 +144,9 @@
   --color-success: #39FF6A;
   --color-danger: #FF4F45;
   --color-danger-ink: #07060B;
+  --color-card-back-stripe: #221E2E;
+  --color-card-jinxed: #2A2735;
+  --color-verdict-drop: #000000;
   --game-1: #141414;
   --game-1-ink: #FFE600;
   --game-2: #FF6A13;
@@ -253,6 +259,9 @@
   --color-success: #5F6E2A;
   --color-danger: #B4481A;
   --color-danger-ink: #F3EBD3;
+  --color-card-back-stripe: #EFE4C8;
+  --color-card-jinxed: #DCCFAE;
+  --color-verdict-drop: #2A1A0E;
   --game-1: #0B0B0B;
   --game-1-ink: #F5D000;
   --game-2: #B0461A;
