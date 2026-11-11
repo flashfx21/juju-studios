@@ -12,6 +12,10 @@
 - 2026-11-11: Host settings are saved in localStorage (`juju.hostSettings`) for now. When rooms exist, the host's settings should move into the room so phones follow the host's style.
 - 2026-11-11: Game-show swatch teal uses the token `#177A74` (design open question 19 had `#1E8C86` on the settings card).
 - 2026-11-11: Page-level theme CSS uses `:root[data-theme=...]`; style cards carry their own `data-theme` to preview a style. Focus ring color always differs from the selection ring.
+- 2026-11-11: Vitest added as the unit test runner (Julian approved). `npm test` runs `vitest run`.
+- 2026-11-11: Dial It In (branch `game/dial-it-in`): rules and tests first, no screens. Per-player closeness scoring, no team mode. Points: 10 for a bullseye, minus 1 per step away (step is 2 on 1 to 100, 1 on 1 to 50), floor 0. A guess is final once submitted. The round reveals when every guesser is in, or on the timer. All rounds (card and target) are dealt at setup so the rules stay pure.
+- 2026-11-11: `src/games/types.ts` is a DRAFT cartridge contract made for Dial It In. `setup` takes an optional `random` so tests are repeatable. `finishingOrder` returns places as arrays of tied player ids. Revisit at build order step 6.
+- 2026-11-11: Game state holds secrets (every round's target). Whatever publishes state to `rooms/{code}/state` must strip targets and send the current one only to the clue giver's `private/{uid}`.
 - Working rules in effect: W1, W3, W5, W6 (recorded in CLAUDE.md).
 
 ## Preferences
@@ -29,11 +33,13 @@
 - Next options: more lobby UI from the designs (lobby, game picker, leaderboard with sample data), or step 2 Firebase once sign-in is decided.
 - Not created yet, by design: `firebase.json`, `database.rules.json` (step 2); `src/games/registry.ts` and `_template/` contents (step 6, cartridge contract).
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).
-- No unit test runner yet. Vitest is "Proposed" in the tech stack doc and needs Julian's OK as a new dependency.
+- Vitest installed. Dial It In rules, manifest and spectrum pack done on `game/dial-it-in` (30 tests). Screens, registry line and playtest still to do.
+- `manifest.ts` repeats Dial It In's title, tag and pitch from `src/games/lineup.ts`. Once `registry.ts` exists, the lineup should read them from manifests.
 
 ## Development Log
 ### Week of 2026-11-09
 - Done: docs and lobby design handoff committed; folder structure; Pages deploy workflow; holding page; Host settings screen with lobby style switch and CRT scanlines, saved per browser; TvStage scaled frame.
 - In progress: none.
 - Blockers: sign-in method decision before Firebase auth work.
+- Done (game/dial-it-in): Vitest; Dial It In manifest, rules, tests, spectrum pack; draft `src/games/types.ts`.
 - Next: Julian's pick between more lobby UI and Firebase setup.

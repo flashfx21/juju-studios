@@ -9,6 +9,7 @@ Live site: https://flashfx21.github.io/juju-studios/ (currently a holding page; 
 - **Holding page** (`#/`): studio name, a Host settings button, and the build version.
 - **Host settings** (`#/settings`): pick the lobby style (retro game show, 90s arcade, 70s rec room) and turn the arcade CRT scanlines on or off. Every screen restyles at once. Choices are saved in this browser until rooms exist.
 - TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.
+- **Dial It In rules** (`src/games/dial-it-in/`): game logic and tests only, no screens yet. Spectrum cards live in `packs/dial-it-in/spectrums.json`.
 
 ## Run it locally
 
@@ -20,6 +21,7 @@ npm run dev      # dev server at http://localhost:5173/juju-studios/
 npm run build    # type-check and build into dist/
 npm run preview  # serve the built dist/ folder
 npm run lint     # ESLint
+npm test         # run the game rules tests once (Vitest)
 ```
 
 ## Deploy
@@ -38,6 +40,8 @@ src/
   games/
     _template/    starting point for a new game
     no-filler/    one folder per game
+    dial-it-in/   Dial It In: manifest, rules and tests
+    types.ts      draft cartridge contract types (manifest, rules)
 packs/            content packs, one folder per game
 docs/             requirements, tech stack, game specs, design handoff
 .github/workflows/deploy.yml
