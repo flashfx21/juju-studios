@@ -66,6 +66,8 @@
 - Not created yet, by design: `firebase.json`, `database.rules.json` (step 2); `src/games/registry.ts` and `_template/` contents (step 6, cartridge contract).
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).
 - Vitest installed (`npm test`). Chainword rules, tests, phone screen and level 1 playtest (chain codes, word lengths 4 to 7, End game) are done and on main. TV screen and Instructions not started. Next for Chainword: a real level 1 playtest on phones.
+- Don't Jinx It (game/dont-jinx-it, worktree `../juju-studios-dont-jinx-it`): step 1 done on 2026-11-11: individual-mode rules, tests, `packs/dont-jinx-it/` (214 words, irregular forms). `playerView()` / `tvView()` are the role filters; leak tests verified to fail when a leak is introduced. Close calls are a spelling rule of thumb (stems, irregular forms, compounds with 4+ letter base). Next: step 2, phone screens and the you-plus-bots playtest (Dev box where you type each bot's clue).
+- Shared dictionary on main: `packs/shared/english-words.txt` (ENABLE, unchanged) and `src/engine/dictionary.ts` (`loadDictionary()`, lazy). ENABLE has no one-letter words and misses some compounds (sandcastle).
 - Design handoffs live in `docs/handoffs/`.
 - Game branches `game/dial-it-in` and `game/chainword` live in worktrees `../juju-studios-dial-it-in` and `../juju-studios-chainword`. Both are pushed.
 - Dial It In (game/dial-it-in): main merged in, own types.ts dropped, rules adapted to main's contract. Rules, tests and spectrum pack done. Rules merged to main on 2026-11-11 (Julian's call) with status still "coming soon"; later Dial It In work continues on game/dial-it-in. Phone screen and single-player playtest merged to main and live on 2026-11-11 (Julian testing on his phone). Safe-style guess dial merged to main and live on 2026-11-11 for a phone test of the touch feel. TV screen, Instructions and registry line still to do.
@@ -77,6 +79,7 @@
 - Chainword rules, word pack and tests (branch game/chainword); draft `src/games/types.ts`; Chainword practice phone screen.
 - Dial It In rules, tests and spectrum pack (branch game/dial-it-in), adapted to main's contract and merged to main. Phone screen, single-player playtest and safe-style guess dial merged to main and live.
 - Chainword hard mode made an option (off by default, H on chain codes). Phase order reset: phase 1 is Dial It In, Chainword, one-word clue game, Pin Drop.
-- In progress: none.
+- Shared dictionary added on main. Don't Jinx It rules, tests and packs on game/dont-jinx-it.
+- In progress: Don't Jinx It step 2 (phone screens, bots playtest).
 - Blockers: sign-in method decision before Firebase auth work.
 - Next: Julian's pick (live example game, more screens, or Firebase).
