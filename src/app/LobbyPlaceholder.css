@@ -1,6 +1,6 @@
-/* ABOUTME: Styles for the holding page, sized to work from a phone up to a TV. */
+/* ABOUTME: Styles for the lobby placeholder, sized to work from a phone up to a TV. */
 /* ABOUTME: Uses only theme tokens so it follows whichever lobby style is active. */
-.holding-page {
+.lobby-placeholder {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   text-align: center;
 }
 
-.holding-page__logo {
+.lobby-placeholder__logo {
   margin: 0;
   font-family: var(--font-logo);
   font-weight: 400;
@@ -20,12 +20,19 @@
   text-shadow: var(--shadow-text-headline);
 }
 
-.holding-page__tagline {
+.lobby-placeholder__tagline {
   margin: 0;
   font-size: clamp(var(--type-phone-body-max), 3vw, var(--type-tv-body-max));
 }
 
-.holding-page__button {
+.lobby-placeholder__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--gap-lg);
+}
+
+.lobby-placeholder__button {
   display: inline-flex;
   align-items: center;
   min-height: var(--space-hit-target-min);
@@ -41,12 +48,12 @@
 }
 
 /* Arcade buttons use the pixel label font (docs/design/components.md, Buttons). */
-:root[data-theme='arcade'] .holding-page__button {
+:root[data-theme='arcade'] .lobby-placeholder__button {
   font-family: var(--font-label);
   text-transform: uppercase;
 }
 
-.holding-page__version {
+.lobby-placeholder__version {
   margin: 0;
   font-family: var(--font-label);
   font-size: var(--type-phone-label-max);

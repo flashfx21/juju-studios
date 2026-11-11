@@ -1,9 +1,9 @@
-// ABOUTME: Host settings on the big screen: pick the lobby style and turn the arcade CRT scanlines on or off.
+// ABOUTME: Host settings on the big screen: lobby style, how the next game is chosen, and arcade CRT scanlines.
 // ABOUTME: Layout follows docs/design (screen 8, Host settings); each style dresses it in HostSettings.css.
 import { TvStage } from '../ui/TvStage'
 import { LOBBY_STYLES } from '../ui/themes/lobbyStyles'
 import type { HostSettings as Settings } from './useHostSettings'
-import { routeHref } from './useHashRoute'
+import { href } from './useHashRoute'
 import './HostSettings.css'
 
 interface HostSettingsProps {
@@ -22,7 +22,7 @@ export function HostSettings({ settings, onChange }: HostSettingsProps) {
             </span>
             <h1 className="host-settings__title">Host settings</h1>
           </div>
-          <a className="host-settings__back" href={routeHref.home} data-testid="back-to-lobby">
+          <a className="host-settings__back" href={href('lobby')} data-testid="back-to-lobby">
             Back to lobby
           </a>
         </header>
@@ -68,39 +68,70 @@ export function HostSettings({ settings, onChange }: HostSettingsProps) {
           </section>
 
           <div className="host-settings__options">
-            <div className="setting-row" role="group" aria-labelledby="scanlines-name">
-              <div className="setting-row__text">
-                <span className="setting-row__name" id="scanlines-name">
-                  CRT scanlines
-                </span>
-                <span className="setting-row__note">Arcade style only</span>
-              </div>
-              <div className="setting-row__choices">
-                <button
-                  type="button"
-                  className="setting-row__choice"
-                  data-testid="scanlines-on"
-                  aria-pressed={settings.scanlines}
-                  onClick={() => onChange({ scanlines: true })}
-                >
-                  On
-                </button>
-                <button
-                  type="button"
-                  className="setting-row__choice"
-                  data-testid="scanlines-off"
-                  aria-pressed={!settings.scanlines}
-                  onClick={() => onChange({ scanlines: false })}
-                >
-                  Off
-                </button>
-              </div>
-            </div>
+            <SettingRow
+              id="game-choice"
+              name="Game choice"
+              note="How tonight's game gets picked"
+              value={settings.gameChoice}
+              options={[
+                { value: 'vote', label: 'Group vote' },
+                { value: 'leader', label: 'Leader pick' },
+              ]}
+              onSelect={(gameChoice) => onChange({ gameChoice })}
+            />
+            <SettingRow
+              id="scanlines"
+              name="CRT scanlines"
+              note="Arcade style only"
+              value={settings.scanlines ? 'on' : 'off'}
+              options={[
+                { value: 'on', label: 'On' },
+                { value: 'off', label: 'Off' },
+              ]}
+              onSelect={(choice) => onChange({ scanlines: choice === 'on' })}
+            />
           </div>
         </div>
 
         <div className="host-settings__floor" aria-hidden="true" />
       </div>
     </TvStage>
+  )
+}
+
+interface SettingRowProps<Value extends string> {
+  id: string
+  name: string
+  note: string
+  value: Value
+  options: { value: Value; label: string }[]
+  onSelect: (value: Value) => void
+}
+
+/** One labelled setting with a pair of pressed/unpressed choice buttons. */
+function SettingRow<Value extends string>({ id, name, note, value, options, onSelect }: SettingRowProps<Value>) {
+  return (
+    <div className="setting-row" role="group" aria-labelledby={`${id}-name`}>
+      <div className="setting-row__text">
+        <span className="setting-row__name" id={`${id}-name`}>
+          {name}
+        </span>
+        <span className="setting-row__note">{note}</span>
+      </div>
+      <div className="setting-row__choices">
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            className="setting-row__choice"
+            data-testid={`${id}-${option.value}`}
+            aria-pressed={option.value === value}
+            onClick={() => onSelect(option.value)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }
