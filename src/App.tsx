@@ -2,7 +2,9 @@
 // ABOUTME: Screens with a TV and a phone version pick one by screen shape (see useScreenKind).
 import { GamePicker } from './app/GamePicker'
 import { GameVote } from './app/GameVote'
+import { HostOrJoinPhone, HostOrJoinTv } from './app/HostOrJoin'
 import { HostSettings } from './app/HostSettings'
+import { HostSignInTv } from './app/HostSignInTv'
 import { LobbyPlaceholder } from './app/LobbyPlaceholder'
 import { useHashRoute, type Route } from './app/useHashRoute'
 import { useHostSettings, type HostSettings as Settings } from './app/useHostSettings'
@@ -26,8 +28,12 @@ function CurrentScreen({ route, kind, settings, updateSettings }: ScreenProps) {
       ) : (
         <GameVote gameChoice={settings.gameChoice} />
       )
-    default:
+    case 'host':
+      return <HostSignInTv />
+    case 'lobby':
       return <LobbyPlaceholder />
+    default:
+      return kind === 'tv' ? <HostOrJoinTv /> : <HostOrJoinPhone />
   }
 }
 

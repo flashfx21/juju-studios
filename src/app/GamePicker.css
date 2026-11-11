@@ -100,11 +100,7 @@
   justify-content: center;
   border-top: 0;
   background-color: var(--color-footer);
-  background-image:
-    radial-gradient(circle at 20px 30px, #ff2ea6 0 5px, rgba(0, 0, 0, 0) 6px),
-    radial-gradient(circle at 84px 66px, #22e4ff 0 3px, rgba(0, 0, 0, 0) 4px),
-    radial-gradient(circle at 60px 20px, rgba(0, 0, 0, 0) 0 8px, #ffe600 9px 11px, rgba(0, 0, 0, 0) 12px),
-    radial-gradient(circle at 112px 50px, rgba(0, 0, 0, 0) 0 5px, #39ff6a 6px 7px, rgba(0, 0, 0, 0) 8px);
+  background-image: var(--texture-carpet);
   background-size: 132px 84px;
 }
 

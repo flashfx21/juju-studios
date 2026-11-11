@@ -1,0 +1,718 @@
+/* ABOUTME: Host or join screen styles: TV at 1280x720 (marquee, neon sign or box lid) and the phone version. */
+/* ABOUTME: Values follow the Host or join screens in docs/design/source, one section per lobby style. */
+
+/* =================== TV =================== */
+
+.entry-tv__logo {
+  margin: 0;
+  font-weight: 400;
+}
+
+.entry-tv__lid-kicker,
+.entry-tv__lid-stripe,
+.entry-tv__cursor {
+  display: none;
+}
+
+.entry-tv__choices {
+  position: absolute;
+  left: 90px;
+  right: 90px;
+  top: 220px;
+  height: 352px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 44px;
+}
+
+.entry-choice {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 24px 32px 26px;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+}
+
+.entry-choice__content {
+  display: contents;
+}
+
+.entry-choice__stripe,
+.entry-choice__seal {
+  display: none;
+}
+
+.entry-choice__url {
+  display: block;
+}
+
+/* ---------- Retro game show: marquee and prize doors ---------- */
+:root[data-theme='game-show'] .entry-tv__sign {
+  position: absolute;
+  left: 353px;
+  top: 30px;
+  width: 574px;
+  height: 150px;
+}
+
+:root[data-theme='game-show'] .entry-tv__logo {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  font-family: var(--font-logo);
+  font-size: 66px;
+  line-height: 1;
+  color: var(--color-text-strong);
+  text-shadow: 5px 5px 0 var(--color-background);
+}
+
+:root[data-theme='game-show'] .entry-choice {
+  box-shadow:
+    inset 0 -10px 0 rgba(0, 0, 0, 0.2),
+    var(--shadow-frame);
+  color: var(--color-background);
+}
+
+:root[data-theme='game-show'] .entry-choice--host {
+  background: var(--color-primary);
+}
+
+:root[data-theme='game-show'] .entry-choice--join {
+  background: var(--color-accent);
+}
+
+:root[data-theme='game-show'] .entry-choice__kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-label);
+  font-size: 24px;
+  letter-spacing: 0.14em;
+}
+
+:root[data-theme='game-show'] .entry-choice__bulb {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-text-strong);
+  color: var(--color-background);
+  font-size: 28px;
+  letter-spacing: 0;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme='game-show'] .entry-choice__title {
+  font-family: var(--font-display);
+  font-size: 62px;
+  line-height: 1.05;
+  color: var(--color-text-strong);
+  text-shadow: 4px 4px 0 var(--color-background);
+}
+
+:root[data-theme='game-show'] .entry-choice--join .entry-choice__title {
+  color: var(--color-background);
+  text-shadow: 4px 4px 0 var(--color-text-strong);
+}
+
+:root[data-theme='game-show'] .entry-choice__body {
+  max-width: 420px;
+  font-size: 23px;
+  line-height: 1.3;
+}
+
+:root[data-theme='game-show'] .entry-choice__cta {
+  margin-top: auto;
+  padding: 8px 18px 4px;
+  background: var(--color-background);
+  color: var(--color-accent);
+  font-family: var(--font-label);
+  font-size: 28px;
+  letter-spacing: 0.1em;
+}
+
+:root[data-theme='game-show'] .entry-choice__address {
+  margin-top: auto;
+  font-family: var(--font-label);
+  font-size: 30px;
+  letter-spacing: 0.06em;
+  line-height: 1.05;
+}
+
+/* The address keeps lowercase letters (Bebas has none): the site path is case-sensitive. */
+:root[data-theme='game-show'] .entry-choice__url {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='game-show'] .entry-tv__floor {
+  font-size: 36px;
+}
+
+/* ---------- 90s arcade: neon sign and lit panels ---------- */
+:root[data-theme='arcade'] .entry-tv__sign {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30px;
+}
+
+:root[data-theme='arcade'] .entry-tv__logo-words {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 32px;
+  font-family: var(--font-logo);
+  font-size: 72px;
+  line-height: 1.1;
+}
+
+:root[data-theme='arcade'] .entry-tv__word-1 {
+  color: #ffd1ec;
+  text-shadow:
+    0 0 4px #ff2ea6,
+    0 0 14px #ff2ea6,
+    0 0 34px #ff2ea6,
+    0 0 70px rgba(255, 46, 166, 0.6);
+}
+
+:root[data-theme='arcade'] .entry-tv__word-2 {
+  color: #d8fbff;
+  text-shadow:
+    0 0 4px #22e4ff,
+    0 0 14px #22e4ff,
+    0 0 34px #22e4ff,
+    0 0 70px rgba(34, 228, 255, 0.55);
+}
+
+:root[data-theme='arcade'] .entry-tv__flicker {
+  animation: flicker 3.2s infinite;
+}
+
+:root[data-theme='arcade'] .entry-tv__choices {
+  left: 80px;
+  right: 80px;
+  top: 190px;
+  height: 390px;
+  gap: 48px;
+}
+
+:root[data-theme='arcade'] .entry-choice {
+  gap: 14px;
+  padding: 28px 32px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+:root[data-theme='arcade'] .entry-choice--host {
+  --panel-color: #ffe600;
+  box-shadow:
+    inset 0 0 0 4px #ffe600,
+    0 0 40px rgba(255, 230, 0, 0.25);
+}
+
+:root[data-theme='arcade'] .entry-choice--join {
+  --panel-color: #22e4ff;
+  box-shadow:
+    inset 0 0 0 4px #22e4ff,
+    0 0 40px rgba(34, 228, 255, 0.25);
+}
+
+:root[data-theme='arcade'] .entry-choice__bulb {
+  display: none;
+}
+
+:root[data-theme='arcade'] .entry-choice__kicker {
+  font-family: var(--font-label);
+  font-size: 16px;
+  text-transform: uppercase;
+  color: var(--panel-color);
+}
+
+:root[data-theme='arcade'] .entry-choice__title {
+  font-family: var(--font-display);
+  font-size: 58px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #ffe600;
+  text-shadow: 0 0 14px rgba(255, 230, 0, 0.6);
+}
+
+:root[data-theme='arcade'] .entry-choice--join .entry-choice__title {
+  color: #d8fbff;
+  text-shadow: 0 0 6px #22e4ff, 0 0 20px #22e4ff;
+}
+
+:root[data-theme='arcade'] .entry-choice__body {
+  font-size: 34px;
+  line-height: 1.05;
+}
+
+:root[data-theme='arcade'] .entry-choice__cta {
+  margin-top: auto;
+  padding: 12px 14px;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-family: var(--font-label);
+  font-size: 14px;
+  text-transform: uppercase;
+  box-shadow: 5px 5px 0 #ff2ea6;
+}
+
+:root[data-theme='arcade'] .entry-choice__address {
+  margin-top: auto;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--color-accent);
+}
+
+:root[data-theme='arcade'] .entry-tv__cursor {
+  display: inline;
+  margin-left: 6px;
+  animation: blink 1s steps(1) infinite;
+}
+
+/* ---------- 70s rec room: box lid and game boxes ---------- */
+:root[data-theme='rec-room'] .entry-tv__sign {
+  position: absolute;
+  left: 370px;
+  top: 26px;
+  width: 540px;
+  height: 150px;
+  overflow: hidden;
+  background: var(--color-surface);
+  transform: rotate(-2deg);
+  box-shadow: 10px 12px 0 rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme='rec-room'] .entry-tv__logo {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--color-background);
+}
+
+:root[data-theme='rec-room'] .entry-tv__lid-kicker {
+  display: block;
+  padding: 16px 28px 0;
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+:root[data-theme='rec-room'] .entry-tv__logo-words {
+  padding: 2px 28px 0;
+  font-family: var(--font-logo);
+  font-size: 58px;
+  line-height: 1.05;
+}
+
+:root[data-theme='rec-room'] .entry-tv__lid-stripe {
+  display: block;
+  margin-top: auto;
+  height: 28px;
+  background: linear-gradient(180deg, #d9a21b 0 25%, #c8551f 25% 50%, #7a8b3a 50% 75%, #5a3a22 75%);
+}
+
+:root[data-theme='rec-room'] .entry-tv__choices {
+  left: 96px;
+  right: 96px;
+  top: 218px;
+  height: 340px;
+  gap: 60px;
+}
+
+:root[data-theme='rec-room'] .entry-choice {
+  gap: 0;
+  padding: 0;
+  border-radius: 3px;
+  box-shadow: 12px 14px 0 rgba(0, 0, 0, 0.4);
+  font-family: var(--font-label);
+}
+
+:root[data-theme='rec-room'] .entry-choice--host {
+  background: #b0461a;
+  color: var(--color-text);
+  transform: rotate(-1.5deg);
+}
+
+:root[data-theme='rec-room'] .entry-choice--join {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  transform: rotate(1.5deg);
+}
+
+:root[data-theme='rec-room'] .entry-choice__stripe {
+  display: block;
+  align-self: stretch;
+  height: 14px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, #d9a21b 0 33%, #f3ebd3 33% 66%, #d9a21b 66%);
+}
+
+:root[data-theme='rec-room'] .entry-choice--join .entry-choice__stripe {
+  background: linear-gradient(90deg, #c8551f 0 33%, #5a3a22 33% 66%, #c8551f 66%);
+}
+
+:root[data-theme='rec-room'] .entry-choice__content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 28px 0;
+}
+
+:root[data-theme='rec-room'] .entry-choice__title {
+  max-width: 330px;
+  font-family: var(--font-display);
+  font-size: 54px;
+  line-height: 1;
+}
+
+:root[data-theme='rec-room'] .entry-choice__body {
+  max-width: 330px;
+  font-size: 20px;
+  line-height: 1.35;
+}
+
+:root[data-theme='rec-room'] .entry-choice__cta {
+  align-self: stretch;
+  margin-top: auto;
+  padding: 12px 28px;
+  background: rgba(0, 0, 0, 0.16);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:root[data-theme='rec-room'] .entry-choice__address {
+  margin-top: auto;
+  padding: 12px 28px 16px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.05;
+}
+
+:root[data-theme='rec-room'] .entry-choice__seal {
+  position: absolute;
+  right: 20px;
+  top: 30px;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1.05;
+  transform: rotate(-10deg);
+}
+
+:root[data-theme='rec-room'] .entry-choice--join .entry-choice__seal {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+:root[data-theme='rec-room'] .entry-tv__floor {
+  font-size: 44px;
+}
+
+/* =================== Phone =================== */
+
+.entry-phone__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.entry-phone__heading {
+  margin: 0;
+  font-family: var(--font-logo);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.1;
+  color: var(--color-accent);
+  text-shadow: 3px 3px 0 var(--color-primary);
+}
+
+.entry-phone__tagline {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 19px;
+  letter-spacing: 0.18em;
+}
+
+.entry-phone__choice {
+  flex: 1;
+  display: flex;
+  min-height: 180px;
+  text-align: left;
+  text-decoration: none;
+  color: var(--color-background);
+  box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.entry-phone__choice--join {
+  background: var(--color-accent);
+}
+
+.entry-phone__choice--host {
+  background: var(--color-primary);
+}
+
+.entry-phone__stripe {
+  display: none;
+}
+
+.entry-phone__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 18px 20px 20px;
+}
+
+.entry-phone__kicker {
+  font-family: var(--font-label);
+  font-size: 20px;
+  letter-spacing: 0.14em;
+}
+
+.entry-phone__title {
+  font-family: var(--font-display);
+  font-size: 46px;
+  line-height: 1.05;
+}
+
+.entry-phone__choice--host .entry-phone__title {
+  color: var(--color-text-strong);
+  text-shadow: 3px 3px 0 var(--color-background);
+}
+
+.entry-phone__body {
+  font-size: 19px;
+  line-height: 1.3;
+}
+
+.entry-phone__cta {
+  margin-top: auto;
+  padding: 7px 14px 3px;
+  background: var(--color-background);
+  color: var(--color-accent);
+  font-family: var(--font-label);
+  font-size: 24px;
+  letter-spacing: 0.1em;
+}
+
+.entry-phone__link {
+  min-height: var(--space-hit-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-label);
+  font-size: 20px;
+  letter-spacing: 0.14em;
+  color: var(--color-text);
+  text-underline-offset: 4px;
+}
+
+/* ---------- Phone: 90s arcade ---------- */
+:root[data-theme='arcade'] .entry-phone__header {
+  gap: 8px;
+}
+
+:root[data-theme='arcade'] .entry-phone__heading {
+  font-size: 46px;
+  color: #ffd1ec;
+  text-shadow:
+    0 0 4px #ff2ea6,
+    0 0 14px #ff2ea6,
+    0 0 34px #ff2ea6;
+}
+
+:root[data-theme='arcade'] .entry-phone__tagline {
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+}
+
+:root[data-theme='arcade'] .entry-phone__choice {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+:root[data-theme='arcade'] .entry-phone__choice--join {
+  --panel-color: #22e4ff;
+  box-shadow: inset 0 0 0 3px #22e4ff;
+}
+
+:root[data-theme='arcade'] .entry-phone__choice--host {
+  --panel-color: #ffe600;
+  box-shadow: inset 0 0 0 3px #ffe600;
+}
+
+:root[data-theme='arcade'] .entry-phone__content {
+  gap: 10px;
+  padding: 16px 18px;
+}
+
+:root[data-theme='arcade'] .entry-phone__kicker {
+  font-size: 10px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--panel-color);
+}
+
+:root[data-theme='arcade'] .entry-phone__title {
+  font-size: 36px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #d8fbff;
+  text-shadow: 0 0 6px #22e4ff, 0 0 16px #22e4ff;
+}
+
+:root[data-theme='arcade'] .entry-phone__choice--host .entry-phone__title {
+  color: #ffe600;
+  text-shadow: 0 0 12px rgba(255, 230, 0, 0.6);
+}
+
+:root[data-theme='arcade'] .entry-phone__body {
+  font-size: 26px;
+  line-height: 1.05;
+}
+
+:root[data-theme='arcade'] .entry-phone__cta {
+  padding: 0;
+  background: none;
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--panel-color);
+}
+
+:root[data-theme='arcade'] .entry-phone__link {
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-underline-offset: 5px;
+  color: var(--color-accent);
+}
+
+/* ---------- Phone: 70s rec room (inside the phone card) ---------- */
+:root[data-theme='rec-room'] .entry-phone__header {
+  align-items: flex-start;
+}
+
+:root[data-theme='rec-room'] .entry-phone__heading {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 42px;
+  line-height: 1;
+  color: var(--color-text-on-surface);
+  text-shadow: none;
+}
+
+:root[data-theme='rec-room'] .entry-phone__choice {
+  min-height: 150px;
+  border-radius: 3px;
+  font-family: var(--font-label);
+  box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .entry-phone__choice--join {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  transform: rotate(-1deg);
+}
+
+:root[data-theme='rec-room'] .entry-phone__choice--host {
+  margin-top: 8px;
+  background: #b0461a;
+  color: var(--color-text);
+  transform: rotate(1deg);
+}
+
+:root[data-theme='rec-room'] .entry-phone__stripe {
+  display: block;
+  width: 12px;
+  border-radius: 3px 0 0 3px;
+  background: linear-gradient(180deg, #c8551f 0 50%, #5a3a22 50%);
+}
+
+:root[data-theme='rec-room'] .entry-phone__choice--host .entry-phone__stripe {
+  background: linear-gradient(180deg, #d9a21b 0 50%, #f3ebd3 50%);
+}
+
+:root[data-theme='rec-room'] .entry-phone__content {
+  gap: 6px;
+  padding: 14px 16px;
+}
+
+:root[data-theme='rec-room'] .entry-phone__kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+:root[data-theme='rec-room'] .entry-phone__title,
+:root[data-theme='rec-room'] .entry-phone__choice--host .entry-phone__title {
+  font-size: 36px;
+  line-height: 1;
+  color: inherit;
+  text-shadow: none;
+}
+
+:root[data-theme='rec-room'] .entry-phone__body {
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+:root[data-theme='rec-room'] .entry-phone__cta {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:root[data-theme='rec-room'] .entry-phone__link {
+  margin-top: 6px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0;
+  color: var(--color-text-on-surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry-tv__flicker,
+  .entry-tv__cursor {
+    animation: none;
+  }
+}

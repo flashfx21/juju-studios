@@ -1,6 +1,87 @@
 /* ABOUTME: The look every TV screen shares inside TvStage: background, glow, and the header with logo and title. */
 /* ABOUTME: One section per lobby style; values come from docs/design/source. */
 
+/* Shared textures (docs/design/assets.md): arcade carpet and rec room shag rug. */
+:root {
+  --texture-carpet:
+    radial-gradient(circle at 20px 30px, #ff2ea6 0 5px, rgba(0, 0, 0, 0) 6px),
+    radial-gradient(circle at 84px 66px, #22e4ff 0 3px, rgba(0, 0, 0, 0) 4px),
+    radial-gradient(circle at 60px 20px, rgba(0, 0, 0, 0) 0 8px, #ffe600 9px 11px, rgba(0, 0, 0, 0) 12px),
+    radial-gradient(circle at 112px 50px, rgba(0, 0, 0, 0) 0 5px, #39ff6a 6px 7px, rgba(0, 0, 0, 0) 8px);
+  --texture-rug: repeating-linear-gradient(
+    100deg,
+    rgba(0, 0, 0, 0.14) 0 2px,
+    rgba(0, 0, 0, 0) 2px 5px,
+    rgba(255, 200, 140, 0.18) 5px 7px,
+    rgba(0, 0, 0, 0) 7px 9px
+  );
+}
+
+/* Game show marquee bulb frame: chasing bulbs around whatever sits inside. */
+.bulb-frame {
+  padding: 14px;
+  background-color: #2a1d08;
+  background-image:
+    radial-gradient(circle at 7px 7px, #fff6d6 0 3px, rgba(242, 182, 48, 0.7) 4px, rgba(242, 182, 48, 0) 6px),
+    radial-gradient(circle at 29px 29px, #fff6d6 0 3px, rgba(242, 182, 48, 0.7) 4px, rgba(242, 182, 48, 0) 6px),
+    radial-gradient(circle at 29px 7px, #6b5320 0 3px, rgba(0, 0, 0, 0) 4px),
+    radial-gradient(circle at 7px 29px, #6b5320 0 3px, rgba(0, 0, 0, 0) 4px);
+  background-size: 44px 44px;
+  animation: chase var(--motion-chase-duration, 0.8s) linear infinite;
+}
+
+/* The footer strip along the bottom of a TV screen: gold-ruled bar, arcade carpet, or shag rug. */
+.tv-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 96px;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-footer);
+  border-top: 5px solid var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 30px;
+  color: var(--color-accent);
+}
+
+:root[data-theme='arcade'] .tv-floor {
+  height: 100px;
+  border-top: 0;
+  background-image: var(--texture-carpet);
+  background-size: 132px 84px;
+  font-family: var(--font-label);
+  font-size: 18px;
+  color: var(--color-text-strong);
+  text-transform: uppercase;
+}
+
+:root[data-theme='arcade'] .tv-floor__message {
+  padding: 14px 20px;
+  background: var(--color-background);
+}
+
+:root[data-theme='rec-room'] .tv-floor {
+  border-top: 0;
+  align-items: flex-end;
+  padding-bottom: 22px;
+  background-image: var(--texture-rug);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--color-text);
+  text-shadow: 2px 2px 0 var(--color-frame);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bulb-frame {
+    animation: none;
+  }
+}
+
 /* ---------- Retro game show (base) ---------- */
 .tv-screen {
   position: absolute;
