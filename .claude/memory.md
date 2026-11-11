@@ -56,6 +56,7 @@
 - To see a design prototype (`*.dc.html` + `support.js`), serve its folder (`npx http-server`) and drive it in headless Edge; find phones by their 390x844 size, not by label text.
 - Synthetic Enter key presses over the DevTools protocol need `text: "\r"` to activate a button.
 - Bebas Neue (game-show label font) has no lowercase. Never set the site address in it: the `/juju-studios` path is case-sensitive on GitHub Pages, so an all-caps address would 404 if typed.
+- Long heredocs with template literals can break the Bash tool ("unexpected EOF"); write edit scripts to the scratchpad with the Write tool instead.
 - Python isn't installed on this PC; use node for one-off scripts.
 - Never clean up headless test browsers with `taskkill /IM msedge.exe`: it closes Julian's own Edge windows too. Kill only the spawned process tree by PID (`taskkill /PID <pid> /T /F`).
 - Headless Edge touch drags (`Input.dispatchTouchEvent`) sometimes stall a run; a retry passes. Give scripts their own timeout so a stall can't hang the shell.
@@ -67,7 +68,7 @@
 - Not created yet, by design: `firebase.json`, `database.rules.json` (step 2); `src/games/registry.ts` and `_template/` contents (step 6, cartridge contract).
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).
 - Vitest installed (`npm test`). Chainword rules, tests, phone screen and level 1 playtest (chain codes, word lengths 4 to 7, End game) are done and on main. TV screen and Instructions not started. Next for Chainword: a real level 1 playtest on phones.
-- Don't Jinx It (game/dont-jinx-it, worktree `../juju-studios-dont-jinx-it`): step 1 done on 2026-11-11: individual-mode rules, tests, `packs/dont-jinx-it/` (214 words, irregular forms). `playerView()` / `tvView()` are the role filters; leak tests verified to fail when a leak is introduced. Close calls are a spelling rule of thumb (stems, irregular forms, compounds with 4+ letter base). Step 2 done on 2026-11-11 (`ef79ab8`): `PhoneScreen.tsx` takes only `playerView()` (never full state), game-show layout; playtest at `#/playtest/dont-jinx-it` with bots and a Dev box (blank bot clues are dealt from a short common-word list so jinxes happen). Checked in headless Edge at 390x844, including 10+ letter words and reduced motion. Not yet on main, so not on the live site. Next: step 3, TV screens.
+- Don't Jinx It (game/dont-jinx-it, worktree `../juju-studios-dont-jinx-it`): step 1 done on 2026-11-11: individual-mode rules, tests, `packs/dont-jinx-it/` (214 words, irregular forms). `playerView()` / `tvView()` are the role filters; leak tests verified to fail when a leak is introduced. Close calls are a spelling rule of thumb (stems, irregular forms, compounds with 4+ letter base). Step 2 done on 2026-11-11 (`ef79ab8`): `PhoneScreen.tsx` takes only `playerView()` (never full state), game-show layout; playtest at `#/playtest/dont-jinx-it` with bots and a Dev box (blank bot clues are dealt from a short common-word list so jinxes happen). Checked in headless Edge at 390x844, including 10+ letter words and reduced motion. Step 3 done on 2026-11-11 (`fd354f8`): `TvScreen.tsx` (takes only `tvView()`), `Instructions.tsx` (T1 with pace and long game), shared `Pieces.tsx` / `format.ts` / `usePileStep.ts` so TV and phones word and time the pile the same. TV cards carry `by` only for jinxed cards and at the reveal. Host bar has status and Next only; Pause / Restart / End wait for the engine's shared host bar. In a TV-shaped window the playtest is a desk view (TV + your phone + dev box). New tokens `--color-card-back-stripe`, `--color-card-jinxed`, `--color-verdict-drop` in all three styles (arcade and rec room values extrapolated). Not yet on main. Next: step 4, arcade and rec room (rec room's `--color-surface` is cream, so the dark panels in the phone CSS need per-style rules).
 - Shared dictionary on main: `packs/shared/english-words.txt` (ENABLE, unchanged) and `src/engine/dictionary.ts` (`loadDictionary()`, lazy). ENABLE has no one-letter words and misses some compounds (sandcastle).
 - Design handoffs live in `docs/handoffs/`.
 - Game branches `game/dial-it-in` and `game/chainword` live in worktrees `../juju-studios-dial-it-in` and `../juju-studios-chainword`. Both are pushed.
@@ -82,6 +83,7 @@
 - Chainword hard mode made an option (off by default, H on chain codes). Phase order reset: phase 1 is Dial It In, Chainword, one-word clue game, Pin Drop.
 - Shared dictionary added on main. Don't Jinx It rules, tests and packs on game/dont-jinx-it.
 - Don't Jinx It phone screens and bots playtest on game/dont-jinx-it.
-- In progress: Don't Jinx It step 3 (TV screens), when Julian says go.
+- Don't Jinx It TV screens, instructions and host settings on game/dont-jinx-it.
+- In progress: Don't Jinx It step 4 (arcade and rec room), when Julian says go.
 - Blockers: sign-in method decision before Firebase auth work.
 - Next: Julian's pick (live example game, more screens, or Firebase).
