@@ -79,13 +79,67 @@
   letter-spacing: 0.16em;
 }
 
-.cw-playing__code {
+.cw-start__rules {
   margin: 0;
-  font-size: 16px;
-  letter-spacing: 0.08em;
-  text-align: center;
+  font-size: 15px;
+  line-height: 1.35;
 }
 
+.cw-playing__code {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.cw-playing__end {
+  min-height: var(--space-hit-target-min);
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: var(--font-label);
+  font-size: 15px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Arcade's pixel label font runs wide; keep the top bar on one line. */
+:root[data-theme='arcade'] .cw-playing__end,
+:root[data-theme='arcade'] .cw-playing__code {
+  font-size: 11px;
+}
+
+/* End game confirm: a modal dialog, so it never makes the game screen taller. */
 .cw-end {
+  width: min(360px, calc(100vw - 32px));
+  padding: 20px;
+  border: 3px solid currentColor;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+.cw-end[open] {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
+}
+
+.cw-end::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.cw-end__question {
+  margin: 0 0 6px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+/* Rec room plays on its cream card, so the dialog matches the card. */
+:root[data-theme='rec-room'] .cw-end {
+  background: var(--color-surface);
+  color: var(--color-text-on-surface);
+  --focus-ring: var(--color-text-on-surface);
 }

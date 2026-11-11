@@ -1,6 +1,6 @@
 // ABOUTME: Chainword playtest on one phone, no room or server: join a shared chain by code, make one, or play solo.
 // ABOUTME: Everyone who types the same chain code gets the same words; players compare totals out loud at the end.
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { PhoneFrame } from '../../ui/PhoneFrame'
 import { TextField } from '../../ui/TextField'
 import { makeChainCode, readChainCode } from './chainCode'
@@ -42,7 +42,7 @@ export function Playtest() {
   const [stage, setStage] = useState<Stage>({ kind: 'start' })
 
   return (
-    <PhoneFrame label="Chainword playtest" cardTag="Playtest">
+    <PhoneFrame label="Chainword playtest" cardTag="Playtest" fit={stage.kind === 'play'}>
       {stage.kind === 'start' && (
         <StartChoices
           onJoin={(code) => setStage(startShared(code))}
@@ -69,7 +69,9 @@ export function Playtest() {
           onNewChain={() => setStage({ kind: 'start' })}
         />
       )}
-      <p className="preview-note">Playtest: each phone plays on its own and nothing is saved.</p>
+      {stage.kind !== 'play' && (
+        <p className="preview-note">Playtest: each phone plays on its own and nothing is saved.</p>
+      )}
     </PhoneFrame>
   )
 }
@@ -98,6 +100,9 @@ function StartChoices({ onJoin, onMakeCode, onSolo }: StartChoicesProps) {
   return (
     <>
       <ChainwordTitle />
+      <p className="cw-start__rules">
+        Hard mode: green letters stay in place, and letters you find must be used again. 6 guesses per word.
+      </p>
 
       <form className="phone-form cw-start__join" noValidate onSubmit={join}>
         <div className="cue-card">
@@ -226,54 +231,67 @@ interface PlayingProps {
 }
 
 function Playing({ state, code, onChange, onNewChain }: PlayingProps) {
-  const [confirmingEnd, setConfirmingEnd] = useState(false)
+  const endDialog = useRef<HTMLDialogElement>(null)
   const over = rules.isOver(state)
   const now = () => ({ now: Date.now(), random: Math.random })
+
+  const topAction = (
+    <>
+      {code && (
+        <span className="cw-playing__code" data-testid="cw-playing-code" aria-label={`Chain code ${code}`}>
+          {code}
+        </span>
+      )}
+      {!over && (
+        <button
+          type="button"
+          className="cw-playing__end"
+          data-testid="cw-end"
+          onClick={() => endDialog.current?.showModal()}
+        >
+          End game
+        </button>
+      )}
+    </>
+  )
 
   return (
     <>
       <PhoneScreen
         state={state}
         player={PLAYER}
+        topAction={topAction}
+        summaryAction={
+          <button type="button" className="phone-button" data-testid="cw-new-chain" onClick={onNewChain}>
+            New chain
+          </button>
+        }
         onGuess={(word) => onChange(rules.onInput(state, PLAYER, { type: 'guess', word }, now()))}
       />
-      {code && (
-        <p className="cw-playing__code" data-testid="cw-playing-code">
-          Chain code {code}
+      <dialog ref={endDialog} className="cw-end" aria-labelledby="cw-end-question">
+        <p className="cw-end__question" id="cw-end-question">
+          End the game now? The word you're on and any words left count {MISSED_WORD_COST} each.
         </p>
-      )}
-
-      {over ? (
-        <button type="button" className="phone-button" data-testid="cw-new-chain" onClick={onNewChain}>
-          New chain
+        <button
+          type="button"
+          className="phone-button"
+          data-testid="cw-end-confirm"
+          onClick={() => {
+            endDialog.current?.close()
+            onChange(endGame(state, now()))
+          }}
+        >
+          Yes, end the game
         </button>
-      ) : confirmingEnd ? (
-        <div className="cue-card cw-end" role="group" aria-labelledby="cw-end-question">
-          <p className="cue-card__text" id="cw-end-question">
-            End the game now? The word you're on and any words left count {MISSED_WORD_COST} each.
-          </p>
-          <button
-            type="button"
-            className="phone-button"
-            data-testid="cw-end-confirm"
-            onClick={() => onChange(endGame(state, now()))}
-          >
-            Yes, end the game
-          </button>
-          <button
-            type="button"
-            className="phone-button phone-button--secondary"
-            data-testid="cw-end-cancel"
-            onClick={() => setConfirmingEnd(false)}
-          >
-            Keep playing
-          </button>
-        </div>
-      ) : (
-        <button type="button" className="phone-link" data-testid="cw-end" onClick={() => setConfirmingEnd(true)}>
-          End game
+        <button
+          type="button"
+          className="phone-button phone-button--secondary"
+          data-testid="cw-end-cancel"
+          onClick={() => endDialog.current?.close()}
+        >
+          Keep playing
         </button>
-      )}
+      </dialog>
     </>
   )
 }

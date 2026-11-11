@@ -113,3 +113,32 @@
   color: var(--color-text-on-surface);
   font-family: var(--font-body);
 }
+
+/* ---------- Fit: one screen tall, nothing scrolls (game screens) ---------- */
+/* :root[data-theme] matches every style, so these follow and outrank the per-style padding above. */
+:root[data-theme] .phone-frame[data-fit] {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+:root[data-theme] .phone-frame[data-fit] .phone-frame__inner {
+  min-height: 0;
+  padding: 14px 16px 10px;
+  gap: 8px;
+}
+
+:root[data-theme='rec-room'] .phone-frame[data-fit] .phone-frame__card,
+:root[data-theme='rec-room'] .phone-frame[data-fit] .phone-frame__card-body {
+  min-height: 0;
+}
+
+:root[data-theme='rec-room'] .phone-frame[data-fit] .phone-frame__card-header {
+  gap: 8px;
+  padding-top: 10px;
+}
+
+:root[data-theme='rec-room'] .phone-frame[data-fit] .phone-frame__card-body {
+  padding: 10px 14px 12px;
+}
