@@ -34,6 +34,7 @@
 - Not created yet, by design: `firebase.json`, `database.rules.json` (step 2); `src/games/registry.ts` and `_template/` contents (step 6, cartridge contract).
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).
 - Vitest installed. Dial It In rules, manifest and spectrum pack done on `game/dial-it-in` (30 tests). Screens, registry line and playtest still to do.
+- 2026-11-11: PAUSED by Julian until Chainword is done. Reason: `game/chainword` has a different `src/games/types.ts` (ctx with now/random, PlayerId[], settings as a list), its own Vitest, and screens plus a practice page in progress. Recommended on resume: adopt Chainword's contract (on main first, or copied here), merge main into this branch, follow Chainword's screen pattern. Still open: engine work location (main or engine branch, not a game branch) and sign-in method (A to D).
 - `manifest.ts` repeats Dial It In's title, tag and pitch from `src/games/lineup.ts`. Once `registry.ts` exists, the lineup should read them from manifests.
 
 ## Development Log
