@@ -34,20 +34,22 @@ The point of phasing: each phase should add as few new engine pieces as possible
 
 *Relative effort is Claude's estimate, not a schedule: S = small, M = medium, L = large.
 
-### Phases (set Nov 10)
+### Phases (set Nov 10, reordered Nov 11)
 Julian's goal: the engine and a few games ready **in a few weeks, if possible**. Phases 1 to 3 are the realistic plan; everything else is one "later" bucket.
 
-**Phase 1: Engine + No Filler**
-Lobby (designed in Claude Design), room codes, phones joining, profiles, turns, timer, voting, content packs, leaderboard. No Filler as the only game.
+**Phase 1: Engine + Chainword**
+Lobby (designed in Claude Design), room codes, phones joining, profiles, timer, private input on each phone, game-pick voting, content packs, leaderboard. Chainword as the first game. (Nov 11: Julian moved No Filler to a later release; Chainword takes the first slot.)
 
 **Phase 2: Quick private-input games**
-Dial It In, Closest Without Going Over, Chainword. All three add one engine piece, private input on each phone.
+Dial It In, Closest Without Going Over. Both reuse the private input built for Chainword.
 
 **Phase 3: Teams and media**
 Sketch Showdown (teams + live drawing), Pin Drop (maps + photo packs).
 
 **Phase 4: Later (combined)**
 Hidden traitor marquee game, Word Agents, the curated board game, maze chase, snake arena.
+
+**No Filler: later release, phase not set.** It brings turns and Clean / Filler voting to the engine.
 
 **Not yet placed:** one-word clue game. Its individual mode uses only phase 2 pieces, so it could join phase 2; team mode needs phase 3's teams.
 

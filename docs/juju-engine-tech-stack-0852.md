@@ -140,8 +140,8 @@ Work on one game per branch (e.g. `game/dial-it-in`) and merge to `main` when it
 4. Lobby with one style first; Settings with the style switch
 5. Engine pieces: session controls, timer, voting, scoring, results, leaderboard
 6. The cartridge contract and `_template/`
-7. No Filler as the first cartridge
-8. A real game night test, then phase 2 games
+7. Chainword as the first cartridge
+8. A real game night test, then phase 2 games (No Filler is a later release)
 
 ## 9. Verified limits and the sign-in decision (Nov 11)
 From Firebase's published limits:
