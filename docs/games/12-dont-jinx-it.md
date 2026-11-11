@@ -12,16 +12,24 @@ One player guesses a mystery word; everyone else gives a one-word clue; matching
 ## Decided
 - Name: Don't Jinx It (Julian, Nov 11)
 - Individual mode: clue givers write clues privately; duplicates are removed; the guesser sees what's left
-- Team mode: one team guesses, the other plays defense, writing clues to match and cancel the guessing team's clues
-- Team mode: likely 2 clues per person so the guesser still has enough clues (e.g. 4 on 4)
-- The engine matches duplicates automatically; the TV reveals which clues survived
-- Julian's house rules to be expanded later
+- Team mode: one team guesses, the other plays defense. Teammates write 2 clues each (3 when the team is small); each defender writes 1 jinx, a guess at one of the clues. Teams take turns; an inning is each team guessing once
+- Any word written more than once is jinxed. A word jinxed by both teammates and the defense counts as jinxed by the defense
+- Settings: Mode (Team / Individual), Pace (Quick 45 s write / 30 s guess, Normal 60 / 45 default, Relaxed 90 / 60), Long game ("Everyone guesses twice")
+- One guess per turn, or pass. Team mode: correct gives the guessing team +1; a miss or pass gives the defense +1
+- Individual mode (phase 1): everyone except the guesser writes 1 clue (2 each with 3 players). Correct guess: guesser +2 and each player whose clue survived +1. Finishing order by points. Turns = players, doubled for a long game; the guesser rotates
+- Clue checks, in order: empty, letters only, the mystery word, part of the mystery word (3+ letters), your two clues match, then "Is this a name?" (Use it / Edit) for words not in the dictionary
+- Dictionary: the full ENABLE word list (public domain), loaded only when the game opens (Julian, Nov 11)
+- Close calls (soft matches such as towel / towels, run / ran, bird / birdhouse): team mode, the defense votes Same / Different (10 s, no vote counts as Different). Individual mode: no vote, every soft match is jinxed automatically (Julian, Nov 11)
+- Skip word: once per turn, usable in the first 15 s
+- The guesser's phone never gets the word, the pile or clue authors; the TV never shows the word or a jinxed clue's text before the full reveal. Survivors reach every screen at the same moment, without authors
+- Screens: `docs/handoffs/design_handoff_dont_jinx_it/` (game-show style designed; arcade and rec room to extrapolate)
+- First playtest (Julian, Nov 11): you plus bots, like Dial It In, at `#/playtest/dont-jinx-it`
 
 ## Open questions
-- Balance in 4 on 4: 6 guessing-team clues vs. 8 defense attempts. Options: defense gets 1 clue each, a cap on defense attempts, or a floor (guesser always sees 1 or 2 clues)
-- Matching: exact word only, or close forms (car / cars)?
-- Scoring: points for a correct guess; does defense score per cancel, or for a wrong guess?
-- Guesser rotation; do teams swap roles each round?
+- Team names and colors (proposed: Clovers / Horseshoes, solid ● and outlined ◆ badges)
+- Tiebreaker format
+- Near guess (beaches for beach): team mode, does a defense vote with no answers count as Yes or No? Individual mode: proposed that plural and simple forms count automatically, no vote
+- Skip word in individual mode: proposed any clue writer can use it, which deals a new word for everyone
 
 ## Engine pieces it needs
 - Private text input, duplicate matching, private per-player data (the word is hidden from the guesser), teams
