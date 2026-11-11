@@ -15,7 +15,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 | Sign in | `#/sign-in`, `/password`, `/sent`, `/expired` | | Email link, password, check your email, link expired |
 | Join (profile setup) | `#/join` | | Room code, username, email, color (arcade adds initials) |
 | Lobby placeholder | `#/lobby` | Links to the game picker, Host settings, Profile and Playtests, plus the version | same |
-| Playtests | `#/playtest`, `#/playtest/chainword` | | Behind the playtest code: games still in testing |
+| Playtests | `#/playtest`, `#/playtest/chainword`, `#/playtest/dial-it-in` | | Behind the playtest code: games still in testing |
 | Game picker | `#/picker` | Full lineup, all coming soon | Coming-soon list, nothing to vote on |
 | Host settings | `#/settings` | Your style, game choice (group vote / leader pick), CRT scanlines | |
 | Profile | `#/profile` | | Initials, username, email, color, **your style**, stats |
@@ -27,7 +27,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 - TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.
 - The game lineup is `src/games/lineup.ts`. Every game is "coming soon".
 - Chainword has its rules, tests and a phone playtest (see Playtests below). No TV screen yet.
-- Dial It In has its rules and tests only, no screens yet. Spectrum cards live in `packs/dial-it-in/spectrums.json`.
+- Dial It In has its rules, tests, a phone screen and a single-player interface playtest (see Playtests below). No TV screen yet. Spectrum cards live in `packs/dial-it-in/spectrums.json`.
 
 ## Run it locally
 
@@ -47,6 +47,8 @@ npm test         # game rules tests (Vitest)
 Games still in testing open at `#/playtest` (phone front door: **Playtest a game**; lobby page: **Playtests**). A playtest code keeps casual visitors out; each device asks once and remembers it. It is not real security: the code can be worked out from the site's code.
 
 **Chainword playtest, no server:** one person taps **Make a code for everyone** (pick letters per word and words in the chain first) and reads the code out, for example `KPDT53`. Everyone else types it under **Got a chain code?** and gets the same words. Say go, play, then compare totals: fewest guesses wins, faster time breaks a tie. **End game** stops early (the word you're on and any left count 7 each). Everyone should load the site fresh first: a code deals from the word lists, so phones on different versions of the site can get different words.
+
+**Dial It In playtest, one player:** an interface test on one phone. Pick 1 to 100 or 1 to 50, then play three rounds against two bots that guess at random; you give the clue in round 1. The dashed **Dev** box stands in for the other phones and the timer: **Bots lock in**, **Time's up** (ends guessing; anyone who hasn't guessed scores 0) and **Next round**.
 
 **To change the playtest code**, run this in the project folder with the new code in place of `newcode`, then put the number it prints into `PLAYTEST_CODE_HASH` in `src/app/playtestCode.ts`. Every device then asks for the new code.
 
@@ -75,7 +77,7 @@ src/
     types.ts      draft cartridge contract: manifest and rules shapes
     no-filler/    one folder per game
     chainword/    Chainword manifest, rules, phone screen and playtest
-    dial-it-in/   Dial It In manifest, rules and tests
+    dial-it-in/   Dial It In manifest, rules, phone screen and playtest
 packs/            content packs, one folder per game
 docs/             requirements, tech stack, game specs, design handoff
 .github/workflows/deploy.yml

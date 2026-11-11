@@ -1,0 +1,173 @@
+/* ABOUTME: Dial It In phone styles: the spectrum card and dial, the secret target, number entry and result lists. */
+/* ABOUTME: Colors come from the surrounding text and style tokens; target and guess marks differ by shape, not only color. */
+
+.dii-phone {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dii-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dii-top .phone-top {
+  padding: 0;
+}
+
+.dii-top__round {
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.dii-role,
+.dii-headline,
+.dii-locked {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1.15;
+}
+
+.dii-hint,
+.dii-status {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+/* ---------- Spectrum card ---------- */
+.dii-spectrum {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  box-shadow: var(--shadow-card);
+}
+
+.dii-spectrum__ends {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.dii-spectrum__ends span:last-child {
+  text-align: right;
+}
+
+/* The dial: a bar with marks placed by percent. Marks sit inside a padded track so the ends stay visible. */
+.dii-spectrum__dial {
+  position: relative;
+  height: 28px;
+  margin: 0 10px;
+  border-bottom: 4px solid currentColor;
+}
+
+.dii-spectrum__mark {
+  position: absolute;
+  bottom: -4px;
+  transform: translateX(-50%);
+}
+
+/* Target: a solid upright bar. */
+.dii-spectrum__mark--target {
+  width: 8px;
+  height: 30px;
+  background: currentColor;
+}
+
+/* Guess: a hollow ring sitting on the bar. */
+.dii-spectrum__mark--guess {
+  width: 20px;
+  height: 20px;
+  bottom: -12px;
+  border: 4px solid currentColor;
+  border-radius: 50%;
+  background: var(--color-secondary);
+}
+
+.dii-spectrum__scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+/* ---------- Clue giver's secret target ---------- */
+.dii-target {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 14px;
+}
+
+.dii-target__label {
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dii-target__value {
+  font-family: var(--font-display);
+  font-size: 72px;
+  line-height: 1;
+}
+
+/* ---------- Guess entry ---------- */
+.dii-guess {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dii-guess__input {
+  font-size: 28px;
+  text-align: center;
+}
+
+/* ---------- Round results and final standings ---------- */
+.dii-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.dii-list__row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 14px;
+  padding: 8px 4px;
+  border-bottom: 1px solid currentColor;
+  font-size: 18px;
+}
+
+.dii-list__row span:last-child {
+  min-width: 5.5em;
+  text-align: right;
+}
+
+/* Arcade's pixel label font runs wide; keep the top row on one line. */
+:root[data-theme='arcade'] .dii-top__round {
+  font-size: 11px;
+}
+
+:root[data-theme='arcade'] .dii-role,
+:root[data-theme='arcade'] .dii-headline,
+:root[data-theme='arcade'] .dii-locked {
+  font-size: 18px;
+  line-height: 1.4;
+}

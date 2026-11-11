@@ -7,4 +7,8 @@ export const PLAYTESTS: Record<string, { title: string; Page: LazyExoticComponen
     title: 'Chainword',
     Page: lazy(() => import('../games/chainword/Playtest').then((module) => ({ default: module.Playtest }))),
   },
+  'dial-it-in': {
+    title: 'Dial It In',
+    Page: lazy(() => import('../games/dial-it-in/Playtest').then((module) => ({ default: module.Playtest }))),
+  },
 }

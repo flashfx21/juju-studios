@@ -1,0 +1,41 @@
+/* ABOUTME: Dial It In playtest styles: the dev bar that stands in for other phones and the engine timer. */
+/* ABOUTME: Dashed outline so it never reads as part of the game screen itself. */
+
+.dii-dev {
+  margin-top: 16px;
+  padding: 10px 12px 12px;
+  border: 2px dashed currentColor;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dii-dev__heading {
+  margin: 0;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.dii-dev__buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.dii-dev__button {
+  flex: 1;
+  min-height: var(--space-hit-target-min);
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+:root[data-theme='arcade'] .dii-dev__heading {
+  font-size: 11px;
+}
