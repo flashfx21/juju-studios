@@ -5,6 +5,8 @@
   --cw-green: #2f7a3a;
   --cw-yellow: #e6b422;
   --cw-gray: #5c6066;
+  --cw-key-gray: #1f2124;
+  --cw-key-gray-ink: #9aa0a8;
   --cw-light-ink: #ffffff;
   --cw-dark-ink: #1b1b1b;
   flex: 1 1 auto;
@@ -179,9 +181,14 @@
   background: var(--cw-dark-ink);
 }
 
-.cw-tile[data-mark='gray'],
-.cw-key[data-mark='gray'] {
+.cw-tile[data-mark='gray'] {
   background: var(--cw-gray);
+}
+
+/* Ruled-out keys sink below the unused ones: near-black with a dimmed letter (about 6:1), in every style. */
+.cw-key[data-mark='gray'] {
+  background: var(--cw-key-gray);
+  color: var(--cw-key-gray-ink);
 }
 
 /* ---------- Message line ---------- */
