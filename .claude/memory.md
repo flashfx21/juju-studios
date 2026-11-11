@@ -12,7 +12,8 @@
 - 2026-11-11: Host settings has lobby style, Game choice (group vote / leader pick) and CRT scanlines. **Sound on the TV is tabled** until Julian finds commission-free music and sound files (`docs/later.md`).
 - 2026-11-11: Host settings are saved in localStorage (`juju.hostSettings`) for now.
 - 2026-11-11: **Style is personal** (Julian's call, launch requirement): each phone shows its own user's style, the TV shows the host's. Changed on the phone Profile screen ("Your style" row). Before sign-in, a phone uses its last style. This replaces the design's "host style restyles every screen". When profiles exist, the style is saved on the profile; until then per device. Code still keeps style in `useHostSettings`; split it into a personal setting when Profile is built.
-- 2026-11-11: All screens must exist in all three styles. Gaps (phone lobby for game-show and arcade, Profile style row, loading states, room full, focus states) go to Claude Design first via `docs/juju-design-gaps-handoff.md`; build after the design comes back.
+- 2026-11-11: All screens must exist in all three styles. The gaps handoff (`docs/handoffs/juju-design-gaps-handoff.md`) came back as a design update (34 screens per style). It did not include the Profile "Your style" row or the Host settings wording change; Julian chose to have me extrapolate those.
+- 2026-11-11: Host settings gained a Room Open/Locked toggle in the design. Not built until rooms exist (same reason as Sound).
 - 2026-11-11: All 12 games are "coming soon" (`src/games/lineup.ts`). The picker fills its six large slots with a large version of each style's coming-soon look, in each game's own tile color (`src/ui/gameTileColors.ts`). That large look is an extrapolation; the design only draws large playable tiles.
 - 2026-11-11: No QR codes yet (Julian's call): screens show the real site address instead. A QR library would be a new dependency.
 - 2026-11-11: Sign-in and Join are UI only. Forms validate, then move on; every such screen shows a "Preview: isn't connected yet" note. Both sign-in forms (email link and password) are built because the method is still open. Join sends you to "Check your email"; the email is kept in sessionStorage (`juju.pendingEmail`) to show there.
@@ -39,7 +40,7 @@
 - Next options: a first playable game wired as a live example (Julian wants this eventually), more designed screens (waiting room, leaderboard, instructions, pause, game over, errors), or step 2 Firebase once sign-in is decided.
 - Not created yet, by design: `firebase.json`, `database.rules.json` (step 2); `src/games/registry.ts` and `_template/` contents (step 6, cartridge contract).
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).
-- Waiting on Claude Design: the design gaps handoff (`docs/juju-design-gaps-handoff.md`).
+- Design handoffs live in `docs/handoffs/`.
 - Game branches `game/dial-it-in` and `game/chainword` live in worktrees `../juju-studios-dial-it-in` and `../juju-studios-chainword`. As of Nov 11 both had no commits and nothing pushed, each with its own `src/games/types.ts` (they differ) and Vitest added separately. Suggested fix: one contract and Vitest on main first, then rebase both.
 - No unit test runner yet. Vitest is "Proposed" in the tech stack doc and needs Julian's OK as a new dependency.
 
