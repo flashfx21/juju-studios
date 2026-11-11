@@ -5,7 +5,9 @@ import { GameVote } from './app/GameVote'
 import { HostOrJoinPhone, HostOrJoinTv } from './app/HostOrJoin'
 import { HostSettings } from './app/HostSettings'
 import { HostSignInTv } from './app/HostSignInTv'
+import { Join } from './app/Join'
 import { LobbyPlaceholder } from './app/LobbyPlaceholder'
+import { SignIn } from './app/SignIn'
 import { useHashRoute, type Route } from './app/useHashRoute'
 import { useHostSettings, type HostSettings as Settings } from './app/useHostSettings'
 import { LobbyStyleContext } from './ui/themes/useLobbyStyle'
@@ -29,7 +31,11 @@ function CurrentScreen({ route, kind, settings, updateSettings }: ScreenProps) {
         <GameVote gameChoice={settings.gameChoice} />
       )
     case 'host':
-      return <HostSignInTv />
+      return kind === 'tv' ? <HostSignInTv /> : <SignIn step="" />
+    case 'sign-in':
+      return <SignIn step={route.step} />
+    case 'join':
+      return <Join />
     case 'lobby':
       return <LobbyPlaceholder />
     default:

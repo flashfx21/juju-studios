@@ -100,6 +100,8 @@
 }
 
 :root[data-theme='rec-room'] .phone-frame__card-body {
+  /* Gold focus rings are too faint on the cream card; use the card's navy ink. */
+  --focus-ring: var(--color-text-on-surface);
   position: relative;
   flex: 1;
   display: flex;

@@ -2,13 +2,27 @@
 
 Phone party games for family and friends. One shared screen (TV or laptop) hosts, and everyone joins on their phone with a room code.
 
-Live site: https://flashfx21.github.io/juju-studios/ (currently a holding page; no games yet).
+Live site: https://flashfx21.github.io/juju-studios/ (screens only for now: no backend, no playable games yet).
 
 ## What works so far
 
-- **Holding page** (`#/`): studio name, a Host settings button, and the build version.
-- **Host settings** (`#/settings`): pick the lobby style (retro game show, 90s arcade, 70s rec room) and turn the arcade CRT scanlines on or off. Every screen restyles at once. Choices are saved in this browser until rooms exist.
+Screens are built from the lobby design (`docs/design/`) in all three styles: retro game show, 90s arcade, 70s rec room. The same address shows the TV version on wide landscape windows (900px and up) and the phone version everywhere else.
+
+| Screen | Address | TV | Phone |
+|---|---|---|---|
+| Host or join (front door) | `#/` | Host a game / Join a game | Join, Host, Sign in |
+| Host sign-in | `#/host` | "Finish on your phone" | Sign-in form |
+| Sign in | `#/sign-in`, `/password`, `/sent`, `/expired` | | Email link, password, check your email, link expired |
+| Join (profile setup) | `#/join` | | Room code, username, email, color (arcade adds initials) |
+| Lobby placeholder | `#/lobby` | Links to the game picker and Host settings, plus the version | same |
+| Game picker | `#/picker` | Full lineup, all coming soon | Coming-soon list, nothing to vote on |
+| Host settings | `#/settings` | Lobby style, game choice (group vote / leader pick), CRT scanlines | |
+
+- Sign-in and joining are **not connected yet**: forms check their fields and move on, but nothing is sent. Each screen says so.
+- Host settings are saved in this browser until rooms exist.
+- Addresses stand in for the design's QR codes (see `docs/later.md`).
 - TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.
+- The game lineup is `src/games/lineup.ts`. Every game is "coming soon".
 
 ## Run it locally
 
@@ -30,12 +44,13 @@ Every push to `main` runs `.github/workflows/deploy.yml`, which lints, builds an
 
 ```
 src/
-  app/            screens and routing (holding page, Host settings), later sign-in and profile
+  app/            screens, routing, settings and form checks
   engine/         rooms, presence, timer, voting, turns, teams, scoring, results
     net/          the only code that talks to the backend (Firebase)
-  ui/             shared pieces, e.g. TvStage (the scaled 1280x720 TV frame)
+  ui/             shared pieces: TvStage (scaled TV frame), TvHeader, PhoneFrame, GameTile, form fields
     themes/       design tokens and the list of lobby styles
   games/
+    lineup.ts     the 12 games shown in the picker, with status
     _template/    starting point for a new game
     no-filler/    one folder per game
 packs/            content packs, one folder per game
