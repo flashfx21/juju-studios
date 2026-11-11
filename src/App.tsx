@@ -1,4 +1,4 @@
-// ABOUTME: Top-level screen switch: applies the host's settings and shows the screen named in the URL hash.
+// ABOUTME: Top-level screen switch: applies this person's style and the host's settings, then shows the screen in the URL hash.
 // ABOUTME: Screens with a TV and a phone version pick one by screen shape (see useScreenKind).
 import { ChainwordPractice } from './app/ChainwordPractice'
 import { GamePicker } from './app/GamePicker'
@@ -8,9 +8,12 @@ import { HostSettings } from './app/HostSettings'
 import { HostSignInTv } from './app/HostSignInTv'
 import { Join } from './app/Join'
 import { LobbyPlaceholder } from './app/LobbyPlaceholder'
+import { Profile } from './app/Profile'
 import { SignIn } from './app/SignIn'
 import { useHashRoute, type Route } from './app/useHashRoute'
 import { useHostSettings, type HostSettings as Settings } from './app/useHostSettings'
+import { useMyStyle } from './app/useMyStyle'
+import type { LobbyStyleId } from './ui/themes/lobbyStyles'
 import { LobbyStyleContext } from './ui/themes/useLobbyStyle'
 import { useScreenKind, type ScreenKind } from './ui/useScreenKind'
 
@@ -19,12 +22,16 @@ interface ScreenProps {
   kind: ScreenKind
   settings: Settings
   updateSettings: (change: Partial<Settings>) => void
+  style: LobbyStyleId
+  setStyle: (style: LobbyStyleId) => void
 }
 
-function CurrentScreen({ route, kind, settings, updateSettings }: ScreenProps) {
+function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle }: ScreenProps) {
   switch (route.screen) {
     case 'settings':
-      return <HostSettings settings={settings} onChange={updateSettings} />
+      return <HostSettings settings={settings} onChange={updateSettings} style={style} onStyleChange={setStyle} />
+    case 'profile':
+      return <Profile style={style} onStyleChange={setStyle} />
     case 'picker':
       return kind === 'tv' ? (
         <GamePicker gameChoice={settings.gameChoice} />
@@ -47,13 +54,21 @@ function CurrentScreen({ route, kind, settings, updateSettings }: ScreenProps) {
 }
 
 function App() {
+  const [style, setStyle] = useMyStyle()
   const [settings, updateSettings] = useHostSettings()
   const route = useHashRoute()
   const kind = useScreenKind()
 
   return (
-    <LobbyStyleContext.Provider value={settings.style}>
-      <CurrentScreen route={route} kind={kind} settings={settings} updateSettings={updateSettings} />
+    <LobbyStyleContext.Provider value={style}>
+      <CurrentScreen
+        route={route}
+        kind={kind}
+        settings={settings}
+        updateSettings={updateSettings}
+        style={style}
+        setStyle={setStyle}
+      />
     </LobbyStyleContext.Provider>
   )
 }

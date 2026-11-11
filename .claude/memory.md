@@ -10,7 +10,11 @@
 - 2026-11-11: TV or phone version is chosen by screen shape: landscape and 900px+ wide is TV (`src/ui/useScreenKind.ts`). Julian's call over separate links.
 - 2026-11-11: TV screens are laid out at the designed 1280x720 inside `TvStage` and scaled to fit (letterboxed). Phone screens are fluid up to 430px (`PhoneFrame`).
 - 2026-11-11: Host settings has lobby style, Game choice (group vote / leader pick) and CRT scanlines. **Sound on the TV is tabled** until Julian finds commission-free music and sound files (`docs/later.md`).
-- 2026-11-11: Host settings are saved in localStorage (`juju.hostSettings`) for now. When rooms exist, the host's settings should move into the room so phones follow the host's style.
+- 2026-11-11: Host settings are saved in localStorage (`juju.hostSettings`) for now.
+- 2026-11-11: **Style is personal** (Julian's call, launch requirement): each phone shows its own user's style, the TV shows the host's. Changed on the phone Profile screen ("Your style" row). Before sign-in, a phone uses its last style. This replaces the design's "host style restyles every screen". When profiles exist, the style is saved on the profile; until then per device in `juju.myStyle` (`src/app/useMyStyle.ts`, which also carries over the earlier `juju.hostSettings.style`). Host settings' style cards set the same personal style; the heading reads "Your style · the TV and your phone".
+- 2026-11-11: Profile (`#/profile`) is built from the design plus an extrapolated "Your style" row (small `StyleCards`, shared with Host settings). Join saves a local profile (`juju.profile`: username, initials, color, email) so Profile has real data; no Verified badge and stats show 0 until the backend exists. In the rec-room phone card the "In use" ring is orange and focus is navy, since cream and walnut both blend in.
+- 2026-11-11: All screens must exist in all three styles. The gaps handoff (`docs/handoffs/juju-design-gaps-handoff.md`) came back as a design update (34 screens per style). It did not include the Profile "Your style" row or the Host settings wording change; Julian chose to have me extrapolate those.
+- 2026-11-11: Host settings gained a Room Open/Locked toggle in the design. Not built until rooms exist (same reason as Sound).
 - 2026-11-11: All 12 games are "coming soon" (`src/games/lineup.ts`). The picker fills its six large slots with a large version of each style's coming-soon look, in each game's own tile color (`src/ui/gameTileColors.ts`). That large look is an extrapolation; the design only draws large playable tiles.
 - 2026-11-11: No QR codes yet (Julian's call): screens show the real site address instead. A QR library would be a new dependency.
 - 2026-11-11: Sign-in and Join are UI only. Forms validate, then move on; every such screen shows a "Preview: isn't connected yet" note. Both sign-in forms (email link and password) are built because the method is still open. Join sends you to "Check your email"; the email is kept in sessionStorage (`juju.pendingEmail`) to show there.
@@ -41,7 +45,9 @@
 - Next options: a first playable game wired as a live example (Julian wants this eventually), more designed screens (waiting room, leaderboard, instructions, pause, game over, errors), or step 2 Firebase once sign-in is decided.
 - Not created yet, by design: `firebase.json`, `database.rules.json` (step 2); `src/games/registry.ts` and `_template/` contents (step 6, cartridge contract).
 - Open decisions blocking step 2: sign-in method (tech stack doc section 9, A to D).
-- Vitest installed. Chainword rules, tests and one-player practice phone screen done on branch game/chainword; TV screen and Instructions not started.
+- Vitest installed (`npm test`). Chainword rules, tests and one-player practice phone screen done on branch game/chainword; TV screen and Instructions not started.
+- Design handoffs live in `docs/handoffs/`.
+- Game branches `game/dial-it-in` and `game/chainword` live in worktrees `../juju-studios-dial-it-in` and `../juju-studios-chainword`. Both are pushed. Each added Vitest and its own `src/games/types.ts` (they differ). Dial It In is paused by Julian until the contract is settled; its pause note recommends adopting Chainword's contract.
 
 ## Development Log
 ### Week of 2026-11-09

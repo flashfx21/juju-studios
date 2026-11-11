@@ -100,8 +100,10 @@
 }
 
 :root[data-theme='rec-room'] .phone-frame__card-body {
-  /* Gold focus rings are too faint on the cream card; use the card's navy ink. */
+  /* Gold focus and cream selection rings are too faint on the cream card: use navy ink for focus,
+     and orange for "In use" (walnut would blend into the walnut rec room style card). */
   --focus-ring: var(--color-text-on-surface);
+  --selection-ring: var(--color-primary);
   position: relative;
   flex: 1;
   display: flex;

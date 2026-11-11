@@ -1,4 +1,4 @@
-// ABOUTME: Stand-in for the lobby until it is built: links to the game picker and Host settings, plus the build version.
+// ABOUTME: Stand-in for the lobby until it is built: links to the game picker, Host settings, Profile and Chainword practice, plus the version.
 // ABOUTME: Restyles with the active lobby style through the theme tokens.
 import packageInfo from '../../package.json'
 import { href } from './useHashRoute'
@@ -15,6 +15,9 @@ export function LobbyPlaceholder() {
         </a>
         <a className="lobby-placeholder__button" href={href('settings')} data-testid="open-host-settings">
           Host settings
+        </a>
+        <a className="lobby-placeholder__button" href={href('profile')} data-testid="open-profile">
+          Your profile
         </a>
         <a className="lobby-placeholder__button" href={href('practice', 'chainword')} data-testid="open-chainword-practice">
           Practice Chainword
