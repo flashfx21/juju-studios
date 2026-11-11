@@ -32,6 +32,7 @@
 - 2026-11-11: Chainword level 1 playtest (Julian): no backend. A chain code (4 consonants + letters per word + words in chain, e.g. KPDT53) seeds the deal, so every phone gets the same chain; players compare totals out loud. Word length is a setting: 4, 5, 6 or 7, default 5. 6 guesses at every length. End game counts the current word and every unreached word as 7.
 - 2026-11-11: Chainword word lists: answers curated by hand per length (`packs/chainword/answers.json`); accepted guesses from ENABLE (public domain) plus answers (`guesses.json`, one string per length). ENABLE was downloaded once; the build script is not kept in the repo.
 - 2026-11-11: No database work yet, and PC-as-player is on hold (Julian). Phone playtest first.
+- 2026-11-11: Chainword phone play screen: on-screen QWERTY keyboard fills the boxes (no text box), keys colored per current word, chain progress bar, result panel after each word, End game is a modal dialog. Game screens use `PhoneFrame fit` (exactly one screen tall, `100dvh`, no scroll); the board sizes tiles with container query units.
 - Working rules in effect: W1, W3, W5, W6 (recorded in CLAUDE.md).
 
 ## Preferences
@@ -39,6 +40,8 @@
 - Julian prefers getting to visible UI early rather than waiting on backend decisions.
 
 ## Lessons Learned
+- Chainword's rules advance to the next word the moment a word is done, so any "how did that word go" view has to be held by the screen (PhoneScreen keeps a review index). That was the missing feedback on the last guess.
+- Headless Edge test runs: give each run its own debugging port and kill the whole process tree (`taskkill /T /F`), or the next run attaches to a dead browser. A full Chainword run can take over 90 seconds on this PC; keep safety timers well above that.
 - Don't put JS template literals (backticks) inside `node -e "..."` in the Bash tool: bash runs them as commands and silently blanks the text. Write the edit script to a file in the scratchpad instead.
 - Most repo files use CRLF line endings; scripted find-and-replace must match `\r\n` (or normalize first).
 - Headless Edge screenshots below about 500px wide are clipped by its minimum window size. Set the viewport over the DevTools protocol instead (`Emulation.setDeviceMetricsOverride`).
