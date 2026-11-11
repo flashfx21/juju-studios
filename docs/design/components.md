@@ -153,6 +153,43 @@ Status labels on screens ("New", "Host's pick", "Expired", "Locked", "No such ro
 - arcade: carpet texture, 72–104 high, black message box with a blinking cursor.
 - rec-room: shag rug, 96 high, with handwritten captions and buttons sitting over it.
 
+## Focus ring (TV remote)
+Drawn on the focused tile only, never on others. It works alongside the existing leading / host-pick markers. Token: `shadow.focus`.
+
+| | Ring | Hint |
+|---|---|---|
+| game-show | `0 0 0 5px #FFF6D6, 0 0 0 9px #0B1533`, 9 outside the tile | Cream "OK to open" tag, top-left, `font.label` 18 |
+| arcade | `0 0 0 4px #22E4FF` + cyan glow, 7 outside the cabinet | Blinking "▲ OK" under the cabinet, `font.label` 11 |
+| rec-room | `0 0 0 4px #F3EBD3, 0 0 0 8px #3D2716`, radius 8 | Handwritten "OK to open ↓" above the box, `font.body` 28 |
+
+Key hints replace the footer: key caps (◀ ▶ ▲ ▼, OK, Back) followed by labels.
+
+## Spin highlight (tie / no votes)
+A brighter ring plus a glow that moves from tile to tile every `motion.spin` (170ms), then holds on the winner. Banner text sits in the footer (game-show, arcade) or on a note card top-right (rec-room).
+- game-show: `0 0 0 6px #FFF6D6, 0 0 40px 10px rgba(255,246,214,.75)`
+- arcade: `0 0 0 4px #FFE600, 0 0 50px 12px rgba(255,230,0,.55)`
+- rec-room: `0 0 0 5px #F3EBD3, 0 0 36px 8px rgba(255,214,150,.7)`
+
+## Loader
+`motion.loader`: a 1s steps(1) blink, staggered across the items.
+- game-show: 3 bulbs (16 on phone, 24 on TV), `color.primary` on cue cards and bulb white on the TV, 0.33s apart.
+- arcade: "LOADING" (`font.label`) + 5–6 yellow blocks (12 / 18), 0.2s apart.
+- rec-room: 3 dots in gold / orange / avocado (16 / 22), 0.33s apart.
+
+Accessible label: "Loading".
+
+## Room locked stamp
+On the lobby room code while the room is locked.
+- game-show: red rotated stamp, `font.display` 28.
+- arcade: red block "LOCKED", `font.label` 14.
+- rec-room: orange sticker "LOCKED", `font.display` 22.
+
+## Empty leaderboard
+The column headers stay. Message per style:
+- game-show: four "0" tote digits + "No scores yet".
+- arcade: "NO HIGH SCORES YET" + a blinking cursor line.
+- rec-room: handwritten "Nobody's on the board yet".
+
 ---
 
 ## Signature components

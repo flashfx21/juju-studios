@@ -2,6 +2,9 @@
 /* Ranged type sizes are exposed as -min / -max. null tokens are omitted. */
 
 [data-theme="game-show"] {
+  --shadow-focus: 0 0 0 5px #FFF6D6, 0 0 0 9px #0B1533;
+  --motion-spin-duration: 170ms;
+  --motion-loader-duration: 1s;
   --color-background: #12204A;
   --color-surface: #0B1533;
   --color-surface-raised: #1A2B5E;
@@ -110,6 +113,9 @@
 }
 
 [data-theme="arcade"] {
+  --shadow-focus: 0 0 0 4px #22E4FF, 0 0 30px rgba(34,228,255,.6);
+  --motion-spin-duration: 170ms;
+  --motion-loader-duration: 1s;
   --color-background: #07060B;
   --color-surface: #111019;
   --color-surface-raised: #16141E;
@@ -219,6 +225,9 @@
 }
 
 [data-theme="rec-room"] {
+  --shadow-focus: 0 0 0 4px #F3EBD3, 0 0 0 8px #3D2716;
+  --motion-spin-duration: 170ms;
+  --motion-loader-duration: 1s;
   --color-background: #5A3A22;
   --color-surface: #F3EBD3;
   --color-surface-raised: #FBF6E8;
