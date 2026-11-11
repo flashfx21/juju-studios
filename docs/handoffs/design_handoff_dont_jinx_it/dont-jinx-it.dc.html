@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Bebas+Neue&family=Oswald:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E4E1DA;}
+a{color:#12204A;}a:hover{color:#F0592A;}
+button:focus-visible,input:focus-visible{outline:3px solid #FFF6D6;outline-offset:3px;}
+@keyframes bulb{0%{opacity:1}50%{opacity:.25}}
+</style>
+</helmet>
+<section style="padding:12px 40px 60px;display:flex;flex-direction:column;gap:10px;box-sizing:border-box;font-family:'Courier Prime',monospace;color:#3b3830;">
+  <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;">
+    <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#5c574d;">JuJu Studios · Game 12 · Don't Jinx It · Team mode · Retro game show</div>
+    <div role="group" aria-label="Screen" style="display:flex;flex-wrap:wrap;gap:2px;padding:3px;background:#D6D2C9;border-radius:7px;">
+      <sc-for list="{{ nav }}" as="b" hint-placeholder-count="9"><button type="button" onClick="{{ b.onClick }}" aria-pressed="{{ b.on }}" style="border:0;margin:0;padding:8px 12px;border-radius:5px;background:{{ b.bg }};color:{{ b.fg }};font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;min-height:36px;">{{ b.label }}</button></sc-for>
+    </div>
+  </div>
+  <sc-if value="{{ hasSubs }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;">
+      <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#5c574d;">{{ subLabel }}</div>
+      <div role="group" aria-label="State" style="display:flex;flex-wrap:wrap;gap:2px;padding:3px;background:#D6D2C9;border-radius:7px;">
+        <sc-for list="{{ subs }}" as="b" hint-placeholder-count="7"><button type="button" onClick="{{ b.onClick }}" aria-pressed="{{ b.on }}" aria-disabled="{{ b.dis }}" style="border:0;margin:0;padding:6px 10px;border-radius:5px;background:{{ b.bg }};color:{{ b.fg }};opacity:{{ b.op }};font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;min-height:32px;">{{ b.label }}</button></sc-for>
+      </div>
+      <sc-if value="{{ isPile }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:2px;padding:3px;background:#D6D2C9;border-radius:7px;">
+          <button type="button" onClick="{{ playDrop }}" style="border:0;margin:0;padding:6px 12px;border-radius:5px;background:#2d2a24;color:#F6E7C8;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;min-height:32px;">{{ playLabel }}</button>
+          <button type="button" onClick="{{ toggleScen }}" aria-pressed="{{ isShut }}" style="border:0;margin:0;padding:6px 12px;border-radius:5px;background:{{ shutBg }};color:{{ shutFg }};font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;min-height:32px;">Shutout run</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isRejected }}" hint-placeholder-val="{{ false }}">
+        <div role="group" aria-label="Reason" style="display:flex;flex-wrap:wrap;gap:2px;padding:3px;background:#D6D2C9;border-radius:7px;">
+          <sc-for list="{{ reasons }}" as="b" hint-placeholder-count="4"><button type="button" onClick="{{ b.onClick }}" aria-pressed="{{ b.on }}" style="border:0;margin:0;padding:6px 10px;border-radius:5px;background:{{ b.bg }};color:{{ b.fg }};font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;min-height:32px;">{{ b.label }}</button></sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <div style="font-size:13px;line-height:1.45;max-width:1100px;text-wrap:pretty;">{{ note }}</div>
+
+  <div ref="{{ outerRef }}" style="width:100%;margin-top:6px;">
+    <div style="width:{{ sw }};height:{{ sh }};margin:0 auto;">
+      <div style="width:1280px;transform:scale({{ scale }});transform-origin:0 0;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-weight:700;font-size:26px;letter-spacing:.06em;color:#3b3830;">BIG SCREEN · {{ tvLabel }}</div>
+
+        <div data-screen-label="{{ tvLabel }}" style="position:relative;width:1280px;height:720px;overflow:hidden;background:#12204A;color:#F6E7C8;font-family:Oswald,sans-serif;">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% -15%, rgba(255,246,214,.16), rgba(255,246,214,0) 70%);"></div>
+          <div style="position:absolute;left:40px;right:40px;top:22px;height:90px;display:flex;align-items:center;justify-content:space-between;gap:20px;">
+            <div style="display:flex;align-items:center;gap:22px;"><div style="font-family:Shrikhand,serif;font-size:30px;color:#12204A;background:#F2B630;padding:6px 16px 10px;">JuJu Studios</div><div style="font-family:Shrikhand,serif;font-size:48px;color:#F6E7C8;">{{ tvTitle }}</div></div>
+            <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:.08em;color:#F2B630;text-align:right;">{{ tvRight }}</div>
+          </div>
+          <div style="position:absolute;left:40px;top:128px;width:1200px;height:458px;box-sizing:border-box;background:#0B1533;box-shadow:0 0 0 4px #F2B630, 0 0 0 10px #0B1533;">
+
+            <sc-if value="{{ tv.T1 }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;box-sizing:border-box;padding:24px 34px 26px;display:grid;grid-template-columns:minmax(0,1fr) 430px;gap:36px;">
+                <div style="display:flex;flex-direction:column;gap:13px;min-width:0;">
+                  <div style="font-family:Shrikhand,serif;font-size:52px;line-height:1.1;color:#FFF6D6;text-shadow:4px 4px 0 #F0592A;">Don't Jinx It</div>
+                  <sc-for list="{{ steps4 }}" as="st" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:18px;"><div style="flex:none;width:44px;height:44px;border-radius:50%;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:27px;display:flex;align-items:center;justify-content:center;">{{ st.n }}</div><div style="font-size:23px;line-height:1.25;text-wrap:pretty;">{{ st.text }}</div></div>
+                  </sc-for>
+                  <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.05em;color:#F2B630;">Correct guess: guessing team +1 · Miss or pass: defense +1 · Team games split 80 / 20</div>
+                  <div style="margin-top:auto;align-self:flex-start;background:#C2302B;color:#FFF6D6;padding:8px 18px 11px;font-family:Shrikhand,serif;font-size:23px;transform:rotate(-1deg);box-shadow:4px 4px 0 #12204A;">Table rule: react, but don't say any words.</div>
+                </div>
+                <div style="background:#F6E7C8;color:#12204A;transform:rotate(-1deg);box-shadow:6px 8px 0 rgba(0,0,0,.3);padding:16px 22px 20px;display:flex;flex-direction:column;gap:12px;">
+                  <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.14em;border-bottom:2px solid #E0473A;padding-bottom:6px;">Game settings · host</div>
+                  <div style="display:flex;flex-direction:column;gap:6px;"><div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.12em;">Mode</div>
+                    <div role="group" aria-label="Mode" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><sc-for list="{{ modeOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.on }}" style="border:0;margin:0;cursor:pointer;height:46px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:inset 0 0 0 2px #12204A;font-family:'Bebas Neue';font-size:24px;letter-spacing:.08em;">{{ o.label }}</button></sc-for></div></div>
+                  <div style="display:flex;flex-direction:column;gap:6px;"><div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.12em;">Pace · write / guess</div>
+                    <div role="group" aria-label="Pace" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;"><sc-for list="{{ paceOpts }}" as="o" hint-placeholder-count="3"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.on }}" style="border:0;margin:0;cursor:pointer;height:58px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:inset 0 0 0 2px #12204A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;"><span style="font-family:'Bebas Neue';font-size:23px;letter-spacing:.06em;line-height:1;">{{ o.label }}</span><span style="font-family:Oswald;font-size:15px;line-height:1.1;">{{ o.sub }}</span></button></sc-for></div></div>
+                  <button type="button" role="checkbox" aria-checked="{{ longOn }}" onClick="{{ toggleLong }}" style="border:0;margin:0;padding:0;background:none;color:#12204A;cursor:pointer;display:flex;align-items:center;gap:12px;min-height:44px;text-align:left;"><span style="flex:none;width:30px;height:30px;box-shadow:inset 0 0 0 2px #12204A;background:{{ longBg }};color:#FFF6D6;font-family:'Bebas Neue';font-size:26px;line-height:30px;text-align:center;">{{ longMark }}</span><span style="font-family:Oswald;font-size:18px;line-height:1.2;"><b style="font-weight:600;">Long game</b> · Everyone guesses twice</span></button>
+                  <div style="margin-top:auto;background:#12204A;color:#F6E7C8;font-family:'Bebas Neue';font-size:24px;letter-spacing:.06em;padding:8px 12px 5px;text-align:center;">{{ settingsLine }}</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tv.T2 }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;box-sizing:border-box;padding:24px 40px 22px;display:flex;flex-direction:column;gap:16px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:44px;flex:1;">
+                  <sc-for list="{{ teams }}" as="t" hint-placeholder-count="2">
+                    <div style="display:flex;flex-direction:column;gap:9px;">
+                      <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px;"><div style="display:inline-flex;align-items:center;gap:10px;height:48px;padding:2px 18px 0;font-family:'Bebas Neue';font-size:30px;letter-spacing:.1em;background:{{ t.tbg }};color:{{ t.tink }};box-shadow:inset 0 0 0 3px #F6E7C8;"><span style="font-family:Oswald;font-size:22px;">{{ t.tshape }}</span>{{ t.tname }}</div><div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.1em;color:#F2B630;">{{ t.count }}</div></div>
+                      <sc-for list="{{ t.players }}" as="pl" hint-placeholder-count="4">
+                        <div style="display:flex;align-items:center;gap:14px;height:50px;padding:0 14px;background:#1A2B5E;box-shadow:inset 0 -6px 0 rgba(0,0,0,.2);"><div style="flex:none;width:36px;height:36px;border-radius:50%;background:{{ pl.c }};color:{{ pl.ink }};font-family:'Bebas Neue';font-size:19px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">{{ pl.i2 }}</div><div style="font-family:Shrikhand,serif;font-size:26px;line-height:1;">{{ pl.name }}</div></div>
+                      </sc-for>
+                      <sc-if value="{{ t.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-family:'Bebas Neue';font-size:23px;letter-spacing:.06em;color:#F2B630;margin-top:4px;">{{ t.note }}</div></sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="text-align:center;font-family:Shrikhand,serif;font-size:50px;line-height:1.05;color:#FFF6D6;text-shadow:4px 4px 0 #F0592A;">{{ firstLine }}</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tv.T3 }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;box-sizing:border-box;padding:28px 44px;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:40px;">
+                <div style="display:flex;flex-direction:column;gap:16px;">
+                  <div style="display:flex;align-items:center;gap:14px;"><div style="display:inline-flex;align-items:center;gap:10px;height:44px;padding:2px 16px 0;font-family:'Bebas Neue';font-size:27px;letter-spacing:.1em;background:#F6E7C8;color:#12204A;"><span style="font-family:Oswald;font-size:20px;">●</span>{{ nA }}</div><div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:.1em;color:#F2B630;">{{ isGuessingWord }} guessing</div></div>
+                  <div style="display:flex;align-items:center;gap:28px;"><div style="flex:none;width:140px;height:140px;border-radius:50%;background:#F2B630;color:#12204A;font-family:'Bebas Neue';font-size:72px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 5px #12204A, 0 0 0 9px #F2B630;">GG</div><div style="font-family:Shrikhand,serif;font-size:92px;line-height:1;color:#FFF6D6;text-shadow:5px 5px 0 #F0592A;">GeeGee</div></div>
+                  <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;">
+                    <div style="align-self:flex-start;background:#F6E7C8;color:#12204A;font-family:Shrikhand,serif;font-size:28px;padding:6px 18px 10px;">GeeGee: eyes on the TV.</div>
+                    <div style="align-self:flex-start;box-shadow:inset 0 0 0 3px #F6E7C8;color:#F6E7C8;font-family:Shrikhand,serif;font-size:28px;padding:6px 18px 10px;">Everyone else: check your phone.</div>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;justify-content:center;">
+                  <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.16em;color:#F2B630;">Score</div>
+                  <sc-for list="{{ scoreRows }}" as="r" hint-placeholder-count="2">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;height:84px;padding:0 16px;background:#1A2B5E;box-shadow:inset 0 -6px 0 rgba(0,0,0,.2);"><div style="display:inline-flex;align-items:center;gap:8px;height:40px;padding:2px 14px 0;font-family:'Bebas Neue';font-size:24px;letter-spacing:.1em;background:{{ r.tbg }};color:{{ r.tink }};box-shadow:inset 0 0 0 2px #F6E7C8;"><span style="font-family:Oswald;font-size:17px;">{{ r.tshape }}</span>{{ r.tname }}</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:60px;line-height:1;padding:6px 16px 0;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);">{{ r.pts }}</div></div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tv.T4 }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;box-sizing:border-box;padding:24px 32px;display:grid;grid-template-columns:290px minmax(0,1fr);gap:34px;">
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.16em;color:#F2B630;">Writing closes</div>
+                  <div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:124px;line-height:1;padding:10px 0 0;text-align:center;box-shadow:inset 0 -8px 0 rgba(0,0,0,.18);">{{ t4.timer }}</div>
+                  <div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:.04em;line-height:1.1;">{{ t4.counts }}</div>
+                  <sc-if value="{{ t4.allIn }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;background:#F2B630;color:#12204A;font-family:Shrikhand,serif;font-size:32px;padding:4px 18px 9px;transform:rotate(-3deg);box-shadow:4px 4px 0 #12204A;">Everyone's in</div></sc-if>
+                  <div style="margin-top:auto;font-size:19px;line-height:1.3;color:#F6E7C8;">Ends early when everyone's in.</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:20px;min-width:0;">
+                  <sc-for list="{{ t4.lanes }}" as="ln" hint-placeholder-count="2">
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                      <div style="display:flex;align-items:center;gap:12px;"><div style="display:inline-flex;align-items:center;gap:8px;height:38px;padding:2px 14px 0;font-family:'Bebas Neue';font-size:23px;letter-spacing:.1em;background:{{ ln.tbg }};color:{{ ln.tink }};box-shadow:inset 0 0 0 2px #F6E7C8;"><span style="font-family:Oswald;font-size:16px;">{{ ln.tshape }}</span>{{ ln.tname }}</div><div style="font-family:'Bebas Neue';font-size:23px;letter-spacing:.1em;color:#F2B630;">{{ ln.what }}</div></div>
+                      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;">
+                        <sc-for list="{{ ln.tiles }}" as="tl" hint-placeholder-count="4">
+                          <div style="height:132px;box-sizing:border-box;background:#1A2B5E;padding:12px;display:flex;flex-direction:column;gap:10px;opacity:{{ tl.op }};box-shadow:inset 0 -6px 0 rgba(0,0,0,.2);">
+                            <div style="display:flex;align-items:center;gap:10px;min-width:0;"><div style="flex:none;width:34px;height:34px;border-radius:50%;background:{{ tl.c }};color:{{ tl.ink }};font-family:'Bebas Neue';font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">{{ tl.i2 }}</div><div style="font-family:Shrikhand,serif;font-size:21px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ tl.name }}</div></div>
+                            <sc-if value="{{ tl.guessing }}" hint-placeholder-val="{{ false }}"><div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:.08em;color:#F2B630;line-height:1;">Guessing</div><div style="font-size:16px;line-height:1.2;">Eyes on the TV</div></sc-if>
+                            <sc-if value="{{ tl.writer }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:8px;"><sc-for list="{{ tl.ticks }}" as="tk" hint-placeholder-count="2"><div style="width:40px;height:40px;background:{{ tk.bg }};box-shadow:inset 0 0 0 2px #F6E7C8;color:#12204A;font-family:Oswald;font-weight:600;font-size:24px;display:flex;align-items:center;justify-content:center;">{{ tk.mark }}</div></sc-for></div></sc-if>
+                            <sc-if value="{{ tl.dc }}" hint-placeholder-val="{{ false }}"><div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.06em;line-height:1.1;">Disconnected · counts as blank</div></sc-if>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tv.T6 }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;box-sizing:border-box;padding:20px 26px 18px;display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;"><div style="font-family:'Bebas Neue';font-size:25px;letter-spacing:.14em;color:#F2B630;">The clue drop · 6 clues from {{ nA }}</div><div style="font-family:'Bebas Neue';font-size:25px;letter-spacing:.1em;">No words until the reveal</div></div>
+                <div style="display:flex;justify-content:center;gap:18px;padding-top:24px;">
+                  <sc-for list="{{ cards }}" as="c" hint-placeholder-count="6">
+                    <div style="position:relative;width:172px;height:236px;perspective:1000px;transform:{{ c.landT }};opacity:{{ c.landO }};transition:{{ c.tr }};">
+                      <div style="position:absolute;inset:0;transform-style:preserve-3d;transform:{{ c.flipT }};transition:{{ c.trFlip }};">
+                        <div style="position:absolute;inset:0;backface-visibility:hidden;background:repeating-linear-gradient(135deg,#1A2B5E 0 12px,#22356E 12px 24px);box-shadow:inset 0 0 0 4px #F2B630, inset 0 -10px 0 rgba(0,0,0,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;">
+                          <div style="font-family:Shrikhand,serif;font-size:70px;line-height:1;color:#F2B630;">{{ c.num }}</div>
+                          <div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.18em;color:#F6E7C8;">Clue</div>
+                        </div>
+                        <div style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);background:#F6E7C8;box-shadow:inset 0 -10px 0 rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;padding:10px;box-sizing:border-box;"><div style="font-family:Shrikhand,serif;font-size:36px;line-height:1.05;color:#12204A;text-align:center;overflow-wrap:anywhere;">{{ c.front }}</div></div>
+                      </div>
+                      <div style="position:absolute;left:-8px;right:-8px;top:40px;padding:6px 6px 8px;background:#F6E7C8;color:#C2302B;text-align:center;box-shadow:inset 0 0 0 3px #C2302B, inset 0 0 0 6px #F6E7C8, inset 0 0 0 8px #C2302B, 4px 4px 0 #0B1533;transform:{{ c.tmT }};opacity:{{ c.tmO }};transition:{{ c.trStamp }};">
+                        <div style="font-family:Shrikhand,serif;font-size:29px;line-height:1.1;">JINXED!</div>
+                        <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.04em;color:#12204A;line-height:1.1;">{{ c.tmText }}</div>
+                      </div>
+                      <div style="position:absolute;left:-8px;right:-8px;top:118px;padding:6px 6px 8px;background:#C2302B;color:#FFF6D6;text-align:center;box-shadow:inset 0 0 0 3px #FFF6D6, inset 0 0 0 6px #C2302B, inset 0 0 0 8px #FFF6D6, 4px 4px 0 #0B1533;transform:{{ c.defT }};opacity:{{ c.defO }};transition:{{ c.trStamp }};">
+                        <div style="font-family:Shrikhand,serif;font-size:29px;line-height:1.1;">JINXED!</div>
+                        <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.04em;line-height:1.1;">{{ c.defText }}</div>
+                      </div>
+                      <div style="position:absolute;left:26px;right:26px;top:-22px;background:#F2B630;color:#12204A;text-align:center;padding:2px 4px 4px;transform:rotate(-4deg);box-shadow:3px 3px 0 #0B1533;opacity:{{ c.ccO }};transition:{{ c.trStamp }};"><div style="font-family:Shrikhand,serif;font-size:30px;line-height:1;">?</div><div style="font-family:'Bebas Neue';font-size:17px;letter-spacing:.1em;">Close call</div></div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="margin-top:auto;display:flex;align-items:center;justify-content:center;gap:28px;min-height:96px;">
+                  <div style="text-align:center;display:flex;flex-direction:column;gap:4px;"><div style="font-family:Shrikhand,serif;font-size:48px;line-height:1.05;color:#FFF6D6;text-shadow:4px 4px 0 #F0592A;">{{ t6.head }}</div><div style="font-family:'Bebas Neue';font-size:26px;letter-spacing:.1em;color:#F2B630;">{{ t6.sub }}</div></div>
+                  <sc-if value="{{ t6.cc }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.14em;color:#F2B630;">Vote closes</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:52px;line-height:1;padding:6px 14px 0;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);">{{ ccTime }}</div></div></sc-if>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tv.T7 }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;box-sizing:border-box;padding:22px 30px;display:flex;flex-direction:column;gap:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;"><div style="display:flex;flex-direction:column;gap:2px;"><div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.16em;color:#F2B630;">Survived</div><div style="font-family:Shrikhand,serif;font-size:40px;line-height:1.1;">{{ survCount }}</div></div><div style="display:flex;align-items:center;gap:14px;"><div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.14em;color:#F2B630;">Guess closes</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:64px;line-height:1;padding:6px 16px 0;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);">0:45</div></div></div>
+                <sc-if value="{{ hasSurv }}" hint-placeholder-val="{{ true }}">
+                  <div style="flex:1;display:flex;justify-content:center;align-items:center;gap:24px;">
+                    <sc-for list="{{ survivors }}" as="s" hint-placeholder-count="3"><div style="flex:1 1 0;max-width:330px;height:196px;background:#F6E7C8;color:#12204A;display:flex;align-items:center;justify-content:center;font-family:Shrikhand,serif;font-size:60px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.15), 6px 8px 0 rgba(0,0,0,.3);transform:rotate({{ s.rot }});">{{ s.w }}</div></sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ isShutSurv }}" hint-placeholder-val="{{ false }}">
+                  <div style="flex:1;box-sizing:border-box;border:3px dashed rgba(246,231,200,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;"><div style="font-family:Shrikhand,serif;font-size:72px;line-height:1;color:#FFF6D6;text-shadow:4px 4px 0 #C2302B;">Shutout</div><div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:.1em;color:#F2B630;">Nothing survived · GeeGee can guess blind or pass</div></div>
+                </sc-if>
+                <div style="height:62px;background:#C2302B;display:flex;align-items:center;justify-content:center;font-family:Shrikhand,serif;font-size:34px;color:#FFF6D6;">Quiet! No hints.</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tv.T8 }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;box-sizing:border-box;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
+                <div style="background:{{ v.bg }};color:{{ v.ink }};padding:6px 52px 18px;transform:rotate(-3deg);box-shadow:inset 0 0 0 4px {{ v.ink }}, inset 0 0 0 10px {{ v.bg }}, inset 0 0 0 12px {{ v.ink }}, 8px 8px 0 #050B1F;"><div style="font-family:Shrikhand,serif;font-size:104px;line-height:1.1;">{{ v.head }}</div></div>
+                <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:.14em;color:#F2B630;margin-top:8px;">{{ v.lead }}</div>
+                <sc-if value="{{ v.hasTiles }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:8px;"><sc-for list="{{ v.tiles }}" as="l" hint-placeholder-count="5"><div style="width:62px;height:74px;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:66px;line-height:74px;text-align:center;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);">{{ l }}</div></sc-for></div></sc-if>
+                <div style="display:flex;align-items:center;gap:14px;"><div style="display:inline-flex;align-items:center;gap:8px;height:42px;padding:2px 14px 0;font-family:'Bebas Neue';font-size:25px;letter-spacing:.1em;background:{{ v.tbg }};color:{{ v.tink }};box-shadow:inset 0 0 0 2px #F6E7C8;"><span style="font-family:Oswald;font-size:17px;">{{ v.tshape }}</span>{{ v.tname }}</div><div style="font-family:Shrikhand,serif;font-size:36px;">{{ v.result }}</div></div>
+                <sc-if value="{{ v.deciding }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:22px;"><div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.12em;color:#F2B630;">Votes in</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:40px;line-height:1;padding:5px 12px 0;">1 of 3</div><div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.12em;color:#F2B630;">Closes</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:40px;line-height:1;padding:5px 12px 0;">0:10</div></div></sc-if>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tv.T9 }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;box-sizing:border-box;padding:22px 26px;display:grid;grid-template-columns:300px minmax(0,1fr);gap:28px;">
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                  <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.16em;color:#F2B630;">The word was</div>
+                  <div style="display:flex;gap:6px;"><sc-for list="{{ wordTiles }}" as="l" hint-placeholder-count="5"><div style="width:54px;height:66px;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:60px;line-height:66px;text-align:center;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);">{{ l }}</div></sc-for></div>
+                  <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.16em;color:#F2B630;margin-top:12px;">This turn</div>
+                  <div style="display:flex;align-items:center;gap:10px;"><div style="display:inline-flex;align-items:center;gap:8px;height:38px;padding:2px 12px 0;font-family:'Bebas Neue';font-size:23px;letter-spacing:.1em;background:#F6E7C8;color:#12204A;"><span style="font-family:Oswald;font-size:16px;">●</span>{{ nA }}</div><div style="font-family:Shrikhand,serif;font-size:30px;">+1 · Correct</div></div>
+                  <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.16em;color:#F2B630;margin-top:12px;">Score</div>
+                  <sc-for list="{{ scoreRowsAfter }}" as="r" hint-placeholder-count="2">
+                    <div style="display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 12px;background:#1A2B5E;"><div style="display:inline-flex;align-items:center;gap:8px;height:34px;padding:2px 12px 0;font-family:'Bebas Neue';font-size:21px;letter-spacing:.1em;background:{{ r.tbg }};color:{{ r.tink }};box-shadow:inset 0 0 0 2px #F6E7C8;"><span style="font-family:Oswald;font-size:15px;">{{ r.tshape }}</span>{{ r.tname }}</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:40px;line-height:1;padding:5px 12px 0;">{{ r.pts }}</div></div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;min-width:0;">
+                  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
+                    <sc-for list="{{ reveal }}" as="r" hint-placeholder-count="6">
+                      <div style="height:152px;box-sizing:border-box;background:{{ r.bg }};color:#12204A;padding:11px 14px;display:flex;flex-direction:column;gap:5px;box-shadow:inset 0 -7px 0 rgba(0,0,0,.15);">
+                        <div style="display:flex;align-items:center;gap:8px;"><div style="flex:none;width:26px;height:26px;border-radius:50%;background:{{ r.c }};color:{{ r.ink }};font-family:'Bebas Neue';font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">{{ r.i2 }}</div><div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.08em;">{{ r.by }}</div></div>
+                        <div style="font-family:Shrikhand,serif;font-size:36px;line-height:1.1;text-decoration:{{ r.deco }};text-decoration-thickness:3px;">{{ r.w }}</div>
+                        <sc-if value="{{ r.jinxed }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;font-family:'Bebas Neue';font-size:18px;letter-spacing:.04em;padding:3px 8px 1px;background:{{ r.sBg }};color:{{ r.sFg }};box-shadow:inset 0 0 0 2px #C2302B;transform:rotate(-1.5deg);">JINXED! · {{ r.sText }}</div></sc-if>
+                        <sc-if value="{{ r.ok }}" hint-placeholder-val="{{ true }}"><div style="align-self:flex-start;font-family:'Bebas Neue';font-size:18px;letter-spacing:.08em;padding:3px 8px 1px;background:#177A74;color:#FFF6D6;">✓ Survived</div></sc-if>
+                        <sc-if value="{{ r.cc }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;font-family:'Bebas Neue';font-size:16px;letter-spacing:.06em;padding:2px 8px 0;background:#F2B630;color:#12204A;">? Close call · {{ r.ccText }}</div></sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="background:#1A2B5E;padding:10px 16px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+                    <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.14em;color:#F2B630;">Missed jinxes</div>
+                    <sc-for list="{{ missed }}" as="m" hint-placeholder-count="1"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:none;width:28px;height:28px;border-radius:50%;background:{{ m.c }};color:{{ m.ink }};font-family:'Bebas Neue';font-size:15px;display:flex;align-items:center;justify-content:center;">{{ m.i2 }}</div><div style="font-family:Shrikhand,serif;font-size:24px;">◆ {{ m.name }} · {{ m.w }}</div></div></sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tv.T10 }}" hint-placeholder-val="{{ false }}">
+              <div style="height:100%;box-sizing:border-box;padding:18px 26px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:26px;">
+                <div style="display:flex;flex-direction:column;gap:5px;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:16px;margin-bottom:4px;"><div style="display:inline-flex;align-items:center;gap:10px;height:46px;padding:2px 16px 0;font-family:'Bebas Neue';font-size:29px;letter-spacing:.1em;background:#F6E7C8;color:#12204A;"><span style="font-family:Oswald;font-size:20px;">●</span>{{ nA }}</div><div style="font-family:Shrikhand,serif;font-size:38px;line-height:1.1;color:#FFF6D6;text-shadow:3px 3px 0 #F0592A;">{{ winsWord }} 5 to 3</div></div>
+                  <div style="display:grid;grid-template-columns:170px 1fr 200px;padding:0 14px;font-family:'Bebas Neue';font-size:19px;letter-spacing:.14em;color:#F2B630;"><div>Team</div><div>Contestant</div><div style="text-align:center;">Leaderboard points</div></div>
+                  <sc-for list="{{ overRows }}" as="r" hint-placeholder-count="7">
+                    <div style="display:grid;grid-template-columns:170px 1fr 200px;align-items:center;height:38px;padding:0 14px;background:{{ r.face }};color:{{ r.fg }};box-shadow:inset 0 -4px 0 rgba(0,0,0,.18);">
+                      <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.06em;">{{ r.team }}</div>
+                      <div style="display:flex;align-items:center;gap:10px;min-width:0;"><div style="flex:none;width:28px;height:28px;border-radius:50%;background:{{ r.c }};color:{{ r.ink }};font-family:'Bebas Neue';font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px rgba(0,0,0,.25);">{{ r.i2 }}</div><div style="font-family:Shrikhand,serif;font-size:23px;line-height:1;">{{ r.name }}</div></div>
+                      <div style="display:flex;justify-content:center;"><div style="min-width:76px;background:#12204A;color:#F2B630;font-family:'Bebas Neue';font-size:28px;line-height:1;padding:4px 10px 0;text-align:center;">{{ r.pts }}</div></div>
+                    </div>
+                  </sc-for>
+                  <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.06em;color:#F2B630;margin-top:4px;">Team games split 80 / 20 · each team's share split evenly</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <sc-for list="{{ callouts }}" as="co" hint-placeholder-count="2">
+                    <div style="background:#F6E7C8;color:#12204A;padding:10px 16px 12px;transform:rotate({{ co.rot }});box-shadow:6px 8px 0 rgba(0,0,0,.3);display:flex;flex-direction:column;gap:4px;">
+                      <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.14em;color:#C2302B;border-bottom:2px solid #E0473A;padding-bottom:3px;">{{ co.label }}</div>
+                      <div style="display:flex;align-items:center;gap:10px;"><div style="flex:none;width:32px;height:32px;border-radius:50%;background:{{ co.c }};color:{{ co.ink }};font-family:'Bebas Neue';font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">{{ co.i2 }}</div><div style="font-family:Shrikhand,serif;font-size:28px;line-height:1.1;">{{ co.name }}</div></div>
+                      <div style="font-size:17px;line-height:1.25;">{{ co.detail }}</div>
+                    </div>
+                  </sc-for>
+                  <div style="flex:1;min-height:80px;box-sizing:border-box;border:3px dashed rgba(246,231,200,.5);display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-family:'Bebas Neue';font-size:21px;letter-spacing:.1em;color:#F6E7C8;">Tiebreak line · format still being decided</div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="position:absolute;left:0;right:0;bottom:0;height:106px;background:#0c1636;border-top:5px solid #F2B630;display:flex;align-items:center;justify-content:center;gap:18px;padding:0 40px;box-sizing:border-box;">
+            <sc-if value="{{ foot.ready }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:Shrikhand,serif;font-size:26px;color:#F2B630;">Everyone read it?</div>
+              <button type="button" onClick="{{ goTeams }}" style="border:0;margin:0;cursor:pointer;height:62px;padding:0 36px 4px;background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:30px;box-shadow:0 6px 0 #7A2508;">Start game</button>
+            </sc-if>
+            <sc-if value="{{ foot.live }}" hint-placeholder-val="{{ true }}">
+              <div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:.08em;color:#F6E7C8;margin-right:auto;">{{ hostStatus }}</div>
+              <sc-if value="{{ foot.next }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ nextStep }}" style="border:0;margin:0;cursor:pointer;height:56px;padding:4px 28px 0;background:#F0592A;color:#FFF6D6;font-family:'Bebas Neue';font-size:26px;letter-spacing:.1em;box-shadow:0 5px 0 #7A2508;">Next</button></sc-if>
+              <button type="button" style="border:0;margin:0;cursor:pointer;height:56px;padding:4px 24px 0;background:#F2B630;color:#12204A;font-family:'Bebas Neue';font-size:26px;letter-spacing:.1em;">Pause game</button>
+              <button type="button" onClick="{{ goSettings }}" style="border:0;margin:0;cursor:pointer;height:56px;padding:4px 24px 0;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:26px;letter-spacing:.1em;">Restart game</button>
+              <button type="button" style="border:0;margin:0;cursor:pointer;height:56px;padding:4px 24px 0;background:none;box-shadow:inset 0 0 0 2px #F6E7C8;color:#F6E7C8;font-family:'Bebas Neue';font-size:26px;letter-spacing:.1em;">End and return to lobby</button>
+            </sc-if>
+            <sc-if value="{{ foot.over }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:Shrikhand,serif;font-size:26px;color:#F2B630;margin-right:auto;">Top Jinxer and Clue MVP are for bragging only</div>
+              <button type="button" onClick="{{ goSettings }}" style="border:0;margin:0;cursor:pointer;height:62px;padding:0 36px 4px;background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:30px;box-shadow:0 6px 0 #7A2508;">Play again</button>
+              <button type="button" style="border:0;margin:0;cursor:pointer;height:62px;padding:4px 24px 0;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:26px;letter-spacing:.1em;box-shadow:0 5px 0 #8A7A5A;">Back to lobby</button>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:26px;">
+          <sc-for list="{{ phones }}" as="p" hint-placeholder-count="3">
+            <div style="width:390px;display:flex;flex-direction:column;gap:10px;">
+              <div style="font-weight:700;font-size:20px;letter-spacing:.04em;color:#3b3830;line-height:1.2;min-height:48px;">PHONE · {{ p.label }}</div>
+              <div role="group" aria-label="Whose phone" style="display:flex;gap:4px;min-height:40px;">
+                <sc-for list="{{ p.pick }}" as="o" hint-placeholder-count="3"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.on }}" style="border:0;margin:0;padding:6px 12px;border-radius:5px;background:{{ o.bg }};color:{{ o.fg }};font-family:'Courier Prime',monospace;font-size:17px;font-weight:700;cursor:pointer;">{{ o.name }}</button></sc-for>
+              </div>
+              <div data-screen-label="{{ p.label }}" style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#12204A;color:#F6E7C8;font-family:Oswald,sans-serif;">
+                <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 45% at 50% -5%, rgba(255,246,214,.2), rgba(255,246,214,0) 70%);"></div>
+                <div style="position:relative;height:100%;box-sizing:border-box;padding:54px 20px 26px;display:flex;flex-direction:column;gap:12px;">
+                  <sc-if value="{{ p.hasHead }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 2px;"><div style="display:inline-flex;align-items:center;gap:7px;height:32px;padding:2px 12px 0;font-family:'Bebas Neue';font-size:20px;letter-spacing:.1em;background:{{ p.tbg }};color:{{ p.tink }};box-shadow:inset 0 0 0 2px #F6E7C8;"><span style="font-family:Oswald;font-size:14px;">{{ p.tshape }}</span>{{ p.tname }}</div><div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.1em;color:#F2B630;">{{ p.headRight }}</div></div>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isReady }}" hint-placeholder-val="{{ false }}">
+                    <div style="text-align:center;font-family:'Bebas Neue';font-size:19px;letter-spacing:.16em;color:#F2B630;margin-top:6px;">Up next · word game</div>
+                    <div style="text-align:center;font-family:Shrikhand,serif;font-size:42px;line-height:1.1;color:#FFF6D6;text-shadow:3px 3px 0 #F0592A;">Don't Jinx It</div>
+                    <div style="background:#0B1533;padding:14px;display:flex;flex-direction:column;gap:11px;"><sc-for list="{{ p.steps }}" as="st" hint-placeholder-count="4"><div style="display:flex;gap:10px;align-items:flex-start;"><div style="flex:none;width:28px;height:28px;border-radius:50%;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:18px;display:flex;align-items:center;justify-content:center;">{{ st.n }}</div><div style="font-size:17px;line-height:1.3;">{{ st.text }}</div></div></sc-for></div>
+                    <div style="background:#C2302B;color:#FFF6D6;padding:9px 14px 12px;font-family:Shrikhand,serif;font-size:19px;line-height:1.2;transform:rotate(-1deg);">Table rule: react, but don't say any words.</div>
+                    <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.08em;color:#F2B630;text-align:center;">{{ p.settingsLine }}</div>
+                    <button type="button" style="border:0;margin:0;cursor:pointer;margin-top:auto;min-height:62px;background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:24px;box-shadow:0 6px 0 #7A2508;">I'm ready</button>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isTeam }}" hint-placeholder-val="{{ false }}">
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;">
+                      <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.16em;color:#F2B630;">You're on</div>
+                      <div style="display:inline-flex;align-items:center;gap:14px;height:88px;padding:4px 30px 0;font-family:'Bebas Neue';font-size:60px;letter-spacing:.08em;background:{{ p.tbg }};color:{{ p.tink }};box-shadow:inset 0 0 0 4px #F6E7C8;"><span style="font-family:Oswald;font-size:36px;">{{ p.tshape }}</span>{{ p.tname }}</div>
+                      <div style="width:100%;display:flex;flex-direction:column;gap:6px;"><sc-for list="{{ p.mates }}" as="m" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:12px;height:48px;padding:0 12px;background:#1A2B5E;"><div style="flex:none;width:32px;height:32px;border-radius:50%;background:{{ m.c }};color:{{ m.ink }};font-family:'Bebas Neue';font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">{{ m.i2 }}</div><div style="font-family:Shrikhand,serif;font-size:22px;">{{ m.name }}</div><div style="margin-left:auto;font-family:'Bebas Neue';font-size:18px;letter-spacing:.1em;color:#F2B630;">{{ m.you }}</div></div></sc-for></div>
+                      <div style="font-family:Shrikhand,serif;font-size:30px;line-height:1.15;color:#FFF6D6;text-shadow:3px 3px 0 #F0592A;">{{ p.firstLine }}</div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isRole }}" hint-placeholder-val="{{ false }}">
+                    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;">
+                      <div style="background:#F6E7C8;color:#12204A;transform:rotate(-1deg);box-shadow:6px 8px 0 rgba(0,0,0,.3);padding:20px 22px 26px;display:flex;flex-direction:column;gap:12px;">
+                        <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.16em;border-bottom:2px solid #E0473A;padding-bottom:6px;">Your role this turn</div>
+                        <div style="font-family:Shrikhand,serif;font-size:42px;line-height:1.05;">{{ p.roleHead }}</div>
+                        <div style="font-size:20px;line-height:1.35;">{{ p.roleBody }}</div>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:12px;justify-content:center;"><div style="flex:none;width:40px;height:40px;border-radius:50%;background:#F2B630;color:#12204A;font-family:'Bebas Neue';font-size:21px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">GG</div><div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.08em;">{{ p.roleFoot }}</div></div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isWrite }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;">
+                      <div style="display:flex;flex-direction:column;gap:4px;"><div style="font-family:'Bebas Neue';font-size:17px;letter-spacing:.16em;color:#F2B630;">The word</div><div style="display:flex;gap:5px;"><sc-for list="{{ p.wordTiles }}" as="l" hint-placeholder-count="5"><div style="width:44px;height:54px;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:48px;line-height:54px;text-align:center;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18);">{{ l }}</div></sc-for></div></div>
+                      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><div style="font-family:'Bebas Neue';font-size:17px;letter-spacing:.16em;color:#F2B630;">Time</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:38px;line-height:1;padding:8px 10px 0;height:46px;box-sizing:border-box;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18);">{{ p.timer }}</div></div>
+                    </div>
+                    <sc-if value="{{ p.editing }}" hint-placeholder-val="{{ true }}">
+                      <div style="background:#F6E7C8;color:#12204A;transform:rotate(-1deg);box-shadow:6px 8px 0 rgba(0,0,0,.3);padding:14px 18px 18px;display:flex;flex-direction:column;gap:10px;margin-top:6px;">
+                        <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.14em;border-bottom:2px solid #E0473A;padding-bottom:5px;">{{ p.cardHead }}</div>
+                        <div style="font-size:16px;line-height:1.3;">{{ p.cardHint }}</div>
+                        <sc-for list="{{ p.fields }}" as="f" hint-placeholder-count="2">
+                          <label style="display:flex;flex-direction:column;gap:4px;">
+                            <span style="font-family:'Bebas Neue';font-size:17px;letter-spacing:.12em;">{{ f.label }}</span>
+                            <input value="{{ f.val }}" onChange="{{ f.onChange }}" placeholder="One word" aria-invalid="{{ f.invalid }}" autocomplete="off" style="height:52px;border:0;border-radius:0;background:#FFFDF6;box-shadow:inset 0 0 0 {{ f.ringW }} {{ f.ring }};padding:2px 14px 0;font-family:'Bebas Neue';font-size:30px;letter-spacing:.04em;color:#12204A;outline-offset:2px;">
+                            <sc-if value="{{ f.hasErr }}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-weight:600;font-size:16px;color:#C2302B;">✕ {{ f.err }}</span></sc-if>
+                          </label>
+                        </sc-for>
+                        <sc-if value="{{ p.hasPrompt }}" hint-placeholder-val="{{ false }}">
+                          <div style="background:#12204A;color:#F6E7C8;padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;">
+                            <div style="font-family:Shrikhand,serif;font-size:23px;line-height:1.1;color:#F2B630;">Is this a name?</div>
+                            <div style="font-size:16px;line-height:1.3;">"{{ p.promptWord }}" isn't in our word list. Names and places are fine.</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><button type="button" onClick="{{ p.useIt }}" style="border:0;margin:0;cursor:pointer;height:48px;background:#F2B630;color:#12204A;font-family:'Bebas Neue';font-size:23px;letter-spacing:.1em;">Use it</button><button type="button" onClick="{{ p.editIt }}" style="border:0;margin:0;cursor:pointer;height:48px;background:none;box-shadow:inset 0 0 0 2px #F6E7C8;color:#F6E7C8;font-family:'Bebas Neue';font-size:23px;letter-spacing:.1em;">Edit</button></div>
+                          </div>
+                        </sc-if>
+                      </div>
+                      <button type="button" onClick="{{ p.submit }}" style="border:0;margin:0;cursor:pointer;margin-top:auto;min-height:62px;background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:25px;box-shadow:0 6px 0 #7A2508;">Submit</button>
+                      <sc-if value="{{ p.hasSkip }}" hint-placeholder-val="{{ false }}">
+                        <button type="button" onClick="{{ p.skip }}" aria-disabled="{{ p.skipDis }}" style="border:0;margin:0;cursor:pointer;min-height:54px;margin-top:4px;background:#F6E7C8;color:#12204A;opacity:{{ p.skipOp }};font-family:'Bebas Neue';font-size:23px;letter-spacing:.1em;box-shadow:0 5px 0 #8A7A5A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 4px;"><span style="line-height:1;">{{ p.skipLabel }}</span><span style="font-family:Oswald;font-size:14px;letter-spacing:0;line-height:1.2;">{{ p.skipNote }}</span></button>
+                      </sc-if>
+                    </sc-if>
+                    <sc-if value="{{ p.done }}" hint-placeholder-val="{{ false }}">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;">
+                        <div style="background:#177A74;color:#FFF6D6;font-family:Shrikhand,serif;font-size:40px;padding:4px 22px 10px;transform:rotate(-4deg);box-shadow:inset 0 0 0 3px #FFF6D6, 5px 5px 0 #0B1533;">You're in</div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;"><sc-for list="{{ p.myWords }}" as="w" hint-placeholder-count="2"><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:32px;letter-spacing:.04em;padding:6px 14px 2px;">{{ w }}</div></sc-for></div>
+                        <div style="font-size:18px;line-height:1.35;max-width:300px;">Keep it to yourself. The pile opens when everyone's in.</div>
+                        <div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:40px;line-height:1;padding:6px 14px 0;">{{ p.inCount }}</div>
+                        <div role="img" aria-label="Loading" style="display:flex;gap:12px;"><div style="width:16px;height:16px;border-radius:50%;background:#FFF6D6;animation:bulb 1s steps(1) infinite;"></div><div style="width:16px;height:16px;border-radius:50%;background:#FFF6D6;animation:bulb 1s steps(1) .33s infinite;"></div><div style="width:16px;height:16px;border-radius:50%;background:#FFF6D6;animation:bulb 1s steps(1) .66s infinite;"></div></div>
+                      </div>
+                    </sc-if>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isDc }}" hint-placeholder-val="{{ false }}">
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;">
+                      <div style="font-family:Shrikhand,serif;font-size:36px;line-height:1.1;color:#FFF6D6;text-shadow:3px 3px 0 #C2302B;">You dropped out</div>
+                      <div style="font-size:19px;line-height:1.35;">Reconnecting. If the timer runs out, your jinx counts as blank.</div>
+                      <div role="img" aria-label="Loading" style="display:flex;gap:12px;"><div style="width:16px;height:16px;border-radius:50%;background:#FFF6D6;animation:bulb 1s steps(1) infinite;"></div><div style="width:16px;height:16px;border-radius:50%;background:#FFF6D6;animation:bulb 1s steps(1) .33s infinite;"></div><div style="width:16px;height:16px;border-radius:50%;background:#FFF6D6;animation:bulb 1s steps(1) .66s infinite;"></div></div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isWait }}" hint-placeholder-val="{{ false }}">
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;">
+                      <div style="width:110px;height:110px;border-radius:50%;background:#F2B630;color:#12204A;font-family:'Bebas Neue';font-size:56px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px #12204A, 0 0 0 8px #F2B630;">GG</div>
+                      <div style="font-family:Shrikhand,serif;font-size:42px;line-height:1.05;color:#FFF6D6;text-shadow:3px 3px 0 #F0592A;">You're guessing</div>
+                      <div style="font-size:22px;line-height:1.3;">Don't look at anyone's phone.</div>
+                      <sc-if value="{{ p.hasWaitCount }}" hint-placeholder-val="{{ false }}"><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:44px;line-height:1;padding:6px 14px 0;">{{ p.waitCount }}</div></sc-if>
+                      <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.1em;color:#F2B630;">{{ p.waitLine }}</div>
+                      <div role="img" aria-label="Loading" style="display:flex;gap:12px;"><div style="width:16px;height:16px;border-radius:50%;background:#FFF6D6;animation:bulb 1s steps(1) infinite;"></div><div style="width:16px;height:16px;border-radius:50%;background:#FFF6D6;animation:bulb 1s steps(1) .33s infinite;"></div><div style="width:16px;height:16px;border-radius:50%;background:#FFF6D6;animation:bulb 1s steps(1) .66s infinite;"></div></div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isPile }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;">
+                      <div style="display:flex;flex-direction:column;gap:3px;"><div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:.16em;color:#F2B630;">The word</div><div style="display:flex;gap:4px;"><sc-for list="{{ p.wordTiles }}" as="l" hint-placeholder-count="5"><div style="width:28px;height:34px;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:30px;line-height:34px;text-align:center;">{{ l }}</div></sc-for></div></div>
+                      <div style="display:flex;flex-direction:column;align-items:flex-end;"><div style="font-family:'Bebas Neue';font-size:16px;letter-spacing:.14em;color:#F2B630;">{{ p.pileStage }}</div><div style="font-family:Shrikhand,serif;font-size:28px;line-height:1.1;">The pile</div></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-family:'Bebas Neue';font-size:17px;letter-spacing:.14em;color:#F2B630;margin-top:2px;"><span>● {{ nA }} clues</span><span>{{ p.clueCount }}</span></div>
+                    <div style="display:flex;flex-direction:column;gap:3px;margin-top:-8px;">
+                      <sc-for list="{{ p.clueRows }}" as="r" hint-placeholder-count="6">
+                        <div style="display:flex;align-items:center;gap:10px;min-height:36px;padding:3px 10px;box-sizing:border-box;background:{{ r.bg }};color:{{ r.fg }};opacity:{{ r.op }};transform:{{ r.tf }};transition:{{ r.tr }};box-shadow:inset 0 -4px 0 rgba(0,0,0,.18);">
+                          <div style="flex:none;width:28px;height:28px;border-radius:50%;background:{{ r.c }};color:{{ r.ink }};font-family:'Bebas Neue';font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">{{ r.i2 }}</div>
+                          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+                            <div style="display:flex;align-items:baseline;gap:8px;min-width:0;"><span style="font-family:'Bebas Neue';font-size:26px;line-height:1;letter-spacing:.02em;text-decoration:{{ r.deco }};text-decoration-thickness:2px;">{{ r.w }}</span><span style="font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.by }}</span><sc-if value="{{ r.hasTag }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;flex:none;font-family:'Bebas Neue';font-size:16px;letter-spacing:.06em;padding:3px 7px 1px;background:{{ r.tagBg }};color:{{ r.tagFg }};box-shadow:inset 0 0 0 2px {{ r.tagRing }};">{{ r.tag }}</span></sc-if></div>
+                            <sc-if value="{{ r.stamp }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-start;font-family:'Bebas Neue';font-size:15px;letter-spacing:.04em;padding:2px 7px 0;background:{{ r.sBg }};color:{{ r.sFg }};box-shadow:inset 0 0 0 2px #C2302B;transform:rotate(-1.5deg);">JINXED! · {{ r.sText }}</div></sc-if>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <sc-if value="{{ p.showJinx }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex;justify-content:space-between;font-family:'Bebas Neue';font-size:17px;letter-spacing:.14em;color:#F2B630;margin-top:4px;"><span>◆ {{ nB }} jinxes</span><span>3</span></div>
+                      <div style="display:flex;flex-direction:column;gap:3px;margin-top:-8px;">
+                        <sc-for list="{{ p.jinxRows }}" as="r" hint-placeholder-count="3">
+                          <div style="display:flex;align-items:center;gap:10px;min-height:36px;padding:3px 10px;box-sizing:border-box;background:{{ r.bg }};color:{{ r.fg }};opacity:{{ r.op }};transform:{{ r.tf }};transition:{{ r.tr }};box-shadow:inset 0 0 0 2px {{ r.ring }};">
+                            <div style="flex:none;width:28px;height:28px;border-radius:50%;background:{{ r.c }};color:{{ r.ink }};font-family:'Bebas Neue';font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">{{ r.i2 }}</div>
+                            <div style="flex:1;min-width:0;display:flex;align-items:baseline;gap:8px;"><span style="font-family:'Bebas Neue';font-size:26px;line-height:1;letter-spacing:.02em;text-decoration:{{ r.deco }};">{{ r.w }}</span><span style="font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.by }}</span><sc-if value="{{ r.hasTag }}" hint-placeholder-val="{{ false }}"><span style="margin-left:auto;flex:none;font-family:'Bebas Neue';font-size:16px;letter-spacing:.06em;padding:3px 7px 1px;background:{{ r.tagBg }};color:{{ r.tagFg }};box-shadow:inset 0 0 0 2px {{ r.tagRing }};">{{ r.tag }}</span></sc-if></div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                    <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;">
+                      <sc-if value="{{ p.ccVote }}" hint-placeholder-val="{{ false }}">
+                        <div style="background:#F6E7C8;color:#12204A;padding:10px 14px 12px;display:flex;flex-direction:column;gap:8px;transform:rotate(-1deg);box-shadow:6px 8px 0 rgba(0,0,0,.3);">
+                          <div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-family:Shrikhand,serif;font-size:22px;line-height:1.1;">towel / towels: same word?</div><div style="background:#12204A;color:#F6E7C8;font-family:'Bebas Neue';font-size:26px;line-height:1;padding:5px 8px 1px;">{{ ccTime }}</div></div>
+                          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><button type="button" onClick="{{ voteSame }}" style="border:0;margin:0;cursor:pointer;height:52px;background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:22px;box-shadow:0 5px 0 #7A2508;">Same</button><button type="button" onClick="{{ voteDiff }}" style="border:0;margin:0;cursor:pointer;height:52px;background:#12204A;color:#F6E7C8;font-family:'Bebas Neue';font-size:24px;letter-spacing:.1em;box-shadow:0 5px 0 #050B1F;">Different</button></div>
+                          <div style="font-size:15px;line-height:1.25;">No vote counts as Different.</div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ p.ccWait }}" hint-placeholder-val="{{ false }}">
+                        <div style="background:#0B1533;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;"><div><div style="font-family:Shrikhand,serif;font-size:22px;color:#F2B630;line-height:1.1;">{{ nB }} {{ isDecidingWord }} deciding.</div><div style="font-size:17px;">Stay quiet.</div></div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:28px;line-height:1;padding:5px 8px 1px;">{{ ccTime }}</div></div>
+                      </sc-if>
+                      <sc-if value="{{ p.hasPileMsg }}" hint-placeholder-val="{{ true }}">
+                        <div style="background:#0B1533;padding:10px 14px;font-family:'Bebas Neue';font-size:21px;letter-spacing:.05em;line-height:1.2;color:#F6E7C8;">{{ p.pileMsg }}</div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isSurv }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;"><div style="display:flex;flex-direction:column;"><div style="font-family:'Bebas Neue';font-size:17px;letter-spacing:.16em;color:#F2B630;">Survived</div><div style="font-family:Shrikhand,serif;font-size:26px;line-height:1.1;">{{ survCount }}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;"><div style="font-family:'Bebas Neue';font-size:17px;letter-spacing:.16em;color:#F2B630;">Guess closes</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:34px;line-height:1;padding:6px 10px 0;">0:45</div></div></div>
+                    <sc-if value="{{ hasSurv }}" hint-placeholder-val="{{ true }}">
+                      <div style="display:flex;flex-direction:column;gap:10px;padding:0 6px;">
+                        <sc-for list="{{ survivors }}" as="s" hint-placeholder-count="3"><div style="height:{{ p.cardH }};background:#F6E7C8;color:#12204A;display:flex;align-items:center;justify-content:center;font-family:Shrikhand,serif;font-size:{{ p.cardFs }};box-shadow:inset 0 -7px 0 rgba(0,0,0,.15), 5px 6px 0 rgba(0,0,0,.3);transform:rotate({{ s.rot }});">{{ s.w }}</div></sc-for>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ isShutSurv }}" hint-placeholder-val="{{ false }}">
+                      <div style="height:200px;box-sizing:border-box;border:3px dashed rgba(246,231,200,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:10px;"><div style="font-family:Shrikhand,serif;font-size:44px;line-height:1;color:#FFF6D6;text-shadow:3px 3px 0 #C2302B;">Shutout</div><div style="font-family:'Bebas Neue';font-size:21px;letter-spacing:.08em;color:#F2B630;">{{ p.shutLine }}</div></div>
+                    </sc-if>
+                    <sc-if value="{{ p.hasKeys }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;">
+                        <div style="display:flex;gap:10px;"><input value="{{ p.guessVal }}" onChange="{{ p.onGuess }}" placeholder="Your guess" aria-label="Your guess" autocomplete="off" style="flex:1;min-width:0;height:56px;border:0;border-radius:0;background:#FFFDF6;box-shadow:inset 0 0 0 2px #F2B630;padding:2px 14px 0;font-family:'Bebas Neue';font-size:30px;letter-spacing:.04em;color:#12204A;"><button type="button" onClick="{{ p.doGuess }}" style="border:0;margin:0;cursor:pointer;width:112px;height:56px;background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:22px;box-shadow:0 5px 0 #7A2508;">Guess</button></div>
+                        <button type="button" onClick="{{ p.doPass }}" style="border:0;margin:0;cursor:pointer;height:46px;background:none;box-shadow:inset 0 0 0 2px #F6E7C8;color:#F6E7C8;font-family:'Bebas Neue';font-size:22px;letter-spacing:.12em;">Pass</button>
+                        <div style="height:232px;margin:0 -20px -26px;background:repeating-linear-gradient(135deg,#0B1533 0 10px,#13204A 10px 20px);display:flex;align-items:center;justify-content:center;font-family:'Courier Prime',monospace;font-size:13px;letter-spacing:.1em;color:#C9C0A8;">system keyboard</div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ p.noKeys }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:auto;background:#C2302B;color:#FFF6D6;padding:14px;text-align:center;font-family:Shrikhand,serif;font-size:28px;">No hints, no faces.</div>
+                    </sc-if>
+                    <sc-if value="{{ p.hasVerdict }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:12px;background:#0B1533;padding:16px 14px 18px;">
+                        <div style="background:{{ v.bg }};color:{{ v.ink }};font-family:Shrikhand,serif;font-size:46px;line-height:1.1;padding:2px 24px 10px;transform:rotate(-3deg);box-shadow:inset 0 0 0 3px {{ v.ink }}, 5px 5px 0 #050B1F;">{{ v.head }}</div>
+                        <div style="font-size:19px;text-align:center;line-height:1.3;">{{ v.phoneLine }}</div>
+                        <div style="display:flex;align-items:center;gap:10px;"><div style="display:inline-flex;align-items:center;gap:7px;height:32px;padding:2px 12px 0;font-family:'Bebas Neue';font-size:20px;letter-spacing:.1em;background:{{ v.tbg }};color:{{ v.tink }};box-shadow:inset 0 0 0 2px #F6E7C8;"><span style="font-family:Oswald;font-size:14px;">{{ v.tshape }}</span>{{ v.tname }}</div><div style="font-family:Shrikhand,serif;font-size:24px;">{{ v.result }}</div></div>
+                      </div>
+                    </sc-if>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isVote }}" hint-placeholder-val="{{ false }}">
+                    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px;">
+                      <div style="font-family:'Bebas Neue';font-size:21px;letter-spacing:.16em;color:#F2B630;">Near guess · {{ nB }} votes</div>
+                      <div style="font-family:Shrikhand,serif;font-size:38px;line-height:1.15;color:#FFF6D6;">GeeGee guessed <span style="color:#F2B630;">beaches</span>. Count it?</div>
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><button type="button" onClick="{{ nearYes }}" style="border:0;margin:0;cursor:pointer;height:66px;background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:28px;box-shadow:0 6px 0 #7A2508;">Yes</button><button type="button" onClick="{{ nearNo }}" style="border:0;margin:0;cursor:pointer;height:66px;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:30px;letter-spacing:.1em;box-shadow:0 5px 0 #8A7A5A;">No</button></div>
+                      <div style="display:flex;align-items:center;gap:12px;"><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:34px;line-height:1;padding:6px 10px 0;">0:10</div><div style="font-size:17px;line-height:1.3;">The TV shows the count only, never who voted.</div></div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isResult }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:4px;"><div style="font-family:Shrikhand,serif;font-size:30px;line-height:1.1;color:#FFF6D6;text-shadow:3px 3px 0 #F0592A;">{{ p.resHead }}</div></div>
+                    <div style="display:flex;align-items:center;gap:10px;"><div style="display:flex;gap:4px;"><sc-for list="{{ p.wordTiles }}" as="l" hint-placeholder-count="5"><div style="width:32px;height:40px;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:34px;line-height:40px;text-align:center;">{{ l }}</div></sc-for></div><div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.08em;color:#F2B630;">● {{ nA }} +1 · Correct</div></div>
+                    <sc-if value="{{ p.resIsGuesser }}" hint-placeholder-val="{{ false }}"><div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.14em;color:#F2B630;margin-top:4px;">Who wrote what</div></sc-if>
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                      <sc-for list="{{ p.results }}" as="rr" hint-placeholder-count="3"><div style="background:{{ rr.bg }};color:{{ rr.fg }};padding:{{ rr.pad }};font-size:{{ rr.fs }};line-height:1.3;">{{ rr.pre }}<b style="font-family:Shrikhand,serif;font-weight:400;color:{{ rr.wc }};">{{ rr.word }}</b>{{ rr.post }}</div></sc-for>
+                    </div>
+                    <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center;background:#0B1533;padding:10px 14px;"><div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.12em;color:#F2B630;">Score</div><div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:.06em;">● {{ nA }} 2 · 1 {{ nB }} ◆</div></div>
+                  </sc-if>
+
+                  <sc-if value="{{ p.isOver }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:0 4px;"><div style="font-family:Shrikhand,serif;font-size:32px;color:#F2B630;">Game over</div><div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.1em;">Don't Jinx It</div></div>
+                    <div style="background:#0B1533;padding:14px 16px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+                      <div style="display:flex;align-items:center;gap:10px;"><div style="display:inline-flex;align-items:center;gap:7px;height:34px;padding:2px 12px 0;font-family:'Bebas Neue';font-size:22px;letter-spacing:.1em;background:#F6E7C8;color:#12204A;"><span style="font-family:Oswald;font-size:15px;">●</span>{{ nA }}</div><div style="font-family:Shrikhand,serif;font-size:28px;">{{ winsWord }} 5 to 3</div></div>
+                      <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.16em;color:#F2B630;">{{ p.overYou }}</div>
+                      <div style="display:flex;align-items:center;gap:12px;"><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:48px;line-height:1;padding:6px 14px 0;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);">{{ p.overPts }}</div><div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:.1em;line-height:1.1;">Leaderboard<br>points</div></div>
+                    </div>
+                    <sc-for list="{{ callouts }}" as="co" hint-placeholder-count="2">
+                      <div style="background:#F6E7C8;color:#12204A;padding:9px 14px 11px;display:flex;align-items:center;gap:12px;"><div style="flex:none;width:34px;height:34px;border-radius:50%;background:{{ co.c }};color:{{ co.ink }};font-family:'Bebas Neue';font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">{{ co.i2 }}</div><div><div style="font-family:'Bebas Neue';font-size:17px;letter-spacing:.14em;color:#C2302B;">{{ co.label }}</div><div style="font-family:Shrikhand,serif;font-size:22px;line-height:1.1;">{{ co.name }}</div><div style="font-size:14px;">{{ co.detail }}</div></div></div>
+                    </sc-for>
+                    <div style="box-sizing:border-box;border:2px dashed rgba(246,231,200,.5);padding:10px;text-align:center;font-family:'Bebas Neue';font-size:17px;letter-spacing:.1em;">Tiebreak line · format still being decided</div>
+                    <div style="margin-top:auto;font-family:Shrikhand,serif;font-size:24px;line-height:1.15;text-align:center;color:#F2B630;">The host picks what's next</div>
+                  </sc-if>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;teamNames&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Placeholder&quot;,&quot;Proposed&quot;],&quot;default&quot;:&quot;Placeholder&quot;,&quot;tsType&quot;:&quot;'Placeholder'|'Proposed'&quot;,&quot;section&quot;:&quot;Teams&quot;}}">
+class Component extends DCLogic {
+  static P = {
+    GeeGee: { i2: 'GG', c: '#F2B630', ink: '#12204A', t: 'A' },
+    JMohawk: { i2: 'JM', c: '#C2302B', ink: '#FFF6D6', t: 'A' },
+    Sadrique: { i2: 'SA', c: '#177A74', ink: '#FFF6D6', t: 'A' },
+    KaliBear: { i2: 'KB', c: '#3D6FD9', ink: '#FFF6D6', t: 'A' },
+    RubyRed: { i2: 'RR', c: '#E8489A', ink: '#15120C', t: 'B' },
+    Juju: { i2: 'JU', c: '#7A8B3A', ink: '#15120C', t: 'B' },
+    Angie: { i2: 'AN', c: '#F2B630', ink: '#12204A', t: 'B' },
+  };
+  static MAIN = {
+    clues: [
+      { w: 'sand', by: 'JMohawk', tm: ['JMohawk', 'Sadrique'], def: 'RubyRed' },
+      { w: 'waves', by: 'JMohawk' },
+      { w: 'sand', by: 'Sadrique', tm: ['JMohawk', 'Sadrique'], def: 'RubyRed' },
+      { w: 'towel', by: 'Sadrique', cc: 'Angie' },
+      { w: 'shells', by: 'KaliBear' },
+      { w: 'summer', by: 'KaliBear' },
+    ],
+    jinx: [{ w: 'sand', by: 'RubyRed', hit: true }, { w: 'ocean', by: 'Juju' }, { w: 'towels', by: 'Angie', cc: true }],
+  };
+  static SHUT = {
+    clues: [
+      { w: 'sand', by: 'JMohawk', tm: ['JMohawk', 'Sadrique'], def: 'Angie' },
+      { w: 'waves', by: 'JMohawk', tm: ['JMohawk', 'KaliBear'] },
+      { w: 'sand', by: 'Sadrique', tm: ['JMohawk', 'Sadrique'], def: 'Angie' },
+      { w: 'towel', by: 'Sadrique', def: 'Juju' },
+      { w: 'waves', by: 'KaliBear', tm: ['JMohawk', 'KaliBear'] },
+      { w: 'shells', by: 'KaliBear', def: 'RubyRed' },
+    ],
+    jinx: [{ w: 'shells', by: 'RubyRed', hit: true }, { w: 'towel', by: 'Juju', hit: true }, { w: 'sand', by: 'Angie', hit: true }],
+  };
+  static STEPS = [
+    ['settings', 'Settings'], ['teams', 'Teams'], ['intro', 'Turn intro'], ['write', 'Writing'], ['pile', 'The pile'],
+    ['guess', 'Guess'], ['verdict', 'Verdict'], ['reveal', 'Full reveal'], ['over', 'Game over'],
+  ];
+  static WSUBS = ['Empty', 'Typing', 'Rejected', 'Is this a name?', 'Submitted', 'Everyone in', 'Disconnected', 'Skip word used'];
+  static REASONS = ['Letters only', "That's the mystery word", "That's part of the mystery word", 'Your two clues match'];
+  static DICT = new Set('sand waves wave towel towels shells shell summer ocean sun sunny surf tide coast shore swim bikini palm umbrella vacation island sea salt boat seagull crab castle hot sunscreen pier dune water sandcastle lifeguard tan holiday splash shark fish sunset bay seaside cooler flipflops sandals'.split(' '));
+
+  state = { step: 'pile', wsub: 'Typing', gsub: 'Survivors', vsub: 'Correct', k: 0, scen: 'main', vote: null, playing: false, landed: true, ccLeft: 10, mid: 'KaliBear', def: 'RubyRed', mode: 'Team', pace: 'Normal', long: false, reason: 0, w: null, guess: '', guessShown: null, scale: 1 };
+  outerRef = React.createRef();
+  timers = [];
+
+  componentDidMount() {
+    const el = this.outerRef.current;
+    if (el && window.ResizeObserver) {
+      this.ro = new ResizeObserver(e => { const w = e[0].contentRect.width; const s = Math.min(1, w / 1280); if (Math.abs(s - this.state.scale) > 0.002) this.setState({ scale: s }); });
+      this.ro.observe(el);
+    }
+  }
+  componentWillUnmount() { this.ro && this.ro.disconnect(); this.clear(); }
+  clear() { this.timers.forEach(t => clearTimeout(t)); this.timers = []; clearInterval(this.ccInt); }
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+
+  hasCC() { return this.state.scen === 'main'; }
+  play() {
+    this.clear();
+    const rm = !!this.props.reducedMotion;
+    if (rm) { this.setState({ playing: false, landed: true, vote: null, k: this.hasCC() ? 4 : 6 }); return; }
+    this.setState({ playing: true, k: 0, vote: null, landed: false, ccLeft: 10 });
+    this.later(() => this.setState({ landed: true }), 60);
+    this.later(() => this.advance(), 1800);
+  }
+  advance() {
+    const { k } = this.state;
+    if (!this.state.playing) return;
+    let nk = k + 1;
+    if (!this.hasCC() && nk === 4) nk = 6;
+    this.setState({ k: nk });
+    if (nk === 4) { this.startCC(); return; }
+    if (nk < 6) this.later(() => this.advance(), 1700);
+    else this.setState({ playing: false });
+  }
+  startCC() {
+    clearInterval(this.ccInt);
+    this.setState({ ccLeft: 10 });
+    this.ccInt = setInterval(() => {
+      const n = this.state.ccLeft - 1;
+      if (n <= 0) { clearInterval(this.ccInt); this.vote('different'); } else this.setState({ ccLeft: n });
+    }, 1000);
+  }
+  vote(v) {
+    clearInterval(this.ccInt);
+    const rm = !!this.props.reducedMotion;
+    this.setState({ vote: v, k: rm ? 6 : 5 });
+    if (!rm && this.state.playing) this.later(() => { this.setState({ k: 6, playing: false }); }, 1800);
+  }
+
+  validate(vals, isClue, accepted) {
+    const errs = vals.map(() => null); let prompt = null;
+    vals.forEach((v, i) => {
+      const s = v.trim().toLowerCase();
+      if (!s) errs[i] = 'Write one word';
+      else if (!/^[a-z]+$/.test(s)) errs[i] = 'Letters only';
+      else if (s === 'beach') errs[i] = "That's the mystery word";
+      else if (s.length >= 3 && (s.includes('beach') || 'beach'.includes(s))) errs[i] = "That's part of the mystery word";
+    });
+    if (isClue && vals.length === 2 && !errs[0] && !errs[1] && vals[0].trim().toLowerCase() === vals[1].trim().toLowerCase()) errs[1] = 'Your two clues match';
+    if (errs.every(e => !e)) { const u = vals.find(v => { const s = v.trim().toLowerCase(); return !Component.DICT.has(s) && !accepted.includes(s); }); if (u) prompt = u.trim(); }
+    return { errs, prompt };
+  }
+
+  writePreset(who, isClue) {
+    const C = Component, sub = this.state.wsub;
+    const mine = isClue ? C.MAIN.clues.filter(c => c.by === who).map(c => c.w) : C.MAIN.jinx.filter(j => j.by === who).map(j => j.w);
+    const blank = mine.map(() => '');
+    const o = { vals: blank.slice(), errs: blank.map(() => null), prompt: null, done: false, accepted: [], skip: 'open' };
+    if (sub === 'Typing') o.vals = isClue ? [mine[0], mine[1].slice(0, 3)] : [mine[0].slice(0, 2)];
+    if (sub === 'Rejected') {
+      const r = this.state.reason;
+      const bad = ['sun-hat', 'beach', 'beachy'][r];
+      if (r < 3) { o.vals = isClue ? [bad, mine[1]] : [bad]; o.errs = isClue ? [C.REASONS[r], null] : [C.REASONS[r]]; }
+      else { o.vals = isClue ? [mine[0], mine[0]] : [mine[0].slice(0, 3)]; if (isClue) o.errs = [null, C.REASONS[3]]; }
+      o.skip = 'expired';
+    }
+    if (sub === 'Is this a name?') { o.vals = isClue ? [mine[0], 'Malibu'] : ['Malibu']; o.prompt = 'Malibu'; o.skip = 'expired'; }
+    if (['Submitted', 'Everyone in', 'Disconnected'].includes(sub)) { o.vals = mine.slice(); o.done = true; }
+    if (sub === 'Skip word used') o.skip = 'used';
+    if (sub === 'Typing') o.skip = 'open';
+    return o;
+  }
+  wkey(who) { return this.state.wsub + '|' + this.state.reason + '|' + who; }
+  getW(who, isClue) {
+    const w = this.state.w || {};
+    return w[this.wkey(who)] || this.writePreset(who, isClue);
+  }
+  setW(who, isClue, patch) {
+    const cur = this.getW(who, isClue);
+    this.setState(s => ({ w: { ...(s.w || {}), [this.wkey(who)]: { ...cur, ...patch } } }));
+  }
+
+  renderVals() {
+    const S = this.state, C = Component, rm = !!this.props.reducedMotion;
+    const prop = (this.props.teamNames ?? 'Placeholder') === 'Proposed';
+    const nA = prop ? 'Clovers' : 'Team A', nB = prop ? 'Horseshoes' : 'Team B';
+    const sv = (a, b) => prop ? b : a;
+    const badge = t => t === 'A' ? { tbg: '#F6E7C8', tink: '#12204A', tshape: '●', tname: nA } : { tbg: 'transparent', tink: '#F6E7C8', tshape: '◆', tname: nB };
+    const chip = n => ({ name: n, i2: C.P[n].i2, c: C.P[n].c, ink: C.P[n].ink });
+    const step = S.step;
+    const go = st => () => { this.clear(); this.setState({ step: st, playing: false, landed: true }); };
+    const segBtn = (label, on, onClick, extra) => ({ label, on, onClick, bg: on ? '#2d2a24' : 'transparent', fg: on ? '#F6E7C8' : '#3b3830', op: 1, dis: false, ...(extra || {}) });
+
+    const nav = C.STEPS.map(([id, label]) => segBtn(label, step === id, go(id)));
+    let subs = [], subLabel = '';
+    const shut = S.scen === 'shut';
+    if (step === 'write') { subLabel = 'Writing'; subs = C.WSUBS.map(x => segBtn(x, S.wsub === x, () => this.setState({ wsub: x }))); }
+    if (step === 'pile') {
+      subLabel = 'Drop state';
+      const ks = [['a Full pile', 0], ['b Matches', 1], ['c Teammate jinx', 2], ['c Defense jinx', 3], ['d Close call', 4], ['e Vote result', 5], [shut ? 'g Shutout' : 'f What\'s left', 6]];
+      subs = ks.map(([l, k]) => { const dis = shut && (k === 4 || k === 5); return segBtn(l, S.k === k, dis ? () => {} : () => { this.clear(); this.setState({ k, playing: false, landed: true, vote: k === 5 && !S.vote ? 'same' : (k < 5 ? null : (S.vote || 'same')) }); if (k === 4) this.setState({ ccLeft: 10 }); }, { op: dis ? .4 : 1, dis }); });
+    }
+    if (step === 'guess') { subLabel = 'Guess'; subs = ['Survivors', 'Shutout'].map(x => segBtn(x, S.gsub === x, () => this.setState({ gsub: x, guess: '' }))); }
+    if (step === 'verdict') { subLabel = 'Verdict'; subs = ['Correct', 'Miss', 'Pass', 'Deciding'].map(x => segBtn(x, S.vsub === x, () => this.setState({ vsub: x, guessShown: null }))); }
+    const reasons = C.REASONS.map((r, i) => segBtn(r, S.reason === i, () => this.setState({ reason: i })));
+
+    const D = shut ? C.SHUT : C.MAIN;
+    const k = S.k, vote = S.vote;
+    const tmLabel = c => '● ' + c.tm.join(' + ');
+    const defName = c => c.def || c.cc;
+
+    // ---- clue drop cards (TV) ----
+    const cards = D.clues.map((c, i) => {
+      const tmOn = !!c.tm && k >= 2;
+      const defOn = (!!c.def && k >= 3) || (!!c.cc && k >= 5 && vote === 'same');
+      const survives = !(c.tm || c.def || (c.cc && (vote || 'same') === 'same' && k >= 5));
+      const up = k === 6 && survives;
+      const jinxed = tmOn || defOn;
+      const d = i * 80;
+      return {
+        num: i + 1, front: up ? c.w : '',
+        landT: S.landed ? 'translateY(0) rotate(0deg)' : 'translateY(-300px) rotate(-8deg)',
+        landO: S.landed ? (k === 6 && jinxed ? .5 : 1) : 0,
+        tr: rm ? 'none' : `transform .55s cubic-bezier(.2,1.3,.4,1) ${d}ms, opacity .35s ${S.landed && k < 6 ? d : 0}ms`,
+        trFlip: rm ? 'none' : `transform .6s ease ${d}ms`,
+        flipT: up ? 'rotateY(180deg)' : 'rotateY(0deg)',
+        tmT: tmOn ? 'rotate(-8deg) scale(1)' : 'rotate(-8deg) scale(1.9)', tmO: tmOn ? 1 : 0, tmText: c.tm ? tmLabel(c) : '',
+        defT: defOn ? 'rotate(5deg) scale(1)' : 'rotate(5deg) scale(1.9)', defO: defOn ? 1 : 0, defText: `◆ ${nB} · ${defName(c) || ''}`,
+        ccO: c.cc && k === 4 ? 1 : 0,
+        trStamp: rm ? 'none' : 'transform .3s cubic-bezier(.3,1.6,.5,1), opacity .18s',
+      };
+    });
+    const finalSurv = D.clues.filter(c => !(c.tm || c.def || (c.cc && (vote || 'same') === 'same')));
+    const tmWords = [...new Set(D.clues.filter(c => c.tm).map(c => c.w))];
+    const defWords = [...new Set(D.clues.filter(c => c.def).map(c => c.w))];
+    const missedJ = D.jinx.filter(j => !j.hit && !j.cc).map(j => j.w);
+    const t6 = [
+      { head: 'Clues are in', sub: '6 face down · no peeking', cc: false },
+      { head: 'Checking for matches…', sub: 'Any word written twice gets jinxed', cc: false },
+      { head: 'Jinxed by teammates!', sub: `${tmWords.length} ${tmWords.length === 1 ? 'word' : 'words'} written twice on ${nA}`, cc: false },
+      { head: `Jinxed by ${nB}!`, sub: `${nB} ${sv('matched', 'matched')} ${D.clues.filter(c => c.def).length} clues`, cc: false },
+      { head: '1 close call', sub: `${nB} ${sv('is', 'are')} deciding`, cc: true },
+      vote === 'different' ? { head: `${nB} said Different`, sub: 'The clue stays', cc: false } : { head: `${nB} said Same`, sub: 'Jinxed!', cc: false },
+      shut ? { head: 'Shutout!', sub: 'GeeGee can guess blind or pass', cc: false } : { head: `${finalSurv.length} of 6 survived`, sub: 'GeeGee, eyes up', cc: false },
+    ][k];
+    const tvIds = ['T6a · Cards land', 'T6a · Cards land (matching on phones)', 'T6b · Teammate jinx stamps', 'T6c · Defense jinx stamps', 'T5 · Close call', 'T6c · Close call result', shut ? 'T6e · Shutout' : 'T6d · Survivors flip'];
+    const phIds = ['P6a Full pile', 'P6b Matches found', 'P6c Removal', 'P6c Removal', 'P6d Close call', 'P6e Close call result', shut ? 'P6g Shutout' : 'P6f What\'s left'];
+
+    // ---- pile rows (phones) ----
+    const wcount = {}; [...D.clues, ...D.jinx].forEach(x => { wcount[x.w] = (wcount[x.w] || 0) + 1; });
+    const rowTr = rm ? 'none' : 'transform .35s ease, opacity .35s ease, background .25s';
+    const base = { bg: '#1A2B5E', fg: '#F6E7C8', op: 1, tf: 'translateX(0)', tr: rowTr, deco: 'none', hasTag: false, stamp: false, tag: '', tagBg: '', tagFg: '', tagRing: 'transparent', ring: '#F6E7C8' };
+    const tagMatch = n => ({ hasTag: true, tag: `Match ×${n}`, tagBg: '#F2B630', tagFg: '#12204A', tagRing: '#F2B630', bg: '#F6E7C8', fg: '#12204A' });
+    const tagCC = { hasTag: true, tag: '? Close call', tagBg: '#12204A', tagFg: '#F2B630', tagRing: '#12204A', bg: '#F2B630', fg: '#12204A' };
+    const gone = { op: .6, tf: 'translateX(6px)', deco: 'line-through', bg: '#0B1533' };
+    const clueRows = D.clues.map(c => {
+      const ch = chip(c.by); let r = { ...base, ...ch, w: c.w, by: c.by };
+      const matched = !!(c.tm || c.def);
+      if (k === 1 && matched) r = { ...r, ...tagMatch(wcount[c.w]) };
+      if (k >= 2) {
+        if (c.def && k >= 3) r = { ...r, ...gone, stamp: true, sBg: '#C2302B', sFg: '#FFF6D6', sText: `◆ ${nB} · ${c.def}` };
+        else if (c.tm) r = { ...r, ...gone, stamp: true, sBg: '#F6E7C8', sFg: '#C2302B', sText: tmLabel(c) };
+        else if (c.def && k === 2) r = { ...r, ...tagMatch(wcount[c.w]) };
+      }
+      if (c.cc && k === 4) r = { ...r, ...tagCC };
+      if (c.cc && k >= 5) r = vote === 'same' ? { ...r, ...gone, stamp: true, sBg: '#C2302B', sFg: '#FFF6D6', sText: `◆ ${nB} · ${c.cc}` } : { ...r, hasTag: k === 5, tag: 'Stays', tagBg: '#177A74', tagFg: '#FFF6D6', tagRing: '#177A74' };
+      r.keep = !(c.tm || c.def || (c.cc && vote === 'same'));
+      return r;
+    });
+    const jinxRows = D.jinx.map(j => {
+      const ch = chip(j.by); let r = { ...base, ...ch, w: j.w, by: j.by, bg: 'transparent' };
+      if (j.hit && k >= 1 && k < 3) r = { ...r, ...tagMatch(wcount[j.w]), ring: '#F6E7C8' };
+      if (j.hit && k >= 3) r = { ...r, hasTag: true, tag: 'Landed', tagBg: '#C2302B', tagFg: '#FFF6D6', tagRing: '#C2302B', op: .6, tf: 'translateX(6px)' };
+      if (!j.hit && !j.cc && k >= 3) r = { ...r, hasTag: true, tag: 'Missed', tagBg: 'transparent', tagFg: '#F6E7C8', tagRing: '#F6E7C8', op: .45, deco: 'line-through' };
+      if (j.cc && k === 4) r = { ...r, ...tagCC };
+      if (j.cc && k >= 5) r = vote === 'same' ? { ...r, hasTag: true, tag: 'Landed', tagBg: '#C2302B', tagFg: '#FFF6D6', tagRing: '#C2302B', op: .6, tf: 'translateX(6px)' } : { ...r, hasTag: true, tag: 'Missed', tagBg: 'transparent', tagFg: '#F6E7C8', tagRing: '#F6E7C8', op: .45, deco: 'line-through' };
+      return r;
+    });
+    const shownClueRows = k === 6 ? clueRows.filter(r => r.keep).map(r => ({ ...r, hasTag: false })) : clueRows;
+    const pileMsg = [
+      'Every word is in. Watch what gets jinxed.',
+      'Matches found: ' + Object.keys(wcount).filter(w => wcount[w] > 1).map(w => `${w} ×${wcount[w]}`).join(', '),
+      tmWords.length ? `Jinxed by teammates: ${tmWords.join(', ')}` : 'No teammate matches',
+      `${nB} landed ${defWords.join(', ')}.` + (missedJ.length ? ` ${missedJ.join(', ')} missed.` : ''),
+      '',
+      vote === 'different' ? `${nB} said Different: both words stay.` : `${nB} said Same: towel is jinxed.`,
+      shut ? 'Shutout! Nothing survived. GeeGee can guess blind or pass.' : `${finalSurv.length} of 6 survived. GeeGee sees these next, without names.`,
+    ][k];
+    const ccTime = '0:' + String(k === 4 ? S.ccLeft : 10).padStart(2, '0');
+
+    // ---- write step ----
+    const WT = {
+      Empty: ['1:00', {}], Typing: ['0:48', { JMohawk: 2, Juju: 1 }], Rejected: ['0:41', { JMohawk: 2, Sadrique: 1, Juju: 1, Angie: 1 }],
+      'Is this a name?': ['0:37', { JMohawk: 2, Sadrique: 1, Juju: 1, Angie: 1 }], Submitted: ['0:30', { JMohawk: 2, Sadrique: 0, KaliBear: 2, RubyRed: 1, Juju: 1 }],
+      'Everyone in': ['0:22', { JMohawk: 2, Sadrique: 2, KaliBear: 2, RubyRed: 1, Juju: 1, Angie: 1 }], Disconnected: ['0:30', { JMohawk: 2, Sadrique: 2, KaliBear: 2, RubyRed: 1, Angie: 1 }],
+      'Skip word used': ['0:52', { JMohawk: 1 }],
+    };
+    const [wTimer, wTk0] = WT[S.wsub];
+    const wMid = this.getW(S.mid, true), wDef = this.getW(S.def, false);
+    const wTk = { ...wTk0, [S.mid]: wMid.done ? 2 : (S.wsub === 'Everyone in' ? 2 : 0), [S.def]: wDef.done ? 1 : 0 };
+    if (S.wsub === 'Disconnected' && S.def === 'Juju') wTk.Juju = 0;
+    const dcName = S.wsub === 'Disconnected' ? 'Juju' : null;
+    const nClues = ['JMohawk', 'Sadrique', 'KaliBear'].reduce((a, n) => a + (wTk[n] || 0), 0);
+    const nJinx = ['RubyRed', 'Juju', 'Angie'].reduce((a, n) => a + (wTk[n] || 0), 0);
+    const allIn = nClues === 6 && nJinx === 3;
+    const tile = (n, max) => ({ ...chip(n), op: n === dcName ? .4 : 1, guessing: false, writer: n !== dcName, dc: n === dcName, ticks: Array.from({ length: max }, (_, i) => ({ bg: i < (wTk[n] || 0) ? '#F6E7C8' : 'transparent', mark: i < (wTk[n] || 0) ? '✓' : '' })) });
+    const t4 = {
+      timer: allIn ? '0:00' : wTimer, counts: `Clues ${nClues} of 6 · Jinxes ${nJinx} of 3`, allIn,
+      lanes: [
+        { ...badge('A'), what: 'writing clues', tiles: [{ ...chip('GeeGee'), op: 1, guessing: true, writer: false, dc: false, ticks: [] }, tile('JMohawk', 2), tile('Sadrique', 2), tile('KaliBear', 2)] },
+        { ...badge('B'), what: 'writing jinxes', tiles: [tile('RubyRed', 1), tile('Juju', 1), tile('Angie', 1)] },
+      ],
+    };
+    const inCount = `${nClues + nJinx} of 9 in`;
+
+    // ---- survivors / verdict ----
+    const gShut = S.gsub === 'Shutout' && step === 'guess';
+    const survList = gShut ? [] : C.MAIN.clues.filter(c => !(c.tm || c.def || (c.cc && (S.vote || 'same') === 'same')));
+    const rots = ['-1.5deg', '1deg', '-0.5deg', '1.5deg'];
+    const survivors = survList.map((c, i) => ({ w: c.w, rot: rots[i % 4] }));
+    const vs = S.vsub;
+    const gWord = S.guessShown || { Correct: 'beach', Miss: 'vacation', Deciding: 'beaches', Pass: '' }[vs];
+    const V = {
+      Correct: { bg: '#177A74', ink: '#FFF6D6', head: 'Correct!', lead: 'GeeGee guessed', t: 'A', result: '+1', phoneLine: `GeeGee guessed “${gWord}”` },
+      Miss: { bg: '#C2302B', ink: '#FFF6D6', head: 'Miss!', lead: 'GeeGee guessed', t: 'B', result: '+1', phoneLine: `GeeGee guessed “${gWord}”` },
+      Pass: { bg: '#F6E7C8', ink: '#12204A', head: 'Pass', lead: 'GeeGee passed', t: 'B', result: '+1', phoneLine: 'GeeGee passed' },
+      Deciding: { bg: '#F2B630', ink: '#12204A', head: 'Near guess', lead: 'GeeGee guessed', t: 'B', result: sv('is deciding', 'are deciding'), phoneLine: `GeeGee guessed “${gWord}”. ${nB} ${sv('is', 'are')} deciding. Stay quiet.` },
+    }[vs];
+    const v = { ...V, ...badge(V.t), hasTiles: vs !== 'Pass', tiles: (gWord || '').toUpperCase().split(''), deciding: vs === 'Deciding' };
+
+    // ---- reveal ----
+    const reveal = C.MAIN.clues.map(c => {
+      const ch = chip(c.by); const jby = c.def || c.cc;
+      const jinxed = !!(c.tm || c.def || c.cc);
+      return { ...ch, w: c.w, by: c.by + ' wrote', bg: jinxed ? '#D9CCAE' : '#F6E7C8', deco: jinxed ? 'line-through' : 'none', jinxed, ok: !jinxed, cc: !!c.cc, ccText: `${nB} said Same`,
+        sBg: jby ? '#C2302B' : '#F6E7C8', sFg: jby ? '#FFF6D6' : '#C2302B', sText: jby ? `◆ ${nB} · ${jby}` : (c.tm ? tmLabel(c) : '') };
+    });
+    const missed = C.MAIN.jinx.filter(j => !j.hit && !j.cc).map(j => ({ ...chip(j.by), w: j.w }));
+
+    const resultsFor = n => {
+      const out = [];
+      const row = (pre, word, post) => ({ pre, word, post, bg: '#0B1533', fg: '#F6E7C8', wc: '#F2B630', pad: '12px 14px', fs: '19px' });
+      if (n === 'GeeGee') {
+        C.MAIN.clues.forEach(c => out.push({ ...row('', c.w, ` · ${c.by} · ` + (c.def ? `jinxed by ${c.def}` : c.cc ? `jinxed by ${c.cc} (close call)` : 'survived')), pad: '8px 12px', fs: '17px' }));
+        C.MAIN.jinx.forEach(j => out.push({ ...row('', j.w, ` · ${j.by} · jinx ` + (j.hit || j.cc ? 'landed' : 'missed')), pad: '8px 12px', fs: '17px', bg: 'transparent', fg: '#F6E7C8' }));
+        return out;
+      }
+      C.MAIN.clues.filter(c => c.by === n).forEach(c => {
+        if (c.def) out.push(row('', c.w, ` got jinxed by ${c.def}` + (c.tm ? ` (and by ${c.tm.filter(x => x !== n).join(', ')})` : '')));
+        else if (c.cc) out.push(row('', c.w, ` got jinxed by ${c.cc} · close call, ${nB} said Same`));
+        else if (c.tm) out.push(row('', c.w, ` got jinxed by teammates`));
+        else out.push(row('Your clue ', c.w, ' survived'));
+      });
+      C.MAIN.jinx.filter(j => j.by === n).forEach(j => {
+        if (j.hit) out.push(row('Your jinx ', j.w, ' landed'));
+        else if (j.cc) out.push(row('Your jinx ', j.w, ` landed · close call, ${nB} said Same`));
+        else out.push(row('Your jinx ', j.w, ' missed'));
+      });
+      return out;
+    };
+
+    // ---- settings ----
+    const turnsBase = S.mode === 'Team' ? 8 : 7;
+    const turns = turnsBase * (S.long ? 2 : 1);
+    const per = { Quick: 2, Normal: 2.5, Relaxed: 3.5 }[S.pace];
+    const mins = Math.round(turns * per);
+    const settingsLine = S.mode === 'Team' ? `7 players · ${turns / 2} innings · about ${mins} min` : `7 players · ${turns} turns · about ${mins} min`;
+    const optBtn = (label, on, onClick, sub) => ({ label, on, onClick, sub, bg: on ? '#12204A' : 'transparent', fg: on ? '#F6E7C8' : '#12204A' });
+    const modeOpts = ['Team', 'Individual'].map(m => optBtn(m, S.mode === m, () => this.setState({ mode: m })));
+    const paceOpts = [['Quick', '45 / 30 s'], ['Normal', '60 / 45 s'], ['Relaxed', '90 / 60 s']].map(([p, s]) => optBtn(p, S.pace === p, () => this.setState({ pace: p }), s));
+    const steps4 = [
+      'One player guesses; everyone else sees the word.',
+      'Teammates write 2 clues. The other team writes a jinx.',
+      'Any word written twice gets jinxed.',
+      'Guess from what survives.',
+    ].map((text, i) => ({ n: i + 1, text }));
+
+    const teams = [
+      { ...badge('A'), count: '4 players', players: ['GeeGee', 'JMohawk', 'Sadrique', 'KaliBear'].map(chip), hasNote: false, note: '' },
+      { ...badge('B'), count: '3 players', players: ['RubyRed', 'Juju', 'Angie'].map(chip), hasNote: true, note: `${nB} has 3: RubyRed guesses twice` },
+    ];
+    const firstLine = `${nA} ${sv('guesses', 'guess')} first`;
+    const scoreRows = [{ ...badge('A'), pts: 1 }, { ...badge('B'), pts: 1 }];
+    const scoreRowsAfter = [{ ...badge('A'), pts: 2 }, { ...badge('B'), pts: 1 }];
+    const overRows = [
+      ...['KaliBear', 'GeeGee', 'JMohawk', 'Sadrique'].map(n => ({ ...chip(n), team: '● ' + nA, pts: '+20', face: '#F2B630', fg: '#12204A' })),
+      ...[['RubyRed', '+7'], ['Juju', '+7'], ['Angie', '+6']].map(([n, p]) => ({ ...chip(n), team: '◆ ' + nB, pts: p, face: '#1A2B5E', fg: '#F6E7C8' })),
+    ];
+    const callouts = [
+      { ...chip('RubyRed'), label: 'Top Jinxer', detail: '4 jinxes landed', rot: '-1deg' },
+      { ...chip('KaliBear'), label: 'Clue MVP', detail: '6 clues survived in correct turns', rot: '1deg' },
+    ];
+
+    // ---- TV per step ----
+    const tv = { T1: step === 'settings', T2: step === 'teams', T3: step === 'intro', T4: step === 'write', T6: step === 'pile', T7: step === 'guess', T8: step === 'verdict', T9: step === 'reveal', T10: step === 'over' };
+    const turnLine = 'Inning 2 of 4 · Turn 3 of 8';
+    const tvLabel = {
+      settings: 'T1 · Game settings', teams: 'T2 · Teams are set', intro: 'T3 · Turn intro',
+      write: 'T4 · Writing · ' + (allIn ? 'everyone in' : dcName ? 'player disconnected' : 'in progress'),
+      pile: tvIds[k], guess: gShut ? 'T7 · Guess (shutout)' : 'T7 · Guess', verdict: 'T8 · Verdict · ' + vs, reveal: 'T9 · Full reveal', over: 'T10 · Game over',
+    }[step];
+    const hostStatus = {
+      teams: 'Teams are set · next in 5 s', intro: 'Turn 3 of 8 · next in 5 s', write: 'Writing · ' + inCount,
+      pile: k === 4 ? 'Close call · ' + nB + ' voting' : 'The pile · about 10 s', guess: 'Guessing · 0:45', verdict: 'Verdict', reveal: 'Full reveal · next in 20 s',
+    }[step] || '';
+    const foot = { ready: step === 'settings', over: step === 'over', live: step !== 'settings' && step !== 'over', next: ['teams', 'intro', 'reveal'].includes(step) };
+
+    // ---- phones ----
+    const wordTiles = 'BEACH'.split('');
+    const pickBtns = (list, cur, key) => list.map(n => ({ name: n, on: cur === n, onClick: () => this.setState({ [key]: n }), bg: cur === n ? '#2d2a24' : '#D6D2C9', fg: cur === n ? '#F6E7C8' : '#3b3830' }));
+    const mk = (who, role) => {
+      const t = C.P[who].t;
+      const o = { ...badge(t), hasHead: true, headRight: 'Turn 3 of 8', pick: [], isReady: false, isTeam: false, isRole: false, isWrite: false, isDc: false, isWait: false, isPile: false, isSurv: false, isVote: false, isResult: false, isOver: false, wordTiles };
+      const roleName = role === 'g' ? 'guesser' : role === 'a' ? nA : nB + ' (defense)';
+      let id = '';
+      if (role === 'a') o.pick = pickBtns(['JMohawk', 'Sadrique', 'KaliBear'], S.mid, 'mid');
+      if (role === 'd') o.pick = pickBtns(['RubyRed', 'Juju', 'Angie'], S.def, 'def');
+      if (step === 'settings') { o.isReady = true; o.hasHead = false; o.steps = steps4; o.settingsLine = settingsLine; id = 'Get ready'; }
+      if (step === 'teams') {
+        o.isTeam = true; o.headRight = 'Game start'; id = 'P1 Your team';
+        o.mates = (t === 'A' ? ['GeeGee', 'JMohawk', 'Sadrique', 'KaliBear'] : ['RubyRed', 'Juju', 'Angie']).map(n => ({ ...chip(n), you: n === who ? 'You' : '' }));
+        o.firstLine = firstLine + '.';
+      }
+      if (step === 'intro') {
+        o.isRole = true; id = 'P2 Role card';
+        if (role === 'g') { o.roleHead = "You're the guesser."; o.roleBody = "Don't look at anyone's phone. Eyes on the TV."; o.roleFoot = 'GeeGee · you'; }
+        if (role === 'a') { o.roleHead = 'Your team is guessing'; o.roleBody = "You'll see the word. Write 2 one-word clues for GeeGee."; o.roleFoot = 'GeeGee is guessing'; }
+        if (role === 'd') { o.roleHead = "You're on defense"; o.roleBody = `You'll see the word. Write a jinx: guess one of ${nA}'s clues.`; o.roleFoot = 'GeeGee is guessing'; }
+      }
+      if (step === 'write') {
+        if (role === 'g') { o.isWait = true; o.hasWaitCount = true; o.waitCount = inCount; o.waitLine = 'Clues are coming in'; id = 'P5 Guesser waiting'; }
+        else if (role === 'd' && who === 'Juju' && dcName) { o.isDc = true; id = 'Disconnected'; }
+        else {
+          const isClue = role === 'a'; const w = isClue ? wMid : wDef;
+          o.isWrite = true; id = isClue ? 'P3 Write clues' : 'P4 Write a jinx';
+          o.timer = allIn ? '0:00' : wTimer; o.editing = !w.done; o.done = w.done; o.myWords = w.vals; o.inCount = inCount;
+          o.cardHead = isClue ? 'Write 2 clues' : 'Jinx them';
+          o.cardHint = isClue ? 'One word each. Any word written twice gets jinxed, even by a teammate.' : `Guess one of ${nA}'s clues. If you match it, it's jinxed.`;
+          o.fields = w.vals.map((val, i) => ({
+            label: isClue ? `Clue ${i + 1}` : 'Your jinx', val, hasErr: !!w.errs[i], err: w.errs[i] || '', invalid: !!w.errs[i],
+            ring: w.errs[i] ? '#C2302B' : '#12204A', ringW: w.errs[i] ? '3px' : '2px',
+            onChange: e => { const vals = w.vals.slice(); vals[i] = e.target.value; const errs = w.errs.slice(); errs[i] = null; this.setW(who, isClue, { vals, errs, prompt: null }); },
+          }));
+          o.hasPrompt = !!w.prompt; o.promptWord = w.prompt || '';
+          o.submit = () => { const r = this.validate(w.vals, isClue, w.accepted); this.setW(who, isClue, { errs: r.errs, prompt: r.prompt, done: r.errs.every(e => !e) && !r.prompt }); };
+          o.useIt = () => { const acc = [...w.accepted, (w.prompt || '').toLowerCase()]; const r = this.validate(w.vals, isClue, acc); this.setW(who, isClue, { accepted: acc, errs: r.errs, prompt: r.prompt, done: r.errs.every(e => !e) && !r.prompt }); };
+          o.editIt = () => this.setW(who, isClue, { prompt: null });
+          o.hasSkip = isClue; o.skipDis = w.skip !== 'open'; o.skipOp = w.skip === 'open' ? 1 : .45;
+          o.skipLabel = w.skip === 'used' ? 'Skip word · used' : w.skip === 'expired' ? 'Skip word · expired' : 'Skip word';
+          o.skipNote = w.skip === 'used' ? 'Once per turn. A new word is up.' : w.skip === 'expired' ? 'Only in the first 15 s' : 'New word · first 15 s, once per turn';
+          o.skip = () => { if (w.skip === 'open') this.setW(who, isClue, { skip: 'used', vals: w.vals.map(() => ''), errs: w.vals.map(() => null) }); };
+        }
+      }
+      if (step === 'pile') {
+        if (role === 'g') { o.isWait = true; o.hasWaitCount = false; o.waitLine = k === 6 ? 'Your clues are up. Eyes on the TV.' : 'Clues are getting jinxed…'; id = 'P5 Guesser waiting'; }
+        else {
+          o.isPile = true; id = phIds[k]; o.pileStage = 'Step ' + 'abcdef'[Math.min(k === 3 ? 2 : k > 3 ? k - 1 : k, 5)] + (k === 6 && shut ? '→g' : '');
+          o.pileStage = phIds[k].split(' ')[0];
+          o.clueRows = shownClueRows; o.jinxRows = jinxRows; o.showJinx = k < 6;
+          o.clueCount = k === 6 ? `${shownClueRows.length} of 6 left` : '6';
+          o.ccVote = k === 4 && role === 'd'; o.ccWait = k === 4 && role === 'a';
+          o.hasPileMsg = k !== 4; o.pileMsg = pileMsg;
+        }
+      }
+      if (step === 'guess' || step === 'verdict') {
+        o.isSurv = true; o.shutLine = role === 'g' ? 'Nothing survived. Guess blind or pass.' : 'Nothing survived. GeeGee can guess blind or pass.';
+        const g = role === 'g';
+        o.cardH = g ? '70px' : '112px'; o.cardFs = g ? '36px' : '52px';
+        o.hasKeys = g && step === 'guess'; o.noKeys = !g && step === 'guess'; o.hasVerdict = step === 'verdict';
+        id = g ? (step === 'guess' ? 'P7 Guess + keyboard' : 'P7 Result') : (step === 'guess' ? 'P8 Survivors' : 'P8 Result');
+        if (g) {
+          o.guessVal = S.guess; o.onGuess = e => this.setState({ guess: e.target.value });
+          o.doGuess = () => { const s = S.guess.trim().toLowerCase(); if (!s) return; const vsub = s === 'beach' ? 'Correct' : (s.startsWith('beach') || (s.length > 3 && 'beach'.startsWith(s))) ? 'Deciding' : 'Miss'; this.setState({ step: 'verdict', vsub, guessShown: s }); };
+          o.doPass = () => this.setState({ step: 'verdict', vsub: 'Pass', guessShown: null });
+        }
+        if (step === 'verdict' && vs === 'Deciding' && role === 'd') { o.isSurv = false; o.isVote = true; id = 'P9 Near-guess vote'; }
+      }
+      if (step === 'reveal') {
+        o.isResult = true; id = 'P10 Your result'; o.resIsGuesser = role === 'g';
+        o.resHead = role === 'g' ? 'Here is what happened' : 'Your result';
+        o.results = resultsFor(who);
+      }
+      if (step === 'over') {
+        o.isOver = true; o.hasHead = false; id = 'P11 Game over';
+        o.overYou = t === 'A' ? 'Your team won · you got' : 'Your team lost · you got';
+        o.overPts = (overRows.find(r => r.name === who) || {}).pts || '+0';
+      }
+      o.label = `${who} · ${roleName} · ${id}`;
+      return o;
+    };
+    const phones = [mk('GeeGee', 'g'), mk(S.mid, 'a'), mk(S.def, 'd')];
+
+    const notes = {
+      settings: 'T1 · The Instructions ready state with a host settings card. Settings are live: change mode, pace or long game and the length line updates. Phones show the get-ready card.',
+      teams: 'T2 · P1. Team identity is a proposal, not final: solid ● vs outlined ◆, no new hue, so it never collides with player colors. Swap in proposed names (Clovers / Horseshoes) under Tweaks.',
+      intro: 'T3 · P2, all three role cards. Score lives here and on T9 only.',
+      write: 'T4 · P5 / P3 / P4. The phone inputs are live: type and Submit to see each rejection message, and "Malibu" for the name prompt. Pick whose phone you see above each phone.',
+      pile: 'T6 + T5 on the TV, P6 on the phones, in sync. Play runs the drop and waits on the defense phone for the vote (10 s; no vote counts as Different). The sample data has no teammate-only jinx: sand gets the teammate stamp first, then Team B\'s stamp lands on top. The shutout run has one (waves). Reduced motion (Tweaks) skips straight to the close call or end state.',
+      guess: 'T7 · P7 / P8: the same survivor layout, no authors. Only the guesser gets the keyboard; try a guess (beach, beaches, anything else) or Pass.',
+      verdict: 'T8 · P7 / P8 results · P9 near-guess vote on defense phones. Still open: whether silence on a near guess counts as Yes or No.',
+      reveal: 'T9 · P10. The guesser\'s phone is the first place they see who wrote what.',
+      over: 'T10 · P11. 80 / 20 split per team, shared evenly (Team B\'s 20 rounds to 7 / 7 / 6). Tiebreak slot reserved.',
+    };
+
+    const scale = S.scale, H = 1720;
+    return {
+      nav, subs, subLabel, hasSubs: subs.length > 0, reasons, isRejected: step === 'write' && S.wsub === 'Rejected', isPile: step === 'pile',
+      playDrop: () => this.play(), playLabel: S.playing ? 'Restart drop' : 'Play the drop',
+      toggleScen: () => { this.clear(); this.setState({ scen: shut ? 'main' : 'shut', k: 0, vote: null, playing: false, landed: true }); },
+      isShut: shut, shutBg: shut ? '#2d2a24' : 'transparent', shutFg: shut ? '#F6E7C8' : '#3b3830',
+      note: notes[step],
+      outerRef: this.outerRef, scale, sw: Math.round(1280 * scale) + 'px', sh: Math.round(H * scale) + 'px',
+      tvLabel, tvTitle: step === 'over' ? 'Game over' : "Don't Jinx It",
+      tvRight: step === 'settings' ? 'Word game · 7 players' : step === 'teams' ? 'Team mode · 7 players' : step === 'over' ? "Don't Jinx It · final" : turnLine,
+      tv, foot, hostStatus, nA, nB,
+      isGuessingWord: sv('is', 'are'), isDecidingWord: sv('is', 'are'), winsWord: sv('wins', 'win'),
+      steps4, modeOpts, paceOpts, longOn: S.long, longBg: S.long ? '#12204A' : 'transparent', longMark: S.long ? '✓' : '',
+      toggleLong: () => this.setState({ long: !S.long }), settingsLine,
+      teams, firstLine, scoreRows, scoreRowsAfter, t4, cards, t6, ccTime,
+      survivors, survCount: `${survivors.length} of 6`, hasSurv: survivors.length > 0, isShutSurv: survivors.length === 0, v,
+      wordTiles, reveal, missed, overRows, callouts, phones,
+      voteSame: () => this.vote('same'), voteDiff: () => this.vote('different'),
+      nearYes: () => this.setState({ vsub: 'Correct', guessShown: 'beaches' }), nearNo: () => this.setState({ vsub: 'Miss', guessShown: 'beaches' }),
+      goTeams: go('teams'), goSettings: go('settings'),
+      nextStep: () => { const i = C.STEPS.findIndex(s => s[0] === step); go(C.STEPS[Math.min(i + 1, C.STEPS.length - 1)][0])(); },
+    };
+  }
+}
+</script>
+</body>
+</html>
