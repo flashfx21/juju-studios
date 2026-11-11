@@ -404,9 +404,9 @@ describe('what each screen may know', () => {
 
   it('offers the skip only to writers, early, before it is used', () => {
     const state = game()
-    expect(playerView(state, 'bo', START).canSkip).toBe(true)
-    expect(playerView(state, 'ana', START).canSkip).toBe(false)
-    expect(playerView(state, 'bo', START + SKIP_WINDOW_SECONDS * 1000).canSkip).toBe(false)
-    expect(playerView(send(state, 'bo', { type: 'skip' }), 'cy', START).canSkip).toBe(false)
+    expect(playerView(state, 'bo', START).skip).toBe('open')
+    expect(playerView(state, 'ana', START).skip).toBe('closed')
+    expect(playerView(state, 'bo', START + SKIP_WINDOW_SECONDS * 1000).skip).toBe('closed')
+    expect(playerView(send(state, 'bo', { type: 'skip' }), 'cy', START).skip).toBe('used')
   })
 })

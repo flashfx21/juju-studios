@@ -354,6 +354,9 @@ export interface WriterProgress {
   submitted: boolean
 }
 
+/** open: this player may skip the word now. used: someone already skipped this turn. closed: too late, or not a writer. */
+export type SkipState = 'open' | 'used' | 'closed'
+
 /** What one player's phone may know right now. */
 export interface PlayerView {
   phase: Phase
@@ -365,7 +368,7 @@ export interface PlayerView {
   word: string | null
   cluesNeeded: number
   progress: WriterProgress[]
-  canSkip: boolean
+  skip: SkipState
   /** This writer's own clues once sent; null for the guesser. */
   myClues: string[] | null
   /** Every clue with its writer: non-guessers from the pile on, the guesser only at the reveal. */
@@ -414,12 +417,12 @@ export function playerView(state: DontJinxItState, player: PlayerId, now: number
   const turn = currentTurn(state)
   const isGuesser = player === turn.guesser
   const revealed = reached(state, 'reveal')
-  const canSkip =
+  const skipOpen =
     state.phase === 'write' &&
     !isGuesser &&
-    !turn.skipUsed &&
     state.spareWords.length > 0 &&
     now - turn.writeStartedAt < SKIP_WINDOW_SECONDS * 1000
+  const skip: SkipState = turn.skipUsed ? 'used' : skipOpen ? 'open' : 'closed'
   return {
     phase: state.phase,
     turnIndex: state.turnIndex,
@@ -429,7 +432,7 @@ export function playerView(state: DontJinxItState, player: PlayerId, now: number
     word: isGuesser && !revealed ? null : turn.word,
     cluesNeeded: cluesPerWriter(state.players.length),
     progress: writerProgress(state, turn),
-    canSkip,
+    skip,
     myClues: isGuesser ? null : (turn.clues[player] ?? null),
     pile: reached(state, isGuesser ? 'reveal' : 'pile') ? resolvePile(state, turn) : null,
     survivors: reached(state, 'guess') ? survivors(state, turn) : null,

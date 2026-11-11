@@ -15,7 +15,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 | Sign in | `#/sign-in`, `/password`, `/sent`, `/expired` | | Email link, password, check your email, link expired |
 | Join (profile setup) | `#/join` | | Room code, username, email, color (arcade adds initials) |
 | Lobby placeholder | `#/lobby` | Links to the game picker, Host settings, Profile and Playtests, plus the version | same |
-| Playtests | `#/playtest`, `#/playtest/chainword`, `#/playtest/dial-it-in` | | Behind the playtest code: games still in testing |
+| Playtests | `#/playtest`, `#/playtest/chainword`, `#/playtest/dial-it-in`, `#/playtest/dont-jinx-it` | | Behind the playtest code: games still in testing |
 | Game picker | `#/picker` | Full lineup, all coming soon | Coming-soon list, nothing to vote on |
 | Host settings | `#/settings` | Your style, game choice (group vote / leader pick), CRT scanlines | |
 | Profile | `#/profile` | | Initials, username, email, color, **your style**, stats |
@@ -28,7 +28,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 - The game lineup is `src/games/lineup.ts`. Every game is "coming soon".
 - Chainword has its rules, tests and a phone playtest (see Playtests below). No TV screen yet.
 - Dial It In has its rules, tests, a phone screen and a single-player interface playtest (see Playtests below). No TV screen yet. Spectrum cards live in `packs/dial-it-in/spectrums.json`.
-- Don't Jinx It (branch `game/dont-jinx-it`) has its individual-mode rules and tests. No screens yet. Mystery words and irregular word forms live in `packs/dont-jinx-it/`.
+- Don't Jinx It (branch `game/dont-jinx-it`) has its individual-mode rules, tests, a phone screen (game-show style) and a single-player interface playtest (see Playtests below). No TV screen yet. Mystery words and irregular word forms live in `packs/dont-jinx-it/`.
 
 ## Run it locally
 
@@ -50,6 +50,8 @@ Games still in testing open at `#/playtest` (phone front door: **Playtest a game
 **Chainword playtest, no server:** one person taps **Make a code for everyone** (pick letters per word, words in the chain and hard mode first) and reads the code out, for example `KPDT53` (a code ending in `H`, like `KPDT53H`, plays in hard mode). Everyone else types it under **Got a chain code?** and gets the same words. Say go, play, then compare totals: fewest guesses wins, faster time breaks a tie. **End game** stops early (the word you're on and any left count 7 each). Everyone should load the site fresh first: a code deals from the word lists, so phones on different versions of the site can get different words.
 
 **Dial It In playtest, one player:** an interface test on one phone. Pick 1 to 100 or 1 to 50, then play three rounds against two bots that guess at random; you give the clue in round 1. To guess, turn the safe-style dial (clockwise goes up, counterclockwise goes down, and it wraps past the top like a safe) or type the number in the box under it. The dashed **Dev** box stands in for the other phones and the timer: **Bots lock in**, **Time's up** (ends guessing; anyone who hasn't guessed scores 0) and **Next round**.
+
+**Don't Jinx It playtest, one player:** an interface test on one phone, for checking the screens. Pick 3, 5 or 7 players; the rest are bots. You guess on turn 1 and write a clue on every turn after. The dashed **Dev** box stands in for the other phones and the timer: type a bot's clue (or leave it blank to deal a common word, so jinxes happen), **Bots send**, a bot guesser's **Bot guesses** / **Guess right** / **Pass**, and the timer button (**Time's up**, **Pile done**, **Show reveal**, **Next turn**). The shared word list loads with the game, so an unknown clue asks "Is this a name?".
 
 **To change the playtest code**, run this in the project folder with the new code in place of `newcode`, then put the number it prints into `PLAYTEST_CODE_HASH` in `src/app/playtestCode.ts`. Every device then asks for the new code.
 
