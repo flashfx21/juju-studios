@@ -4,57 +4,9 @@
 /* Page-level rules use :root[data-theme] so they never leak into the style cards,
    which carry their own data-theme to preview each style. */
 
+/* Background, glow, logo and title come from src/ui/TvChrome.css. */
+
 /* ---------- Shared layout (retro game show is the base look) ---------- */
-.host-settings {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background: var(--color-background);
-  color: var(--color-text);
-  font-family: var(--font-body);
-}
-
-.host-settings::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 60% at 50% -15%, rgba(255, 246, 214, 0.16), rgba(255, 246, 214, 0) 70%);
-}
-
-.host-settings__header {
-  position: absolute;
-  left: 40px;
-  right: 40px;
-  top: 22px;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.host-settings__brand {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-}
-
-.host-settings__logo {
-  font-family: var(--font-logo);
-  font-size: 30px;
-  color: var(--color-background);
-  background: var(--color-accent);
-  padding: 6px 16px 10px;
-}
-
-.host-settings__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 48px;
-  color: var(--color-text);
-}
-
 .host-settings__back {
   display: inline-flex;
   align-items: center;
@@ -164,38 +116,6 @@
 }
 
 /* ---------- 90s arcade ---------- */
-:root[data-theme='arcade'] .host-settings::before {
-  background: radial-gradient(ellipse 50% 40% at 50% 12%, rgba(34, 228, 255, 0.14), rgba(34, 228, 255, 0) 70%);
-}
-
-:root[data-theme='arcade'] .host-settings__header {
-  top: 30px;
-  height: 56px;
-}
-
-:root[data-theme='arcade'] .host-settings__brand {
-  gap: 24px;
-}
-
-:root[data-theme='arcade'] .host-settings__logo {
-  font-size: 34px;
-  color: #ffd1ec;
-  background: none;
-  padding: 0;
-  text-shadow: 0 0 6px #ff2ea6, 0 0 18px #ff2ea6;
-}
-
-:root[data-theme='arcade'] .host-settings__logo-rest {
-  display: none;
-}
-
-:root[data-theme='arcade'] .host-settings__title {
-  font-family: var(--font-label);
-  font-size: 28px;
-  color: var(--color-text-strong);
-  text-transform: uppercase;
-}
-
 :root[data-theme='arcade'] .host-settings__back {
   height: 56px;
   padding: 0 20px;
@@ -290,45 +210,6 @@
 }
 
 /* ---------- 70s rec room ---------- */
-:root[data-theme='rec-room'] .host-settings {
-  background-image:
-    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.28) 0 3px, rgba(0, 0, 0, 0) 3px 128px),
-    repeating-linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0) 0 22px,
-      rgba(255, 220, 170, 0.05) 22px 40px,
-      rgba(0, 0, 0, 0.06) 40px 71px,
-      rgba(255, 255, 255, 0) 71px 128px
-    );
-  font-family: var(--font-label);
-}
-
-:root[data-theme='rec-room'] .host-settings::before {
-  background: radial-gradient(ellipse 60% 55% at 50% 30%, rgba(255, 214, 150, 0.16), rgba(255, 214, 150, 0) 70%);
-}
-
-:root[data-theme='rec-room'] .host-settings__header {
-  left: 44px;
-  right: 44px;
-  top: 26px;
-  height: 80px;
-}
-
-:root[data-theme='rec-room'] .host-settings__logo {
-  font-size: 22px;
-  color: var(--color-background);
-  background: var(--color-surface);
-  padding: 8px 14px;
-  transform: rotate(-2deg);
-  box-shadow: 4px 5px 0 rgba(0, 0, 0, 0.3);
-}
-
-:root[data-theme='rec-room'] .host-settings__title {
-  font-size: 46px;
-  color: var(--color-text);
-  text-shadow: var(--shadow-text-headline);
-}
-
 :root[data-theme='rec-room'] .host-settings__back {
   padding: 0 22px;
   background: var(--color-secondary);
