@@ -1,7 +1,9 @@
-// ABOUTME: Host settings on the big screen: lobby style, how the next game is chosen, and arcade CRT scanlines.
+// ABOUTME: Host settings on the big screen: the host's own style, how the next game is chosen, and CRT scanlines.
 // ABOUTME: Layout follows docs/design (screen 8, Host settings); each style dresses it in HostSettings.css.
+import { StyleCards } from '../ui/StyleCards'
+import { TvHeader } from '../ui/TvHeader'
 import { TvStage } from '../ui/TvStage'
-import { LOBBY_STYLES } from '../ui/themes/lobbyStyles'
+import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import type { HostSettings as Settings } from './useHostSettings'
 import { href } from './useHashRoute'
 import './HostSettings.css'
@@ -9,62 +11,31 @@ import './HostSettings.css'
 interface HostSettingsProps {
   settings: Settings
   onChange: (change: Partial<Settings>) => void
+  /** The host's own style, shown on the TV and the host's phone. */
+  style: LobbyStyleId
+  onStyleChange: (style: LobbyStyleId) => void
 }
 
-export function HostSettings({ settings, onChange }: HostSettingsProps) {
+export function HostSettings({ settings, onChange, style, onStyleChange }: HostSettingsProps) {
   return (
     <TvStage label="Host settings">
-      <div className="host-settings">
-        <header className="host-settings__header">
-          <div className="host-settings__brand">
-            <span className="host-settings__logo">
-              JuJu<span className="host-settings__logo-rest"> Studios</span>
-            </span>
-            <h1 className="host-settings__title">Host settings</h1>
-          </div>
+      <div className="tv-screen host-settings">
+        <TvHeader title="Host settings">
           <a className="host-settings__back" href={href('lobby')} data-testid="back-to-lobby">
             Back to lobby
           </a>
-        </header>
+        </TvHeader>
 
         <div className="host-settings__body">
           <section className="host-settings__styles" aria-labelledby="lobby-style-heading">
             <h2 className="host-settings__heading" id="lobby-style-heading">
-              <span className="host-settings__heading-label">Lobby style</span>
+              <span className="host-settings__heading-label">Your style</span>
               <span className="host-settings__heading-sep" aria-hidden="true">
                 {' · '}
               </span>
-              <span className="host-settings__heading-note">restyles every screen</span>
+              <span className="host-settings__heading-note">the TV and your phone</span>
             </h2>
-            <div className="style-cards">
-              {LOBBY_STYLES.map((style) => {
-                const inUse = style.id === settings.style
-                return (
-                  <button
-                    key={style.id}
-                    type="button"
-                    className="style-card"
-                    data-theme={style.id}
-                    data-testid={`style-card-${style.id}`}
-                    aria-pressed={inUse}
-                    onClick={() => onChange({ style: style.id })}
-                  >
-                    <span className="style-card__text">
-                      <span className="style-card__label">{style.label}</span>
-                      <span className="style-card__logo" aria-hidden="true">
-                        JuJu Studios
-                      </span>
-                    </span>
-                    <span className="style-card__swatches" aria-hidden="true">
-                      {style.swatches.map((color) => (
-                        <span key={color} className="style-card__swatch" style={{ background: color }} />
-                      ))}
-                    </span>
-                    {inUse && <span className="style-card__badge">In use</span>}
-                  </button>
-                )
-              })}
-            </div>
+            <StyleCards current={style} size="tv" labelledBy="lobby-style-heading" onPick={onStyleChange} />
           </section>
 
           <div className="host-settings__options">

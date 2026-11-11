@@ -2,8 +2,8 @@
 // ABOUTME: everyone else guesses a number privately and scores by closeness. Pure logic, no screens.
 
 import spectrumPack from '../../../packs/dial-it-in/spectrums.json'
-import type { FinishingPlace, GameRules, Player, Random } from '../types'
-import { manifest, type DialItInSettings, type DialRange } from './manifest'
+import type { FinishingOrder, GameRules, PlayerId } from '../types'
+import { manifest } from './manifest'
 
 /** A pair of opposites. The dial runs from left (1) to right (the top of the range). */
 export interface SpectrumCard {
@@ -14,8 +14,19 @@ export interface SpectrumCard {
 
 export const SPECTRUM_CARDS: SpectrumCard[] = spectrumPack
 
+/** How wide the dial is: 1 to 50 is easier, 1 to 100 is the standard game. */
+export type DialRange = 50 | 100
+
+export const DIAL_RANGES: readonly DialRange[] = [50, 100]
+
+export interface DialItInSettings {
+  range: DialRange
+}
+
+export const DEFAULT_SETTINGS: DialItInSettings = { range: 100 }
+
 export interface Round {
-  clueGiverId: string
+  clueGiver: PlayerId
   card: SpectrumCard
   /** Secret until the reveal. Only the clue giver's phone may show it during guessing. */
   target: number
@@ -29,7 +40,8 @@ export interface Round {
 export type Phase = 'guessing' | 'reveal' | 'over'
 
 export interface DialItInState {
-  players: Player[]
+  /** Turn order, which is also the clue-giver rotation. */
+  players: readonly PlayerId[]
   range: DialRange
   /** One round per player, dealt at setup, in clue-giver order. */
   rounds: Round[]
@@ -57,14 +69,14 @@ export function currentRound(state: DialItInState): Round {
 }
 
 /** Everyone except this round's clue giver. */
-export function guessersFor(state: DialItInState, round: Round): Player[] {
-  return state.players.filter((player) => player.id !== round.clueGiverId)
+export function guessersFor(state: DialItInState, round: Round): PlayerId[] {
+  return state.players.filter((player) => player !== round.clueGiver)
 }
 
 /** Each player's points across all revealed rounds, by player id. */
 export function totalScores(state: DialItInState): Record<string, number> {
   const totals: Record<string, number> = {}
-  for (const player of state.players) totals[player.id] = 0
+  for (const player of state.players) totals[player] = 0
   for (const round of state.rounds) {
     for (const [playerId, points] of Object.entries(round.points)) {
       totals[playerId] += points
@@ -73,7 +85,7 @@ export function totalScores(state: DialItInState): Record<string, number> {
   return totals
 }
 
-function shuffled<T>(items: T[], random: Random): T[] {
+function shuffled<T>(items: T[], random: () => number): T[] {
   const copy = [...items]
   for (let i = copy.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1))
@@ -90,8 +102,8 @@ function revealRound(state: DialItInState): DialItInState {
   const round = currentRound(state)
   const points: Record<string, number> = {}
   for (const guesser of guessersFor(state, round)) {
-    const guess = round.guesses[guesser.id]
-    points[guesser.id] = guess === undefined ? 0 : closenessPoints(guess, round.target, state.range)
+    const guess = round.guesses[guesser]
+    points[guesser] = guess === undefined ? 0 : closenessPoints(guess, round.target, state.range)
   }
   const rounds = state.rounds.map((r, i) => (i === state.roundIndex ? { ...r, points } : r))
   return { ...state, rounds, phase: 'reveal' }
@@ -105,18 +117,18 @@ function startNextRound(state: DialItInState): DialItInState {
 
 export const rules: GameRules<DialItInState, DialItInSettings, DialItInInput> = {
   /** Players arrive in turn order; that order is the clue-giver rotation. */
-  setup(players, settings, random = Math.random) {
+  setup(players, settings, ctx) {
     if (players.length < manifest.players.min) {
       throw new Error(`Dial It In needs at least ${manifest.players.min} players.`)
     }
     if (players.length > SPECTRUM_CARDS.length) {
       throw new Error(`The spectrum pack has only ${SPECTRUM_CARDS.length} cards for ${players.length} players.`)
     }
-    const cards = shuffled(SPECTRUM_CARDS, random)
+    const cards = shuffled(SPECTRUM_CARDS, ctx.random)
     const rounds = players.map((player, i) => ({
-      clueGiverId: player.id,
+      clueGiver: player,
       card: cards[i],
-      target: 1 + Math.floor(random() * settings.range),
+      target: 1 + Math.floor(ctx.random() * settings.range),
       guesses: {},
       points: {},
     }))
@@ -124,18 +136,18 @@ export const rules: GameRules<DialItInState, DialItInSettings, DialItInInput> = 
   },
 
   /** Ignores anything that isn't a fresh, in-range guess from a guesser during guessing. */
-  onInput(state, playerId, input) {
+  onInput(state, player, input) {
     if (state.phase !== 'guessing' || input.type !== 'guess') return state
     const round = currentRound(state)
     const guessers = guessersFor(state, round)
-    if (!guessers.some((player) => player.id === playerId)) return state
-    if (playerId in round.guesses) return state
+    if (!guessers.includes(player)) return state
+    if (player in round.guesses) return state
     if (!isValidGuess(input.value, state.range)) return state
 
-    const guesses = { ...round.guesses, [playerId]: input.value }
+    const guesses = { ...round.guesses, [player]: input.value }
     const rounds = state.rounds.map((r, i) => (i === state.roundIndex ? { ...r, guesses } : r))
     const updated = { ...state, rounds }
-    const everyoneGuessed = guessers.every((player) => player.id in guesses)
+    const everyoneGuessed = guessers.every((guesser) => guesser in guesses)
     return everyoneGuessed ? revealRound(updated) : updated
   },
 
@@ -152,12 +164,12 @@ export const rules: GameRules<DialItInState, DialItInSettings, DialItInInput> = 
 
   finishingOrder(state) {
     const totals = totalScores(state)
-    const byScore = new Map<number, string[]>()
+    const byScore = new Map<number, PlayerId[]>()
     for (const player of state.players) {
-      const score = totals[player.id]
-      byScore.set(score, [...(byScore.get(score) ?? []), player.id])
+      const score = totals[player]
+      byScore.set(score, [...(byScore.get(score) ?? []), player])
     }
-    const places: FinishingPlace[] = [...byScore.entries()]
+    const places: FinishingOrder = [...byScore.entries()]
       .sort(([a], [b]) => b - a)
       .map(([, ids]) => ids)
     return places

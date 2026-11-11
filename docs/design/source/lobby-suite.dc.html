@@ -29,8 +29,7 @@ a:hover{color:#C8551F}
       <button type="button" onClick="{{ togglePause }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;padding:4px 9px;border-radius:5px;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;color:#3b3830;">{{ pauseLabel }}</button>
       <button type="button" onClick="{{ restartDemo }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;padding:4px 9px;border-radius:5px;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;color:#3b3830;">Restart demo</button>
     </div>
-    <div role="group" aria-label="Style" style="display:flex;gap:2px;padding:3px;background:#D6D2C9;border-radius:7px;"><sc-for list="{{ styleOpts }}" as="b" hint-placeholder-count="3"><button type="button" onClick="{{ b.onClick }}" aria-pressed="{{ b.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;padding:4px 9px;border-radius:5px;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;background:{{ b.bg }};color:{{ b.ink }};">{{ b.label }}</button></sc-for></div>
-    <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#5c574d;">Sample data · style: {{ styleName }}</div>
+    <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#5c574d;">Sample data · style: {{ styleName }} (change in Settings)</div>
   </div>
   <sc-if value="{{ hasSubs }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;"><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#5c574d;">{{ subTitle }}</div><div role="group" aria-label="{{ subTitle }}" style="display:flex;flex-wrap:wrap;gap:2px;padding:3px;background:#D6D2C9;border-radius:7px;"><sc-for list="{{ subs }}" as="b" hint-placeholder-count="3"><button type="button" onClick="{{ b.onClick }}" aria-pressed="{{ b.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;padding:4px 9px;border-radius:5px;font-family:'Courier Prime',monospace;font-size:12px;font-weight:700;background:{{ b.bg }};color:{{ b.ink }};">{{ b.label }}</button></sc-for></div></div></sc-if>
 <div data-screen-label="Tokens · Retro game show" style="display:{{ tokensDisplayA }};max-width:1200px;width:100%;margin:10px auto 40px;flex-direction:column;gap:22px;color:#3b3830;font-family:'Courier Prime',monospace;">
@@ -110,6 +109,7 @@ a:hover{color:#C8551F}
           </div>
         </div>
 
+        <sc-if value="{{ roomLocked }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:370px;top:238px;z-index:2;background:#C2302B;color:#FFF6D6;font-family:Shrikhand,serif;font-size:28px;padding:4px 16px 8px;transform:rotate(-7deg);box-shadow:4px 4px 0 #0B1533;">Locked</div></sc-if>
         <div style="position:absolute;left:576px;top:250px;width:644px;display:flex;flex-direction:column;gap:14px;">
           <div style="display:flex;justify-content:space-between;align-items:baseline;">
             <div style="font-family:'Bebas Neue';font-size:42px;letter-spacing:.1em;color:#F2B630;">Contestants</div>
@@ -157,7 +157,7 @@ a:hover{color:#C8551F}
         </div>
         <sc-if value="{{ g.isLeader }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-10px;right:18px;background:#FFF6D6;color:#C2302B;font-family:'Bebas Neue';font-size:19px;letter-spacing:.14em;padding:4px 12px 2px;box-shadow:0 0 0 3px #12204A;">In the lead</div></sc-if>
         <sc-if value="{{ g.isHostPick }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:16px;bottom:16px;background:#F0592A;color:#12204A;font-family:Shrikhand,serif;font-size:26px;padding:4px 16px 8px;transform:rotate(-6deg);box-shadow:4px 4px 0 #12204A;">Host's pick</div></sc-if>
-      </button>
+      <sc-if value="{{ g.spinOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:-8px;pointer-events:none;box-shadow:0 0 0 6px #FFF6D6, 0 0 40px 10px rgba(255,246,214,.75);"></div></sc-if><sc-if value="{{ g.focusOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:-9px;pointer-events:none;box-shadow:0 0 0 5px #FFF6D6, 0 0 0 9px #0B1533;"></div><div style="position:absolute;left:14px;top:-18px;z-index:2;background:#FFF6D6;color:#12204A;font-family:'Bebas Neue';font-size:18px;letter-spacing:.12em;padding:3px 10px 1px;">OK to open</div></sc-if></button>
     </sc-for>
   </div>
   <div style="position:absolute;left:40px;top:556px;width:1200px;height:82px;display:grid;grid-template-columns:2fr repeat(5,1fr);gap:12px;">
@@ -173,7 +173,7 @@ a:hover{color:#C8551F}
     <sc-if value="{{ voteMode }}" hint-placeholder-val="{{ true }}"><div style="font-family:Shrikhand,serif;font-size:24px;color:#F2B630;">Vote on your phone · host taps a game to start</div><div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:.08em;">{{ votesOf }} votes in</div></sc-if>
     <sc-if value="{{ leaderMode }}" hint-placeholder-val="{{ false }}"><div style="font-family:Shrikhand,serif;font-size:24px;color:#F2B630;">Host's choice tonight · tap a game</div><div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:.08em;">Doors 7 to 12 open soon</div></sc-if>
   </div>
-</div>
+<sc-if value="{{ pickBanner }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#F0592A;border-top:5px solid #F2B630;display:flex;align-items:center;justify-content:center;"><div style="font-family:Shrikhand,serif;font-size:32px;color:#FFF6D6;text-shadow:3px 3px 0 #12204A;">{{ pickBannerText }}</div></div></sc-if><sc-if value="{{ remoteHint }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;bottom:0;height:64px;background:#0c1636;border-top:5px solid #F2B630;display:flex;align-items:center;justify-content:center;gap:34px;font-family:'Bebas Neue';font-size:26px;letter-spacing:.1em;color:#F6E7C8;"><div><span style="background:#F6E7C8;color:#12204A;padding:3px 10px 0;margin-right:8px;">◀ ▶ ▲ ▼</span>Move</div><div><span style="background:#F6E7C8;color:#12204A;padding:3px 10px 0;margin-right:8px;">OK</span>Open instructions</div><div><span style="background:#F6E7C8;color:#12204A;padding:3px 10px 0;margin-right:8px;">Back</span>Lobby</div></div></sc-if></div>
 </sc-if>
 <sc-if value="{{ s.AStart }}" hint-placeholder-val="{{ false }}">
 <div data-screen-label="A0 Host or join" style="position:relative;width:1280px;height:720px;overflow:hidden;background:#12204A;color:#F6E7C8;font-family:Oswald,sans-serif;">
@@ -214,7 +214,7 @@ a:hover{color:#C8551F}
     <div style="background:#F2B630;color:#12204A;font-family:'Bebas Neue';font-size:26px;letter-spacing:.14em;padding:6px 14px 2px;">{{ tvSignTag }}</div>
     <div style="position:relative;font-family:Shrikhand,serif;font-size:60px;line-height:1.1;color:#FFF6D6;text-shadow:4px 4px 0 #F0592A;">{{ tvSignHead }}</div>
     <div style="font-size:28px;line-height:1.35;max-width:560px;text-wrap:pretty;">{{ tvSignBody }}</div>
-    <sc-if value="{{ tvSignExpired }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px;background:#C2302B;color:#FFF6D6;font-family:Shrikhand,serif;font-size:34px;padding:6px 20px 10px;transform:rotate(-5deg);box-shadow:5px 5px 0 #0B1533;">Expired</div></sc-if>
+    <sc-if value="{{ tvLoader }}" hint-placeholder-val="{{ false }}"><div style="margin-top:6px;"><div role="img" aria-label="Loading" style="display:flex;gap:16px;"><div style="width:24px;height:24px;border-radius:50%;background:#FFF6D6;animation:blink 1s steps(1) infinite;animation-delay:0.00s;"></div><div style="width:24px;height:24px;border-radius:50%;background:#FFF6D6;animation:blink 1s steps(1) infinite;animation-delay:0.33s;"></div><div style="width:24px;height:24px;border-radius:50%;background:#FFF6D6;animation:blink 1s steps(1) infinite;animation-delay:0.66s;"></div></div></div></sc-if><sc-if value="{{ tvSignExpired }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px;background:#C2302B;color:#FFF6D6;font-family:Shrikhand,serif;font-size:34px;padding:6px 20px 10px;transform:rotate(-5deg);box-shadow:5px 5px 0 #0B1533;">Expired</div></sc-if>
   </div>
   <div style="position:absolute;left:0;right:0;bottom:0;height:106px;background:#0c1636;border-top:5px solid #F2B630;display:flex;align-items:center;justify-content:center;gap:18px;padding:0 40px;box-sizing:border-box;height:96px;"><div style="font-family:Shrikhand,serif;font-size:30px;color:#F2B630;">Your room opens here once you're signed in</div></div>
 </div>
@@ -266,11 +266,11 @@ a:hover{color:#C8551F}
   <div style="position:absolute;left:40px;right:40px;top:22px;height:90px;display:flex;align-items:center;justify-content:space-between;gap:20px;"><div style="display:flex;align-items:center;gap:22px;"><div style="font-family:Shrikhand,serif;font-size:30px;color:#12204A;background:#F2B630;padding:6px 16px 10px;">JuJu Studios</div><div style="font-family:Shrikhand,serif;font-size:48px;color:#F6E7C8;">{{ insTitle }}</div></div><div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:.08em;color:#F2B630;text-align:right;">{{ roundLine }}</div></div>
   <div style="position:absolute;left:40px;top:128px;width:1200px;height:458px;box-sizing:border-box;background:#0B1533;box-shadow:0 0 0 4px #F2B630, 0 0 0 10px #0B1533;padding:30px;"><div style="height:100%;box-sizing:border-box;border:3px dashed rgba(246,231,200,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;"><div style="font-family:Shrikhand,serif;font-size:58px;line-height:1.1;color:#FFF6D6;text-shadow:4px 4px 0 #F0592A;">{{ insTitle }}</div><div style="font-family:'Bebas Neue';font-size:30px;letter-spacing:.12em;color:#F2B630;">Game screen placeholder</div></div></div>
   <div style="position:absolute;inset:0;background:rgba(11,21,51,.86);"></div>
-  <div style="position:absolute;left:290px;top:120px;width:700px;height:290px;box-sizing:border-box;padding:14px;background-color:#2a1d08;background-image:radial-gradient(circle at 7px 7px,#FFF6D6 0 3px,rgba(242,182,48,.7) 4px,rgba(242,182,48,0) 6px),radial-gradient(circle at 29px 29px,#FFF6D6 0 3px,rgba(242,182,48,.7) 4px,rgba(242,182,48,0) 6px),radial-gradient(circle at 29px 7px,#6b5320 0 3px,rgba(0,0,0,0) 4px),radial-gradient(circle at 7px 29px,#6b5320 0 3px,rgba(0,0,0,0) 4px);background-size:44px 44px;animation:chase .8s linear infinite;"><div style="width:100%;height:100%;background:#C2302B;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 24px;"><div style="font-family:Shrikhand,serif;font-size:56px;white-space:nowrap;line-height:1;color:#FFF6D6;text-shadow:5px 5px 0 #12204A;">Host disconnected</div><div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:.12em;color:#FFF6D6;">Waiting for JMohawk to reconnect</div></div></div>
+  <div style="position:absolute;left:290px;top:120px;width:700px;height:290px;box-sizing:border-box;padding:14px;background-color:#2a1d08;background-image:radial-gradient(circle at 7px 7px,#FFF6D6 0 3px,rgba(242,182,48,.7) 4px,rgba(242,182,48,0) 6px),radial-gradient(circle at 29px 29px,#FFF6D6 0 3px,rgba(242,182,48,.7) 4px,rgba(242,182,48,0) 6px),radial-gradient(circle at 29px 7px,#6b5320 0 3px,rgba(0,0,0,0) 4px),radial-gradient(circle at 7px 29px,#6b5320 0 3px,rgba(0,0,0,0) 4px);background-size:44px 44px;animation:chase .8s linear infinite;"><div style="width:100%;height:100%;background:#C2302B;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 24px;"><div style="font-family:Shrikhand,serif;font-size:56px;white-space:nowrap;line-height:1;color:#FFF6D6;text-shadow:5px 5px 0 #12204A;">{{ dcHead }}</div><div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:.12em;color:#FFF6D6;">{{ dcSub }}</div></div></div>
   <div style="position:absolute;left:0;right:0;top:446px;display:flex;justify-content:center;gap:48px;">
-    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.16em;color:#F2B630;">Reconnecting for</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:52px;line-height:1;padding:6px 14px 2px;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);">{{ pausedFor }}</div></div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:.16em;color:#F2B630;">{{ dcTimerLabel }}</div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:52px;line-height:1;padding:6px 14px 2px;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);">{{ pausedFor }}</div></div>
   </div>
-  <div style="position:absolute;left:0;right:0;bottom:0;height:106px;background:#0c1636;border-top:5px solid #F2B630;display:flex;align-items:center;justify-content:center;gap:18px;padding:0 40px;box-sizing:border-box;"><div style="font-family:Shrikhand,serif;font-size:30px;color:#F2B630;">The game picks up where it left off</div></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:106px;background:#0c1636;border-top:5px solid #F2B630;display:flex;align-items:center;justify-content:center;gap:18px;padding:0 40px;box-sizing:border-box;"><div style="font-family:Shrikhand,serif;font-size:30px;color:#F2B630;">{{ dcFoot }}</div></div>
 </div>
 </sc-if>
 <sc-if value="{{ s.AErrSolo }}" hint-placeholder-val="{{ false }}">
@@ -339,7 +339,7 @@ a:hover{color:#C8551F}
     <div style="background:#FFE600;color:#07060B;font-family:'Press Start 2P';font-size:14px;padding:10px 12px;">{{ tvSignTagUp }}</div>
     <div style="font-family:Bungee;color:#FFD1EC;text-shadow:0 0 6px #FF2EA6,0 0 20px #FF2EA6;font-size:52px;line-height:1.1;">{{ tvSignHeadUp }}</div>
     <div style="font-size:38px;line-height:1.05;max-width:600px;text-wrap:pretty;">{{ tvSignBody }}</div>
-    <sc-if value="{{ tvSignExpired }}" hint-placeholder-val="{{ false }}"><div style="background:#FF4F45;color:#07060B;font-family:'Press Start 2P';font-size:18px;padding:12px 14px;box-shadow:6px 6px 0 #07060B, 6px 6px 0 2px #FF4F45;">LINK EXPIRED</div></sc-if>
+    <sc-if value="{{ tvLoader }}" hint-placeholder-val="{{ false }}"><div style="margin-top:6px;"><div style="display:flex;align-items:center;gap:16px;"><div style="font-family:'Press Start 2P';font-size:16px;color:#22E4FF;">LOADING</div><div role="img" aria-label="Loading" style="display:flex;gap:6px;align-items:center;"><div style="width:18px;height:18px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.0s;"></div><div style="width:18px;height:18px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.2s;"></div><div style="width:18px;height:18px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.4s;"></div><div style="width:18px;height:18px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.6s;"></div><div style="width:18px;height:18px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.8s;"></div><div style="width:18px;height:18px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:1.0s;"></div></div></div></div></sc-if><sc-if value="{{ tvSignExpired }}" hint-placeholder-val="{{ false }}"><div style="background:#FF4F45;color:#07060B;font-family:'Press Start 2P';font-size:18px;padding:12px 14px;box-shadow:6px 6px 0 #07060B, 6px 6px 0 2px #FF4F45;">LINK EXPIRED</div></sc-if>
   </div>
   <div style="position:absolute;left:0;right:0;bottom:0;height:100px;background-color:#120E26;background-image:radial-gradient(circle at 20px 30px,#FF2EA6 0 5px,rgba(0,0,0,0) 6px),radial-gradient(circle at 84px 66px,#22E4FF 0 3px,rgba(0,0,0,0) 4px),radial-gradient(circle at 60px 20px,rgba(0,0,0,0) 0 8px,#FFE600 9px 11px,rgba(0,0,0,0) 12px),radial-gradient(circle at 112px 50px,rgba(0,0,0,0) 0 5px,#39FF6A 6px 7px,rgba(0,0,0,0) 8px);background-size:132px 84px;display:flex;align-items:center;justify-content:center;gap:16px;padding:0 30px;box-sizing:border-box;"><div style="background:#07060B;padding:14px 20px;font-family:'Press Start 2P';font-size:18px;color:#FFE600;display:flex;gap:6px;">YOUR ROOM OPENS HERE ONCE YOU SIGN IN</div></div>
   <sc-if value="{{ scanlines }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(0,0,0,.28) 0 1px,rgba(0,0,0,0) 1px 3px),radial-gradient(ellipse 75% 70% at 50% 50%,rgba(0,0,0,0) 60%,rgba(0,0,0,.55));"></div></sc-if>
@@ -396,11 +396,11 @@ a:hover{color:#C8551F}
   <div style="position:absolute;left:40px;top:96px;width:1200px;height:490px;box-sizing:border-box;background:#07060B;border:3px dashed #22E4FF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;"><div style="font-family:Bungee;color:#FFD1EC;text-shadow:0 0 6px #FF2EA6,0 0 20px #FF2EA6;font-size:44px;line-height:1.1;">{{ insTitleUp }}</div><div style="font-family:'Press Start 2P';font-size:16px;color:#22E4FF;">GAME SCREEN PLACEHOLDER</div></div>
   <div style="position:absolute;inset:0;background:rgba(7,6,11,.88);"></div>
   <div style="position:absolute;left:0;right:0;top:170px;display:flex;flex-direction:column;align-items:center;gap:26px;">
-    <div style="font-family:'Press Start 2P';font-size:50px;color:#FF4F45;text-shadow:0 0 12px rgba(255,79,69,.7);">HOST DISCONNECTED</div>
-    <div style="font-size:44px;line-height:1;color:#22E4FF;">WAITING FOR JMOHAWK TO RECONNECT<span style="animation:blink 1s steps(1) infinite;">_</span></div>
-    <div style="margin-top:14px;"><div style="display:flex;flex-direction:column;align-items:center;gap:10px;"><div style="font-family:'Press Start 2P';font-size:12px;color:#FF2EA6;">RECONNECTING</div><div style="font-family:'Press Start 2P';font-size:30px;color:#FFE600;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;padding:14px 18px;">{{ pausedFor }}</div></div></div>
+    <div style="font-family:'Press Start 2P';font-size:50px;color:#FF4F45;text-shadow:0 0 12px rgba(255,79,69,.7);">{{ dcHeadUp }}</div>
+    <div style="font-size:44px;line-height:1;color:#22E4FF;">{{ dcSubUp }}<span style="animation:blink 1s steps(1) infinite;">_</span></div>
+    <div style="margin-top:14px;"><div style="display:flex;flex-direction:column;align-items:center;gap:10px;"><div style="font-family:'Press Start 2P';font-size:12px;color:#FF2EA6;">{{ dcTimerLabelUp }}</div><div style="font-family:'Press Start 2P';font-size:30px;color:#FFE600;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;padding:14px 18px;">{{ pausedFor }}</div></div></div>
   </div>
-  <div style="position:absolute;left:0;right:0;bottom:0;height:100px;background-color:#120E26;background-image:radial-gradient(circle at 20px 30px,#FF2EA6 0 5px,rgba(0,0,0,0) 6px),radial-gradient(circle at 84px 66px,#22E4FF 0 3px,rgba(0,0,0,0) 4px),radial-gradient(circle at 60px 20px,rgba(0,0,0,0) 0 8px,#FFE600 9px 11px,rgba(0,0,0,0) 12px),radial-gradient(circle at 112px 50px,rgba(0,0,0,0) 0 5px,#39FF6A 6px 7px,rgba(0,0,0,0) 8px);background-size:132px 84px;display:flex;align-items:center;justify-content:center;gap:16px;padding:0 30px;box-sizing:border-box;"><div style="background:#07060B;padding:14px 20px;font-family:'Press Start 2P';font-size:18px;color:#FFE600;display:flex;gap:6px;">THE GAME PICKS UP WHERE IT LEFT OFF</div></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:100px;background-color:#120E26;background-image:radial-gradient(circle at 20px 30px,#FF2EA6 0 5px,rgba(0,0,0,0) 6px),radial-gradient(circle at 84px 66px,#22E4FF 0 3px,rgba(0,0,0,0) 4px),radial-gradient(circle at 60px 20px,rgba(0,0,0,0) 0 8px,#FFE600 9px 11px,rgba(0,0,0,0) 12px),radial-gradient(circle at 112px 50px,rgba(0,0,0,0) 0 5px,#39FF6A 6px 7px,rgba(0,0,0,0) 8px);background-size:132px 84px;display:flex;align-items:center;justify-content:center;gap:16px;padding:0 30px;box-sizing:border-box;"><div style="background:#07060B;padding:14px 20px;font-family:'Press Start 2P';font-size:18px;color:#FFE600;display:flex;gap:6px;">{{ dcFootUp }}</div></div>
   <sc-if value="{{ scanlines }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(0,0,0,.28) 0 1px,rgba(0,0,0,0) 1px 3px),radial-gradient(ellipse 75% 70% at 50% 50%,rgba(0,0,0,0) 60%,rgba(0,0,0,.55));"></div></sc-if>
 </div>
 </sc-if>
@@ -462,7 +462,7 @@ a:hover{color:#C8551F}
       <div style="font-family:'Courier Prime',monospace;font-weight:700;font-size:15px;letter-spacing:.14em;color:#B4481A;padding-top:8px;">{{ tvSignTagUp }}</div>
       <div style="font-size:60px;font-weight:700;line-height:1;">{{ tvSignHead }}</div>
       <div style="font-size:36px;line-height:1.25;font-weight:500;text-wrap:pretty;">{{ tvSignBody }}</div>
-      <sc-if value="{{ tvSignExpired }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:26px;top:20px;background:#B4481A;color:#F3EBD3;font-family:Righteous;font-size:24px;padding:6px 14px;transform:rotate(-8deg);box-shadow:3px 4px 0 rgba(0,0,0,.3);">EXPIRED</div></sc-if>
+      <sc-if value="{{ tvLoader }}" hint-placeholder-val="{{ false }}"><div style="margin-top:6px;"><div role="img" aria-label="Loading" style="display:flex;gap:14px;"><div style="width:22px;height:22px;border-radius:50%;background:#D9A21B;animation:blink 1s steps(1) infinite;animation-delay:0.00s;"></div><div style="width:22px;height:22px;border-radius:50%;background:#C8551F;animation:blink 1s steps(1) infinite;animation-delay:0.33s;"></div><div style="width:22px;height:22px;border-radius:50%;background:#7A8B3A;animation:blink 1s steps(1) infinite;animation-delay:0.66s;"></div></div></div></sc-if><sc-if value="{{ tvSignExpired }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:26px;top:20px;background:#B4481A;color:#F3EBD3;font-family:Righteous;font-size:24px;padding:6px 14px;transform:rotate(-8deg);box-shadow:3px 4px 0 rgba(0,0,0,.3);">EXPIRED</div></sc-if>
     </div>
   </div>
   <div style="position:absolute;left:0;right:0;bottom:24px;display:flex;justify-content:center;"><div style="font-family:Caveat;font-weight:700;font-size:38px;color:#F3EBD3;text-shadow:2px 2px 0 #3D2716;">Your room opens here once you're signed in</div></div>
@@ -526,11 +526,11 @@ a:hover{color:#C8551F}
   <div style="position:absolute;left:300px;top:150px;width:680px;height:300px;background:#F3EBD3;transform:rotate(-2deg);box-shadow:12px 14px 0 rgba(0,0,0,.4);display:flex;flex-direction:column;overflow:hidden;">
     <div style="height:22px;background:#B4481A;"></div>
     <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:0 24px;text-align:center;">
-      <div style="font-family:Righteous;font-size:64px;line-height:1;color:#B4481A;">Host disconnected</div>
-      <div style="font-family:Caveat;font-weight:700;font-size:40px;line-height:1.1;color:#24356B;">Waiting for JMohawk to reconnect… {{ pausedFor }}</div>
+      <div style="font-family:Righteous;font-size:64px;line-height:1;color:#B4481A;">{{ dcHead }}</div>
+      <div style="font-family:Caveat;font-weight:700;font-size:40px;line-height:1.1;color:#24356B;">{{ dcSubTimed }}</div>
     </div>
   </div>
-  <div style="position:absolute;left:0;right:0;bottom:24px;display:flex;justify-content:center;"><div style="font-family:Caveat;font-weight:700;font-size:40px;color:#F3EBD3;text-shadow:2px 2px 0 #3D2716;">The game picks up where it left off</div></div>
+  <div style="position:absolute;left:0;right:0;bottom:24px;display:flex;justify-content:center;"><div style="font-family:Caveat;font-weight:700;font-size:40px;color:#F3EBD3;text-shadow:2px 2px 0 #3D2716;">{{ dcFoot }}</div></div>
 </div>
 </sc-if>
 <sc-if value="{{ s.CErrSolo }}" hint-placeholder-val="{{ false }}">
@@ -570,7 +570,7 @@ a:hover{color:#C8551F}
         </div>
 
         <div style="position:absolute;left:64px;top:236px;width:480px;display:flex;flex-direction:column;gap:14px;">
-          <div style="font-family:'Press Start 2P';font-size:16px;color:#22E4FF;">INSERT CODE</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-family:'Press Start 2P';font-size:16px;color:#22E4FF;">INSERT CODE</div><sc-if value="{{ roomLocked }}" hint-placeholder-val="{{ false }}"><div style="background:#FF4F45;color:#07060B;font-family:'Press Start 2P';font-size:14px;padding:8px 10px;">LOCKED</div></sc-if></div>
           <div style="background:#FFE600;color:#07060B;height:150px;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P';font-size:80px;letter-spacing:.08em;box-shadow:8px 8px 0 #FF2EA6;">KTZB</div>
           <div style="display:flex;gap:20px;align-items:center;margin-top:18px;">
             <div style="width:116px;height:116px;background:#fff;padding:8px;box-sizing:border-box;display:grid;grid-template-columns:repeat(25,1fr);">
@@ -641,7 +641,7 @@ a:hover{color:#C8551F}
         <sc-if value="{{ g.isLeader }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-26px;left:0;right:0;text-align:center;font-family:'Press Start 2P';font-size:11px;color:#FFE600;">▼ LEADING ▼</div></sc-if>
         <sc-if value="{{ g.isHostPick }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-26px;left:0;right:0;text-align:center;font-family:'Press Start 2P';font-size:11px;color:#FFE600;">▼ HOST PICK ▼</div></sc-if>
         <sc-if value="{{ g.isNew }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:50px;right:-10px;background:#FFE600;color:#07060B;font-family:'Press Start 2P';font-size:11px;padding:7px 8px;transform:rotate(10deg);box-shadow:4px 4px 0 #FF2EA6;">NEW!</div></sc-if>
-      </button>
+      <sc-if value="{{ g.spinOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:-6px;pointer-events:none;border-radius:12px 12px 0 0;box-shadow:0 0 0 4px #FFE600, 0 0 50px 12px rgba(255,230,0,.55);"></div></sc-if><sc-if value="{{ g.focusOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:-7px;pointer-events:none;border-radius:12px 12px 0 0;box-shadow:0 0 0 4px #22E4FF, 0 0 30px rgba(34,228,255,.6);"></div><div style="position:absolute;left:0;right:0;bottom:-30px;text-align:center;font-family:'Press Start 2P';font-size:11px;color:#22E4FF;animation:blink 1s steps(1) infinite;">▲ OK</div></sc-if></button>
     </sc-for>
   </div>
   <div style="position:absolute;left:40px;top:470px;width:1200px;height:150px;display:grid;grid-template-columns:2fr repeat(5,1fr);gap:19px;">
@@ -663,7 +663,7 @@ a:hover{color:#C8551F}
     <sc-if value="{{ leaderMode }}" hint-placeholder-val="{{ false }}"><div style="background:#07060B;padding:12px 20px;font-family:'Press Start 2P';font-size:16px;color:#FFE600;">HOST: TAP A CABINET</div></sc-if>
   </div>
   <sc-if value="{{ scanlines }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(0,0,0,.28) 0 1px,rgba(0,0,0,0) 1px 3px),radial-gradient(ellipse 75% 70% at 50% 50%,rgba(0,0,0,0) 60%,rgba(0,0,0,.55));"></div></sc-if>
-</div>
+<sc-if value="{{ pickBanner }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;bottom:0;height:72px;background:#07060B;box-shadow:inset 0 4px 0 #FF2EA6;display:flex;align-items:center;justify-content:center;"><div style="font-family:'Press Start 2P';font-size:22px;color:#FFE600;text-shadow:4px 4px 0 #FF2EA6;">{{ pickBannerTextUp }}</div></div></sc-if><sc-if value="{{ remoteHint }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;bottom:0;height:72px;background:#07060B;box-shadow:inset 0 4px 0 #22E4FF;display:flex;align-items:center;justify-content:center;gap:36px;font-family:'Press Start 2P';font-size:13px;color:#fff;"><div><span style="color:#07060B;background:#22E4FF;padding:6px 8px;margin-right:10px;">◀▶</span>MOVE</div><div><span style="color:#07060B;background:#22E4FF;padding:6px 8px;margin-right:10px;">OK</span>OPEN</div><div><span style="color:#07060B;background:#22E4FF;padding:6px 8px;margin-right:10px;">BACK</span>LOBBY</div></div></sc-if></div>
 </sc-if>
 <sc-if value="{{ s.C1 }}" hint-placeholder-val="{{ true }}">
 <div data-screen-label="C1 Lobby" style="position:relative;width:1280px;height:720px;overflow:hidden;background-color:#5A3A22;background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.28) 0 3px,rgba(0,0,0,0) 3px 128px),repeating-linear-gradient(90deg,rgba(255,255,255,0) 0 22px,rgba(255,220,170,.05) 22px 40px,rgba(0,0,0,.06) 40px 71px,rgba(255,255,255,0) 71px 128px);font-family:'Courier Prime',monospace;">
@@ -681,7 +681,7 @@ a:hover{color:#C8551F}
         </div>
 
         <div style="position:absolute;left:56px;top:304px;width:560px;height:346px;box-sizing:border-box;border-radius:26px;background:radial-gradient(ellipse at 50% 40%,#8A9C45,#6A7A30 75%);box-shadow:0 0 0 12px #3D2716,10px 14px 0 12px rgba(0,0,0,.3);padding:26px 30px;display:flex;flex-direction:column;gap:16px;color:#F3EBD3;">
-          <div style="font-family:Righteous;font-size:28px;">Room code</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-family:Righteous;font-size:28px;">Room code</div><sc-if value="{{ roomLocked }}" hint-placeholder-val="{{ false }}"><div style="background:#B4481A;color:#F3EBD3;font-family:Righteous;font-size:22px;padding:4px 14px;transform:rotate(6deg);box-shadow:3px 3px 0 rgba(0,0,0,.3);">LOCKED</div></sc-if></div>
           <div style="display:flex;gap:14px;">
             <div style="position:relative;width:88px;height:120px;border-radius:8px;background:#FBF6E8;transform:rotate(-4deg);box-shadow:3px 4px 0 rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-family:Righteous;font-size:64px;color:#C8551F;"><span style="position:absolute;left:8px;top:4px;font-size:16px;">K</span>K</div>
             <div style="position:relative;width:88px;height:120px;border-radius:8px;background:#FBF6E8;transform:rotate(2deg);box-shadow:3px 4px 0 rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-family:Righteous;font-size:64px;color:#5A3A22;"><span style="position:absolute;left:8px;top:4px;font-size:16px;">T</span>T</div>
@@ -765,14 +765,14 @@ a:hover{color:#C8551F}
               <sc-if value="{{ g.isNew }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:-10px;top:-12px;background:#D9A21B;color:#3D2716;font-family:Righteous;font-size:15px;padding:4px 9px;transform:rotate(-8deg);box-shadow:2px 3px 0 rgba(0,0,0,.3);">NEW!</div></sc-if>
               <sc-if value="{{ g.isLeader }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:90px;top:-28px;font-family:Caveat;font-weight:700;font-size:28px;color:#F3EBD3;transform:rotate(-4deg);">in the lead!</div></sc-if>
               <sc-if value="{{ g.isHostPick }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:90px;top:-28px;font-family:Caveat;font-weight:700;font-size:28px;color:#F3EBD3;transform:rotate(-4deg);">host's pick</div></sc-if>
-            </button>
+            <sc-if value="{{ g.spinOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:-10px;pointer-events:none;border-radius:8px;box-shadow:0 0 0 5px #F3EBD3, 0 0 36px 8px rgba(255,214,150,.7);"></div></sc-if><sc-if value="{{ g.focusOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:-10px;pointer-events:none;border-radius:8px;box-shadow:0 0 0 4px #F3EBD3, 0 0 0 8px #3D2716;"></div><div style="position:absolute;left:4px;top:-38px;font-family:Caveat;font-weight:700;font-size:28px;color:#F3EBD3;transform:rotate(-3deg);">OK to open ↓</div></sc-if></button>
           </sc-for>
         </div>
         <div style="height:20px;background:#3D2716;box-shadow:inset 0 4px 0 #7A5233,0 8px 0 rgba(0,0,0,.25);margin-bottom:12px;"></div>
       </div>
     </sc-for>
   </div>
-</div>
+<sc-if value="{{ pickBanner }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:44px;top:16px;z-index:3;background:#F3EBD3;color:#24356B;font-family:Caveat;font-weight:700;font-size:40px;line-height:1;padding:10px 22px 12px;transform:rotate(2deg);box-shadow:6px 7px 0 rgba(0,0,0,.35);">{{ pickBannerText }}</div></sc-if><sc-if value="{{ remoteHint }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:44px;top:16px;z-index:3;background:#F3EBD3;color:#24356B;font-family:Caveat;font-weight:700;font-size:28px;line-height:1;min-height:86px;box-sizing:border-box;padding:10px 22px;transform:rotate(2deg);box-shadow:6px 7px 0 rgba(0,0,0,.35);display:flex;gap:18px;align-items:center;"><div><span style="font-family:'Courier Prime',monospace;font-weight:700;font-size:16px;background:#3D2716;color:#F3EBD3;border-radius:4px;padding:2px 8px;margin-right:6px;">◀ ▶ ▲ ▼</span>move</div><div><span style="font-family:'Courier Prime',monospace;font-weight:700;font-size:16px;background:#3D2716;color:#F3EBD3;border-radius:4px;padding:2px 8px;margin-right:6px;">OK</span>open</div><div><span style="font-family:'Courier Prime',monospace;font-weight:700;font-size:16px;background:#3D2716;color:#F3EBD3;border-radius:4px;padding:2px 8px;margin-right:6px;">Back</span>lobby</div></div></sc-if></div>
 </sc-if>
 <sc-if value="{{ s.A3 }}" hint-placeholder-val="{{ false }}">
 <div data-screen-label="A3 Leaderboard" style="position:relative;width:1280px;height:720px;overflow:hidden;background:#12204A;color:#F6E7C8;font-family:Oswald,sans-serif;">
@@ -786,7 +786,7 @@ a:hover{color:#C8551F}
   </div>
   <div style="position:absolute;left:40px;top:120px;width:1200px;height:496px;box-sizing:border-box;background:#0B1533;padding:10px 16px;display:flex;flex-direction:column;gap:6px;box-shadow:0 0 0 4px #F2B630, 0 0 0 10px #0B1533;">
     <div style="display:grid;grid-template-columns:52px 48px 1fr 170px 110px 110px;padding:0 12px 0 16px;font-family:'Bebas Neue';font-size:19px;letter-spacing:.14em;color:#F2B630;"><div></div><div></div><div>Player</div><div style="text-align:center;">Total</div><div style="text-align:center;">Games</div><div style="text-align:center;">Avg</div></div>
-    <sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
+    <sc-if value="{{ lbEmpty }}" hint-placeholder-val="{{ false }}"><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;"><div style="display:flex;gap:4px;"><div style="width:44px;height:58px;background:#12204A;color:#F2B630;font-family:'Bebas Neue';font-size:52px;line-height:1;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;">0</div><div style="width:44px;height:58px;background:#12204A;color:#F2B630;font-family:'Bebas Neue';font-size:52px;line-height:1;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;">0</div><div style="width:44px;height:58px;background:#12204A;color:#F2B630;font-family:'Bebas Neue';font-size:52px;line-height:1;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;">0</div><div style="width:44px;height:58px;background:#12204A;color:#F2B630;font-family:'Bebas Neue';font-size:52px;line-height:1;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;">0</div></div><div style="font-family:Shrikhand,serif;font-size:46px;line-height:1.1;color:#FFF6D6;text-shadow:4px 4px 0 #F0592A;">No scores yet</div><div style="font-size:24px;">Play a game and the standings start here.</div></div></sc-if><sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
       <div style="height:50px;flex:none;background:{{ r.aFace }};color:{{ r.aInk }};display:grid;grid-template-columns:52px 48px 1fr 170px 110px 110px;align-items:center;padding:0 12px 0 16px;box-shadow:inset 0 -5px 0 rgba(0,0,0,.2);">
         <div style="width:38px;height:38px;border-radius:50%;background:#FFF6D6;color:#12204A;font-family:'Bebas Neue';font-size:24px;display:flex;align-items:center;justify-content:center;">{{ r.rank }}</div>
         <div style="width:36px;height:36px;border-radius:50%;background:{{ r.aChip }};color:{{ r.aChipInk }};box-shadow:0 0 0 2px #12204A;font-family:'Bebas Neue';font-size:19px;display:flex;align-items:center;justify-content:center;">{{ r.i2 }}</div>
@@ -824,7 +824,7 @@ a:hover{color:#C8551F}
   <div style="position:absolute;left:0;right:0;top:86px;text-align:center;font-family:'Press Start 2P';font-size:40px;color:#FFE600;text-shadow:6px 6px 0 #FF2EA6;">HIGH SCORES</div>
   <div style="position:absolute;left:110px;width:1060px;top:162px;display:flex;flex-direction:column;">
     <div style="display:grid;grid-template-columns:110px 110px 1fr 170px 120px 120px;font-family:'Press Start 2P';font-size:11px;color:#22E4FF;padding-bottom:10px;"><div>RANK</div><div>INIT</div><div>NAME</div><div style="text-align:right;padding-right:30px;">TOTAL</div><div style="text-align:center;">GAMES</div><div style="text-align:center;">AVG</div></div>
-    <sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
+    <sc-if value="{{ lbEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding-top:70px;display:flex;flex-direction:column;align-items:center;gap:24px;"><div style="font-family:'Press Start 2P';font-size:28px;color:#FFE600;">NO HIGH SCORES YET</div><div style="font-size:38px;line-height:1;color:#22E4FF;">Play a game to get on the board<span style="animation:blink 1s steps(1) infinite;">_</span></div></div></sc-if><sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
       <div style="display:grid;grid-template-columns:110px 110px 1fr 170px 120px 120px;align-items:center;height:44px;color:{{ r.bCol }};">
         <div style="font-family:'Press Start 2P';font-size:16px;">{{ r.rankOrd }}</div>
         <div style="font-family:'Press Start 2P';font-size:20px;color:{{ r.bInit }};">{{ r.i3 }}</div>
@@ -873,7 +873,7 @@ a:hover{color:#C8551F}
         <div style="font-size:30px;font-weight:700;color:#B4481A;">{{ lbTitle }}</div>
       </div>
       <div style="height:28px;flex:none;display:grid;grid-template-columns:44px 40px 1fr 110px 80px 90px;align-items:end;font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;letter-spacing:.12em;color:#5A3A22;"><div></div><div></div><div>PLAYER</div><div style="text-align:right;">TOTAL</div><div style="text-align:right;">GAMES</div><div style="text-align:right;">AVG</div></div>
-      <sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
+      <sc-if value="{{ lbEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding-top:30px;display:flex;flex-direction:column;gap:12px;"><div style="font-size:50px;font-weight:700;line-height:1.1;">Nobody's on the board yet</div><div style="font-size:36px;line-height:1.2;">Play a game and the scores go here.</div></div></sc-if><sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
           <div style="position:relative;height:56px;flex:none;display:grid;grid-template-columns:44px 40px 1fr 110px 80px 90px;align-items:end;font-size:38px;line-height:1.15;font-weight:500;">
             <div style="color:#6b5f4f;">{{ r.num }}</div>
             <div style="align-self:center;width:32px;height:32px;border-radius:50%;background:{{ r.cChip }};color:{{ r.cChipInk }};font-family:'Courier Prime',monospace;font-size:13px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;">{{ r.i2 }}</div>
@@ -1046,15 +1046,19 @@ a:hover{color:#C8551F}
     <sc-if value="{{ s.dC }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:16px;top:16px;background:#F3EBD3;color:#3D2716;font-family:Righteous;font-size:16px;padding:5px 10px;transform:rotate(4deg);">In use</div></sc-if></button>
 </div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
-    <div style="height:72px;padding:0 12px 0 24px;background:#0B1533;display:flex;align-items:center;justify-content:space-between;">
+    <div style="height:62px;padding:0 12px 0 24px;background:#0B1533;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:baseline;gap:14px;"><div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:.06em;color:#F6E7C8;">Game choice</div><div style="font-size:18px;color:#F2B630;">How tonight's game gets picked</div></div>
       <div style="display:flex;gap:4px;padding:4px;background:#12204A;"><sc-for list="{{ gameChoice }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:130px;height:48px;padding:0 18px;background:{{ o.aBg }};color:{{ o.aInk }};font-family:'Bebas Neue';font-size:24px;letter-spacing:.08em;">{{ o.label }}</button></sc-for></div>
     </div>
-    <div style="height:72px;padding:0 12px 0 24px;background:#0B1533;display:flex;align-items:center;justify-content:space-between;">
+    <div style="height:62px;padding:0 12px 0 24px;background:#0B1533;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:baseline;gap:14px;"><div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:.06em;color:#F6E7C8;">Room</div><div style="font-size:18px;color:#F2B630;">Locked rooms don't let new players join</div></div>
+      <div style="display:flex;gap:4px;padding:4px;background:#12204A;"><sc-for list="{{ roomOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:130px;height:48px;padding:0 18px;background:{{ o.aBg }};color:{{ o.aInk }};font-family:'Bebas Neue';font-size:24px;letter-spacing:.08em;">{{ o.label }}</button></sc-for></div>
+    </div>
+    <div style="height:62px;padding:0 12px 0 24px;background:#0B1533;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:baseline;gap:14px;"><div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:.06em;color:#F6E7C8;">Sound on the TV</div><div style="font-size:18px;color:#F2B630;">Music and buzzers</div></div>
       <div style="display:flex;gap:4px;padding:4px;background:#12204A;"><sc-for list="{{ soundOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:130px;height:48px;padding:0 18px;background:{{ o.aBg }};color:{{ o.aInk }};font-family:'Bebas Neue';font-size:24px;letter-spacing:.08em;">{{ o.label }}</button></sc-for></div>
     </div>
-    <div style="height:72px;padding:0 12px 0 24px;background:#0B1533;display:flex;align-items:center;justify-content:space-between;">
+    <div style="height:62px;padding:0 12px 0 24px;background:#0B1533;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:baseline;gap:14px;"><div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:.06em;color:#F6E7C8;">CRT scanlines</div><div style="font-size:18px;color:#F2B630;">Arcade style only</div></div>
       <div style="display:flex;gap:4px;padding:4px;background:#12204A;"><sc-for list="{{ scanOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:130px;height:48px;padding:0 18px;background:{{ o.aBg }};color:{{ o.aInk }};font-family:'Bebas Neue';font-size:24px;letter-spacing:.08em;">{{ o.label }}</button></sc-for></div>
     </div>
@@ -1098,15 +1102,19 @@ a:hover{color:#C8551F}
     <sc-if value="{{ s.dC }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;right:16px;top:16px;background:#F3EBD3;color:#3D2716;font-family:Righteous;font-size:16px;padding:5px 10px;transform:rotate(4deg);">In use</div></sc-if></button>
 </div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;">
-    <div style="height:72px;padding:0 12px 0 24px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;display:flex;align-items:center;justify-content:space-between;">
+    <div style="height:60px;padding:0 12px 0 24px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:18px;"><div style="font-family:'Press Start 2P';font-size:15px;color:#FFE600;">GAME CHOICE</div><div style="font-size:28px;color:#B9B4CC;">How tonight's game gets picked</div></div>
       <div style="display:flex;gap:6px;"><sc-for list="{{ gameChoice }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:110px;height:48px;padding:0 16px;background:{{ o.bBg }};color:{{ o.bInk }};box-shadow:inset 0 0 0 2px #22E4FF;font-family:'Press Start 2P';font-size:13px;">{{ o.label }}</button></sc-for></div>
     </div>
-    <div style="height:72px;padding:0 12px 0 24px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;display:flex;align-items:center;justify-content:space-between;">
+    <div style="height:60px;padding:0 12px 0 24px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:18px;"><div style="font-family:'Press Start 2P';font-size:15px;color:#FFE600;">ROOM</div><div style="font-size:28px;color:#B9B4CC;">Lock to stop new players joining</div></div>
+      <div style="display:flex;gap:6px;"><sc-for list="{{ roomOptsUp }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:110px;height:48px;padding:0 16px;background:{{ o.bBg }};color:{{ o.bInk }};box-shadow:inset 0 0 0 2px #22E4FF;font-family:'Press Start 2P';font-size:13px;">{{ o.label }}</button></sc-for></div>
+    </div>
+    <div style="height:60px;padding:0 12px 0 24px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:18px;"><div style="font-family:'Press Start 2P';font-size:15px;color:#FFE600;">TV SOUND</div><div style="font-size:28px;color:#B9B4CC;">Music and buzzers</div></div>
       <div style="display:flex;gap:6px;"><sc-for list="{{ soundOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:110px;height:48px;padding:0 16px;background:{{ o.bBg }};color:{{ o.bInk }};box-shadow:inset 0 0 0 2px #22E4FF;font-family:'Press Start 2P';font-size:13px;">{{ o.label }}</button></sc-for></div>
     </div>
-    <div style="height:72px;padding:0 12px 0 24px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;display:flex;align-items:center;justify-content:space-between;">
+    <div style="height:60px;padding:0 12px 0 24px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:18px;"><div style="font-family:'Press Start 2P';font-size:15px;color:#FFE600;">SCANLINES</div><div style="font-size:28px;color:#B9B4CC;">Arcade style only</div></div>
       <div style="display:flex;gap:6px;"><sc-for list="{{ scanOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:110px;height:48px;padding:0 16px;background:{{ o.bBg }};color:{{ o.bInk }};box-shadow:inset 0 0 0 2px #22E4FF;font-family:'Press Start 2P';font-size:13px;">{{ o.label }}</button></sc-for></div>
     </div>
@@ -1156,15 +1164,19 @@ a:hover{color:#C8551F}
 </div>
   </div>
   <div style="position:absolute;left:56px;top:400px;width:1168px;height:258px;box-sizing:border-box;border-radius:22px;background:radial-gradient(ellipse at 50% 40%,#6F8038,#56652A 75%);box-shadow:0 0 0 12px #3D2716,10px 14px 0 12px rgba(0,0,0,.3);padding:14px 30px;display:flex;flex-direction:column;">
-    <div style="height:66px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dashed rgba(243,235,211,.35);">
+    <div style="height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dashed rgba(243,235,211,.35);">
         <div style="display:flex;align-items:baseline;gap:14px;"><div style="font-family:Righteous;font-size:28px;color:#F3EBD3;">Game choice</div><div style="font-family:Caveat;font-weight:700;font-size:26px;color:#F3EBD3;">how tonight's game gets picked</div></div>
         <div style="display:flex;gap:10px;"><sc-for list="{{ gameChoice }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:120px;height:48px;padding:0 16px;background:{{ o.cBg }};color:{{ o.cInk }};transform:{{ o.cTf2 }};box-shadow:{{ o.cSh }};font-family:Righteous;font-size:20px;">{{ o.label }}</button></sc-for></div>
       </div>
-    <div style="height:66px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dashed rgba(243,235,211,.35);">
+    <div style="height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dashed rgba(243,235,211,.35);">
+        <div style="display:flex;align-items:baseline;gap:14px;"><div style="font-family:Righteous;font-size:28px;color:#F3EBD3;">Room</div><div style="font-family:Caveat;font-weight:700;font-size:26px;color:#F3EBD3;">lock it to stop new players joining</div></div>
+        <div style="display:flex;gap:10px;"><sc-for list="{{ roomOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:120px;height:48px;padding:0 16px;background:{{ o.cBg }};color:{{ o.cInk }};transform:{{ o.cTf2 }};box-shadow:{{ o.cSh }};font-family:Righteous;font-size:20px;">{{ o.label }}</button></sc-for></div>
+      </div>
+    <div style="height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dashed rgba(243,235,211,.35);">
         <div style="display:flex;align-items:baseline;gap:14px;"><div style="font-family:Righteous;font-size:28px;color:#F3EBD3;">Sound on the TV</div><div style="font-family:Caveat;font-weight:700;font-size:26px;color:#F3EBD3;">music and buzzers</div></div>
         <div style="display:flex;gap:10px;"><sc-for list="{{ soundOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:120px;height:48px;padding:0 16px;background:{{ o.cBg }};color:{{ o.cInk }};transform:{{ o.cTf2 }};box-shadow:{{ o.cSh }};font-family:Righteous;font-size:20px;">{{ o.label }}</button></sc-for></div>
       </div>
-    <div style="height:66px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dashed rgba(243,235,211,.35);">
+    <div style="height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px dashed rgba(243,235,211,.35);">
         <div style="display:flex;align-items:baseline;gap:14px;"><div style="font-family:Righteous;font-size:28px;color:#F3EBD3;">CRT scanlines</div><div style="font-family:Caveat;font-weight:700;font-size:26px;color:#F3EBD3;">arcade style only</div></div>
         <div style="display:flex;gap:10px;"><sc-for list="{{ scanOpts }}" as="o" hint-placeholder-count="2"><button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-width:120px;height:48px;padding:0 16px;background:{{ o.cBg }};color:{{ o.cInk }};transform:{{ o.cTf2 }};box-shadow:{{ o.cSh }};font-family:Righteous;font-size:20px;">{{ o.label }}</button></sc-for></div>
       </div>
@@ -1212,7 +1224,7 @@ a:hover{color:#C8551F}
       <div style="font-family:Shrikhand,serif;font-size:30px;color:#F2B630;">Cast your vote</div>
       <div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:30px;line-height:1;padding:5px 10px 1px;">{{ timer }}</div>
     </div>
-    <div role="group" aria-label="Playable games" style="background:#0B1533;padding:6px;display:flex;flex-direction:column;gap:6px;">
+    <sc-if value="{{ pickBanner }}" hint-placeholder-val="{{ false }}"><div style="background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:21px;padding:8px 12px 10px;text-align:center;box-shadow:0 4px 0 #7A2508;">{{ pickBannerPhone }}</div></sc-if><div role="group" aria-label="Playable games" style="background:#0B1533;padding:6px;display:flex;flex-direction:column;gap:6px;">
       <sc-for list="{{ aGames }}" as="g" hint-placeholder-count="6">
         <button type="button" onClick="{{ g.onVote }}" aria-pressed="{{ g.minePressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;position:relative;min-height:58px;background:{{ g.face }};color:{{ g.ink }};padding:6px 10px;box-sizing:border-box;display:flex;align-items:center;gap:10px;text-align:left;box-shadow:inset 0 -5px 0 rgba(0,0,0,.2);font-family:Oswald,sans-serif;">
           <div style="flex:none;width:30px;height:30px;border-radius:50%;background:#FFF6D6;color:#12204A;font-family:'Bebas Neue';font-size:20px;display:flex;align-items:center;justify-content:center;">{{ g.n }}</div>
@@ -1267,7 +1279,7 @@ a:hover{color:#C8551F}
       <div style="font-family:'Press Start 2P';font-size:16px;color:#FFE600;">SELECT GAME</div>
       <div style="font-family:'Press Start 2P';font-size:16px;">{{ timerSec }}</div>
     </div>
-    <sc-for list="{{ bGames }}" as="g" hint-placeholder-count="6">
+    <sc-if value="{{ pickBanner }}" hint-placeholder-val="{{ false }}"><div style="background:#111019;box-shadow:inset 0 0 0 2px #FF2EA6;padding:12px;font-family:'Press Start 2P';font-size:11px;line-height:1.6;color:#FFE600;text-align:center;">{{ pickBannerPhoneUp }}</div></sc-if><sc-for list="{{ bGames }}" as="g" hint-placeholder-count="6">
       <button type="button" onClick="{{ g.onVote }}" aria-pressed="{{ g.minePressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;display:flex;min-height:62px;background:{{ g.body }};padding:5px;gap:5px;box-sizing:border-box;box-shadow:{{ g.pGlow }};text-align:left;font-family:VT323,monospace;">
         <div style="flex:1;background:#000;padding:5px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;">
           <div style="font-family:{{ g.font }};font-size:{{ g.pfs }};line-height:1;color:{{ g.scr }};">{{ g.title }}</div>
@@ -1395,7 +1407,7 @@ a:hover{color:#C8551F}
       <div style="font-family:Righteous;font-size:30px;color:#F3EBD3;text-shadow:2px 2px 0 #3D2716;">Pick a game</div>
       <div style="font-family:Caveat;font-weight:700;font-size:28px;color:#D9A21B;">{{ timer }}</div>
     </div>
-    <sc-for list="{{ cGames }}" as="g" hint-placeholder-count="6">
+    <sc-if value="{{ pickBanner }}" hint-placeholder-val="{{ false }}"><div style="background:#F3EBD3;color:#24356B;font-family:Caveat;font-weight:700;font-size:28px;line-height:1;padding:8px 14px 10px;transform:rotate(-1deg);box-shadow:4px 5px 0 rgba(0,0,0,.3);text-align:center;">{{ pickBannerPhone }}</div></sc-if><sc-for list="{{ cGames }}" as="g" hint-placeholder-count="6">
       <button type="button" onClick="{{ g.onVote }}" aria-pressed="{{ g.minePressed }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;position:relative;min-height:62px;background:{{ g.bg }};color:{{ g.ink }};transform:{{ g.ptf }};box-shadow:{{ g.pshadow }};border-radius:3px;display:flex;align-items:stretch;text-align:left;font-family:'Courier Prime',monospace;">
         <div style="width:12px;background:{{ g.stripeV }};border-radius:3px 0 0 3px;"></div>
         <div style="flex:1;padding:7px 14px;display:flex;flex-direction:column;justify-content:center;gap:2px;">
@@ -1413,8 +1425,87 @@ a:hover{color:#C8551F}
   </div>
 </div>
 </sc-if>
-<sc-if value="{{ s.Am }}" hint-placeholder-val="{{ false }}">
-<div data-screen-label="Phone lobby (not designed)" style="width:390px;height:844px;border-radius:44px;box-sizing:border-box;border:3px dashed #A8A398;display:flex;align-items:center;justify-content:center;padding:48px;text-align:center;font-family:'Courier Prime',monospace;font-size:26px;line-height:1.4;color:#6b665c;">Phone lobby tabs (Who's here, Game library) aren't designed for this direction yet.</div>
+<sc-if value="{{ s.AmWho }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="A1m Who's here" style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#12204A;color:#F6E7C8;font-family:Oswald,sans-serif;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 45% at 50% -5%, rgba(255,246,214,.2), rgba(255,246,214,0) 70%);"></div>
+  <div style="position:relative;height:100%;box-sizing:border-box;padding:54px 20px 26px;display:flex;flex-direction:column;gap:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 4px;"><div style="font-family:Shrikhand,serif;font-size:30px;color:#F2B630;">JuJu Studios</div><div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.14em;">Room KTZB</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;"><button type="button" onClick="{{ showWho }}" aria-pressed="true" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#F2B630;color:#12204A;font-family:'Bebas Neue';font-size:20px;letter-spacing:.08em;">Who's here</button><button type="button" onClick="{{ showLib }}" aria-pressed="false" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#0B1533;color:#F6E7C8;font-family:'Bebas Neue';font-size:20px;letter-spacing:.08em;">Game library</button><button type="button" onClick="{{ toBoard }}" aria-pressed="false" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#0B1533;color:#F6E7C8;font-family:'Bebas Neue';font-size:20px;letter-spacing:.08em;">Standings</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:4px 4px 0;"><div style="font-family:Shrikhand,serif;font-size:26px;color:#FFF6D6;">Who's here</div><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.08em;color:#F2B630;">{{ joinedOf }}</div></div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <sc-for list="{{ aPlayers }}" as="p" hint-placeholder-count="10">
+        <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 10px;background:#0B1533;opacity:{{ p.rowOp }};">
+          <div style="flex:none;width:28px;height:28px;border-radius:50%;background:#FFF6D6;color:#12204A;font-family:'Bebas Neue';font-size:18px;display:flex;align-items:center;justify-content:center;">{{ p.seat }}</div>
+          <sc-if value="{{ p.on }}" hint-placeholder-val="{{ true }}"><div style="flex:none;width:28px;height:28px;border-radius:50%;background:{{ p.chip }};color:{{ p.chipInk }};font-family:'Bebas Neue';font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px #12204A;">{{ p.i2 }}</div><div style="flex:1;font-family:Shrikhand,serif;font-size:20px;line-height:1;">{{ p.name }}</div><div role="img" aria-label="{{ p.sigLabel }}" style="display:flex;align-items:flex-end;gap:3px;height:16px;"><sc-for list="{{ p.rowBars }}" as="b" hint-placeholder-count="3"><div style="width:5px;height:{{ b.h }};background:{{ b.bg }};"></div></sc-for></div></sc-if>
+          <sc-if value="{{ p.off }}" hint-placeholder-val="{{ false }}"><div style="flex:1;font-family:'Bebas Neue';font-size:20px;letter-spacing:.1em;">Open seat</div></sc-if>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:auto;font-family:Shrikhand,serif;font-size:24px;color:#F2B630;text-align:center;">Waiting for players</div>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ s.AmLib }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="A1m Game library" style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#12204A;color:#F6E7C8;font-family:Oswald,sans-serif;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 45% at 50% -5%, rgba(255,246,214,.2), rgba(255,246,214,0) 70%);"></div>
+  <div style="position:relative;height:100%;box-sizing:border-box;padding:54px 20px 26px;display:flex;flex-direction:column;gap:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 4px;"><div style="font-family:Shrikhand,serif;font-size:30px;color:#F2B630;">JuJu Studios</div><div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.14em;">Room KTZB</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;"><button type="button" onClick="{{ showWho }}" aria-pressed="false" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#0B1533;color:#F6E7C8;font-family:'Bebas Neue';font-size:20px;letter-spacing:.08em;">Who's here</button><button type="button" onClick="{{ showLib }}" aria-pressed="true" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#F2B630;color:#12204A;font-family:'Bebas Neue';font-size:20px;letter-spacing:.08em;">Game library</button><button type="button" onClick="{{ toBoard }}" aria-pressed="false" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#0B1533;color:#F6E7C8;font-family:'Bebas Neue';font-size:20px;letter-spacing:.08em;">Standings</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:4px 4px 0;"><div style="font-family:Shrikhand,serif;font-size:26px;color:#FFF6D6;">Tonight's lineup</div><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.08em;color:#F2B630;">6 to play</div></div>
+    <div style="background:#0B1533;padding:6px;display:flex;flex-direction:column;gap:6px;">
+      <sc-for list="{{ aGames }}" as="g" hint-placeholder-count="6">
+        <div style="min-height:56px;background:{{ g.face }};color:{{ g.ink }};padding:6px 10px;box-sizing:border-box;display:flex;align-items:center;gap:10px;box-shadow:inset 0 -5px 0 rgba(0,0,0,.2);">
+          <div style="flex:none;width:28px;height:28px;border-radius:50%;background:#FFF6D6;color:#12204A;font-family:'Bebas Neue';font-size:18px;display:flex;align-items:center;justify-content:center;">{{ g.n }}</div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:1px;min-width:0;"><div style="font-family:Shrikhand,serif;font-size:{{ g.apfs }};line-height:1.15;">{{ g.title }}</div><div style="font-family:'Bebas Neue';font-size:15px;letter-spacing:.08em;">{{ g.players }} players · {{ g.len }} · {{ g.tag }}</div></div>
+          <sc-if value="{{ g.isNew }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#12204A;color:#F2B630;font-family:'Bebas Neue';font-size:17px;letter-spacing:.1em;padding:4px 9px 2px;transform:rotate(4deg);">New</div></sc-if>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.14em;color:#F2B630;padding:4px 4px 0;">Coming soon</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;"><sc-for list="{{ aSoon }}" as="s" hint-placeholder-count="6"><div style="background:repeating-linear-gradient(135deg,#0B1533 0 8px,#13204A 8px 16px);box-shadow:inset 0 0 0 2px rgba(246,231,200,.3);padding:6px 10px 4px;font-family:'Bebas Neue';font-size:18px;letter-spacing:.06em;color:#F6E7C8;">{{ s.title }}</div></sc-for></div>
+  </div>
+</div>
+</sc-if>
+<sc-if value="{{ s.BmWho }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="B1m Who's here" style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#07060B;color:#fff;font-family:VT323,monospace;">
+  <div style="height:100%;box-sizing:border-box;padding:54px 22px 28px;display:flex;flex-direction:column;gap:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-family:Monoton;font-size:36px;line-height:1.1;color:#FFD1EC;text-shadow:0 0 4px #FF2EA6,0 0 14px #FF2EA6;">JuJu</div><div style="font-family:'Press Start 2P';font-size:10px;color:#22E4FF;">ROOM KTZB</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;"><button type="button" onClick="{{ showWho }}" aria-pressed="true" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#FFE600;color:#07060B;box-shadow:none;font-family:'Press Start 2P';font-size:9px;line-height:1.5;">WHO'S HERE</button><button type="button" onClick="{{ showLib }}" aria-pressed="false" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#111019;color:#22E4FF;box-shadow:inset 0 0 0 2px #22E4FF;font-family:'Press Start 2P';font-size:9px;line-height:1.5;">LIBRARY</button><button type="button" onClick="{{ toBoard }}" aria-pressed="false" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#111019;color:#22E4FF;box-shadow:inset 0 0 0 2px #22E4FF;font-family:'Press Start 2P';font-size:9px;line-height:1.5;">HI-SCORES</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:6px;"><div style="font-family:'Press Start 2P';font-size:12px;color:#FFE600;">PLAYERS</div><div style="font-size:26px;line-height:1;color:#B9B4CC;">{{ joinedOf }} in</div></div>
+    <div style="display:flex;flex-direction:column;">
+      <sc-for list="{{ bPlayers }}" as="p" hint-placeholder-count="10">
+        <div style="display:grid;grid-template-columns:40px 58px 1fr auto;align-items:center;height:40px;opacity:{{ p.op }};box-shadow:inset 0 -2px 0 #16141E;">
+          <div style="font-family:'Press Start 2P';font-size:9px;color:{{ p.col }};">{{ p.slot }}</div>
+          <div style="font-family:'Press Start 2P';font-size:13px;color:{{ p.col }};">{{ p.init }}</div>
+          <div style="font-size:26px;line-height:1;">{{ p.name }}</div>
+          <div style="display:flex;align-items:center;gap:8px;"><sc-if value="{{ p.on }}" hint-placeholder-val="{{ true }}"><div role="img" aria-label="{{ p.sigLabel }}" style="display:flex;align-items:flex-end;gap:3px;height:16px;"><sc-for list="{{ p.bars }}" as="b" hint-placeholder-count="3"><div style="width:4px;height:{{ b.h }};background:{{ b.bg }};"></div></sc-for></div></sc-if><div style="font-size:22px;line-height:1;color:{{ p.statusCol }};">{{ p.status }}</div></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:auto;font-family:'Press Start 2P';font-size:11px;color:#FFE600;text-align:center;">WAITING FOR PLAYERS<span style="animation:blink 1s steps(1) infinite;">_</span></div>
+  </div>
+  <sc-if value="{{ scanlines }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(0,0,0,.28) 0 1px,rgba(0,0,0,0) 1px 3px),radial-gradient(ellipse 75% 70% at 50% 50%,rgba(0,0,0,0) 60%,rgba(0,0,0,.55));"></div></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{ s.BmLib }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="B1m Game library" style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#07060B;color:#fff;font-family:VT323,monospace;">
+  <div style="height:100%;box-sizing:border-box;padding:54px 22px 28px;display:flex;flex-direction:column;gap:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-family:Monoton;font-size:36px;line-height:1.1;color:#FFD1EC;text-shadow:0 0 4px #FF2EA6,0 0 14px #FF2EA6;">JuJu</div><div style="font-family:'Press Start 2P';font-size:10px;color:#22E4FF;">ROOM KTZB</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;"><button type="button" onClick="{{ showWho }}" aria-pressed="false" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#111019;color:#22E4FF;box-shadow:inset 0 0 0 2px #22E4FF;font-family:'Press Start 2P';font-size:9px;line-height:1.5;">WHO'S HERE</button><button type="button" onClick="{{ showLib }}" aria-pressed="true" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#FFE600;color:#07060B;box-shadow:none;font-family:'Press Start 2P';font-size:9px;line-height:1.5;">LIBRARY</button><button type="button" onClick="{{ toBoard }}" aria-pressed="false" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;height:46px;background:#111019;color:#22E4FF;box-shadow:inset 0 0 0 2px #22E4FF;font-family:'Press Start 2P';font-size:9px;line-height:1.5;">HI-SCORES</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:6px;"><div style="font-family:'Press Start 2P';font-size:12px;color:#FFE600;">GAME LIBRARY</div><div style="font-size:26px;line-height:1;color:#B9B4CC;">6 to play</div></div>
+    <sc-for list="{{ bGames }}" as="g" hint-placeholder-count="6">
+      <div style="display:flex;min-height:58px;background:{{ g.body }};padding:5px;box-sizing:border-box;">
+        <div style="flex:1;background:#000;padding:5px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;">
+          <div style="font-family:{{ g.font }};font-size:{{ g.pfs }};line-height:1;color:{{ g.scr }};">{{ g.title }}</div>
+          <div style="font-size:19px;line-height:1;color:#fff;">{{ g.players }}P · {{ g.len }} · {{ g.tag }}</div>
+        </div>
+      </div>
+    </sc-for>
+    <div style="font-family:'Press Start 2P';font-size:9px;color:#B9B4CC;padding-top:6px;">COMING SOON · OUT OF ORDER</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;"><sc-for list="{{ bSoon }}" as="s" hint-placeholder-count="6"><div style="background:#16141E;box-shadow:inset 0 0 0 2px #3A3550;padding:5px 9px;font-size:21px;line-height:1;color:#B9B4CC;">{{ s.titleUp }}</div></sc-for></div>
+  </div>
+  <sc-if value="{{ scanlines }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(0,0,0,.28) 0 1px,rgba(0,0,0,0) 1px 3px),radial-gradient(ellipse 75% 70% at 50% 50%,rgba(0,0,0,0) 60%,rgba(0,0,0,.55));"></div></sc-if>
+</div>
 </sc-if>
 <sc-if value="{{ s.A3m }}" hint-placeholder-val="{{ false }}">
 <div data-screen-label="A3m Leaderboard" style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#12204A;color:#F6E7C8;font-family:Oswald,sans-serif;">
@@ -1425,7 +1516,7 @@ a:hover{color:#C8551F}
       <div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.1em;">{{ lbTitle }}</div>
     </div>
     <div style="background:#0B1533;padding:6px;display:flex;flex-direction:column;gap:6px;">
-      <sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
+      <sc-if value="{{ lbEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:36px 10px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;"><div style="display:flex;gap:4px;"><div style="width:30px;height:40px;background:#12204A;color:#F2B630;font-family:'Bebas Neue';font-size:34px;line-height:1;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;">0</div><div style="width:30px;height:40px;background:#12204A;color:#F2B630;font-family:'Bebas Neue';font-size:34px;line-height:1;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;">0</div><div style="width:30px;height:40px;background:#12204A;color:#F2B630;font-family:'Bebas Neue';font-size:34px;line-height:1;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;">0</div></div><div style="font-family:Shrikhand,serif;font-size:28px;color:#FFF6D6;">No scores yet</div><div style="font-size:16px;line-height:1.35;">Play a game and the standings start here.</div></div></sc-if><sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
         <div style="min-height:58px;background:{{ r.aFace }};color:{{ r.aInk }};padding:4px 10px;box-sizing:border-box;display:flex;align-items:center;gap:10px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.2);">
           <div style="flex:none;width:30px;height:30px;border-radius:50%;background:#FFF6D6;color:#12204A;font-family:'Bebas Neue';font-size:20px;display:flex;align-items:center;justify-content:center;">{{ r.rank }}</div>
           <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
@@ -1458,7 +1549,7 @@ a:hover{color:#C8551F}
     <div style="font-family:'Press Start 2P';font-size:22px;color:#FFE600;text-align:center;text-shadow:4px 4px 0 #FF2EA6;">HIGH SCORES</div>
     <div style="display:flex;flex-direction:column;gap:2px;margin-top:6px;">
       <div style="display:grid;grid-template-columns:48px 58px 1fr 76px;font-family:'Press Start 2P';font-size:9px;color:#FFE600;padding:0 8px 6px;"><div>RANK</div><div>INIT</div><div>GAMES·AVG</div><div style="text-align:right;">TOTAL</div></div>
-      <sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
+      <sc-if value="{{ lbEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:40px 0;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;"><div style="font-family:'Press Start 2P';font-size:13px;line-height:1.6;color:#FFE600;">NO HIGH SCORES YET</div><div style="font-size:26px;line-height:1;color:#22E4FF;">Play a game to get on the board</div></div></sc-if><sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
         <div style="display:grid;grid-template-columns:48px 58px 1fr 76px;align-items:center;min-height:48px;padding:0 8px;background:{{ r.bPbg }};color:{{ r.bPcol }};font-size:28px;line-height:1;">
           <div>{{ r.rankOrd }}</div>
           <div style="font-family:'Press Start 2P';font-size:13px;color:{{ r.bInitP }};">{{ r.i3 }}</div>
@@ -1500,7 +1591,7 @@ a:hover{color:#C8551F}
         <div style="font-size:22px;font-weight:700;color:#B4481A;line-height:1.1;">{{ lbTitle }}</div>
       </div>
       <div style="display:grid;grid-template-columns:22px 1fr 50px 28px 42px;gap:4px;font-family:'Courier Prime',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;color:#5A3A22;padding-bottom:2px;"><div></div><div>PLAYER</div><div style="text-align:right;">TOTAL</div><div style="text-align:right;">G</div><div style="text-align:right;">AVG</div></div>
-      <sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
+      <sc-if value="{{ lbEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:20px 0;display:flex;flex-direction:column;gap:8px;color:#24356B;font-family:Caveat;"><div style="font-size:36px;font-weight:700;line-height:1.05;">Nobody's on the board yet</div><div style="font-size:26px;line-height:1.15;">Play a game and the scores go here.</div></div></sc-if><sc-for list="{{ lbRanked }}" as="r" hint-placeholder-count="7">
         <div style="height:44px;flex:none;display:grid;grid-template-columns:22px 1fr 50px 28px 42px;gap:4px;align-items:end;font-size:25px;line-height:1.15;font-weight:500;border-bottom:2px solid #A9BFD9;">
           <div style="color:#6b5f4f;font-size:20px;">{{ r.num }}</div>
           <div style="display:flex;align-items:baseline;gap:4px;min-width:0;transform:rotate({{ r.cTilt }});"><span style="color:{{ r.cNameCol }};">{{ r.name }}</span><sc-if value="{{ r.me }}" hint-placeholder-val="{{ false }}"><span style="font-size:18px;font-weight:700;color:#B4481A;">(you)</span></sc-if></div>
@@ -1678,31 +1769,31 @@ a:hover{color:#C8551F}
 <div data-screen-label="A0m Sign in" style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background:#12204A;color:#F6E7C8;font-family:Oswald,sans-serif;">
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 45% at 50% -5%, rgba(255,246,214,.2), rgba(255,246,214,0) 70%);"></div>
   <div style="position:relative;height:100%;box-sizing:border-box;padding:54px 20px 26px;display:flex;flex-direction:column;gap:12px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 4px;"><div style="font-family:Shrikhand,serif;font-size:32px;color:#F2B630;">Sign in</div><div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.14em;">To host a room</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 4px;"><div style="font-family:Shrikhand,serif;font-size:32px;color:#F2B630;">{{ signHead }}</div><div style="font-family:'Bebas Neue';font-size:19px;letter-spacing:.14em;">To host a room</div></div>
     <sc-if value="{{ signForm }}" hint-placeholder-val="{{ true }}">
       <div style="position:relative;box-sizing:border-box;background:#F6E7C8;color:#12204A;padding:12px 18px 16px;transform:rotate(-1deg);box-shadow:6px 8px 0 rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;margin-top:8px;">
-        <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.14em;border-bottom:2px solid #E0473A;padding-bottom:4px;">Host sign-in</div>
-        <div style="display:flex;flex-direction:column;gap:5px;"><div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.12em;">Email</div><div style="height:48px;background:#FFFDF6;box-shadow:inset 0 0 0 2px #12204A;font-size:19px;font-weight:500;display:flex;align-items:center;justify-content:space-between;padding:0 14px;">jmohawk@example.com</div></div>
+        <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.14em;border-bottom:2px solid #E0473A;padding-bottom:4px;">{{ signCardHead }}</div>
+        <sc-if value="{{ signCreate }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:5px;"><div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.12em;">Username</div><div style="height:48px;background:#FFFDF6;box-shadow:inset 0 0 0 2px #12204A;font-size:19px;font-weight:500;display:flex;align-items:center;padding:0 14px;">JMohawk</div></div></sc-if><div style="display:flex;flex-direction:column;gap:5px;"><div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.12em;">Email</div><div style="height:48px;background:#FFFDF6;box-shadow:inset 0 0 0 2px #12204A;font-size:19px;font-weight:500;display:flex;align-items:center;justify-content:space-between;padding:0 14px;">jmohawk@example.com</div></div>
         <sc-if value="{{ signPw }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:5px;"><div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.12em;">Password</div><div style="height:48px;background:#FFFDF6;box-shadow:inset 0 0 0 2px #12204A;font-size:19px;font-weight:500;display:flex;align-items:center;justify-content:space-between;padding:0 14px;"><span style="letter-spacing:.2em;">••••••••••</span><span style="font-family:'Bebas Neue';font-size:18px;letter-spacing:.12em;">Show</span></div></div>
-          <div style="font-size:15px;text-decoration:underline;text-underline-offset:3px;">Forgot your password?</div>
+          <sc-if value="{{ signPwOnly }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ onForgot }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;align-self:flex-start;min-height:32px;font-size:15px;text-decoration:underline;text-underline-offset:3px;">Forgot your password?</button></sc-if>
         </sc-if>
         <sc-if value="{{ signNoPw }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:15px;line-height:1.35;">We'll email you a sign-in link. Tap it on this phone and you're in. Check your spam folder.</div>
+          <div style="font-size:15px;line-height:1.35;">{{ signHelp }}</div>
           <div style="height:22px;"></div>
         </sc-if>
       </div>
       <button type="button" onClick="{{ onSignCta }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:62px;padding:6px 12px;background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:24px;line-height:1.1;box-shadow:0 6px 0 #7A2508;margin-top:auto;">{{ signCta }}</button>
       <button type="button" onClick="{{ onSignAlt }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#F6E7C8;font-family:'Bebas Neue';font-size:20px;letter-spacing:.14em;text-decoration:underline;text-underline-offset:4px;">{{ signAlt }}</button>
-      <button type="button" onClick="{{ toStart }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#F6E7C8;font-family:'Bebas Neue';font-size:20px;letter-spacing:.14em;text-decoration:underline;text-underline-offset:4px;min-height:40px;font-size:18px;">Back</button>
+      <sc-if value="{{ signPwOnly }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ onCreate }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#F6E7C8;font-family:'Bebas Neue';font-size:20px;letter-spacing:.14em;text-decoration:underline;text-underline-offset:4px;">New here? Create an account</button></sc-if><button type="button" onClick="{{ toStart }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#F6E7C8;font-family:'Bebas Neue';font-size:20px;letter-spacing:.14em;text-decoration:underline;text-underline-offset:4px;min-height:40px;font-size:18px;">Back</button>
     </sc-if>
     <sc-if value="{{ signSent }}" hint-placeholder-val="{{ false }}">
       <div style="position:relative;box-sizing:border-box;background:#F6E7C8;color:#12204A;padding:12px 18px 16px;transform:rotate(-1deg);box-shadow:6px 8px 0 rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;margin-top:8px;align-items:center;text-align:center;gap:12px;padding:16px 18px 20px;">
         <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.14em;align-self:stretch;border-bottom:2px solid #E0473A;padding-bottom:4px;">Link sent</div>
         <div style="font-family:Shrikhand,serif;font-size:40px;line-height:1.1;">Check your email</div>
-        <div style="font-size:18px;line-height:1.35;">We sent a sign-in link to</div>
+        <div style="font-size:18px;line-height:1.35;">{{ signSentLine }}</div>
         <div style="align-self:stretch;background:#FFFDF6;box-shadow:inset 0 0 0 2px #12204A;font-size:19px;font-weight:500;padding:10px 12px;">jmohawk@example.com</div>
-        <div style="font-size:16px;line-height:1.4;text-wrap:pretty;">Open it on this phone. The link works once and expires in 15 minutes. Not there? Check your spam folder.</div>
+        <div style="font-size:16px;line-height:1.4;text-wrap:pretty;">{{ signSentNote }}</div>
       </div>
       <button type="button" onClick="{{ onResend }}" aria-disabled="{{ resendDis }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:54px;padding:4px 12px 0;background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:24px;letter-spacing:.1em;box-shadow:0 5px 0 #8A7A5A;margin-top:auto;opacity:{{ resendOp }};">{{ resendLabel }}</button>
       <button type="button" onClick="{{ diffEmail }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#F6E7C8;font-family:'Bebas Neue';font-size:20px;letter-spacing:.14em;text-decoration:underline;text-underline-offset:4px;">Use a different email</button>
@@ -1779,7 +1870,7 @@ a:hover{color:#C8551F}
       <div style="font-family:Shrikhand,serif;font-size:36px;line-height:1.1;text-wrap:pretty;">{{ err.head }}</div>
       <div style="font-size:17px;line-height:1.4;text-wrap:pretty;">{{ err.body }}</div>
       <sc-if value="{{ err.hasCode }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px;"><sc-for list="{{ err.code }}" as="c" hint-placeholder-count="4"><div style="flex:1;height:56px;background:#FFFDF6;box-shadow:{{ c.ring }};color:{{ c.ink }};font-family:'Bebas Neue';font-size:42px;display:flex;align-items:center;justify-content:center;">{{ c.ch }}</div></sc-for></div></sc-if>
-      <sc-if value="{{ err.wait }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:space-between;background:#12204A;color:#F6E7C8;padding:10px 14px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.12em;">Reconnecting<span style="animation:blink 1s steps(1) infinite;">…</span></div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:30px;line-height:1;padding:4px 10px 0;">{{ pausedFor }}</div></div></sc-if>
+      <sc-if value="{{ err.loader }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 0;"><div role="img" aria-label="Loading" style="display:flex;gap:12px;"><div style="width:16px;height:16px;border-radius:50%;background:#F0592A;animation:blink 1s steps(1) infinite;animation-delay:0.00s;"></div><div style="width:16px;height:16px;border-radius:50%;background:#F0592A;animation:blink 1s steps(1) infinite;animation-delay:0.33s;"></div><div style="width:16px;height:16px;border-radius:50%;background:#F0592A;animation:blink 1s steps(1) infinite;animation-delay:0.66s;"></div></div></div></sc-if><sc-if value="{{ err.wait }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:space-between;background:#12204A;color:#F6E7C8;padding:10px 14px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:.12em;">Reconnecting<span style="animation:blink 1s steps(1) infinite;">…</span></div><div style="background:#F6E7C8;color:#12204A;font-family:'Bebas Neue';font-size:30px;line-height:1;padding:4px 10px 0;">{{ pausedFor }}</div></div></sc-if>
     </div>
     <sc-if value="{{ err.hasPrimary }}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{ err.onPrimary }}" aria-disabled="{{ err.pDis }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:62px;padding:6px 12px;background:#F0592A;color:#FFF6D6;font-family:Shrikhand,serif;font-size:24px;line-height:1.1;box-shadow:0 6px 0 #7A2508;margin-top:auto;opacity:{{ err.pOp }};">{{ err.primary }}</button></sc-if>
     <sc-if value="{{ err.noPrimary }}" hint-placeholder-val="{{ false }}"><div style="margin-top:auto;font-family:'Bebas Neue';font-size:20px;letter-spacing:.14em;text-align:center;">Keep this screen open</div></sc-if>
@@ -1813,24 +1904,24 @@ a:hover{color:#C8551F}
   <div style="height:100%;box-sizing:border-box;padding:54px 22px 28px;display:flex;flex-direction:column;gap:12px;">
     <div style="display:flex;justify-content:space-between;align-items:center;"><div style="font-family:Monoton;font-size:36px;line-height:1.1;color:#FFD1EC;text-shadow:0 0 4px #FF2EA6,0 0 14px #FF2EA6;">JuJu</div><div style="font-family:'Press Start 2P';font-size:9px;line-height:1.8;color:#FFE600;text-align:right;">HOST LOGIN<br><span style="color:#B9B4CC;">TO HOST A ROOM</span></div></div>
     <sc-if value="{{ signForm }}" hint-placeholder-val="{{ true }}">
-      <div style="font-family:'Press Start 2P';font-size:16px;color:#FFE600;margin-top:10px;">SIGN IN</div>
-      <div style="display:flex;flex-direction:column;gap:6px;"><div style="font-family:'Press Start 2P';font-size:10px;color:#22E4FF;">EMAIL</div><div style="height:46px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;font-size:28px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;">jmohawk@example.com</div></div>
+      <div style="font-family:'Press Start 2P';font-size:16px;color:#FFE600;margin-top:10px;">{{ signHeadUp }}</div>
+      <sc-if value="{{ signCreate }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:6px;"><div style="font-family:'Press Start 2P';font-size:10px;color:#22E4FF;">USERNAME</div><div style="height:46px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;font-size:28px;display:flex;align-items:center;padding:0 14px;">JMohawk</div></div></sc-if><div style="display:flex;flex-direction:column;gap:6px;"><div style="font-family:'Press Start 2P';font-size:10px;color:#22E4FF;">EMAIL</div><div style="height:46px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;font-size:28px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;">jmohawk@example.com</div></div>
       <sc-if value="{{ signPw }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:6px;"><div style="font-family:'Press Start 2P';font-size:10px;color:#22E4FF;">PASSWORD</div><div style="height:46px;background:#111019;box-shadow:inset 0 0 0 2px #3A3550;font-size:28px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;"><span style="letter-spacing:.2em;">**********</span><span style="font-family:'Press Start 2P';font-size:9px;color:#22E4FF;">SHOW</span></div></div>
-        <div style="font-size:24px;line-height:1;color:#22E4FF;text-decoration:underline;text-underline-offset:4px;">Forgot your password?</div>
+        <sc-if value="{{ signPwOnly }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ onForgot }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;align-self:flex-start;min-height:32px;font-family:VT323,monospace;font-size:24px;line-height:1;color:#22E4FF;text-decoration:underline;text-underline-offset:4px;">Forgot your password?</button></sc-if>
       </sc-if>
-      <sc-if value="{{ signNoPw }}" hint-placeholder-val="{{ true }}"><div style="font-size:24px;line-height:1.05;color:#B9B4CC;">We'll email you a sign-in link. Tap it on this phone and you're in. Check your spam folder.</div></sc-if>
+      <sc-if value="{{ signNoPw }}" hint-placeholder-val="{{ true }}"><div style="font-size:24px;line-height:1.05;color:#B9B4CC;">{{ signHelp }}</div></sc-if>
       <button type="button" onClick="{{ onSignCta }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;margin-right:6px;min-height:64px;padding:8px 10px;background:#FFE600;color:#07060B;font-family:'Press Start 2P';font-size:15px;line-height:1.5;box-shadow:6px 6px 0 #FF2EA6;margin-top:auto;">{{ signCtaUp }}</button>
       <button type="button" onClick="{{ onSignAlt }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#22E4FF;font-family:'Press Start 2P';font-size:10px;line-height:1.6;text-decoration:underline;text-underline-offset:5px;margin-top:6px;">{{ signAltUp }}</button>
-      <button type="button" onClick="{{ toStart }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#22E4FF;font-family:'Press Start 2P';font-size:10px;line-height:1.6;text-decoration:underline;text-underline-offset:5px;min-height:40px;color:#B9B4CC;">BACK</button>
+      <sc-if value="{{ signPwOnly }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ onCreate }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#FFE600;font-family:'Press Start 2P';font-size:10px;line-height:1.6;text-decoration:underline;text-underline-offset:5px;">NEW HERE? CREATE AN ACCOUNT</button></sc-if><button type="button" onClick="{{ toStart }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#22E4FF;font-family:'Press Start 2P';font-size:10px;line-height:1.6;text-decoration:underline;text-underline-offset:5px;min-height:40px;color:#B9B4CC;">BACK</button>
     </sc-if>
     <sc-if value="{{ signSent }}" hint-placeholder-val="{{ false }}">
       <div style="margin-top:16px;background:#111019;box-shadow:inset 0 0 0 2px #39FF6A;padding:18px 16px;display:flex;flex-direction:column;gap:12px;">
         <div style="font-family:'Press Start 2P';font-size:10px;color:#39FF6A;">LINK SENT</div>
         <div style="font-family:Bungee;font-size:30px;line-height:1.05;color:#FFE600;">CHECK YOUR EMAIL</div>
-        <div style="font-size:26px;line-height:1;">We sent a sign-in link to</div>
+        <div style="font-size:26px;line-height:1;">{{ signSentLine }}</div>
         <div style="font-size:28px;line-height:1;color:#22E4FF;">jmohawk@example.com</div>
-        <div style="font-size:23px;line-height:1.05;color:#B9B4CC;">Open it on this phone. The link works once and expires in 15 minutes. Not there? Check your spam folder.</div>
+        <div style="font-size:23px;line-height:1.05;color:#B9B4CC;">{{ signSentNote }}</div>
       </div>
       <button type="button" onClick="{{ onResend }}" aria-disabled="{{ resendDis }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:54px;padding:6px 10px;background:#07060B;color:#22E4FF;box-shadow:inset 0 0 0 2px #22E4FF;font-family:'Press Start 2P';font-size:12px;line-height:1.5;margin-top:auto;opacity:{{ resendOp }};">{{ resendLabelUp }}</button>
       <button type="button" onClick="{{ diffEmail }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#22E4FF;font-family:'Press Start 2P';font-size:10px;line-height:1.6;text-decoration:underline;text-underline-offset:5px;">USE A DIFFERENT EMAIL</button>
@@ -1914,7 +2005,7 @@ a:hover{color:#C8551F}
       <div style="font-family:Bungee;font-size:27px;line-height:1.05;color:#FFE600;">{{ err.headUp }}</div>
       <div style="font-size:25px;line-height:1.05;">{{ err.body }}</div>
       <sc-if value="{{ err.hasCode }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px;"><sc-for list="{{ err.code }}" as="c" hint-placeholder-count="4"><div style="flex:1;height:50px;background:#07060B;box-shadow:{{ c.ringB }};color:{{ c.inkB }};font-family:'Press Start 2P';font-size:22px;display:flex;align-items:center;justify-content:center;">{{ c.ch }}</div></sc-for></div></sc-if>
-      <sc-if value="{{ err.wait }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:space-between;height:48px;padding:0 12px;background:#07060B;"><div style="font-family:'Press Start 2P';font-size:10px;color:#22E4FF;">RECONNECTING<span style="animation:blink 1s steps(1) infinite;">_</span></div><div style="font-family:'Press Start 2P';font-size:16px;color:#FFE600;">{{ pausedFor }}</div></div></sc-if>
+      <sc-if value="{{ err.loader }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 0;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-family:'Press Start 2P';font-size:10px;color:#22E4FF;">LOADING</div><div role="img" aria-label="Loading" style="display:flex;gap:6px;align-items:center;"><div style="width:12px;height:12px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.0s;"></div><div style="width:12px;height:12px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.2s;"></div><div style="width:12px;height:12px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.4s;"></div><div style="width:12px;height:12px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.6s;"></div><div style="width:12px;height:12px;background:#FFE600;animation:blink 1s steps(1) infinite;animation-delay:0.8s;"></div></div></div></div></sc-if><sc-if value="{{ err.wait }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:space-between;height:48px;padding:0 12px;background:#07060B;"><div style="font-family:'Press Start 2P';font-size:10px;color:#22E4FF;">RECONNECTING<span style="animation:blink 1s steps(1) infinite;">_</span></div><div style="font-family:'Press Start 2P';font-size:16px;color:#FFE600;">{{ pausedFor }}</div></div></sc-if>
     </div>
     <sc-if value="{{ err.hasPrimary }}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{ err.onPrimary }}" aria-disabled="{{ err.pDis }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;margin-right:6px;min-height:64px;padding:8px 10px;background:#FFE600;color:#07060B;font-family:'Press Start 2P';font-size:15px;line-height:1.5;box-shadow:6px 6px 0 #FF2EA6;margin-top:auto;opacity:{{ err.pOp }};">{{ err.primaryUp }}</button></sc-if>
     <sc-if value="{{ err.noPrimary }}" hint-placeholder-val="{{ false }}"><div style="margin-top:auto;font-family:'Press Start 2P';font-size:10px;color:#B9B4CC;text-align:center;">KEEP THIS SCREEN OPEN</div></sc-if>
@@ -1937,22 +2028,22 @@ a:hover{color:#C8551F}
 <div data-screen-label="C0m Sign in" style="position:relative;width:390px;height:844px;border-radius:44px;overflow:hidden;background-color:#5A3A22;background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.28) 0 3px,rgba(0,0,0,0) 3px 98px);font-family:'Courier Prime',monospace;">
   <div style="position:absolute;left:16px;right:16px;top:48px;bottom:24px;background:#F3EBD3;box-shadow:6px 8px 0 rgba(0,0,0,.3);display:flex;flex-direction:column;"><div style="background:#3D2716;padding:14px 20px 0;display:flex;flex-direction:column;gap:12px;"><div style="display:flex;justify-content:space-between;align-items:baseline;"><div style="font-family:Righteous;font-size:28px;color:#F3EBD3;">JuJu Studios</div><div style="font-family:'Courier Prime';font-weight:700;font-size:13px;letter-spacing:.12em;color:#D9A21B;">HOST SIGN-IN</div></div><div style="height:16px;margin:0 -20px;background:linear-gradient(180deg,#D9A21B 0 33%,#C8551F 33% 66%,#7A8B3A 66%);"></div></div><div style="position:relative;flex:1;padding:16px 22px 20px;display:flex;flex-direction:column;gap:10px;color:#24356B;font-family:Caveat;">
     <sc-if value="{{ signForm }}" hint-placeholder-val="{{ true }}">
-      <div style="font-size:42px;font-weight:700;line-height:1;">Sign in</div>
-      <div style="display:flex;flex-direction:column;gap:2px;"><div style="font-size:26px;font-weight:700;line-height:1;">Email</div><div style="height:42px;border-bottom:2px solid #3a2a1a;font-size:30px;font-weight:500;display:flex;align-items:flex-end;justify-content:space-between;padding:0 4px 2px;">jmohawk@example.com</div></div>
+      <div style="font-size:42px;font-weight:700;line-height:1;">{{ signHead }}</div>
+      <sc-if value="{{ signCreate }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:2px;"><div style="font-size:26px;font-weight:700;line-height:1;">Username</div><div style="height:42px;border-bottom:2px solid #3a2a1a;font-size:30px;font-weight:500;display:flex;align-items:flex-end;padding:0 4px 2px;">JMohawk</div></div></sc-if><div style="display:flex;flex-direction:column;gap:2px;"><div style="font-size:26px;font-weight:700;line-height:1;">Email</div><div style="height:42px;border-bottom:2px solid #3a2a1a;font-size:30px;font-weight:500;display:flex;align-items:flex-end;justify-content:space-between;padding:0 4px 2px;">jmohawk@example.com</div></div>
       <sc-if value="{{ signPw }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:2px;"><div style="font-size:26px;font-weight:700;line-height:1;">Password</div><div style="height:42px;border-bottom:2px solid #3a2a1a;font-size:30px;font-weight:500;display:flex;align-items:flex-end;justify-content:space-between;padding:0 4px 2px;"><span style="letter-spacing:.15em;">••••••••••</span><span style="font-family:'Courier Prime',monospace;font-weight:700;font-size:13px;letter-spacing:.1em;">SHOW</span></div></div>
-        <div style="font-size:24px;text-decoration:underline;text-underline-offset:3px;">Forgot your password?</div>
+        <sc-if value="{{ signPwOnly }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ onForgot }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;align-self:flex-start;min-height:32px;font-family:Caveat;font-weight:700;font-size:24px;color:#24356B;text-decoration:underline;text-underline-offset:3px;">Forgot your password?</button></sc-if>
       </sc-if>
-      <sc-if value="{{ signNoPw }}" hint-placeholder-val="{{ true }}"><div style="font-size:24px;line-height:1.1;color:#5A3A22;">We'll email you a sign-in link. Tap it on this phone and you're in. Check your spam folder.</div></sc-if>
+      <sc-if value="{{ signNoPw }}" hint-placeholder-val="{{ true }}"><div style="font-size:24px;line-height:1.1;color:#5A3A22;">{{ signHelp }}</div></sc-if>
       <button type="button" onClick="{{ onSignCta }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:60px;padding:4px 12px;border-radius:12px;background:#B4481A;color:#F3EBD3;font-family:Righteous;font-size:23px;box-shadow:0 5px 0 #7A2E0D;margin-top:auto;">{{ signCta }}</button>
       <button type="button" onClick="{{ onSignAlt }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#24356B;font-family:Caveat;font-weight:700;font-size:26px;text-decoration:underline;text-underline-offset:4px;">{{ signAlt }}</button>
-      <button type="button" onClick="{{ toStart }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#24356B;font-family:Caveat;font-weight:700;font-size:26px;text-decoration:underline;text-underline-offset:4px;min-height:40px;font-size:22px;color:#5A3A22;">Back</button>
+      <sc-if value="{{ signPwOnly }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ onCreate }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#B4481A;font-family:Caveat;font-weight:700;font-size:26px;text-decoration:underline;text-underline-offset:4px;">New here? Create an account</button></sc-if><button type="button" onClick="{{ toStart }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#24356B;font-family:Caveat;font-weight:700;font-size:26px;text-decoration:underline;text-underline-offset:4px;min-height:40px;font-size:22px;color:#5A3A22;">Back</button>
     </sc-if>
     <sc-if value="{{ signSent }}" hint-placeholder-val="{{ false }}">
       <div style="font-size:44px;font-weight:700;line-height:1;">Check your email</div>
-      <div style="font-size:27px;line-height:1.1;">We sent a sign-in link to</div>
+      <div style="font-size:27px;line-height:1.1;">{{ signSentLine }}</div>
       <div style="height:42px;border-bottom:2px solid #3a2a1a;font-size:30px;font-weight:700;display:flex;align-items:flex-end;padding:0 4px 2px;">jmohawk@example.com</div>
-      <div style="font-size:24px;line-height:1.15;color:#5A3A22;">Open it on this phone. The link works once and expires in 15 minutes. Not there? Check your spam folder.</div>
+      <div style="font-size:24px;line-height:1.15;color:#5A3A22;">{{ signSentNote }}</div>
       <button type="button" onClick="{{ onResend }}" aria-disabled="{{ resendDis }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:52px;padding:4px 12px;border-radius:12px;background:#D9A21B;color:#3D2716;font-family:Righteous;font-size:20px;box-shadow:0 5px 0 rgba(0,0,0,.3);margin-top:auto;opacity:{{ resendOp }};">{{ resendLabel }}</button>
       <button type="button" onClick="{{ diffEmail }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#24356B;font-family:Caveat;font-weight:700;font-size:26px;text-decoration:underline;text-underline-offset:4px;">Use a different email</button>
     </sc-if>
@@ -2016,7 +2107,7 @@ a:hover{color:#C8551F}
     <div style="font-size:42px;font-weight:700;line-height:1;margin-top:10px;text-wrap:pretty;">{{ err.head }}</div>
     <div style="font-size:26px;line-height:1.15;text-wrap:pretty;">{{ err.body }}</div>
     <sc-if value="{{ err.hasCode }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:10px;margin-top:4px;"><sc-for list="{{ err.code }}" as="c" hint-placeholder-count="4"><div style="flex:1;height:56px;background:#FBF6E8;box-shadow:{{ c.ringC }};border-radius:4px;transform:rotate({{ c.tilt }});color:{{ c.inkC }};font-size:42px;font-weight:700;display:flex;align-items:center;justify-content:center;">{{ c.ch }}</div></sc-for></div></sc-if>
-    <sc-if value="{{ err.wait }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between;font-size:30px;border-bottom:2px solid #A9BFD9;padding-bottom:2px;margin-top:4px;"><span>Reconnecting…</span><span style="font-weight:700;">{{ pausedFor }}</span></div></sc-if>
+    <sc-if value="{{ err.loader }}" hint-placeholder-val="{{ false }}"><div style="padding:4px 0;"><div role="img" aria-label="Loading" style="display:flex;gap:12px;"><div style="width:16px;height:16px;border-radius:50%;background:#D9A21B;animation:blink 1s steps(1) infinite;animation-delay:0.00s;"></div><div style="width:16px;height:16px;border-radius:50%;background:#C8551F;animation:blink 1s steps(1) infinite;animation-delay:0.33s;"></div><div style="width:16px;height:16px;border-radius:50%;background:#7A8B3A;animation:blink 1s steps(1) infinite;animation-delay:0.66s;"></div></div></div></sc-if><sc-if value="{{ err.wait }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between;font-size:30px;border-bottom:2px solid #A9BFD9;padding-bottom:2px;margin-top:4px;"><span>Reconnecting…</span><span style="font-weight:700;">{{ pausedFor }}</span></div></sc-if>
     <sc-if value="{{ err.hasPrimary }}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{ err.onPrimary }}" aria-disabled="{{ err.pDis }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:60px;padding:4px 12px;border-radius:12px;background:#B4481A;color:#F3EBD3;font-family:Righteous;font-size:23px;box-shadow:0 5px 0 #7A2E0D;margin-top:auto;opacity:{{ err.pOp }};">{{ err.primary }}</button></sc-if>
     <sc-if value="{{ err.noPrimary }}" hint-placeholder-val="{{ false }}"><div style="margin-top:auto;font-size:28px;font-weight:700;color:#B4481A;text-align:center;">Keep this screen open</div></sc-if>
     <button type="button" onClick="{{ err.onSecondary }}" style="border:0;margin:0;padding:0;background:none;color:inherit;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;text-align:center;cursor:pointer;min-height:44px;color:#24356B;font-family:Caveat;font-weight:700;font-size:26px;text-decoration:underline;text-underline-offset:4px;">{{ err.secondary }}</button>
@@ -2120,7 +2211,7 @@ class Component extends DCLogic {
   state = (() => {
     let s = {}; try { s = JSON.parse(localStorage.getItem('jujuLobbySuite2') || '{}'); } catch (e) {}
     return { style: s.style || 'C', screen: s.screen || 'lobby', pick: s.pick || 'vote', sound: s.sound !== false, scan: s.scan !== false, color: s.color || 'red', lbGame: s.lbGame || 0, lbSort: s.lbSort || 'total',
-      tab: 'who', signSub: 'email', insSub: 'live', pauseSub: 'host', overSub: 'host', errSub: 'notfound', t: 0, paused: false, host: 'ready', ready: false, chosen: 0, myVote: 5, note: 0, z: 0.4 };
+      tab: 'who', pickSub: 'live', lbSub: 'scores', loadSub: 'joining', locked: false, focusN: 1, spin: 0, signSub: 'email', insSub: 'live', pauseSub: 'host', overSub: 'host', errSub: 'notfound', t: 0, paused: false, host: 'ready', ready: false, chosen: 0, myVote: 5, note: 0, z: 0.4 };
   })();
   persist() {
     const { style, screen, pick, sound, scan, color, lbGame, lbSort } = this.state;
@@ -2136,8 +2227,15 @@ class Component extends DCLogic {
   componentDidMount() {
     window.addEventListener('resize', this.fit); this.fit(); setTimeout(this.fit, 300); document.fonts && document.fonts.ready.then(this.fit);
     this.iv = setInterval(() => { if (!this.state.paused && this.state.t < 80) this.setState(s => ({ t: s.t + 1 })); }, 1000);
+    this.sp = setInterval(() => { const s = this.state; if (s.screen === 'picker' && (s.pickSub === 'tie' || s.pickSub === 'none')) this.setState(x => ({ spin: x.spin + 1 })); }, 170);
+    this.kd = e => { const s = this.state; if (s.screen !== 'picker' || s.pickSub !== 'remote') return; const cols = s.style === 'B' ? 6 : 3; let n = s.focusN;
+      if (e.key === 'ArrowRight') n = Math.min(6, n + 1); else if (e.key === 'ArrowLeft') n = Math.max(1, n - 1); else if (e.key === 'ArrowDown') n = Math.min(6, n + cols); else if (e.key === 'ArrowUp') n = Math.max(1, n - cols);
+      else if (e.key === 'Enter') { e.preventDefault(); this.setState({ chosen: n, host: 'ready', ready: false }); this.set({ screen: 'instr' }); return; }
+      else if (e.key === 'Escape' || e.key === 'Backspace') { e.preventDefault(); this.set({ screen: 'lobby' }); return; } else return;
+      e.preventDefault(); this.setState({ focusN: n }); };
+    window.addEventListener('keydown', this.kd);
   }
-  componentWillUnmount() { window.removeEventListener('resize', this.fit); clearInterval(this.iv); clearTimeout(this.nt); }
+  componentWillUnmount() { window.removeEventListener('resize', this.fit); window.removeEventListener('keydown', this.kd); clearInterval(this.sp); clearInterval(this.iv); clearTimeout(this.nt); }
   ink(hex) {
     const c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255).map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
     const L = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
@@ -2145,7 +2243,7 @@ class Component extends DCLogic {
   }
   soon(n) { this.setState({ note: n }); clearTimeout(this.nt); this.nt = setTimeout(() => this.setState({ note: 0 }), 1600); }
   renderVals() {
-    const st = this.state, d = st.style, sc = st.screen, t = st.t, leader = st.pick === 'leader';
+    const st = this.state, d = st.style, sc = st.screen, t = st.t, spinMode = sc === 'picker' && (st.pickSub === 'tie' || st.pickSub === 'none'), remoteMode = sc === 'picker' && st.pickSub === 'remote', leader = st.pick === 'leader' && !spinMode;
     const GAMES = [
       { n: 1, title: 'No Filler', pitch: 'Name 3 before time runs out. No um, no uh, no like.', players: '4–10', len: '15 min', tag: 'Party' },
       { n: 2, title: 'Dial It In', pitch: 'Guess where the clue lands between two opposites, 1 to 100.', players: '3–10', len: '20 min', tag: 'Brainy' },
@@ -2190,7 +2288,7 @@ class Component extends DCLogic {
     const tilts = ['-1deg', '1deg', '0deg', '-1.5deg', '.5deg', '-.5deg', '1.5deg'];
     const fmt = n => n.toLocaleString('en-US');
     const colOf = p => p.color || st.color;
-    const up = s => s.toUpperCase();
+    const up = s => (s || '').toUpperCase();
     const bars = (l, on, off) => [40, 70, 100].map((hh, k) => ({ h: hh + '%', bg: k < l ? on : off }));
     const lvl = i => { const v = (i * 5 + Math.floor(t / 4) * 3) % 7; return v === 0 ? 1 : v < 3 ? 2 : 3; };
 
@@ -2200,8 +2298,11 @@ class Component extends DCLogic {
     const votesIn = Math.min(7, Math.floor(t / 2));
     const counts = [0, 0, 0, 0, 0, 0, 0];
     SEQ.slice(0, votesIn).forEach(n => { counts[n || st.myVote]++; });
-    const maxV = Math.max.apply(null, counts), leadN = maxV > 0 ? counts.indexOf(maxV) : 0;
-    const secs = Math.max(0, 30 - Math.min(t, 14));
+    if (spinMode) { counts.fill(0); if (st.pickSub === 'tie') { counts[2] = 3; counts[5] = 3; counts[3] = 1; } }
+    const cand = st.pickSub === 'tie' ? [2, 5] : [1, 2, 3, 4, 5, 6], spinLen = st.pickSub === 'tie' ? 15 : 21, spinStep = st.spin % (spinLen + 14), spinLanded = spinStep >= spinLen;
+    const spinCur = spinLanded ? cand[(spinLen - 1) % cand.length] : cand[spinStep % cand.length];
+    const maxV = Math.max.apply(null, counts), leadN = spinMode ? 0 : (maxV > 0 ? counts.indexOf(maxV) : 0);
+    const secs = spinMode ? 0 : Math.max(0, 30 - Math.min(t, 14));
     const timer = '0:' + String(secs).padStart(2, '0');
     const chosenN = st.chosen || (leader ? 2 : (leadN || 1)), chosen = GAMES[chosenN - 1];
     const hostPickN = 2;
@@ -2209,8 +2310,8 @@ class Component extends DCLogic {
     const voteFor = n => () => this.setState({ myVote: n });
     const common = g => {
       const hostPick = leader && g.n === hostPickN;
-      return { isNew: !!g.isNew, votes: counts[g.n], mine: g.n === st.myVote, notMine: g.n !== st.myVote, minePressed: g.n === st.myVote ? 'true' : 'false', showVotes: !leader,
-        isLeader: !leader && maxV > 0 && g.n === leadN, isHostPick: hostPick, onPick: pickGame(g.n), onVote: voteFor(g.n),
+      return { spinOn: spinMode && g.n === spinCur, focusOn: remoteMode && g.n === st.focusN, isNew: !!g.isNew, votes: counts[g.n], mine: g.n === st.myVote, notMine: g.n !== st.myVote, minePressed: g.n === st.myVote ? 'true' : 'false', showVotes: !leader,
+        isLeader: !leader && !remoteMode && maxV > 0 && g.n === leadN, isHostPick: hostPick, onPick: pickGame(g.n), onVote: voteFor(g.n),
         aria: g.title + ', ' + g.tag + (leader ? '' : ', ' + counts[g.n] + ' votes') + '. Open instructions', playersUp: g.players, lenUp: up(g.len) };
     };
 
@@ -2258,9 +2359,9 @@ class Component extends DCLogic {
     // players
     const seats = Array.from({ length: 10 }, (_, i) => i < joined ? PEOPLE[i] : null);
     const sig = l => 'Signal ' + l + ' of 3';
-    const aPlayers = seats.map((p, i) => { if (!p) return { name: 'Open', num: '', plateBg: 'rgba(246,231,200,.1)', plateInk: 'rgba(246,231,200,.6)', body: 'rgba(255,255,255,.06)', bulb: 'rgba(255,255,255,.06)', on: false, bars: [], sigLabel: '' };
+    const aPlayers = seats.map((p, i) => { if (!p) return { seat: i + 1, rowOp: .5, off: true, i2: '', chip: 'transparent', chipInk: '#000', rowBars: [], name: 'Open', num: '', plateBg: 'rgba(246,231,200,.1)', plateInk: 'rgba(246,231,200,.6)', body: 'rgba(255,255,255,.06)', bulb: 'rgba(255,255,255,.06)', on: false, bars: [], sigLabel: '' };
       const body = PAL.A[colOf(p)], l = lvl(i), ik = this.ink(body);
-      return { name: p.name, num: i + 1, plateBg: '#F6E7C8', plateInk: '#12204A', body, bulb: '#FFF6D6', on: true, bars: bars(l, ik, ik === '#FFFFFF' ? 'rgba(255,255,255,.3)' : 'rgba(0,0,0,.25)'), sigLabel: sig(l) }; });
+      return { seat: i + 1, rowOp: 1, off: false, i2: p.i2, chip: body, chipInk: ik, rowBars: bars(l, '#F6E7C8', 'rgba(246,231,200,.25)'), name: p.name, num: i + 1, plateBg: '#F6E7C8', plateInk: '#12204A', body, bulb: '#FFF6D6', on: true, bars: bars(l, ik, ik === '#FFFFFF' ? 'rgba(255,255,255,.3)' : 'rgba(0,0,0,.25)'), sigLabel: sig(l) }; });
     const bPlayers = seats.map((p, i) => { if (!p) { const nx = i === joined; return { slot: (i + 1) + 'P', init: '---', name: '', status: nx ? 'PRESS START' : 'OPEN', statusCol: '#22E4FF', col: '#8A86A0', op: nx ? 1 : 0.5, on: false, bars: [], sigLabel: '' }; }
       const l = lvl(i); return { slot: (i + 1) + 'P', init: p.i3, name: p.name, status: l === 1 ? 'LAG' : 'READY', statusCol: l === 1 ? '#FF4F45' : '#39FF6A', col: PAL.B[colOf(p)], op: 1, on: true,
         bars: bars(l, l === 1 ? '#FF4F45' : l === 2 ? '#FFE600' : '#39FF6A', '#2A2733'), sigLabel: sig(l) }; });
@@ -2313,8 +2414,8 @@ class Component extends DCLogic {
     const phKey = { join: '5', lobby: 'm', wait: '6', picker: '7', instr: '4m', board: '3m', settings: '9' }[sc];
     const s = { dA: d === 'A', dB: d === 'B', dC: d === 'C' };
     ['A', 'B', 'C'].forEach(x => { [1, 2, 3, 4, 8].forEach(k => { s[x + k] = d === x && bigKey === k; }); ['5', '6', '7', '4m', '3m', '9'].forEach(k => { s[x + k] = d === x && phKey === k; }); });
-    s.Am = d !== 'C' && phKey === 'm'; s.CmWho = d === 'C' && phKey === 'm' && st.tab === 'who'; s.CmLib = d === 'C' && phKey === 'm' && st.tab === 'lib';
-    const SCR = [['start', 'Host or join'], ['signin', 'Sign in'], ['join', 'Join'], ['lobby', 'Lobby'], ['wait', 'Waiting room'], ['picker', 'Game picker'], ['instr', 'Instructions'], ['pause', 'Pause'], ['over', 'Game over'], ['board', 'Leaderboard'], ['settings', 'Settings'], ['errors', 'Errors'], ['tokens', 'Tokens']];
+    s.Am = false; ['A', 'B'].forEach(x => { s[x + 'mWho'] = d === x && phKey === 'm' && st.tab === 'who'; s[x + 'mLib'] = d === x && phKey === 'm' && st.tab === 'lib'; }); s.CmWho = d === 'C' && phKey === 'm' && st.tab === 'who'; s.CmLib = d === 'C' && phKey === 'm' && st.tab === 'lib';
+    const SCR = [['start', 'Host or join'], ['signin', 'Sign in'], ['loading', 'Loading'], ['join', 'Join'], ['lobby', 'Lobby'], ['wait', 'Waiting room'], ['picker', 'Game picker'], ['instr', 'Instructions'], ['pause', 'Pause'], ['over', 'Game over'], ['board', 'Leaderboard'], ['settings', 'Settings'], ['errors', 'Errors'], ['tokens', 'Tokens']];
     const myVoteTitle = GAMES[st.myVote - 1].title;
 
     const out = { z: st.z, stageRef: this.stageRef, s, styleName: { A: 'Retro game show', B: '90s arcade', C: '70s rec room' }[d],
@@ -2350,21 +2451,25 @@ class Component extends DCLogic {
       toBoard: () => this.set({ screen: 'board' }), toWait: () => this.set({ screen: 'wait' }), toSettings: () => this.set({ screen: 'settings' }), toLobby: () => this.set({ screen: 'lobby' }),
       showWho: () => this.setState({ tab: 'who' }), showLib: () => this.setState({ tab: 'lib' }),
       toWho: () => { this.setState({ tab: 'who' }); this.set({ screen: 'lobby' }); }, toLib: () => { this.setState({ tab: 'lib' }); this.set({ screen: 'lobby' }); } };
-    const aOnly = { start: 1, signin: 1, pause: 1, over: 1, errors: 1, tokens: 1 }[sc] === 1;
+    const aOnly = { start: 1, signin: 1, loading: 1, pause: 1, over: 1, errors: 1, tokens: 1 }[sc] === 1;
     const subDefs = {
-      signin: ['signSub', 'Sign-in state', [['email', 'Email link'], ['password', 'With password'], ['sent', 'Check your email'], ['expired', 'Link expired']]],
+      signin: ['signSub', 'Sign-in state', [['email', 'Email link'], ['password', 'With password'], ['sent', 'Check your email'], ['expired', 'Link expired'], ['create', 'Create account'], ['forgot', 'Forgot password'], ['reset', 'Reset link sent']]],
+      loading: ['loadSub', 'Loading', [['joining', 'Joining room'], ['sending', 'Sending link'], ['signing', 'Signing in'], ['reconnecting', 'Reconnecting']]],
+      lobby: ['tab', 'Phone tab', [['who', "Who's here"], ['lib', 'Game library']]],
+      picker: ['pickSub', 'Game picker', [['live', 'Live vote'], ['tie', 'Tie: spin'], ['none', 'No votes: spin'], ['remote', 'Remote focus']]],
+      board: ['lbSub', 'Leaderboard', [['scores', 'With scores'], ['empty', 'Empty']]],
       instr: ['insSub', 'Instructions', [['live', 'Chosen game'], ['tpl', 'Template']]],
       pause: ['pauseSub', 'Phone view', [['host', 'Host'], ['player', 'Player']]],
       over: ['overSub', 'Phone view', [['host', 'Host'], ['player', 'Player']]],
-      errors: ['errSub', 'Error', [['notfound', 'Room not found'], ['locked', 'Room locked'], ['hostdc', 'Host disconnected'], ['solo', 'Only 1 player']]],
+      errors: ['errSub', 'Error', [['notfound', 'Room not found'], ['locked', 'Room locked'], ['full', 'Room full'], ['hostdc', 'Host disconnected'], ['takeover', 'Host away: take over'], ['newhost', 'New host'], ['solo', 'Only 1 player']]],
     };
     const sd = subDefs[sc];
     const subs = sd ? sd[2].map(([id, label]) => { const on = st[sd[0]] === id; return { label, pressed: on ? 'true' : 'false', onClick: () => this.setState({ [sd[0]]: id }), bg: on ? '#2b2a27' : 'transparent', ink: on ? '#F3F1EC' : '#3b3830' }; }) : [];
-    const sg = st.signSub, er = st.errSub;
+    const sg = st.signSub, er = st.errSub, ls = st.loadSub;
     ['A', 'B', 'C'].forEach(x => { const on = d === x;
-      Object.assign(s, { [x + 'Start']: on && sc === 'start', [x + 'mStart']: on && sc === 'start', [x + 'Sign']: on && sc === 'signin', [x + 'mSign']: on && sc === 'signin', [x + 'Pause']: on && sc === 'pause', [x + 'mPause']: on && sc === 'pause',
-        [x + 'Over']: on && sc === 'over', [x + 'mOver']: on && sc === 'over', [x + 'ErrDc']: on && sc === 'errors' && er === 'hostdc', [x + 'ErrSolo']: on && sc === 'errors' && er === 'solo', [x + 'mErr']: on && sc === 'errors' }); });
-    s.TVNote = sc === 'errors' && (er === 'notfound' || er === 'locked');
+      Object.assign(s, { [x + 'Start']: on && sc === 'start', [x + 'mStart']: on && sc === 'start', [x + 'Sign']: on && (sc === 'signin' || (sc === 'loading' && (ls === 'sending' || ls === 'signing'))), [x + 'mSign']: on && sc === 'signin', [x + 'Pause']: on && sc === 'pause', [x + 'mPause']: on && sc === 'pause',
+        [x + 'Over']: on && sc === 'over', [x + 'mOver']: on && sc === 'over', [x + 'ErrDc']: on && sc === 'errors' && (er === 'hostdc' || er === 'takeover' || er === 'newhost'), [x + 'ErrSolo']: on && sc === 'errors' && er === 'solo', [x + 'mErr']: on && (sc === 'errors' || sc === 'loading') }); });
+    s.TVNote = (sc === 'errors' && ['notfound', 'locked', 'full'].includes(er)) || (sc === 'loading' && (ls === 'joining' || ls === 'reconnecting'));
     const pad2 = n => String(n).padStart(2, '0');
     const pausedFor = '0:' + pad2(t % 60);
     const toStart = () => this.set({ screen: 'start' });
@@ -2383,27 +2488,44 @@ class Component extends DCLogic {
       notfound: { room: 'Join a room', stamp: 'No such room', label: 'Room code', head: "We couldn't find that room", body: 'Check the 4-letter code on the TV and try again.', code: code('KTZQ', true), primary: 'Try again', onPrimary: () => this.set({ screen: 'join' }), secondary: 'Back to start', onSecondary: toStart },
       locked: { room: 'Room KTZB', stamp: 'Locked', label: 'Room KTZB', head: 'This room is locked', body: 'The host locked the room, so no one new can join right now. Ask them to unlock it, then try again.', code: [], primary: 'Try again', onPrimary: () => this.set({ screen: 'join' }), secondary: 'Join a different room', onSecondary: () => this.set({ screen: 'join' }) },
       hostdc: { room: 'Room KTZB', stamp: 'On hold', label: chosen.title + ' · round 2 of 5', head: 'The host dropped out', body: "We're waiting for JMohawk to reconnect. Keep this screen open and the game picks up where it left off.", code: [], wait: true, primary: '', secondary: 'Leave room', onSecondary: toStart },
+      full: { room: 'Room KTZB', stamp: 'Full', label: 'Room KTZB · 10 of 10', head: 'This room is full', body: 'All 10 seats are taken. Ask the host to make room, or join a different room.', code: [], primary: 'Try again', onPrimary: () => this.set({ screen: 'join' }), secondary: 'Join a different room', onSecondary: () => this.set({ screen: 'join' }) },
+      takeover: { room: 'Room KTZB', stamp: 'Host away', label: chosen.title + ' · round 2 of 5', head: 'The host is still away', body: 'JMohawk has been gone for over a minute. Anyone in the room can take over as host and keep the game going.', code: [], wait: true, primary: 'Take over as host', onPrimary: () => this.setState({ errSub: 'newhost' }), secondary: 'Keep waiting', onSecondary: () => this.setState({ errSub: 'hostdc' }) },
+      newhost: { room: 'Room KTZB', stamp: 'New host', label: chosen.title + ' · round 2 of 5', head: "You're the host now", body: 'Every screen now shows GeeGee as host. You can resume, restart or end the game.', code: [], primary: 'Resume game', onPrimary: () => { this.setState({ host: 'playing' }); this.set({ screen: 'instr' }); }, secondary: 'End and return to lobby', onSecondary: goLobby },
       solo: { room: 'Room KTZB', stamp: 'Just you', label: 'Waiting for players', head: "You're the only one here", body: 'Games need at least 2 players. Share the code or have a friend scan it on the TV.', code: code('KTZB', false), primary: 'Start game · need 1 more', disabled: true, secondary: 'Back to lobby', onSecondary: goLobby },
     };
-    const e0 = ERR[er];
-    const err = Object.assign({ wait: false }, e0, { roomUp: up(e0.room), stampUp: up(e0.stamp), labelUp: up(e0.label), headUp: up(e0.head), primaryUp: up(e0.primary), secondaryUp: up(e0.secondary), hasPrimary: !!e0.primary, noPrimary: !e0.primary, hasCode: e0.code.length > 0, pOp: e0.disabled ? 0.45 : 1, pDis: e0.disabled ? 'true' : 'false', onPrimary: e0.disabled ? undefined : e0.onPrimary });
-    const TVS = { email: ['Waiting', 'Finish on your phone', "Scan the code, enter your email and we'll send you a sign-in link."], password: ['Waiting', 'Finish on your phone', 'Scan the code and sign in with your email and password.'],
-      sent: ['Link sent', 'Check your email', 'Tap the link we sent to jmohawk@example.com. Your room opens on this screen as soon as you do.'], expired: ['Link expired', 'That link has expired', 'Sign-in links work once and expire after 15 minutes. Scan the code to get a new one.'] }[sg];
+    const LOAD = {
+      joining: { room: 'Room KTZB', stamp: 'Joining', label: 'Room KTZB', head: 'Finding your seat', body: 'Hang on while we add you to the room.', code: [], loader: true, secondary: 'Cancel', onSecondary: () => this.set({ screen: 'join' }) },
+      sending: { room: 'Sign in', stamp: 'Sending', label: 'Host sign-in', head: 'Sending your link', body: "We're emailing a sign-in link to jmohawk@example.com.", code: [], loader: true, secondary: 'Cancel', onSecondary: () => { this.setState({ signSub: 'email' }); this.set({ screen: 'signin' }); } },
+      signing: { room: 'Sign in', stamp: 'Signing in', label: 'Host sign-in', head: 'Signing you in', body: 'Checking your link. This phone will remember you.', code: [], loader: true, secondary: 'Cancel', onSecondary: toStart },
+      reconnecting: { room: 'Room KTZB', stamp: 'Offline', label: chosen.title + ' · round 2 of 5', head: 'Reconnecting', body: "Your phone lost its connection. We'll put you back in your seat as soon as it's back.", code: [], loader: true, wait: true, secondary: 'Leave room', onSecondary: toStart },
+    };
+    const e0 = sc === 'loading' ? LOAD[ls] : ERR[er];
+    const err = Object.assign({ wait: false, loader: false }, e0, { roomUp: up(e0.room), stampUp: up(e0.stamp), labelUp: up(e0.label), headUp: up(e0.head), primaryUp: up(e0.primary), secondaryUp: up(e0.secondary), hasPrimary: !!e0.primary, noPrimary: !e0.primary, hasCode: e0.code.length > 0, pOp: e0.disabled ? 0.45 : 1, pDis: e0.disabled ? 'true' : 'false', onPrimary: e0.disabled ? undefined : e0.onPrimary });
+    const TVS = { sending: ['Sending', 'Sending your link', 'Hang on while we email jmohawk@example.com.'], signing: ['Signing in', 'Signing you in', 'Checking your link. Your room opens here in a moment.'],
+      create: ['Waiting', 'Finish on your phone', "Create your host account on your phone. Your room opens here when you're done."], forgot: ['Waiting', 'Finish on your phone', 'Reset your password on your phone, then sign in.'], reset: ['Link sent', 'Check your email', 'Tap the reset link we sent to jmohawk@example.com, then sign in on your phone.'],
+      email: ['Waiting', 'Finish on your phone', "Scan the code, enter your email and we'll send you a sign-in link."], password: ['Waiting', 'Finish on your phone', 'Scan the code and sign in with your email and password.'],
+      sent: ['Link sent', 'Check your email', 'Tap the link we sent to jmohawk@example.com. Your room opens on this screen as soon as you do.'], expired: ['Link expired', 'That link has expired', 'Sign-in links work once and expire after 15 minutes. Scan the code to get a new one.'] }[sc === 'loading' && (ls === 'sending' || ls === 'signing') ? ls : sg];
     const rs = Math.max(0, 45 - t);
-    const errLabel = { notfound: 'ROOM NOT FOUND', locked: 'ROOM LOCKED', hostdc: 'HOST DISCONNECTED', solo: 'ONLY 1 PLAYER' }[er];
+    const errLabel = sc === 'loading' ? { joining: 'JOINING ROOM', sending: 'SENDING LINK', signing: 'SIGNING IN', reconnecting: 'RECONNECTING' }[ls] : { notfound: 'ROOM NOT FOUND', locked: 'ROOM LOCKED', full: 'ROOM FULL', hostdc: 'HOST DISCONNECTED', takeover: 'HOST AWAY · TAKE OVER', newhost: 'NEW HOST', solo: 'ONLY 1 PLAYER' }[er];
     const extra = {
       subs, hasSubs: subs.length > 0, subTitle: sd ? sd[1] : '', stageDisplay: sc === 'tokens' ? 'none' : 'flex', tokensDisplay: sc === 'tokens' ? 'flex' : 'none',
       styleOpts: [['A', 'Game show'], ['B', 'Arcade'], ['C', 'Rec room']].map(([id, label]) => ({ label, pressed: d === id ? 'true' : 'false', onClick: () => this.set({ style: id }), bg: d === id ? '#2b2a27' : 'transparent', ink: d === id ? '#F3F1EC' : '#3b3830' })),
       tokensDisplayA: sc === 'tokens' && d === 'A' ? 'flex' : 'none', tokensDisplayB: sc === 'tokens' && d === 'B' ? 'flex' : 'none', tokensDisplayC: sc === 'tokens' && d === 'C' ? 'flex' : 'none',
-      tvSignTagUp: up(TVS[0]), tvSignHeadUp: up(TVS[1]), signCtaUp: up(sg === 'password' ? 'Sign in' : 'Email me a link'), signAltUp: up(sg === 'password' ? 'Email me a link instead' : 'Use a password instead'), resendLabelUp: up(rs ? 'Resend link in 0:' + pad2(rs) : 'Resend link'),
+      tvSignTagUp: up(TVS[0]), tvSignHeadUp: up(TVS[1]), signCtaUp: up({ password: 'Sign in', create: 'Create account', forgot: 'Send reset link' }[sg] || 'Email me a link'), signAltUp: up({ password: 'Email me a link instead', create: 'Have an account? Sign in', forgot: 'Back to sign in' }[sg] || 'Use a password instead'), resendLabelUp: up(rs ? 'Resend link in 0:' + pad2(rs) : 'Resend link'),
       myPlaceUp: up(ORD[meI]), myOverTotalB: overRows[meI].totalB, overNoteUp: up(chosen.team ? 'Winners split 80 · others split 20' : 'Top half scores · 40/30/20/10'),
-      bigLabel: aOnly ? { start: 'HOST OR JOIN', signin: 'HOST SIGN-IN', pause: 'PAUSED', over: 'GAME OVER', errors: 'ERROR · ' + errLabel }[sc] : (T ? '4 · INSTRUCTIONS TEMPLATE' : out.bigLabel),
-      phoneLabel: aOnly ? { start: 'HOST OR JOIN', signin: 'SIGN IN', pause: 'PAUSED', over: 'GAME OVER', errors: 'ERROR · ' + errLabel }[sc] : (T ? '4 · GET READY TEMPLATE' : out.phoneLabel),
+      bigLabel: aOnly ? { start: 'HOST OR JOIN', signin: 'HOST SIGN-IN', pause: 'PAUSED', over: 'GAME OVER', errors: 'ERROR · ' + errLabel, loading: 'LOADING · ' + errLabel }[sc] : (T ? '4 · INSTRUCTIONS TEMPLATE' : out.bigLabel),
+      phoneLabel: aOnly ? { start: 'HOST OR JOIN', signin: 'SIGN IN', pause: 'PAUSED', over: 'GAME OVER', errors: 'ERROR · ' + errLabel, loading: 'LOADING · ' + errLabel }[sc] : (T ? '4 · GET READY TEMPLATE' : out.phoneLabel),
       toStart, startHost: () => { this.setState({ signSub: 'email' }); this.set({ screen: 'signin' }); }, startJoin: () => this.set({ screen: 'join' }),
-      signForm: sg === 'email' || sg === 'password', signPw: sg === 'password', signNoPw: sg === 'email', signSent: sg === 'sent', signExpired: sg === 'expired',
-      signCta: sg === 'password' ? 'Sign in' : 'Email me a link', signAlt: sg === 'password' ? 'Email me a link instead' : 'Use a password instead',
-      onSignCta: () => { if (sg === 'password') this.set({ screen: 'lobby' }); else this.setState({ signSub: 'sent', t: 0 }); },
+      signForm: ['email', 'password', 'create', 'forgot'].includes(sg), signPw: sg === 'password' || sg === 'create', signPwOnly: sg === 'password', signNoPw: sg === 'email' || sg === 'forgot', signCreate: sg === 'create',
+      signHead: { create: 'Create account', forgot: 'Forgot password' }[sg] || 'Sign in', signHeadUp: { create: 'CREATE ACCOUNT', forgot: 'FORGOT PASSWORD' }[sg] || 'SIGN IN', signCardHead: { create: 'New host account', forgot: 'Reset password' }[sg] || 'Host sign-in',
+      signHelp: sg === 'forgot' ? "Enter the email you signed up with and we'll send a link to reset your password." : "We'll email you a sign-in link. Tap it on this phone and you're in. Check your spam folder.",
+      signSentLine: sg === 'reset' ? 'We sent a password reset link to' : 'We sent a sign-in link to',
+      signSentNote: sg === 'reset' ? 'Open it on this phone to choose a new password. Not there? Check your spam folder.' : 'Open it on this phone. The link works once and expires in 15 minutes. Not there? Check your spam folder.',
+      onForgot: () => this.setState({ signSub: 'forgot' }), onCreate: () => this.setState({ signSub: 'create' }), tvLoader: sc === 'loading', signExpired: sg === 'expired',
+      signCta: { password: 'Sign in', create: 'Create account', forgot: 'Send reset link' }[sg] || 'Email me a link', signAlt: { password: 'Email me a link instead', create: 'Already have an account? Sign in', forgot: 'Back to sign in' }[sg] || 'Use a password instead',
+      onSignCta: () => { if (sg === 'password') this.set({ screen: 'lobby' }); else this.setState({ signSub: sg === 'forgot' ? 'reset' : 'sent', t: 0 }); },
       onSignAlt: () => this.setState({ signSub: sg === 'password' ? 'email' : 'password' }),
+      signSent: sg === 'sent' || sg === 'reset',
       resendLabel: rs ? 'Resend link in 0:' + pad2(rs) : 'Resend link', resendOp: rs ? 0.5 : 1, resendDis: rs ? 'true' : 'false', onResend: () => { if (!rs) this.setState({ t: 0 }); },
       newLink: () => this.setState({ signSub: 'sent', t: 0 }), diffEmail: () => this.setState({ signSub: 'email' }),
       tvSignTag: TVS[0], tvSignHead: TVS[1], tvSignBody: TVS[2], tvSignExpired: sg === 'expired',
@@ -2412,9 +2534,23 @@ class Component extends DCLogic {
       overRows, overHost: st.overSub === 'host', overPlayer: st.overSub === 'player', myPlace: ORD[meI], myPts: pay[meI] ? '+' + pay[meI] : '0', myOverTotal: overRows[meI].total,
       overNote: chosen.team ? 'Winning team splits 80 · other team splits 20' : 'Top half of the room scores · 40, 30, 20, 10',
       playAgain: () => { this.setState({ host: 'ready', ready: false }); this.set({ screen: 'instr' }); }, backToLobby: goLobby,
-      err, tvNote: er === 'locked' ? 'Room locked appears only on the phone that tried to join. The TV lobby is unchanged.' : 'Room not found appears only on the phone that tried to join. The TV stays on the lobby.',
+      err, tvNote: sc === 'loading' ? (ls === 'joining' ? "Joining shows only on the joining phone. The TV lobby adds the player's seat once they're in." : "Reconnecting shows on the player's phone. On the TV their signal bars drop to zero until they're back.") : { locked: 'Room locked appears only on the phone that tried to join. The TV lobby shows a Locked stamp on the room code.', full: 'Room full appears only on the phone that tried to join. The TV lobby shows 10 of 10.' }[er] || 'Room not found appears only on the phone that tried to join. The TV stays on the lobby.',
     };
-    return Object.assign(out, extra, tplVals);
+    const DC = { hostdc: ['Host disconnected', 'Waiting for JMohawk to reconnect', 'Reconnecting for', 'The game picks up where it left off'], takeover: ['Host still away', 'Anyone can take over from their phone', 'Away for', 'First to tap Take over becomes the host'], newhost: ['New host: GeeGee', 'GeeGee can resume, restart or end the game', 'Paused for', 'JMohawk can rejoin as a player'] }[er] || ['Host disconnected', 'Waiting for JMohawk to reconnect', 'Reconnecting for', 'The game picks up where it left off'];
+    const lbEmpty = sc === 'board' && st.lbSub === 'empty';
+    const winT = GAMES[spinCur - 1].title;
+    const more = {
+      dcHead: DC[0], dcSub: DC[1], dcTimerLabel: DC[2], dcFoot: DC[3], dcHeadUp: up(DC[0]), dcSubUp: up(DC[1]), dcTimerLabelUp: up(DC[2]), dcFootUp: up(DC[3]), dcSubTimed: er === 'newhost' ? DC[1] : DC[1] + '… ' + pausedFor,
+      roomLocked: st.locked, roomOpts: [opt('Open', !st.locked, () => this.setState({ locked: false })), opt('Locked', st.locked, () => this.setState({ locked: true }))],
+      roomOptsUp: [opt('OPEN', !st.locked, () => this.setState({ locked: false })), opt('LOCKED', st.locked, () => this.setState({ locked: true }))],
+      lbEmpty, pickBanner: spinMode, remoteHint: remoteMode,
+      pickBannerText: spinLanded ? winT + ' it is!' : (st.pickSub === 'tie' ? "It's a tie! Spinning…" : 'No votes! Spinning all 6…'),
+      pickBannerPhone: spinLanded ? winT + ' it is!' : (st.pickSub === 'tie' ? "It's a tie! Watch the TV" : 'No votes in. Watch the TV'),
+    };
+    more.pickBannerTextUp = up(more.pickBannerText); more.pickBannerPhoneUp = up(more.pickBannerPhone);
+    if (spinMode) { more.votesOf = (st.pickSub === 'tie' ? 7 : 0) + ' of 7'; more.coinsOf = (st.pickSub === 'tie' ? 7 : 0) + '/7'; }
+    if (lbEmpty) Object.assign(more, { lbRanked: [], lbUnranked: [], hasUnranked: false });
+    return Object.assign(out, extra, more, tplVals);
   }
 }
 </script>

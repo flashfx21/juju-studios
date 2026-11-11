@@ -1,7 +1,7 @@
 # JuJu Studios Engine: Requirements (Draft)
 
 The shared engine behind the JuJu Studios game night suite: lobby, profiles, host controls, connection, game framework, leaderboard. Each game plugs into it like a cartridge.
-Goal: expedited launch. Engine + No Filler first, then a few more games, aiming for a few weeks.
+Goal: expedited launch. Engine + Chainword first, then a few more games, aiming for a few weeks. No Filler is a later release.
 Status: draft, updated Nov 11, 2026. Decisions from Julian marked **Decided**; Claude's suggestions marked **Proposed**.
 Related: `juju-engine-tech-stack-0852.md` (stack and architecture), `game-night-suite-ideas-2233.md` (games and phases), `games/` (one spec per game).
 

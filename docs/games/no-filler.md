@@ -1,7 +1,7 @@
 # No Filler
 
 **Game ID:** `no-filler`  
-**Status:** Playable, phase 1 (first cartridge; builds the engine)  
+**Status:** Playable, later release (phase not set)  
 **Players:** 4 to 10 (placeholder)  
 **Length:** 15 min (placeholder)  
 **Modes:** Individual

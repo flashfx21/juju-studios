@@ -292,7 +292,8 @@
     "card": "10px 12px 0 rgba(0,0,0,.3)",
     "frame": "0 0 0 12px #3D2716, 10px 14px 0 12px rgba(0,0,0,.3)",
     "glow": null,
-    "textHeadline": "3px 3px 0 #3D2716"
+    "textHeadline": "3px 3px 0 #3D2716",
+    "focus": "0 0 0 4px #F3EBD3, 0 0 0 8px #3D2716"
   },
   "motion": {
     "chase": null,
@@ -303,7 +304,18 @@
       "use": "Coming-soon \"not ready yet\" note"
     },
     "liftSelected": "translateY(-12px) rotate(-1.5deg) scale(1.03)",
-    "tilt": "-3deg to 3deg"
+    "tilt": "-3deg to 3deg",
+    "spin": {
+      "duration": "170ms",
+      "use": "Tie / no-vote spin step; lands after ~15–21 steps"
+    },
+    "loader": {
+      "duration": "1s",
+      "easing": "steps(1)",
+      "iteration": "infinite",
+      "stagger": "0.33s",
+      "use": "Loading indicator"
+    }
   },
   "texture": {
     "background": "Wood panel: #5A3A22 with repeating-linear-gradient(90deg) grooves every 128px (98px on phone)",

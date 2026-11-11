@@ -271,7 +271,8 @@
     "card": "6px 8px 0 rgba(0,0,0,.3)",
     "frame": "0 0 0 4px #F2B630, 0 0 0 10px #0B1533",
     "glow": null,
-    "textHeadline": "4px 4px 0 #F0592A"
+    "textHeadline": "4px 4px 0 #F0592A",
+    "focus": "0 0 0 5px #FFF6D6, 0 0 0 9px #0B1533"
   },
   "motion": {
     "chase": {
@@ -285,6 +286,17 @@
     "notReadyNote": {
       "duration": "1.6s",
       "use": "Coming-soon \"Not ready yet\" note"
+    },
+    "spin": {
+      "duration": "170ms",
+      "use": "Tie / no-vote spin step; lands after ~15–21 steps"
+    },
+    "loader": {
+      "duration": "1s",
+      "easing": "steps(1)",
+      "iteration": "infinite",
+      "stagger": "0.33s",
+      "use": "Loading indicator"
     }
   },
   "texture": {

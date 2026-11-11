@@ -1,0 +1,144 @@
+/* ABOUTME: Phone screen frame per lobby style: background, padding and the rec room phone card. */
+/* ABOUTME: Fluid width up to 430px so it fits any phone; spacing follows the 390x844 design. */
+
+.phone-frame {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+.phone-frame__inner {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  padding: 54px 20px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Outside the rec room style the card adds nothing: its contents flow straight into the frame. */
+.phone-frame__card,
+.phone-frame__card-body {
+  display: contents;
+}
+
+.phone-frame__card-header {
+  display: none;
+}
+
+/* ---------- Retro game show ---------- */
+:root[data-theme='game-show'] .phone-frame {
+  background-image: radial-gradient(ellipse 80% 45% at 50% -5%, rgba(255, 246, 214, 0.2), rgba(255, 246, 214, 0) 70%);
+  background-repeat: no-repeat;
+}
+
+/* ---------- 90s arcade ---------- */
+:root[data-theme='arcade'] .phone-frame__inner {
+  padding: 54px 22px 28px;
+}
+
+/* ---------- 70s rec room ---------- */
+:root[data-theme='rec-room'] .phone-frame {
+  background-image: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.28) 0 3px, rgba(0, 0, 0, 0) 3px 98px);
+  font-family: var(--font-label);
+}
+
+:root[data-theme='rec-room'] .phone-frame__inner {
+  padding: 56px 20px 26px;
+}
+
+:root[data-theme='rec-room'] .phone-frame[data-card] .phone-frame__inner {
+  padding: 48px 16px 24px;
+}
+
+:root[data-theme='rec-room'] .phone-frame__card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  box-shadow: 6px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .phone-frame__card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 20px 0;
+  background: var(--color-frame);
+}
+
+:root[data-theme='rec-room'] .phone-frame__card-titles {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+:root[data-theme='rec-room'] .phone-frame__card-logo {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--color-text);
+}
+
+:root[data-theme='rec-room'] .phone-frame__card-tag {
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+:root[data-theme='rec-room'] .phone-frame__tri-stripe {
+  height: 16px;
+  margin: 0 -20px;
+  background: linear-gradient(180deg, #d9a21b 0 33%, #c8551f 33% 66%, #7a8b3a 66%);
+}
+
+:root[data-theme='rec-room'] .phone-frame__card-body {
+  /* Gold focus and cream selection rings are too faint on the cream card: use navy ink for focus,
+     and orange for "In use" (walnut would blend into the walnut rec room style card). */
+  --focus-ring: var(--color-text-on-surface);
+  --selection-ring: var(--color-primary);
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 22px 20px;
+  color: var(--color-text-on-surface);
+  font-family: var(--font-body);
+}
+
+/* ---------- Fit: one screen tall, nothing scrolls (game screens) ---------- */
+/* :root[data-theme] matches every style, so these follow and outrank the per-style padding above. */
+:root[data-theme] .phone-frame[data-fit] {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+:root[data-theme] .phone-frame[data-fit] .phone-frame__inner {
+  min-height: 0;
+  padding: 14px 16px 10px;
+  gap: 8px;
+}
+
+:root[data-theme='rec-room'] .phone-frame[data-fit] .phone-frame__card,
+:root[data-theme='rec-room'] .phone-frame[data-fit] .phone-frame__card-body {
+  min-height: 0;
+}
+
+:root[data-theme='rec-room'] .phone-frame[data-fit] .phone-frame__card-header {
+  gap: 8px;
+  padding-top: 10px;
+}
+
+:root[data-theme='rec-room'] .phone-frame[data-fit] .phone-frame__card-body {
+  padding: 10px 14px 12px;
+}

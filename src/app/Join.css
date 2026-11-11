@@ -1,0 +1,182 @@
+/* ABOUTME: Join screen extras on top of PhoneForm.css: the top line, color fieldset, and the join button. */
+/* ABOUTME: Game show turns the join button into its buzzer; arcade and rec room use a plain primary button. */
+
+/* ---------- Retro game show ---------- */
+.join-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.join-top__logo {
+  margin: 0;
+  font-family: var(--font-logo);
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.1;
+  color: var(--color-accent);
+  text-shadow: 3px 3px 0 var(--color-primary);
+}
+
+.join-top__tag {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 19px;
+  letter-spacing: 0.18em;
+  text-align: center;
+}
+
+.join-top__tag-arcade {
+  display: none;
+}
+
+.join-card {
+  gap: 9px;
+}
+
+.join-colors {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.join-colors legend {
+  padding: 0;
+  margin-bottom: 6px;
+}
+
+.join-actions {
+  align-items: center;
+  gap: 6px;
+}
+
+/* The buzzer: gold ring around an orange dome. */
+.join-submit {
+  width: 116px;
+  height: 116px;
+  min-height: 0;
+  padding: 10px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 7px 0 #8a5a0e;
+}
+
+.join-submit__dome {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 36% 30%, #ff9466, #f0592a 55%, #b83a14);
+  box-shadow: 0 5px 0 #7a2508;
+  color: var(--color-text-strong);
+  font-size: 28px;
+}
+
+.join-caption {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 19px;
+  letter-spacing: 0.16em;
+}
+
+/* ---------- 90s arcade ---------- */
+:root[data-theme='arcade'] .join-top {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+:root[data-theme='arcade'] .join-top__logo {
+  font-size: 40px;
+  color: #ffd1ec;
+  text-shadow: 0 0 4px #ff2ea6, 0 0 14px #ff2ea6;
+}
+
+:root[data-theme='arcade'] .join-top__logo-rest {
+  display: none;
+}
+
+:root[data-theme='arcade'] .join-top__tag-main {
+  display: none;
+}
+
+:root[data-theme='arcade'] .join-top__tag-arcade {
+  display: block;
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: 0;
+  text-align: right;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+}
+
+:root[data-theme='arcade'] .join-top__tag-note {
+  display: block;
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='arcade'] .join-card {
+  margin-top: 0;
+}
+
+:root[data-theme='arcade'] .join-card .cue-card__label {
+  display: none;
+}
+
+:root[data-theme='arcade'] .join-actions,
+:root[data-theme='rec-room'] .join-actions {
+  align-items: stretch;
+}
+
+:root[data-theme='arcade'] .join-submit,
+:root[data-theme='rec-room'] .join-submit {
+  width: auto;
+  height: auto;
+  border-radius: var(--radius-button-phone);
+  background: var(--color-primary);
+}
+
+:root[data-theme='arcade'] .join-submit {
+  min-height: 64px;
+  font-size: 18px;
+  box-shadow: var(--shadow-button);
+}
+
+:root[data-theme='rec-room'] .join-submit {
+  min-height: 60px;
+  font-size: 24px;
+  box-shadow: var(--shadow-button);
+}
+
+:root[data-theme='arcade'] .join-submit__dome,
+:root[data-theme='rec-room'] .join-submit__dome {
+  background: none;
+  box-shadow: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+:root[data-theme='arcade'] .join-caption,
+:root[data-theme='rec-room'] .join-caption {
+  display: none;
+}
+
+/* ---------- 70s rec room (inside the phone card) ---------- */
+/* The card header already shows the logo; keep the heading for screen readers only. */
+:root[data-theme='rec-room'] .join-top {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+:root[data-theme='rec-room'] .join-colors {
+  gap: 8px;
+}

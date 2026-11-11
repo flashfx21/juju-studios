@@ -1,0 +1,754 @@
+/* ABOUTME: Shared phone form pieces: header line, cue card, fields, code boxes, color swatches, buttons, links. */
+/* ABOUTME: One section per lobby style; values follow the Sign in and Join screens in docs/design/source. */
+
+/* ---------- Retro game show (base): tilted cream cue card ---------- */
+.phone-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 4px;
+}
+
+.phone-top__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 32px;
+  color: var(--color-accent);
+}
+
+.phone-top__logo {
+  display: none;
+}
+
+.phone-top__tag {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 19px;
+  letter-spacing: 0.14em;
+}
+
+/* Arcade shows a two-line tag ("Host login / To host a room"); the others show only the second line. */
+.phone-top__tag-main {
+  display: none;
+}
+
+.phone-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cue-card__email {
+  margin: 0;
+  align-self: stretch;
+  padding: 10px 12px;
+  background: var(--color-field);
+  box-shadow: inset 0 0 0 2px var(--color-field-border);
+  font-size: 19px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.cue-card--sent {
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px 20px;
+  text-align: center;
+}
+
+.cue-card--sent .cue-card__label {
+  align-self: stretch;
+}
+
+.cue-card--danger {
+  margin-top: 22px;
+  gap: 12px;
+  padding: 14px 18px 20px;
+}
+
+.cue-card--danger .cue-card__heading {
+  font-size: 38px;
+}
+
+.cue-card {
+  position: relative;
+  margin-top: 8px;
+  padding: 12px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  transform: rotate(-1deg);
+  box-shadow: var(--shadow-card);
+}
+
+/* The style's usual focus color is cream, which would vanish on the cream card. */
+:root[data-theme='game-show'] .cue-card {
+  --focus-ring: var(--color-secondary-ink);
+}
+
+.cue-card__label {
+  margin: 0;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--color-line);
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: 0.14em;
+}
+
+.cue-card__heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.1;
+}
+
+.cue-card__text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.cue-card__stamp {
+  position: absolute;
+  right: 14px;
+  top: -22px;
+  padding: 4px 14px 8px;
+  background: var(--color-danger);
+  color: var(--color-danger-ink);
+  font-family: var(--font-display);
+  font-size: 24px;
+  transform: rotate(-7deg);
+  box-shadow: 4px 4px 0 var(--color-background);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field__label {
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.12em;
+}
+
+.field__box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field__input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-field);
+  color: inherit;
+  box-shadow: inset 0 0 0 2px var(--color-field-border);
+  font: inherit;
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.field__input[aria-invalid='true'] {
+  box-shadow: inset 0 0 0 3px var(--color-danger);
+}
+
+.field__input--with-toggle {
+  padding-right: 72px;
+}
+
+.field__toggle {
+  position: absolute;
+  right: 6px;
+  min-width: 44px;
+  min-height: 40px;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.12em;
+}
+
+.field__error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.field__hint {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.code-boxes {
+  position: relative;
+  display: flex;
+  gap: 8px;
+}
+
+.code-boxes__box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The real input covers the boxes but is invisible; the boxes show what was typed. */
+.code-boxes__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  font-size: 16px;
+  cursor: text;
+}
+
+.code-boxes[data-focused] .code-boxes__box[data-active] {
+  outline: 4px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.code-boxes .field__input {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  padding: 0;
+  text-align: center;
+  text-transform: uppercase;
+  font-family: var(--font-label);
+  font-size: 40px;
+  font-weight: 400;
+}
+
+.code-boxes--initials {
+  width: 150px;
+  gap: 6px;
+}
+
+.swatches {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.swatch {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Oswald, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.swatch[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 3px var(--color-secondary),
+    0 0 0 6px var(--color-background);
+}
+
+.phone-button {
+  min-height: 62px;
+  padding: 6px 12px;
+  border: 0;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.1;
+  box-shadow: var(--shadow-button);
+}
+
+.phone-button--secondary {
+  min-height: 54px;
+  padding: 4px 12px 0;
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  font-family: var(--font-label);
+  letter-spacing: 0.1em;
+  box-shadow: var(--shadow-button-secondary);
+}
+
+/* A link dressed as a button centers its label like one. */
+a.phone-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.phone-button[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.phone-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 12px;
+}
+
+.phone-link {
+  min-height: var(--space-hit-target-min);
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  font-family: var(--font-label);
+  font-size: 20px;
+  letter-spacing: 0.14em;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.phone-link--quiet {
+  font-size: 18px;
+}
+
+.preview-note {
+  margin: 0;
+  padding: 8px 4px 0;
+  font-size: 15px;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--color-accent);
+}
+
+/* ---------- 90s arcade: bare fields on black ---------- */
+:root[data-theme='arcade'] .phone-top {
+  align-items: center;
+  padding: 0;
+}
+
+:root[data-theme='arcade'] .phone-top__logo {
+  display: block;
+  font-family: var(--font-logo);
+  font-size: 36px;
+  line-height: 1.1;
+  color: #ffd1ec;
+  text-shadow: 0 0 4px #ff2ea6, 0 0 14px #ff2ea6;
+}
+
+:root[data-theme='arcade'] .phone-top__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+:root[data-theme='arcade'] .phone-top__tag {
+  font-size: 9px;
+  line-height: 1.8;
+  letter-spacing: 0;
+  text-align: right;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+}
+
+:root[data-theme='arcade'] .phone-top__tag-main,
+:root[data-theme='arcade'] .phone-top__tag-note {
+  display: block;
+}
+
+:root[data-theme='arcade'] .phone-top__tag-note {
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='arcade'] .cue-card__email {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--color-accent);
+}
+
+:root[data-theme='arcade'] .cue-card--sent {
+  align-items: stretch;
+  text-align: left;
+  padding: 18px 16px;
+}
+
+:root[data-theme='arcade'] .cue-card--danger {
+  margin-top: 16px;
+  padding: 18px 16px;
+}
+
+:root[data-theme='arcade'] .cue-card--danger .cue-card__heading {
+  font-size: 28px;
+}
+
+:root[data-theme='arcade'] .cue-card {
+  margin-top: 10px;
+  padding: 0;
+  gap: 12px;
+  background: none;
+  color: var(--color-text);
+  transform: none;
+  box-shadow: none;
+}
+
+:root[data-theme='arcade'] .cue-card--message {
+  margin-top: 16px;
+  padding: 18px 16px;
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 2px var(--color-success);
+}
+
+:root[data-theme='arcade'] .cue-card--danger {
+  box-shadow: inset 0 0 0 2px var(--color-danger);
+}
+
+:root[data-theme='arcade'] .cue-card__label {
+  padding: 0;
+  border: 0;
+  font-size: 16px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+}
+
+:root[data-theme='arcade'] .cue-card--message .cue-card__label {
+  font-size: 10px;
+  color: var(--color-success);
+}
+
+:root[data-theme='arcade'] .cue-card--danger .cue-card__label {
+  display: none;
+}
+
+:root[data-theme='arcade'] .cue-card__heading {
+  font-size: 30px;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+}
+
+:root[data-theme='arcade'] .cue-card__text {
+  font-size: 23px;
+  line-height: 1.05;
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='arcade'] .cue-card__stamp {
+  position: static;
+  align-self: flex-start;
+  padding: 8px 10px;
+  font-family: var(--font-label);
+  font-size: 12px;
+  text-transform: uppercase;
+  transform: none;
+  box-shadow: none;
+}
+
+:root[data-theme='arcade'] .field {
+  gap: 6px;
+}
+
+:root[data-theme='arcade'] .field__label {
+  font-size: 10px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+:root[data-theme='arcade'] .field__input {
+  height: 46px;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+:root[data-theme='arcade'] .field__toggle {
+  font-size: 9px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+:root[data-theme='arcade'] .field__error {
+  font-size: 22px;
+}
+
+:root[data-theme='arcade'] .field__hint {
+  font-size: 22px;
+  line-height: 1.05;
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='arcade'] .code-boxes .field__input {
+  height: 50px;
+  font-family: var(--font-label);
+  font-size: 22px;
+  color: var(--color-primary);
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
+:root[data-theme='arcade'] .code-boxes--initials .field__input {
+  color: #ff2ea6;
+  box-shadow: inset 0 0 0 2px #ff2ea6;
+}
+
+:root[data-theme='arcade'] .code-boxes .field__input[aria-invalid='true'] {
+  color: var(--color-danger);
+  box-shadow: inset 0 0 0 2px var(--color-danger);
+}
+
+:root[data-theme='arcade'] .swatch[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 3px var(--color-background),
+    0 0 0 5px #ffffff;
+}
+
+:root[data-theme='arcade'] .phone-button {
+  min-height: 64px;
+  margin-right: 6px;
+  padding: 8px 10px;
+  font-family: var(--font-label);
+  font-size: 15px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+:root[data-theme='arcade'] .phone-button--secondary {
+  min-height: 54px;
+  margin-right: 0;
+  background: var(--color-background);
+  color: var(--color-accent);
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='arcade'] .phone-actions {
+  gap: 6px;
+}
+
+:root[data-theme='arcade'] .phone-link {
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-underline-offset: 5px;
+  color: var(--color-accent);
+}
+
+:root[data-theme='arcade'] .phone-link--quiet {
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='arcade'] .preview-note {
+  font-size: 22px;
+  line-height: 1.05;
+}
+
+/* ---------- 70s rec room: inside the phone card, underlined fields ---------- */
+:root[data-theme='rec-room'] .phone-top {
+  padding: 0;
+}
+
+:root[data-theme='rec-room'] .phone-top__title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 42px;
+  line-height: 1;
+  color: var(--color-text-on-surface);
+}
+
+:root[data-theme='rec-room'] .phone-top__tag {
+  display: none;
+}
+
+:root[data-theme='rec-room'] .cue-card {
+  margin-top: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  transform: none;
+  box-shadow: none;
+}
+
+:root[data-theme='rec-room'] .cue-card__label {
+  display: none;
+}
+
+:root[data-theme='rec-room'] .cue-card__heading,
+:root[data-theme='rec-room'] .cue-card--danger .cue-card__heading {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 42px;
+  line-height: 1;
+  max-width: 280px;
+}
+
+:root[data-theme='rec-room'] .cue-card__email {
+  padding: 0 4px 2px;
+  background: none;
+  box-shadow: inset 0 -2px 0 var(--color-field-border);
+  font-weight: 700;
+  font-size: 30px;
+}
+
+:root[data-theme='rec-room'] .cue-card--sent,
+:root[data-theme='rec-room'] .cue-card--danger {
+  align-items: stretch;
+  margin-top: 0;
+  padding: 0;
+  gap: 10px;
+  text-align: left;
+}
+
+:root[data-theme='rec-room'] .cue-card__text {
+  font-size: 24px;
+  line-height: 1.15;
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='rec-room'] .cue-card__stamp {
+  right: 0;
+  top: -2px;
+  padding: 4px 12px;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-size: 18px;
+  text-transform: uppercase;
+  transform: rotate(-6deg);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .field {
+  gap: 2px;
+}
+
+:root[data-theme='rec-room'] .field__label {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+:root[data-theme='rec-room'] .field__input {
+  height: 42px;
+  padding: 0 4px 2px;
+  background: none;
+  box-shadow: inset 0 -2px 0 var(--color-field-border);
+  font-size: 30px;
+}
+
+:root[data-theme='rec-room'] .field__input[aria-invalid='true'] {
+  box-shadow: inset 0 -3px 0 var(--color-danger);
+}
+
+:root[data-theme='rec-room'] .field__toggle {
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+:root[data-theme='rec-room'] .field__error {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+:root[data-theme='rec-room'] .field__hint {
+  font-size: 22px;
+  line-height: 1.1;
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='rec-room'] .code-boxes {
+  gap: 10px;
+}
+
+:root[data-theme='rec-room'] .code-boxes .field__input {
+  height: 54px;
+  border-radius: 4px;
+  background: var(--color-surface-raised);
+  box-shadow: inset 0 0 0 2px var(--color-field-border);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 42px;
+}
+
+:root[data-theme='rec-room'] .code-boxes .field__input:nth-child(odd) {
+  transform: rotate(-1deg);
+}
+
+:root[data-theme='rec-room'] .code-boxes .field__input:nth-child(even) {
+  transform: rotate(1deg);
+}
+
+:root[data-theme='rec-room'] .code-boxes .field__input[aria-invalid='true'] {
+  box-shadow: inset 0 0 0 3px var(--color-primary);
+}
+
+:root[data-theme='rec-room'] .swatch[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 3px var(--color-surface),
+    0 0 0 5px var(--color-frame);
+}
+
+:root[data-theme='rec-room'] .phone-button {
+  min-height: 60px;
+  padding: 4px 12px;
+  border-radius: var(--radius-button-phone);
+  font-size: 23px;
+}
+
+:root[data-theme='rec-room'] .phone-button--secondary {
+  min-height: 52px;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .phone-link {
+  color: var(--color-text-on-surface);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='rec-room'] .phone-link--quiet {
+  font-size: 22px;
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='rec-room'] .preview-note {
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--color-primary);
+}

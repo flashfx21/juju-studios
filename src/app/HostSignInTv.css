@@ -1,0 +1,324 @@
+/* ABOUTME: TV host sign-in styles at 1280x720: where-to-go panel (bulb frame, lit box, felt table) and status. */
+/* ABOUTME: Values follow the Host sign-in screens in docs/design/source, one section per lobby style. */
+
+.host-sign-in__where-title,
+.host-sign-in__then,
+.host-sign-in__headline,
+.host-sign-in__body,
+.host-sign-in__preview {
+  margin: 0;
+  font-weight: 400;
+}
+
+.host-sign-in__address-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.host-sign-in__preview a {
+  color: inherit;
+  text-underline-offset: 4px;
+}
+
+/* ---------- Retro game show ---------- */
+.host-sign-in__where {
+  position: absolute;
+  left: 60px;
+  top: 140px;
+  width: 454px;
+  height: 430px;
+}
+
+.host-sign-in__where-inner {
+  width: 100%;
+  height: 100%;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  text-align: center;
+  background: var(--color-surface);
+}
+
+.host-sign-in__where-title {
+  font-family: var(--font-label);
+  font-size: 30px;
+  letter-spacing: 0.16em;
+  color: var(--color-accent);
+}
+
+.host-sign-in__go {
+  font-size: 21px;
+}
+
+/* Addresses use a font with lowercase letters: the site path is case-sensitive. */
+.host-sign-in__url {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1.1;
+  color: var(--color-text-strong);
+}
+
+/* Break only after a slash, never inside "juju-studios". */
+.host-sign-in__url-part {
+  white-space: nowrap;
+}
+
+.host-sign-in__then {
+  font-size: 21px;
+}
+
+.host-sign-in__status {
+  position: absolute;
+  left: 580px;
+  top: 176px;
+  width: 620px;
+}
+
+.host-sign-in__status-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.host-sign-in__tag {
+  padding: 6px 14px 2px;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-family: var(--font-label);
+  font-size: 26px;
+  letter-spacing: 0.14em;
+}
+
+.host-sign-in__headline {
+  font-family: var(--font-display);
+  font-size: 60px;
+  line-height: 1.1;
+  color: var(--color-text-strong);
+  text-shadow: 4px 4px 0 var(--color-primary);
+}
+
+.host-sign-in__body {
+  max-width: 560px;
+  font-size: 28px;
+  line-height: 1.35;
+}
+
+.host-sign-in__preview {
+  font-size: 22px;
+  color: var(--color-accent);
+}
+
+/* ---------- 90s arcade ---------- */
+:root[data-theme='arcade'] .host-sign-in__where {
+  left: 64px;
+  top: 150px;
+  width: 440px;
+  height: auto;
+}
+
+:root[data-theme='arcade'] .host-sign-in__where-inner {
+  padding: 0;
+  align-items: flex-start;
+  gap: 18px;
+  text-align: left;
+  background: none;
+}
+
+:root[data-theme='arcade'] .host-sign-in__where-title {
+  font-size: 16px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+:root[data-theme='arcade'] .host-sign-in__address-card {
+  align-self: stretch;
+  align-items: flex-start;
+  padding: 24px;
+  background: var(--color-surface);
+  box-shadow:
+    inset 0 0 0 3px var(--color-accent),
+    8px 8px 0 #ff2ea6;
+}
+
+:root[data-theme='arcade'] .host-sign-in__go {
+  font-size: 30px;
+  color: var(--color-text-muted);
+}
+
+:root[data-theme='arcade'] .host-sign-in__url {
+  font-weight: 400;
+  font-size: 46px;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+:root[data-theme='arcade'] .host-sign-in__then {
+  font-size: 32px;
+  line-height: 1;
+  color: var(--color-accent);
+}
+
+:root[data-theme='arcade'] .host-sign-in__status {
+  top: 150px;
+  width: 640px;
+}
+
+:root[data-theme='arcade'] .host-sign-in__status-inner {
+  gap: 18px;
+}
+
+:root[data-theme='arcade'] .host-sign-in__tag {
+  padding: 10px 12px;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+:root[data-theme='arcade'] .host-sign-in__headline {
+  font-size: 52px;
+  text-transform: uppercase;
+  color: #ffd1ec;
+  text-shadow: 0 0 6px #ff2ea6, 0 0 20px #ff2ea6;
+}
+
+:root[data-theme='arcade'] .host-sign-in__body {
+  max-width: 600px;
+  font-size: 38px;
+  line-height: 1.05;
+}
+
+:root[data-theme='arcade'] .host-sign-in__preview {
+  font-size: 30px;
+  color: var(--color-accent);
+}
+
+/* ---------- 70s rec room: felt table and notepad ---------- */
+:root[data-theme='rec-room'] .host-sign-in__where {
+  left: 68px;
+  top: 136px;
+  width: 440px;
+  height: 440px;
+  border-radius: 26px;
+  background: radial-gradient(ellipse at 50% 40%, #8a9c45, #6a7a30 75%);
+  box-shadow:
+    0 0 0 12px var(--color-frame),
+    10px 14px 0 12px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .host-sign-in__where-inner {
+  padding: 26px 30px;
+  gap: 20px;
+  background: none;
+  color: var(--color-text);
+}
+
+:root[data-theme='rec-room'] .host-sign-in__where-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: 0;
+  color: inherit;
+}
+
+:root[data-theme='rec-room'] .host-sign-in__address-card {
+  padding: 26px 22px;
+  border-radius: 8px;
+  background: var(--color-surface-raised);
+  color: var(--color-text-on-surface);
+  transform: rotate(-2deg);
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .host-sign-in__go {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 28px;
+}
+
+:root[data-theme='rec-room'] .host-sign-in__url {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 34px;
+  color: var(--color-text-on-surface);
+}
+
+:root[data-theme='rec-room'] .host-sign-in__then {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 30px;
+}
+
+:root[data-theme='rec-room'] .host-sign-in__status {
+  top: 130px;
+  width: 630px;
+  height: 450px;
+  background: var(--color-surface);
+  transform: rotate(1.5deg);
+  box-shadow: 10px 12px 0 rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='rec-room'] .host-sign-in__status::before {
+  content: '';
+  display: block;
+  height: 34px;
+  background: var(--color-frame);
+}
+
+:root[data-theme='rec-room'] .host-sign-in__status-inner {
+  height: calc(100% - 34px);
+  padding: 16px 34px 0 84px;
+  gap: 14px;
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, 0) 62px, #d0603e 62px 64px, rgba(0, 0, 0, 0) 64px),
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0) 0 45px, #a9bfd9 45px 47px);
+  background-position:
+    0 0,
+    0 30px;
+  color: var(--color-text-on-surface);
+  font-family: var(--font-body);
+}
+
+:root[data-theme='rec-room'] .host-sign-in__tag {
+  padding: 8px 0 0;
+  background: none;
+  color: var(--color-primary);
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+:root[data-theme='rec-room'] .host-sign-in__headline {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 60px;
+  line-height: 1;
+  color: inherit;
+  text-shadow: none;
+}
+
+:root[data-theme='rec-room'] .host-sign-in__body {
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 1.25;
+}
+
+:root[data-theme='rec-room'] .host-sign-in__preview {
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--color-primary);
+}
+
+:root[data-theme='rec-room'] .host-sign-in .tv-floor {
+  font-size: 38px;
+}

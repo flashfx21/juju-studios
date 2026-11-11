@@ -1,41 +1,55 @@
-// ABOUTME: Draft types for the cartridge contract: what every game's manifest and rules module provides.
-// ABOUTME: A minimal stand-in until the engine's contract is built (build order step 6); expect it to change.
+// ABOUTME: Draft types for the cartridge contract: what every game's manifest and rules must provide.
+// ABOUTME: Shared by all games; the engine calls a game only through these shapes.
 
 import type { GameStatus } from './lineup'
 
-/** A player as the rules see them. Profile details (color, initials) stay with the engine. */
-export interface Player {
-  id: string
-  name: string
-}
+export type { GameStatus }
 
 export type GameMode = 'individual' | 'teams'
 
-/** The label on the cartridge: what the game picker and lobby show. */
-export interface GameManifest<Settings> {
+/** One choice a host can set before a game starts. */
+export interface GameSetting {
+  id: string
+  label: string
+  options: readonly (string | number)[]
+  default: string | number
+}
+
+/** The label on the cartridge: what the picker and lobby show. */
+export interface GameManifest {
   id: string
   title: string
   pitch: string
   tag: string
   players: { min: number; max: number }
-  lengthMinutes: number
-  modes: GameMode[]
+  minutes: number
+  modes: readonly GameMode[]
   status: GameStatus
-  defaultSettings: Settings
+  settings: readonly GameSetting[]
 }
 
-/** Returns a number from 0 (inclusive) to 1 (exclusive), like Math.random. Passed in so tests can fix the outcome. */
-export type Random = () => number
+export type PlayerId = string
 
-/** One place in a finishing order. Players who tie share a place. */
-export type FinishingPlace = string[]
+/**
+ * Everything impure a rule needs, passed in by the engine so rules stay pure.
+ * `now` is milliseconds since the epoch; `random` returns a number in [0, 1).
+ */
+export interface RulesContext {
+  now: number
+  random: () => number
+}
 
-/** The rulebook: pure functions the host runs. No screens, no network. */
+/**
+ * Players or teams from first place to last. Each inner list is one place;
+ * more than one id in a place means a tie.
+ */
+export type FinishingOrder = PlayerId[][]
+
+/** The rulebook: pure functions from state to state. */
 export interface GameRules<State, Settings, Input> {
-  setup(players: Player[], settings: Settings, random?: Random): State
-  onInput(state: State, playerId: string, input: Input): State
-  onTimer(state: State): State
+  setup(players: readonly PlayerId[], settings: Settings, ctx: RulesContext): State
+  onInput(state: State, player: PlayerId, input: Input, ctx: RulesContext): State
+  onTimer(state: State, ctx: RulesContext): State
   isOver(state: State): boolean
-  /** Best first. Each entry is one place holding the ids of everyone tied there. */
-  finishingOrder(state: State): FinishingPlace[]
+  finishingOrder(state: State): FinishingOrder
 }

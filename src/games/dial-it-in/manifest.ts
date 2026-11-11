@@ -1,23 +1,15 @@
-// ABOUTME: The Dial It In label: title, pitch, player range, modes and its settings.
-// ABOUTME: Spec lives in docs/games/dial-it-in.md. Status stays "coming-soon" until tests pass and a local playtest.
-
+// ABOUTME: Dial It In's cartridge label: title, pitch, player counts and the host's dial range setting.
+// ABOUTME: Player count and length are placeholders from docs/games/dial-it-in.md.
 import type { GameManifest } from '../types'
 
-/** How wide the dial is: 1 to 50 is easier, 1 to 100 is the standard game. */
-export type DialRange = 50 | 100
-
-export interface DialItInSettings {
-  range: DialRange
-}
-
-export const manifest: GameManifest<DialItInSettings> = {
+export const manifest: GameManifest = {
   id: 'dial-it-in',
   title: 'Dial It In',
   pitch: 'Guess where the clue lands between two opposites, 1 to 100.',
   tag: 'Brainy',
   players: { min: 3, max: 10 },
-  lengthMinutes: 20,
+  minutes: 20,
   modes: ['individual'],
   status: 'coming-soon',
-  defaultSettings: { range: 100 },
+  settings: [{ id: 'range', label: 'Dial range', options: [50, 100], default: 100 }],
 }

@@ -2,32 +2,37 @@
 // ABOUTME: Run with `npm test`.
 
 import { describe, expect, it } from 'vitest'
-import type { Player } from '../types'
+import { seededRandom } from '../../engine/seededRandom'
+import type { RulesContext } from '../types'
+import { manifest } from './manifest'
 import {
   closenessPoints,
   currentRound,
+  DEFAULT_SETTINGS,
+  DIAL_RANGES,
   rules,
   SPECTRUM_CARDS,
   totalScores,
   type DialItInState,
 } from './rules'
 
-const ANA: Player = { id: 'ana', name: 'Ana' }
-const BO: Player = { id: 'bo', name: 'Bo' }
-const CY: Player = { id: 'cy', name: 'Cy' }
-const PLAYERS = [ANA, BO, CY]
+const PLAYERS = ['ana', 'bo', 'cy']
 
-/** Same sequence every run, so dealt cards and targets are repeatable. */
-function seededRandom(seed: number) {
-  let value = seed
-  return () => {
-    value = (value * 16807) % 2147483647
-    return (value - 1) / 2147483646
-  }
+/** A rules context whose random numbers come from the given seed, so deals repeat every run. */
+function seeded(seed: number): RulesContext {
+  return { now: 0, random: seededRandom(String(seed)) }
 }
 
+/** A rules context whose random number is always the same. */
+function fixed(value: number): RulesContext {
+  return { now: 0, random: () => value }
+}
+
+/** For calls that never draw a random number. */
+const CTX = seeded(1)
+
 function newGame(range: 50 | 100 = 100): DialItInState {
-  return rules.setup(PLAYERS, { range }, seededRandom(42))
+  return rules.setup(PLAYERS, { range }, seeded(42))
 }
 
 /** Replaces each round's target so scores are predictable. */
@@ -36,8 +41,16 @@ function withTargets(state: DialItInState, targets: number[]): DialItInState {
 }
 
 function guess(state: DialItInState, playerId: string, value: number): DialItInState {
-  return rules.onInput(state, playerId, { type: 'guess', value })
+  return rules.onInput(state, playerId, { type: 'guess', value }, CTX)
 }
+
+describe('manifest', () => {
+  it('offers the same dial ranges and default the rules use', () => {
+    const range = manifest.settings.find((setting) => setting.id === 'range')
+    expect(range?.options).toEqual(DIAL_RANGES)
+    expect(range?.default).toBe(DEFAULT_SETTINGS.range)
+  })
+})
 
 describe('spectrum pack', () => {
   it('has enough cards for the largest game', () => {
@@ -57,16 +70,16 @@ describe('spectrum pack', () => {
 describe('setup', () => {
   it('deals one round per player with the clue giver rotating in turn order', () => {
     const state = newGame()
-    expect(state.rounds.map((round) => round.clueGiverId)).toEqual(['ana', 'bo', 'cy'])
+    expect(state.rounds.map((round) => round.clueGiver)).toEqual(['ana', 'bo', 'cy'])
     expect(state.roundIndex).toBe(0)
     expect(state.phase).toBe('guessing')
   })
 
   it('deals a different card to every round', () => {
     const state = rules.setup(
-      Array.from({ length: 10 }, (_, i) => ({ id: `p${i}`, name: `P${i}` })),
+      Array.from({ length: 10 }, (_, i) => `p${i}`),
       { range: 100 },
-      seededRandom(7),
+      seeded(7),
     )
     const cardIds = state.rounds.map((round) => round.card.id)
     expect(new Set(cardIds).size).toBe(10)
@@ -74,7 +87,7 @@ describe('setup', () => {
 
   it.each([50, 100] as const)('keeps every target within 1 to %i', (range) => {
     for (let seed = 1; seed <= 50; seed++) {
-      const state = rules.setup(PLAYERS, { range }, seededRandom(seed))
+      const state = rules.setup(PLAYERS, { range }, seeded(seed))
       for (const round of state.rounds) {
         expect(Number.isInteger(round.target)).toBe(true)
         expect(round.target).toBeGreaterThanOrEqual(1)
@@ -84,12 +97,12 @@ describe('setup', () => {
   })
 
   it('can reach both ends of the dial', () => {
-    expect(rules.setup(PLAYERS, { range: 50 }, () => 0).rounds[0].target).toBe(1)
-    expect(rules.setup(PLAYERS, { range: 50 }, () => 0.999999).rounds[0].target).toBe(50)
+    expect(rules.setup(PLAYERS, { range: 50 }, fixed(0)).rounds[0].target).toBe(1)
+    expect(rules.setup(PLAYERS, { range: 50 }, fixed(0.999999)).rounds[0].target).toBe(50)
   })
 
   it('refuses fewer than the minimum players', () => {
-    expect(() => rules.setup([ANA, BO], { range: 100 })).toThrow(/at least 3/)
+    expect(() => rules.setup(['ana', 'bo'], { range: 100 }, CTX)).toThrow(/at least 3/)
   })
 })
 
@@ -177,26 +190,26 @@ describe('timer', () => {
   it('reveals when guessing time runs out, scoring missing guessers 0', () => {
     let state = withTargets(newGame(), [50, 50, 50])
     state = guess(state, 'bo', 50)
-    state = rules.onTimer(state)
+    state = rules.onTimer(state, CTX)
     expect(state.phase).toBe('reveal')
     expect(currentRound(state).points).toEqual({ bo: 10, cy: 0 })
   })
 
   it('moves to the next clue giver when the reveal time runs out', () => {
-    let state = rules.onTimer(newGame())
-    state = rules.onTimer(state)
+    let state = rules.onTimer(newGame(), CTX)
+    state = rules.onTimer(state, CTX)
     expect(state.phase).toBe('guessing')
-    expect(currentRound(state).clueGiverId).toBe('bo')
+    expect(currentRound(state).clueGiver).toBe('bo')
   })
 
   it('ends the game after every player has given a clue', () => {
     let state = newGame()
     for (let i = 0; i < PLAYERS.length * 2; i++) {
       expect(rules.isOver(state)).toBe(false)
-      state = rules.onTimer(state)
+      state = rules.onTimer(state, CTX)
     }
     expect(rules.isOver(state)).toBe(true)
-    expect(rules.onTimer(state)).toBe(state)
+    expect(rules.onTimer(state, CTX)).toBe(state)
   })
 })
 
@@ -205,8 +218,8 @@ function playGame(targets: number[], guessesByRound: Record<string, number>[]): 
   let state = withTargets(newGame(), targets)
   for (const roundGuesses of guessesByRound) {
     for (const [playerId, value] of Object.entries(roundGuesses)) state = guess(state, playerId, value)
-    if (state.phase === 'guessing') state = rules.onTimer(state)
-    state = rules.onTimer(state)
+    if (state.phase === 'guessing') state = rules.onTimer(state, CTX)
+    state = rules.onTimer(state, CTX)
   }
   return state
 }
