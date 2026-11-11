@@ -1,20 +1,25 @@
-// ABOUTME: Chainword's rulebook: everyone races the same chain of hidden 5-letter words in hard mode.
+// ABOUTME: Chainword's rulebook: everyone races the same chain of hidden words (4 to 7 letters) in hard mode.
 // ABOUTME: Fewest total guesses wins (a missed word counts as 7); ties go to the faster total time.
-import pack from '../../../packs/chainword/words.json'
+import answerPack from '../../../packs/chainword/answers.json'
+import guessPack from '../../../packs/chainword/guesses.json'
 import type { FinishingOrder, GameRules, PlayerId, RulesContext } from '../types'
 
-export const WORD_LENGTH = 5
 export const GUESSES_PER_WORD = 6
 /** What a missed word adds to a player's total: one more than the guess cap. */
 export const MISSED_WORD_COST = GUESSES_PER_WORD + 1
 
 export type ChainLength = 3 | 5
+export type WordLength = 4 | 5 | 6 | 7
+
+export const CHAIN_LENGTHS: readonly ChainLength[] = [3, 5]
+export const WORD_LENGTHS: readonly WordLength[] = [4, 5, 6, 7]
 
 export interface ChainwordSettings {
   chainLength: ChainLength
+  wordLength: WordLength
 }
 
-export const DEFAULT_SETTINGS: ChainwordSettings = { chainLength: 3 }
+export const DEFAULT_SETTINGS: ChainwordSettings = { chainLength: 3, wordLength: 5 }
 
 export interface GuessInput {
   type: 'guess'
@@ -40,6 +45,7 @@ export interface PlayerRun {
 }
 
 export interface ChainwordState {
+  wordLength: WordLength
   chain: string[]
   startedAt: number
   runs: Record<PlayerId, PlayerRun>
@@ -53,8 +59,21 @@ export type GuessProblem =
   | { kind: 'keep-green'; letter: string; position: number }
   | { kind: 'use-letter'; letter: string; count: number }
 
-const ANSWERS: readonly string[] = pack.answers
-const ACCEPTED = new Set<string>([...pack.answers, ...pack.guesses])
+export function answersFor(wordLength: WordLength): readonly string[] {
+  return answerPack[wordLength]
+}
+
+const accepted = new Map<WordLength, Set<string>>()
+
+/** The words a player may type at this length. Built on first use; the pack stores each length as one string. */
+function acceptedWords(wordLength: WordLength): Set<string> {
+  let words = accepted.get(wordLength)
+  if (!words) {
+    words = new Set(guessPack[wordLength].split(' '))
+    accepted.set(wordLength, words)
+  }
+  return words
+}
 
 function normalize(word: string): string {
   return word.trim().toLowerCase()
@@ -120,8 +139,8 @@ export function checkGuess(state: ChainwordState, player: PlayerId, word: string
   const run = state.runs[player]
   if (!run || run.finishedAt !== null) return { kind: 'not-playing' }
   const guess = normalize(word)
-  if (guess.length !== WORD_LENGTH) return { kind: 'wrong-length' }
-  if (!ACCEPTED.has(guess)) return { kind: 'not-a-word' }
+  if (guess.length !== state.wordLength) return { kind: 'wrong-length' }
+  if (!acceptedWords(state.wordLength).has(guess)) return { kind: 'not-a-word' }
   return hardModeProblem(guess, currentAttempt(run))
 }
 
@@ -130,10 +149,10 @@ function emptyAttempt(): WordAttempt {
 }
 
 /** Picks distinct answers at random. */
-function dealChain(length: number, random: () => number): string[] {
-  const pool = [...ANSWERS]
+function dealChain(settings: ChainwordSettings, random: () => number): string[] {
+  const pool = [...answersFor(settings.wordLength)]
   const chain: string[] = []
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < settings.chainLength; i++) {
     const pick = Math.floor(random() * pool.length)
     chain.push(pool[pick])
     pool.splice(pick, 1)
@@ -144,7 +163,7 @@ function dealChain(length: number, random: () => number): string[] {
 function setup(players: readonly PlayerId[], settings: ChainwordSettings, ctx: RulesContext): ChainwordState {
   const runs: Record<PlayerId, PlayerRun> = {}
   for (const player of players) runs[player] = { attempts: [emptyAttempt()], finishedAt: null }
-  return { chain: dealChain(settings.chainLength, ctx.random), startedAt: ctx.now, runs }
+  return { wordLength: settings.wordLength, chain: dealChain(settings, ctx.random), startedAt: ctx.now, runs }
 }
 
 function onInput(state: ChainwordState, player: PlayerId, input: ChainwordInput, ctx: RulesContext): ChainwordState {
@@ -176,6 +195,24 @@ function onInput(state: ChainwordState, player: PlayerId, input: ChainwordInput,
 /** Chainword has no round timer. */
 function onTimer(state: ChainwordState): ChainwordState {
   return state
+}
+
+/**
+ * Ends the game now for everyone still playing: the word in progress and every word not reached count as missed.
+ * Finished players keep their results.
+ */
+export function endGame(state: ChainwordState, ctx: RulesContext): ChainwordState {
+  const runs: Record<PlayerId, PlayerRun> = {}
+  for (const [player, run] of Object.entries(state.runs)) {
+    if (run.finishedAt !== null) {
+      runs[player] = run
+      continue
+    }
+    const attempts = [...run.attempts]
+    while (attempts.length < state.chain.length) attempts.push(emptyAttempt())
+    runs[player] = { attempts, finishedAt: ctx.now }
+  }
+  return { ...state, runs }
 }
 
 function isOver(state: ChainwordState): boolean {

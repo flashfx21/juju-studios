@@ -290,6 +290,14 @@
   box-shadow: var(--shadow-button-secondary);
 }
 
+/* A link dressed as a button centers its label like one. */
+a.phone-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .phone-button[aria-disabled='true'] {
   opacity: 0.45;
   cursor: not-allowed;

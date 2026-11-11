@@ -37,7 +37,7 @@
 
 .cw-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(var(--cw-letters, 5), 1fr);
   gap: 6px;
 }
 
@@ -50,7 +50,8 @@
   border: 2px solid color-mix(in srgb, currentColor 50%, transparent);
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 28px;
+  /* 28px at 5 letters, smaller as words get longer. */
+  font-size: calc(140px / var(--cw-letters, 5));
   color: inherit;
 }
 

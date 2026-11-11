@@ -1,16 +1,21 @@
-// ABOUTME: Tests for Chainword's rules: coloring, hard mode, the guess cap, word list checks and finishing order.
+// ABOUTME: Tests for Chainword's rules: coloring, hard mode, the guess cap, word lists, ending early and finishing order.
 // ABOUTME: Uses a fixed chain and clock so every result is predictable.
 import { describe, expect, it } from 'vitest'
-import pack from '../../../packs/chainword/words.json'
+import answerPack from '../../../packs/chainword/answers.json'
+import guessPack from '../../../packs/chainword/guesses.json'
 import type { RulesContext } from '../types'
 import {
+  answersFor,
   checkGuess,
+  DEFAULT_SETTINGS,
+  endGame,
   markGuess,
   MISSED_WORD_COST,
   rules,
   totalGuesses,
   totalTime,
   tvProgress,
+  WORD_LENGTHS,
   type ChainwordState,
 } from './rules'
 
@@ -22,7 +27,7 @@ function at(now: number): RulesContext {
 
 /** A game with a known chain, started at START. */
 function game(players: string[], chain = ['chain', 'spice', 'grape']): ChainwordState {
-  const state = rules.setup(players, { chainLength: chain.length as 3 | 5 }, at(START))
+  const state = rules.setup(players, { chainLength: chain.length as 3 | 5, wordLength: 5 }, at(START))
   return { ...state, chain }
 }
 
@@ -34,23 +39,42 @@ function guessAll(state: ChainwordState, player: string, words: string[], now = 
   return words.reduce((s, word) => guess(s, player, word, now), state)
 }
 
-describe('word pack', () => {
-  it('holds only 5-letter lowercase words with no repeats', () => {
-    const all = [...pack.answers, ...pack.guesses]
-    expect(all.every((word) => /^[a-z]{5}$/.test(word))).toBe(true)
-    expect(new Set(all).size).toBe(all.length)
+describe('word packs', () => {
+  it.each(WORD_LENGTHS)('%i letters: answers and guesses are lowercase, the right length, with no repeats', (n) => {
+    const answers = answerPack[n]
+    const guesses = guessPack[n].split(' ')
+    const shape = new RegExp(`^[a-z]{${n}}$`)
+    expect(answers.length).toBeGreaterThan(200)
+    expect([...answers, ...guesses].every((word) => shape.test(word))).toBe(true)
+    expect(new Set(answers).size).toBe(answers.length)
+    expect(new Set(guesses).size).toBe(guesses.length)
+  })
+
+  it.each(WORD_LENGTHS)('%i letters: every answer is also an accepted guess', (n) => {
+    const guesses = new Set(guessPack[n].split(' '))
+    expect(answerPack[n].filter((word) => !guesses.has(word))).toEqual([])
   })
 })
 
 describe('setup', () => {
-  it('deals 3 distinct words by default and 5 when asked', () => {
+  it('defaults to 3 words of 5 letters', () => {
+    const state = rules.setup(['ann'], DEFAULT_SETTINGS, at(START))
+    expect(state.chain).toHaveLength(3)
+    expect(state.chain.every((word) => word.length === 5)).toBe(true)
+  })
+
+  it.each(WORD_LENGTHS)('deals 5 distinct %i-letter answers when asked', (wordLength) => {
     let n = 0
     const random = () => (n++ * 0.37) % 1
-    const three = rules.setup(['ann'], { chainLength: 3 }, { now: START, random })
-    const five = rules.setup(['ann'], { chainLength: 5 }, { now: START, random })
-    expect(three.chain).toHaveLength(3)
-    expect(new Set(five.chain).size).toBe(5)
-    expect(five.chain.every((word) => pack.answers.includes(word))).toBe(true)
+    const state = rules.setup(['ann'], { chainLength: 5, wordLength }, { now: START, random })
+    expect(new Set(state.chain).size).toBe(5)
+    expect(state.chain.every((word) => answersFor(wordLength).includes(word))).toBe(true)
+  })
+
+  it('checks guesses against the chosen word length', () => {
+    const state = rules.setup(['ann'], { chainLength: 3, wordLength: 7 }, at(START))
+    expect(checkGuess(state, 'ann', 'chain')).toEqual({ kind: 'wrong-length' })
+    expect(checkGuess(state, 'ann', 'kitchen')).toBeNull()
   })
 
   it('gives every player the same chain', () => {
@@ -159,6 +183,22 @@ describe('isOver and finishingOrder', () => {
   it('onTimer changes nothing', () => {
     const state = game(['ann'])
     expect(rules.onTimer(state, at(START + 1))).toBe(state)
+  })
+})
+
+describe('endGame', () => {
+  it('counts the word in progress and every word not reached as missed, and finishes everyone', () => {
+    let state = game(['ann', 'bo', 'cy'])
+    state = guessAll(state, 'ann', ['chain', 'spice', 'grape'], START + 30_000)
+    state = guessAll(state, 'bo', ['chain', 'piano'])
+    state = endGame(state, at(START + 60_000))
+    expect(rules.isOver(state)).toBe(true)
+    expect(state.runs.ann.finishedAt).toBe(START + 30_000)
+    expect(state.runs.bo.finishedAt).toBe(START + 60_000)
+    expect(state.runs.bo.attempts).toHaveLength(3)
+    expect(totalGuesses(state.runs.bo)).toBe(1 + 2 * MISSED_WORD_COST)
+    expect(totalGuesses(state.runs.cy)).toBe(3 * MISSED_WORD_COST)
+    expect(rules.finishingOrder(state)).toEqual([['ann'], ['bo'], ['cy']])
   })
 })
 

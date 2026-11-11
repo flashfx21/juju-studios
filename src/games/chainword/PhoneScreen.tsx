@@ -1,6 +1,6 @@
 // ABOUTME: Chainword on a player's phone: the current word's guess grid, a guess box, and the results of finished words.
 // ABOUTME: Checks each guess with the rules first and says why a refused guess doesn't count.
-import { useState, type FormEvent } from 'react'
+import { useState, type CSSProperties, type FormEvent } from 'react'
 import type { PlayerId } from '../types'
 import {
   checkGuess,
@@ -8,7 +8,6 @@ import {
   MISSED_WORD_COST,
   totalGuesses,
   totalTime,
-  WORD_LENGTH,
   type ChainwordState,
   type GuessProblem,
   type Mark,
@@ -29,10 +28,10 @@ const MARK_WORDS: Record<Mark, string> = {
   gray: 'not in the word',
 }
 
-function describeProblem(problem: GuessProblem): string {
+function describeProblem(problem: GuessProblem, wordLength: number): string {
   switch (problem.kind) {
     case 'wrong-length':
-      return `Guesses are ${WORD_LENGTH} letters.`
+      return `Guesses are ${wordLength} letters.`
     case 'not-a-word':
       return "That's not in the word list."
     case 'keep-green':
@@ -70,11 +69,16 @@ function GuessRow({ guess, marks }: { guess: string; marks: Mark[] }) {
   )
 }
 
-function Grid({ attempt, typing }: { attempt: WordAttempt; typing: string }) {
+function Grid({ attempt, typing, wordLength }: { attempt: WordAttempt; typing: string; wordLength: number }) {
   const emptyRows = GUESSES_PER_WORD - attempt.guesses.length - 1
-  const typed = typing.slice(0, WORD_LENGTH).padEnd(WORD_LENGTH, ' ')
+  const typed = typing.slice(0, wordLength).padEnd(wordLength, ' ')
   return (
-    <ol className="cw-grid" aria-label="Your guesses" data-testid="cw-grid">
+    <ol
+      className="cw-grid"
+      aria-label="Your guesses"
+      data-testid="cw-grid"
+      style={{ '--cw-letters': wordLength } as CSSProperties}
+    >
       {attempt.guesses.map((guess, i) => (
         <GuessRow key={i} guess={guess} marks={attempt.marks[i]} />
       ))}
@@ -85,7 +89,7 @@ function Grid({ attempt, typing }: { attempt: WordAttempt; typing: string }) {
       </li>
       {Array.from({ length: Math.max(emptyRows, 0) }, (_, row) => (
         <li key={`empty-${row}`} className="cw-row" aria-hidden="true">
-          {Array.from({ length: WORD_LENGTH }, (_, i) => (
+          {Array.from({ length: wordLength }, (_, i) => (
             <Tile key={i} letter="" />
           ))}
         </li>
@@ -105,11 +109,23 @@ function WordResults({ state, attempts }: { state: ChainwordState; attempts: Wor
           <span>
             {attempt.solved
               ? `${attempt.guesses.length} ${attempt.guesses.length === 1 ? 'guess' : 'guesses'}`
-              : `Missed, counts ${MISSED_WORD_COST}`}
+              : `${attempt.guesses.length === 0 ? 'Not played' : 'Missed'}, counts ${MISSED_WORD_COST}`}
           </span>
         </li>
       ))}
     </ol>
+  )
+}
+
+/** The game's name as the screen heading; arcade shows it as its neon logo. */
+export function ChainwordTitle() {
+  return (
+    <div className="phone-top">
+      <span className="phone-top__logo" aria-hidden="true">
+        Chainword
+      </span>
+      <h1 className="phone-top__title">Chainword</h1>
+    </div>
   )
 }
 
@@ -126,7 +142,7 @@ export function PhoneScreen({ state, player, onGuess }: PhoneScreenProps) {
     event.preventDefault()
     const problem = checkGuess(state, player, typing)
     if (problem) {
-      setMessage(describeProblem(problem))
+      setMessage(describeProblem(problem, state.wordLength))
       return
     }
     onGuess(typing)
@@ -136,12 +152,7 @@ export function PhoneScreen({ state, player, onGuess }: PhoneScreenProps) {
 
   return (
     <div className="cw-phone">
-      <div className="phone-top">
-        <span className="phone-top__logo" aria-hidden="true">
-          Chainword
-        </span>
-        <h1 className="phone-top__title">Chainword</h1>
-      </div>
+      <ChainwordTitle />
       <p className="cw-progress" data-testid="cw-progress">
         {finished ? 'Chain done' : `Word ${run.attempts.length} of ${state.chain.length}`}
       </p>
@@ -157,7 +168,7 @@ export function PhoneScreen({ state, player, onGuess }: PhoneScreenProps) {
             Guess {current.guesses.length + 1} of {GUESSES_PER_WORD}. Hard mode: keep green letters in place and
             reuse yellow ones.
           </p>
-          <Grid attempt={current} typing={typing} />
+          <Grid attempt={current} typing={typing} wordLength={state.wordLength} />
           <form className="cw-form" onSubmit={submit} noValidate>
             <label className="field__label" htmlFor="cw-guess">
               Your guess
@@ -167,7 +178,7 @@ export function PhoneScreen({ state, player, onGuess }: PhoneScreenProps) {
                 id="cw-guess"
                 className="field__input cw-form__input"
                 value={typing}
-                maxLength={WORD_LENGTH}
+                maxLength={state.wordLength}
                 autoComplete="off"
                 autoCapitalize="characters"
                 autoCorrect="off"

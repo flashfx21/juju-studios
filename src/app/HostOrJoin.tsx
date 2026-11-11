@@ -240,6 +240,9 @@ export function HostOrJoinPhone() {
       <a className="entry-phone__link" href={href('sign-in')} data-testid="sign-in-link">
         {copy.signIn}
       </a>
+      <a className="entry-phone__link" href={href('playtest')} data-testid="playtest-link">
+        Playtest a game
+      </a>
     </PhoneFrame>
   )
 }
