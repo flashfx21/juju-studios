@@ -35,7 +35,10 @@ One player guesses a mystery word; everyone else gives a one-word clue; matching
 - Private text input, duplicate matching, private per-player data (the word is hidden from the guesser), teams
 
 ## Content pack
-Mystery word list
+- `packs/dont-jinx-it/words.json`: 214 mystery words, chosen by hand (common, family-friendly, easy to clue in one word)
+- `packs/dont-jinx-it/word-forms.json`: irregular forms (run / ran, mouse / mice) for close calls and near guesses
+- Close calls also catch regular forms by spelling (towel / towels, bake / baking, baby / babies) and compounds (bird / birdhouse: the shorter word 4+ letters, 3+ letters left over). This is a rule of thumb; it will sometimes jinx clues people see as different, and a few will slip through
+- Dictionary for "Is this a name?": `packs/shared/english-words.txt`
 
 ## Scoring
 Reports a finishing order only. The engine applies the suite rules: 100 points per game; top 50% score on a countdown split; 2 teams 80/20; 3+ teams top 2 score (67/33); team points split evenly.

@@ -28,6 +28,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 - The game lineup is `src/games/lineup.ts`. Every game is "coming soon".
 - Chainword has its rules, tests and a phone playtest (see Playtests below). No TV screen yet.
 - Dial It In has its rules, tests, a phone screen and a single-player interface playtest (see Playtests below). No TV screen yet. Spectrum cards live in `packs/dial-it-in/spectrums.json`.
+- Don't Jinx It (branch `game/dont-jinx-it`) has its individual-mode rules and tests. No screens yet. Mystery words and irregular word forms live in `packs/dont-jinx-it/`.
 
 ## Run it locally
 
