@@ -1,12 +1,18 @@
-/* ABOUTME: Sketch Showdown phone styles: team badges, the clue options, the canvas tools and swatches, the guess strip, */
+/* ABOUTME: Sketch Showdown phone styles: team badges, the clue options, the tool menu over the canvas, the guess strip, */
 /* ABOUTME: and the reveal's two drawings side by side. Selected tools carry a check-style outline, not only a color. */
 
+/* --ss-back is the color behind the phone's content: the page, or the rec room's paper card. */
 .ss-phone {
+  --ss-back: var(--color-background);
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+:root[data-theme='rec-room'] .ss-phone {
+  --ss-back: var(--color-surface);
 }
 
 .ss-top {
@@ -45,8 +51,73 @@
   justify-content: center;
 }
 
-.ss-canvas-box .sketch-canvas {
+.ss-paper {
+  position: relative;
   width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+}
+
+.ss-paper .sketch-canvas {
+  width: 100%;
+}
+
+/* The tool menu's button sits in the canvas's top-right corner and shows the current tool, color and size. */
+.ss-menu-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid var(--color-primary-ink);
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.ss-menu-button__dot {
+  display: inline-block;
+  border-radius: 50%;
+  outline: 2px solid var(--color-primary-ink);
+}
+
+/* The open menu covers the canvas, so a tap on a choice can never draw. */
+.ss-menu {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  overflow-y: auto;
+  border: 3px solid currentColor;
+  background: var(--ss-back);
+}
+
+/* On a small canvas the swatches shrink to fit eight across rather than spill out of the menu. */
+.ss-menu .ss-swatch {
+  min-height: 0;
+}
+
+.ss-menu .ss-menu__ok {
+  margin-top: auto;
+  flex: none;
+  min-height: 44px;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+  font-size: 18px;
 }
 
 .ss-top__round {
@@ -176,6 +247,7 @@
   aspect-ratio: 1;
   min-height: 32px;
   border: 2px solid currentColor;
+  color: inherit;
   cursor: pointer;
   touch-action: manipulation;
 }
@@ -183,7 +255,7 @@
 /* Selected color: a thick ring with a gap, readable on light and dark swatches alike. */
 .ss-swatch[aria-pressed='true'] {
   box-shadow:
-    0 0 0 3px var(--color-background),
+    0 0 0 3px var(--ss-back),
     0 0 0 6px currentColor;
 }
 
