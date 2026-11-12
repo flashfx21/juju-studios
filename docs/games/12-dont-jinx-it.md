@@ -36,7 +36,7 @@ One player guesses a mystery word; everyone else gives a one-word clue; matching
 
 ## Content pack
 - `packs/dont-jinx-it/words.json`: 214 mystery words, chosen by hand (common, family-friendly, easy to clue in one word)
-- `packs/dont-jinx-it/word-forms.json`: irregular forms (run / ran, mouse / mice) for close calls and near guesses
+- `packs/shared/word-forms.json`: irregular forms (run / ran, mouse / mice) for close calls and near guesses
 - Close calls also catch regular forms by spelling (towel / towels, bake / baking, baby / babies) and compounds (bird / birdhouse: the shorter word 4+ letters, 3+ letters left over). This is a rule of thumb; it will sometimes jinx clues people see as different, and a few will slip through
 - Dictionary for "Is this a name?": `packs/shared/english-words.txt`
 
