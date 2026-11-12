@@ -41,6 +41,7 @@
 - 2026-11-11: Dial It In state holds secrets (every round's target). Whatever publishes state to `rooms/{code}/state` must strip targets and send the current one only to the clue giver's `private/{uid}`.
 - 2026-11-11: Don't Jinx It (Julian): design handoff in `docs/handoffs/design_handoff_dont_jinx_it/` (brief's rules win, README's visuals win). Branch `game/dont-jinx-it` in worktree `../juju-studios-dont-jinx-it`. Individual mode first. First playtest is you plus bots (Dial It In style). Individual-mode close calls are auto-jinxed, no vote. Dictionary for "Is this a name?" is the full ENABLE list, a shared resource for any game (`packs/shared/`, loaded on demand via `src/engine/dictionary.ts`). Spec `docs/games/12-dont-jinx-it.md` holds the decided rules.
 - Working rules in effect: W1, W3, W5, W6 (recorded in CLAUDE.md).
+- 2026-11-12: Games are named with their lineup number in repo docs and reports ("06 Pin Drop"); released titles, ids and folders have none (Julian, recorded in CLAUDE.md). 06 Pin Drop is next toward a solo test: individual mode, no teams, rules final. 05 Sketch Showdown waits on teams, live drawing sync and its visual design. 01 No Filler stays in design while its phone and online version is worked out.
 
 ## Preferences
 - Julian wants each step explained briefly as we go (relearning mode).

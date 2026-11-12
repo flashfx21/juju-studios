@@ -10,6 +10,7 @@ A suite of phone party games for family and friends, played like Jackbox: one sh
 - `src/games/<game-id>/` one folder per game. `src/games/_template/` is the starting point for a new game. `src/games/registry.ts` lists installed games.
 - `packs/<game-id>/` content packs (prompts, words, questions, photos). `packs/shared/` holds content any game can use, such as the English word list loaded by `src/engine/dictionary.ts`.
 - `docs/` requirements, tech stack, design handoffs. `docs/design/` exported designs and tokens.
+- Games keep their lineup number (`docs/games/<nn>-<id>.md`) whenever docs, notes and reports in this repo name them: "06 Pin Drop", "05 Sketch Showdown". Ids, folders and on-screen titles have no number.
 
 ## Rules for games (the cartridge contract)
 - Each game folder has: `manifest.ts` (title, pitch, tag, players, modes, status), `rules.ts` (pure logic: setup, onInput, onTimer, isOver, finishingOrder), `TvScreen.tsx`, `PhoneScreen.tsx`, `Instructions.tsx`, `rules.test.ts`.
