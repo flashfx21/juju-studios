@@ -67,7 +67,7 @@ Two teams, one clue, two drawers. Each team watches only its own drawer and race
 - Brush in 4 preset sizes (S, M, L, XL), sized relative to the canvas so XL looks the same on a phone and a tablet
 - 16 color swatches in two rows, including skin tones
 - Brush, eraser, straight line, undo (removes the last whole stroke), clear (press and hold)
-- Tool, size and color sit in a menu opened from a button in the canvas's top-right corner (it shows the current tool, color and size); OK or Escape closes it. Undo and clear stay under the canvas, so the canvas gets the rest of the screen
+- Two buttons in the canvas's top-left corner, clear of a right-handed drawer's hand: Brush (tool and size) and Color. Each opens its menu over the canvas and shows the current choice; OK or Escape closes it. Undo and clear stay under the canvas, so the canvas gets the rest of the screen
 
 **Scoring**
 - The game reports a finishing order only (team with more round wins first). Round wins are for display

@@ -61,11 +61,17 @@
   width: 100%;
 }
 
-/* The tool menu's button sits in the canvas's top-right corner and shows the current tool, color and size. */
-.ss-menu-button {
+/* The brush and color buttons sit in the canvas's top-left corner, away from a right-handed drawer's hand.
+   They show the current tool, size and color. */
+.ss-menu-buttons {
   position: absolute;
   top: 8px;
-  right: 8px;
+  left: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.ss-menu-button {
   min-width: 44px;
   min-height: 44px;
   padding: 0 8px;
@@ -85,10 +91,11 @@
   -webkit-touch-callout: none;
 }
 
-.ss-menu-button__dot {
+.ss-menu-button__swatch {
   display: inline-block;
-  border-radius: 50%;
-  outline: 2px solid var(--color-primary-ink);
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-primary-ink);
 }
 
 /* The open menu covers the canvas, so a tap on a choice can never draw. */
@@ -105,9 +112,16 @@
   background: var(--ss-back);
 }
 
-/* On a small canvas the swatches shrink to fit eight across rather than spill out of the menu. */
-.ss-menu .ss-swatch {
+/* The color menu has the canvas to itself: four big swatches across, stretched to fill the height. */
+.ss-menu--color .ss-swatches {
+  flex: 1;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+}
+
+.ss-menu--color .ss-swatch {
   min-height: 0;
+  aspect-ratio: auto;
 }
 
 .ss-menu .ss-menu__ok {

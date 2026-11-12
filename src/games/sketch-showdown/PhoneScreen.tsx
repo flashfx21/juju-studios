@@ -168,70 +168,24 @@ function GuessStrip({ guesses, names }: { guesses: TeamGuess[]; names: Record<Pl
   )
 }
 
-interface ToolMenuProps {
-  tool: Tool
-  color: number
-  size: BrushSize
-  onTool: (tool: Tool) => void
-  onColor: (color: number) => void
-  onSize: (size: BrushSize) => void
-  onDone: () => void
-}
+type MenuKind = 'brush' | 'color'
 
-/** Tool, size and color choices, laid over the canvas until OK. Escape also closes it. */
-function ToolMenu({ tool, color, size, onTool, onColor, onSize, onDone }: ToolMenuProps) {
-  const first = useRef<HTMLButtonElement>(null)
-  useEffect(() => first.current?.focus(), [])
+/** Choices laid over the canvas until OK; Escape also closes it. Focus starts on the current choice. */
+function Menu({ label, kind, onDone, children }: { label: string; kind: MenuKind; onDone: () => void; children: ReactNode }) {
+  const box = useRef<HTMLDivElement>(null)
+  useEffect(() => box.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"]')?.focus(), [])
   return (
     <div
-      className="ss-menu"
+      ref={box}
+      className={`ss-menu ss-menu--${kind}`}
       role="dialog"
-      aria-label="Drawing tools"
-      data-testid="ss-menu"
+      aria-label={label}
+      data-testid={`ss-menu-${kind}`}
       onKeyDown={(event) => {
         if (event.key === 'Escape') onDone()
       }}
     >
-      <div className="ss-tools" role="group" aria-label="Tool">
-        {TOOLS.map((t) => (
-          <button
-            key={t}
-            ref={t === tool ? first : undefined}
-            type="button"
-            className="ss-tool"
-            aria-pressed={tool === t}
-            data-testid={`ss-tool-${t}`}
-            onClick={() => onTool(t)}
-          >
-            {TOOL_NAMES[t]}
-          </button>
-        ))}
-      </div>
-      <div className="ss-sizes" role="group" aria-label="Brush size">
-        {BRUSH_SIZES.map((s) => (
-          <button key={s} type="button" className="ss-tool ss-size" aria-pressed={size === s} aria-label={`Size ${s}`} data-testid={`ss-size-${s}`} onClick={() => onSize(s)}>
-            <span className={`ss-size__dot ss-size__dot--${s}`} aria-hidden="true" />
-            {s}
-          </button>
-        ))}
-      </div>
-      <div className="ss-swatches" role="group" aria-label="Colors">
-        {SWATCHES.map((swatch, i) => (
-          <button
-            key={swatch}
-            type="button"
-            className="ss-swatch"
-            style={{ background: swatch }}
-            aria-pressed={color === i}
-            aria-label={`Color ${i + 1}`}
-            data-testid={`ss-color-${i}`}
-            onClick={() => {
-              onColor(i)
-              if (tool === 'eraser') onTool('brush')
-            }}
-          />
-        ))}
-      </div>
+      {children}
       <button type="button" className="ss-tool ss-menu__ok" data-testid="ss-menu-ok" onClick={onDone}>
         OK
       </button>
@@ -244,13 +198,15 @@ function Race(props: PhoneScreenProps) {
   const [tool, setTool] = useState<Tool>('brush')
   const [color, setColor] = useState(0)
   const [size, setSize] = useState<BrushSize>('M')
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuButton = useRef<HTMLButtonElement>(null)
+  const [menu, setMenu] = useState<MenuKind | null>(null)
+  const brushButton = useRef<HTMLButtonElement>(null)
+  const colorButton = useRef<HTMLButtonElement>(null)
   if (view.role !== 'drawer') return <p className="ss-status">Guess what your drawer is drawing</p>
   const strokes = view.drawings[view.team] ?? []
   const closeMenu = () => {
-    setMenuOpen(false)
-    menuButton.current?.focus()
+    const opener = menu === 'color' ? colorButton : brushButton
+    opener.current?.focus()
+    setMenu(null)
   }
 
   return (
@@ -261,23 +217,71 @@ function Race(props: PhoneScreenProps) {
       <div className="ss-canvas-box">
         <div className="ss-paper">
           <SketchCanvas label={`Your drawing of ${view.clue?.answer}`} strokes={strokes} onStroke={onStroke} tool={tool} color={color} size={size} />
-          <button
-            ref={menuButton}
-            type="button"
-            className="ss-menu-button"
-            aria-label={`Drawing tools: ${TOOL_NAMES[tool]}, size ${size}, color ${color + 1}`}
-            aria-expanded={menuOpen}
-            data-testid="ss-menu-button"
-            onClick={() => setMenuOpen(true)}
-          >
-            <span aria-hidden="true">{TOOL_NAMES[tool]}</span>
-            <span
-              className={`ss-menu-button__dot ss-size__dot--${size}`}
-              style={{ background: tool === 'eraser' ? '#ffffff' : SWATCHES[color] }}
-              aria-hidden="true"
-            />
-          </button>
-          {menuOpen && <ToolMenu tool={tool} color={color} size={size} onTool={setTool} onColor={setColor} onSize={setSize} onDone={closeMenu} />}
+          <div className="ss-menu-buttons">
+            <button
+              ref={brushButton}
+              type="button"
+              className="ss-menu-button"
+              aria-label={`Brush: ${TOOL_NAMES[tool]}, size ${size}`}
+              aria-expanded={menu === 'brush'}
+              data-testid="ss-menu-brush-button"
+              onClick={() => setMenu('brush')}
+            >
+              <span className={`ss-size__dot ss-size__dot--${size}`} aria-hidden="true" />
+              <span aria-hidden="true">{TOOL_NAMES[tool]}</span>
+            </button>
+            <button
+              ref={colorButton}
+              type="button"
+              className="ss-menu-button"
+              aria-label={`Color ${color + 1}`}
+              aria-expanded={menu === 'color'}
+              data-testid="ss-menu-color-button"
+              onClick={() => setMenu('color')}
+            >
+              <span className="ss-menu-button__swatch" style={{ background: SWATCHES[color] }} aria-hidden="true" />
+            </button>
+          </div>
+          {menu === 'brush' && (
+            <Menu label="Brush" kind="brush" onDone={closeMenu}>
+              <div className="ss-tools" role="group" aria-label="Tool">
+                {TOOLS.map((t) => (
+                  <button key={t} type="button" className="ss-tool" aria-pressed={tool === t} data-testid={`ss-tool-${t}`} onClick={() => setTool(t)}>
+                    {TOOL_NAMES[t]}
+                  </button>
+                ))}
+              </div>
+              <div className="ss-sizes" role="group" aria-label="Brush size">
+                {BRUSH_SIZES.map((s) => (
+                  <button key={s} type="button" className="ss-tool ss-size" aria-pressed={size === s} aria-label={`Size ${s}`} data-testid={`ss-size-${s}`} onClick={() => setSize(s)}>
+                    <span className={`ss-size__dot ss-size__dot--${s}`} aria-hidden="true" />
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </Menu>
+          )}
+          {menu === 'color' && (
+            <Menu label="Color" kind="color" onDone={closeMenu}>
+              <div className="ss-swatches" role="group" aria-label="Colors">
+                {SWATCHES.map((swatch, i) => (
+                  <button
+                    key={swatch}
+                    type="button"
+                    className="ss-swatch"
+                    style={{ background: swatch }}
+                    aria-pressed={color === i}
+                    aria-label={`Color ${i + 1}`}
+                    data-testid={`ss-color-${i}`}
+                    onClick={() => {
+                      setColor(i)
+                      if (tool === 'eraser') setTool('brush')
+                    }}
+                  />
+                ))}
+              </div>
+            </Menu>
+          )}
         </div>
       </div>
       <GuessStrip guesses={view.guesses[view.team] ?? []} names={names} />
