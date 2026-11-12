@@ -94,6 +94,18 @@
     "dangerInk": {
       "hex": "#07060B",
       "role": "Text on danger"
+    },
+    "cardBackStripe": {
+      "hex": "#221E2E",
+      "role": "Second stripe on face-down clue cards (Don't Jinx It clue drop)"
+    },
+    "cardJinxed": {
+      "hex": "#2A2735",
+      "role": "Jinxed clue cards at the full reveal (Don't Jinx It)"
+    },
+    "verdictDrop": {
+      "hex": "#000000",
+      "role": "Drop shadow under the verdict stamp (Don't Jinx It)"
     }
   },
   "palette": {

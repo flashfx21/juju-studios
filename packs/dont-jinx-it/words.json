@@ -1,0 +1,27 @@
+{
+  "about": "Don't Jinx It mystery words. Chosen by hand: common, family-friendly, easy to clue in one word. Lowercase letters only, 3 or more letters, no repeats.",
+  "words": [
+    "airport", "alarm", "anchor", "apple", "astronaut", "avalanche", "baby", "backpack", "bakery", "balloon",
+    "banana", "barber", "baseball", "basket", "bath", "battery", "beach", "beard", "bicycle", "birthday",
+    "blanket", "blizzard", "boat", "bonfire", "bookshelf", "bowling", "bread", "bridge", "broom", "bubble",
+    "bucket", "butterfly", "cactus", "cake", "camel", "camera", "camping", "candle", "candy", "carnival",
+    "carrot", "castle", "caterpillar", "cave", "cereal", "chess", "chicken", "chimney", "chocolate", "circus",
+    "clock", "cloud", "clown", "coffee", "compass", "cookie", "cowboy", "crayon", "crown", "cupcake",
+    "dentist", "desert", "diamond", "dinosaur", "doctor", "dolphin", "donut", "dragon", "drum", "duck",
+    "eagle", "earthquake", "elephant", "elevator", "envelope", "farm", "feather", "fireworks", "fishing", "flamingo",
+    "flashlight", "football", "forest", "fountain", "frog", "garden", "ghost", "giraffe", "glasses", "glove",
+    "gold", "gorilla", "grandma", "guitar", "hammer", "hamburger", "helicopter", "honey", "horse", "hospital",
+    "hurricane", "igloo", "island", "jacket", "jellyfish", "jungle", "kangaroo", "ketchup", "kitchen", "kite",
+    "ladder", "lemon", "library", "lighthouse", "lion", "lizard", "lobster", "magnet", "mailbox", "map",
+    "marshmallow", "mermaid", "microwave", "mirror", "money", "monkey", "moon", "mountain", "mustache", "necklace",
+    "ninja", "noodle", "ocean", "octopus", "orchestra", "owl", "pajamas", "pancake", "panda", "parachute",
+    "parrot", "party", "peanut", "pencil", "penguin", "piano", "picnic", "pillow", "pirate", "pizza",
+    "planet", "popcorn", "postcard", "pumpkin", "puppet", "puzzle", "pyramid", "queen", "rabbit", "rainbow",
+    "robot", "rocket", "roller", "sandwich", "saxophone", "scarecrow", "school", "scissors", "shark", "sheep",
+    "skeleton", "skunk", "sled", "snail", "snowman", "soccer", "spider", "spoon", "squirrel", "stadium",
+    "starfish", "sunglasses", "superhero", "swamp", "sweater", "taco", "teacher", "telescope", "tent", "thunder",
+    "tiger", "toaster", "toothbrush", "tornado", "tractor", "treasure", "turtle", "umbrella", "unicorn", "vacation",
+    "vampire", "violin", "volcano", "waffle", "wallet", "waterfall", "wedding", "whale", "windmill", "wizard",
+    "yogurt", "zebra", "zipper", "zombie"
+  ]
+}

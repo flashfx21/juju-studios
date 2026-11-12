@@ -1,0 +1,38 @@
+/* ABOUTME: Styles for Don't Jinx It's shared pieces: player chips and letter tiles. */
+/* ABOUTME: Tile size comes from --tile, set per word, so long words shrink to fit. */
+
+.dji-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: var(--font-label);
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--color-background);
+}
+
+.dji-chip--ringed {
+  box-shadow:
+    0 0 0 5px var(--color-background),
+    0 0 0 9px var(--color-accent);
+}
+
+.dji-tiles {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.dji-tiles__tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tile);
+  height: calc(var(--tile) * 1.28);
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  font-family: var(--font-label);
+  font-size: calc(var(--tile) * 0.94);
+  box-shadow: var(--shadow-tile);
+  text-transform: uppercase;
+}

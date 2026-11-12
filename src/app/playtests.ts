@@ -11,4 +11,8 @@ export const PLAYTESTS: Record<string, { title: string; Page: LazyExoticComponen
     title: 'Dial It In',
     Page: lazy(() => import('../games/dial-it-in/Playtest').then((module) => ({ default: module.Playtest }))),
   },
+  'dont-jinx-it': {
+    title: "Don't Jinx It",
+    Page: lazy(() => import('../games/dont-jinx-it/Playtest').then((module) => ({ default: module.Playtest }))),
+  },
 }
