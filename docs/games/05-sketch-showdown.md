@@ -1,7 +1,7 @@
 # Sketch Showdown
 
 **Game ID:** `sketch-showdown`  
-**Status:** Rules final (Julian, Nov 11), pending playtest. Next: visual design. Phase 2 in this folder; the idea log says phase 3 (see open questions)  
+**Status:** Development (rules final Nov 11, 2026). Launch phase 2 here; the idea log says phase 3 (see open questions). Needs teams and live drawing in the engine, and a visual design  
 **Players:** 4 to 10 (2 teams of 2 to 5; uneven teams allowed; 3 players not supported)  
 **Length:** about 5 to 10 min (3 v 3, draw once) up to 15 to 30 min (5 v 5, draw twice). Claude's estimate, not playtested  
 **Modes:** Teams

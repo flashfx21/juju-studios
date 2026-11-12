@@ -1,7 +1,7 @@
 # Hidden traitor game (working title)
 
 **Game ID:** `hidden-traitor`  
-**Status:** Phase 3; marquee candidate (needs its own design pass and playtesting)  
+**Status:** Not Started. Launch phase 3; marquee candidate (needs its own design pass and playtesting)  
 **Players:** 4 to 10 (placeholder)  
 **Length:** 30 min (placeholder)  
 **Modes:** Hidden roles

@@ -1,7 +1,7 @@
 # No Filler
 
 **Game ID:** `no-filler`  
-**Status:** Playable, phase 2  
+**Status:** Design. Launch phase 2. Being reworked for phones and online play  
 **Players:** 4 to 10 (placeholder)  
 **Length:** 15 min (placeholder)  
 **Modes:** Individual

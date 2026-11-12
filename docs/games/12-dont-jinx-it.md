@@ -1,7 +1,7 @@
 # Don't Jinx It
 
 **Game ID:** `dont-jinx-it`  
-**Status:** Playable, phase 1 (individual mode; team mode follows teams in phase 2)  
+**Status:** Development. Launch phase 1 (individual mode; team mode follows teams in phase 2). Rules, phone, TV and Instructions done in the game-show style; solo playtest live. Arcade and rec room to do  
 **Players:** 3 to 10 (placeholder)  
 **Length:** 15 min (placeholder)  
 **Modes:** Individual and Team (defense)

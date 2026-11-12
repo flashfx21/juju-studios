@@ -1,7 +1,7 @@
 # Pin Drop (working title)
 
 **Game ID:** `pin-drop`  
-**Status:** Playable, phase 1 (rules final Nov 11, 2026)  
+**Status:** Development (rules final Nov 11, 2026). Launch phase 1. Next game toward a solo test  
 **Players:** 2 to 10 (placeholder)  
 **Length:** about 12 min at 7 rounds (estimate; 5 rounds about 8, 9 rounds about 15)  
 **Modes:** Individual. Scoring modes: Match play (default), Stroke play
