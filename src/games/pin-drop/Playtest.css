@@ -1,0 +1,115 @@
+/* ABOUTME: Pin Drop playtest styles: the start screen's option rows and the photo that stands in for the TV. */
+/* ABOUTME: The photo is a strip above the map; tapped, it fills the screen on a dark backdrop. */
+
+.pd-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pd-option__label {
+  font-family: var(--font-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+
+.pd-option__buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.pd-option__button {
+  flex: 1;
+  min-height: var(--space-hit-target-min);
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Selected: filled, and a check mark so it doesn't depend on color alone. */
+.pd-option__button[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+}
+
+.pd-option__button[aria-pressed='true']::before {
+  content: '✓ ';
+}
+
+.pd-tv {
+  flex: 0 0 auto;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pd-tv__button {
+  display: block;
+  width: 100%;
+  height: 22dvh;
+  padding: 0;
+  border: 3px solid currentColor;
+  background: #000000;
+  cursor: zoom-in;
+}
+
+.pd-tv__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pd-tv__credit {
+  font-size: 11px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pd-tv[data-big] {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  padding: 12px;
+  background: #000000;
+  color: #ffffff;
+  justify-content: center;
+}
+
+.pd-tv[data-big] .pd-tv__button {
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  border-color: #000000;
+  cursor: zoom-out;
+}
+
+.pd-tv[data-big] .pd-tv__image {
+  object-fit: contain;
+}
+
+.pd-tv[data-big] .pd-tv__credit {
+  white-space: normal;
+  font-size: 13px;
+}
+
+.pd-tv--failed {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border: 3px solid currentColor;
+}
+
+:root[data-theme='arcade'] .pd-option__label {
+  font-size: 11px;
+}

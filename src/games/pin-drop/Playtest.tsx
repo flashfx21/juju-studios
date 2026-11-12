@@ -1,0 +1,226 @@
+// ABOUTME: Pin Drop solo playtest on one phone: you plus two bots, no room or server. The round's photo sits above
+// ABOUTME: the map in place of the TV; a dev box stands in for the other phones and the engine timer.
+import { useEffect, useState } from 'react'
+import { PhoneFrame } from '../../ui/PhoneFrame'
+import type { PlayerId, RulesContext } from '../types'
+import { creditText } from './format'
+import { PhoneScreen, PinDropTitle, type PlayerLook } from './PhoneScreen'
+import {
+  currentRound,
+  DEFAULT_SETTINGS,
+  ROUND_COUNTS,
+  rules,
+  SCORINGS,
+  UNITS,
+  type Photo,
+  type PinDropSettings,
+  type PinDropState,
+} from './rules'
+import '../../ui/PhoneForm.css'
+import '../../ui/PlaytestDev.css'
+import './Playtest.css'
+
+const YOU = 'you'
+const PLAYERS: PlayerId[] = [YOU, 'bot-a', 'bot-b']
+const LOOKS: Record<PlayerId, PlayerLook> = {
+  you: { name: 'You', initials: 'YOU', color: '#c2255c' },
+  'bot-a': { name: 'Bot A', initials: 'BA', color: '#1f5fa8' },
+  'bot-b': { name: 'Bot B', initials: 'BB', color: '#2f7a3a' },
+}
+
+const SCORING_NAMES = { match: 'Match play', stroke: 'Stroke play' }
+const UNIT_NAMES = { mi: 'Miles', km: 'Kilometers' }
+
+function context(): RulesContext {
+  return { now: Date.now(), random: Math.random }
+}
+
+/** Bots guess somewhere near the answer: up to about 25 degrees off in a random direction. */
+function botsLockIn(state: PinDropState): PinDropState {
+  const round = currentRound(state)
+  return PLAYERS.filter((player) => player !== YOU && !round.locked.includes(player)).reduce((next, bot) => {
+    const angle = Math.random() * 2 * Math.PI
+    const reach = 0.5 + Math.random() ** 2 * 25
+    const lat = Math.max(-85, Math.min(85, round.photo.lat + Math.sin(angle) * reach))
+    const lng = round.photo.lng + Math.cos(angle) * reach
+    const pinned = rules.onInput(next, bot, { type: 'pin', lat, lng }, context())
+    return rules.onInput(pinned, bot, { type: 'lock' }, context())
+  }, state)
+}
+
+export function Playtest() {
+  const [state, setState] = useState<PinDropState | null>(null)
+
+  if (!state) {
+    return (
+      <PhoneFrame label="Pin Drop playtest" cardTag="Playtest">
+        <Start onStart={(settings) => setState(rules.setup(PLAYERS, settings, context()))} />
+      </PhoneFrame>
+    )
+  }
+
+  const apply = (change: (current: PinDropState) => PinDropState) => setState((current) => current && change(current))
+
+  return (
+    <PhoneFrame label="Pin Drop playtest" cardTag="Playtest" fit>
+      <PhoneScreen
+        state={state}
+        player={YOU}
+        looks={LOOKS}
+        isHost
+        onPin={(pin) => apply((s) => rules.onInput(s, YOU, { type: 'pin', ...pin }, context()))}
+        onLock={() => apply((s) => rules.onInput(s, YOU, { type: 'lock' }, context()))}
+        onFlag={() => apply((s) => rules.onInput(s, YOU, { type: 'flag' }, context()))}
+        onNext={() => apply((s) => rules.onTimer(s, context()))}
+        above={<TvPhoto key={currentRound(state).photo.id} photo={currentRound(state).photo} />}
+        summaryAction={
+          <button type="button" className="phone-button" data-testid="pd-play-again" onClick={() => setState(null)}>
+            Play again
+          </button>
+        }
+      />
+      <DevBar state={state} onChange={apply} />
+    </PhoneFrame>
+  )
+}
+
+function Start({ onStart }: { onStart: (settings: PinDropSettings) => void }) {
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS)
+  const choose = <K extends keyof PinDropSettings>(key: K, value: PinDropSettings[K]) =>
+    setSettings((current) => ({ ...current, [key]: value }))
+
+  return (
+    <>
+      <PinDropTitle />
+      <p className="cue-card__text">
+        Solo test: you play against two bots that guess near the answer. The photo shows above the map in place of the
+        TV. Use the dev box to stand in for the other phones and the timer.
+      </p>
+      <OptionRow label="Scoring" options={SCORINGS} names={SCORING_NAMES} value={settings.scoring} onChoose={(v) => choose('scoring', v)} />
+      <OptionRow
+        label="Rounds"
+        options={ROUND_COUNTS}
+        names={{ 5: '5', 7: '7', 9: '9' }}
+        value={settings.rounds}
+        onChoose={(v) => choose('rounds', v)}
+      />
+      <OptionRow label="Units" options={UNITS} names={UNIT_NAMES} value={settings.units} onChoose={(v) => choose('units', v)} />
+      <button type="button" className="phone-button" data-testid="pd-start" onClick={() => onStart(settings)}>
+        Start
+      </button>
+      <p className="preview-note">Playtest: nothing is saved, flags included.</p>
+    </>
+  )
+}
+
+interface OptionRowProps<T extends string | number> {
+  label: string
+  options: readonly T[]
+  names: Record<T, string>
+  value: T
+  onChoose: (value: T) => void
+}
+
+function OptionRow<T extends string | number>({ label, options, names, value, onChoose }: OptionRowProps<T>) {
+  return (
+    <div className="pd-option" role="group" aria-label={label}>
+      <span className="pd-option__label">{label}</span>
+      <div className="pd-option__buttons">
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            className="pd-option__button"
+            aria-pressed={option === value}
+            data-testid={`pd-option-${label.toLowerCase()}-${option}`}
+            onClick={() => onChoose(option)}
+          >
+            {names[option]}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** The round's photo, small above the map; tap it to see it full screen. A credit that names the place waits. */
+function TvPhoto({ photo }: { photo: Photo }) {
+  const [big, setBig] = useState(false)
+  const [failed, setFailed] = useState(false)
+  const [attempt, setAttempt] = useState(0)
+
+  useEffect(() => {
+    if (!big) return
+    const onKey = (event: KeyboardEvent) => event.key === 'Escape' && setBig(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [big])
+
+  if (failed) {
+    return (
+      <div className="pd-tv pd-tv--failed" role="alert">
+        <span>The photo didn't load.</span>
+        <button
+          type="button"
+          className="playtest-dev__button"
+          data-testid="pd-photo-retry"
+          onClick={() => {
+            setFailed(false)
+            setAttempt((n) => n + 1)
+          }}
+        >
+          Retry
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <figure className="pd-tv" data-big={big ? 'true' : undefined}>
+      <button
+        type="button"
+        className="pd-tv__button"
+        aria-label={big ? 'Photo. Tap to shrink' : 'Photo. Tap to see it full screen'}
+        aria-expanded={big}
+        data-testid="pd-photo"
+        onClick={() => setBig(!big)}
+      >
+        <img key={attempt} className="pd-tv__image" src={photo.image} alt="" onError={() => setFailed(true)} />
+      </button>
+      {!photo.creditSpoiler && <figcaption className="pd-tv__credit">{creditText(photo)}</figcaption>}
+    </figure>
+  )
+}
+
+interface DevBarProps {
+  state: PinDropState
+  onChange: (change: (current: PinDropState) => PinDropState) => void
+}
+
+/** Controls a real game gets from the other phones and the engine timer. */
+function DevBar({ state, onChange }: DevBarProps) {
+  if (state.phase !== 'guessing' && state.phase !== 'reveal') return null
+  const round = currentRound(state)
+  const botsWaiting = PLAYERS.some((player) => player !== YOU && !round.locked.includes(player))
+
+  return (
+    <section className="playtest-dev" aria-label="Playtest controls">
+      <h2 className="playtest-dev__heading">Dev</h2>
+      <div className="playtest-dev__buttons">
+        {state.phase === 'guessing' && botsWaiting && (
+          <button type="button" className="playtest-dev__button" data-testid="pd-dev-bots" onClick={() => onChange(botsLockIn)}>
+            Bots lock in
+          </button>
+        )}
+        <button
+          type="button"
+          className="playtest-dev__button"
+          data-testid="pd-dev-timer"
+          onClick={() => onChange((s) => rules.onTimer(s, context()))}
+        >
+          {state.phase === 'guessing' ? "Time's up" : 'Reveal done'}
+        </button>
+      </div>
+    </section>
+  )
+}

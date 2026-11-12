@@ -1,0 +1,103 @@
+/* ABOUTME: Pin Drop map styles: the map box, player pins (a round head with initials and a point), the answer star */
+/* ABOUTME: and the keyboard crosshair. Pins and the answer differ by shape as well as color. */
+
+.pd-map {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  /* Keeps Leaflet's own layer order inside the map, so nothing of it shows over the full-screen photo. */
+  isolation: isolate;
+}
+
+.pd-map__canvas {
+  flex: 1 1 auto;
+  min-height: 160px;
+  border: 3px solid currentColor;
+  background: #aad3df;
+  /* The map handles every drag and pinch itself; the page never scrolls or zooms. */
+  touch-action: none;
+}
+
+.pd-map__canvas:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Shown only while the map has keyboard focus: Enter drops the pin here. */
+.pd-map__crosshair {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border: 3px solid #1f2124;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #ffffff;
+  pointer-events: none;
+  z-index: 500;
+}
+
+.pd-map:has(.pd-map__canvas:focus-visible) .pd-map__crosshair {
+  display: block;
+}
+
+.pd-map-pin {
+  background: none;
+  border: none;
+}
+
+.pd-map-pin__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  color: #ffffff;
+  font: 700 13px/1 system-ui, sans-serif;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.45);
+}
+
+.pd-map-pin__head::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -11px;
+  margin-left: -6px;
+  border: 6px solid transparent;
+  border-top: 8px solid #ffffff;
+}
+
+.pd-map-answer {
+  background: none;
+  border: none;
+}
+
+.pd-map-answer__star {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #1f2124;
+  border: 3px solid #ffffff;
+  color: #ffd43b;
+  font-size: 22px;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.45);
+}
+
+/* Leaflet's credit line keeps its own small, dark text on white so it reads on every map tile. */
+.pd-map .leaflet-control-attribution {
+  font-size: 11px;
+  color: #1f2124;
+}
+
+.pd-map .leaflet-control-attribution a {
+  color: #1f4e99;
+}

@@ -1,0 +1,42 @@
+/* ABOUTME: The dev box on playtest pages: buttons that stand in for other phones and the engine timer. */
+/* ABOUTME: Dashed outline so it never reads as part of the game screen itself. */
+
+.playtest-dev {
+  flex: none;
+  padding: 6px 10px 8px;
+  border: 2px dashed currentColor;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.playtest-dev__heading {
+  margin: 0;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.playtest-dev__buttons {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+}
+
+.playtest-dev__button {
+  flex: 1;
+  min-height: var(--space-hit-target-min);
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+:root[data-theme='arcade'] .playtest-dev__heading {
+  font-size: 11px;
+}
