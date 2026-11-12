@@ -418,7 +418,7 @@ export interface PlayerView {
   drawings: [Stroke[] | null, Stroke[] | null]
   /** Your team's guesses; both once the round is revealed. */
   guesses: [TeamGuess[] | null, TeamGuess[] | null]
-  /** Drawers only, during the pick. */
+  /** Drawers only: the three options they chose from. */
   options: Clue[] | null
   /** Drawers only: which option you picked. */
   myPick: number | null
@@ -453,7 +453,7 @@ export function playerView(state: SketchShowdownState, player: PlayerId): Player
     drawers: round.drawers,
     drawings: own(round.drawings),
     guesses: own(round.guesses),
-    options: drawing && state.phase === 'pick' ? round.options : null,
+    options: drawing ? round.options : null,
     myPick: drawing ? (round.picks[player] ?? null) : null,
     clue: knowsClue ? round.clue : null,
     howChosen: drawing || revealed ? round.howChosen : null,
