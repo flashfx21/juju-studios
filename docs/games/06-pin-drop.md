@@ -1,7 +1,7 @@
 # Pin Drop (working title)
 
 **Game ID:** `pin-drop`  
-**Status:** Development (rules final Nov 11, 2026). Launch phase 1. Next game toward a solo test  
+**Status:** Development (rules final Nov 11, 2026). Launch phase 1. On branch `game/pin-drop`: rules, tests, 23-photo starter pack, phone screen with the world map and a solo playtest. TV screen, Instructions, arcade and rec room checks, and the full pack script to do  
 **Players:** 2 to 10 (placeholder)  
 **Length:** about 12 min at 7 rounds (estimate; 5 rounds about 8, 9 rounds about 15)  
 **Modes:** Individual. Scoring modes: Match play (default), Stroke play
