@@ -344,6 +344,12 @@
   font-size: 11px;
 }
 
+/* Arcade's unused keys are already near-black, so a darker fill can't set ruled-out keys apart: they empty out instead. */
+:root[data-theme='arcade'] .cw-key[data-mark='gray'] {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px #3d4047;
+}
+
 /* Rec room's handwritten body font runs small; segment numbers use its label font instead. */
 :root[data-theme='rec-room'] .cw-chain__step {
   font-family: var(--font-label);
