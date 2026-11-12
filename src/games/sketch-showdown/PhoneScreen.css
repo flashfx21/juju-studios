@@ -1,0 +1,254 @@
+/* ABOUTME: Sketch Showdown phone styles: team badges, the clue options, the canvas tools and swatches, the guess strip, */
+/* ABOUTME: and the reveal's two drawings side by side. Selected tools carry a check-style outline, not only a color. */
+
+.ss-phone {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ss-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 12px;
+}
+
+.ss-top .phone-top {
+  padding: 0;
+}
+
+/* The game's long name stays on one line, so the canvas keeps its room. */
+.ss-top .phone-top__title {
+  font-size: 24px;
+  white-space: nowrap;
+}
+
+:root[data-theme='rec-room'] .ss-top .phone-top__title {
+  font-size: 28px;
+}
+
+:root[data-theme='arcade'] .ss-top .phone-top__logo {
+  font-size: 22px;
+  white-space: nowrap;
+}
+
+/* The drawing canvas takes whatever height is left, staying square. */
+.ss-canvas-box {
+  flex: 1 1 auto;
+  min-height: 120px;
+  container-type: size;
+  display: flex;
+  justify-content: center;
+}
+
+.ss-canvas-box .sketch-canvas {
+  width: min(100cqw, 100cqh);
+}
+
+.ss-top__round {
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.ss-role {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.ss-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.ss-headline,
+.ss-clue {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1.15;
+}
+
+.ss-clue {
+  font-size: 40px;
+}
+
+.ss-status,
+.ss-hint,
+.ss-answer,
+.ss-draw-line {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.ss-draw-line strong {
+  font-size: 20px;
+}
+
+.ss-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- Tools ---------- */
+.ss-tools,
+.ss-sizes {
+  display: flex;
+  gap: 6px;
+}
+
+.ss-tool {
+  flex: 1;
+  min-height: 40px;
+  padding: 0 4px;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.ss-tool[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 2px var(--color-primary-ink);
+}
+
+.ss-tool:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ss-tool--clear[data-holding] {
+  background: var(--color-danger);
+  color: var(--color-danger-ink);
+  border-color: var(--color-danger);
+}
+
+.ss-size {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ss-size__dot {
+  display: inline-block;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.ss-size__dot--S { width: 4px; height: 4px; }
+.ss-size__dot--M { width: 8px; height: 8px; }
+.ss-size__dot--L { width: 13px; height: 13px; }
+.ss-size__dot--XL { width: 20px; height: 20px; }
+
+.ss-swatches {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 5px;
+}
+
+.ss-swatch {
+  aspect-ratio: 1;
+  min-height: 32px;
+  border: 2px solid currentColor;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* Selected color: a thick ring with a gap, readable on light and dark swatches alike. */
+.ss-swatch[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 3px var(--color-background),
+    0 0 0 6px currentColor;
+}
+
+/* ---------- Team guess strip (never covers the canvas) ---------- */
+.ss-strip {
+  display: flex;
+  gap: 8px;
+  min-height: 30px;
+  padding: 4px 6px;
+  overflow-x: auto;
+  white-space: nowrap;
+  border: 2px solid currentColor;
+  font-size: 15px;
+}
+
+.ss-strip__guess {
+  font-weight: 700;
+}
+
+.ss-strip__who {
+  font-weight: 400;
+  font-size: 13px;
+}
+
+/* ---------- Reveal ---------- */
+.ss-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ss-pair__item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ss-wrong {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.ss-score {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 22px;
+}
+
+:root[data-theme='arcade'] .ss-top__round {
+  font-size: 11px;
+}
+
+:root[data-theme='arcade'] .ss-headline,
+:root[data-theme='arcade'] .ss-clue {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+:root[data-theme='arcade'] .ss-clue {
+  font-size: 24px;
+}

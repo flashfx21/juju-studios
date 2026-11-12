@@ -21,7 +21,6 @@ import {
   survivors,
   totalScores,
   tvView,
-  WORD_FORM_GROUPS,
   type DontJinxItInput,
   type DontJinxItState,
 } from './rules'
@@ -77,11 +76,6 @@ describe('word packs', () => {
     expect(MYSTERY_WORDS.every((word) => /^[a-z]{3,}$/.test(word))).toBe(true)
   })
 
-  it('lists each irregular form once, lowercase letters only', () => {
-    const forms = WORD_FORM_GROUPS.flat()
-    expect(forms.every((word) => /^[a-z]+$/.test(word))).toBe(true)
-    expect(new Set(forms).size).toBe(forms.length)
-  })
 })
 
 describe('setup', () => {

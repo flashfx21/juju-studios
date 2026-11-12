@@ -1,0 +1,84 @@
+/* ABOUTME: Sketch Showdown playtest styles: the start screen's option rows, the dev box's guess field and the gallery. */
+/* ABOUTME: The dev box stacks its rows here because it carries a text field as well as buttons. */
+
+.ss-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ss-option__label {
+  font-family: var(--font-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+
+.ss-option__buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.ss-option__button {
+  flex: 1;
+  min-height: var(--space-hit-target-min);
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.ss-option__button[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+}
+
+.ss-option__button[aria-pressed='true']::before {
+  content: '✓ ';
+}
+
+.ss-dev {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.ss-dev__guess {
+  display: flex;
+  gap: 6px;
+}
+
+.ss-dev__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 8px;
+  border: 2px solid currentColor;
+  background: var(--color-field, #ffffff);
+  color: inherit;
+  font-size: 16px;
+}
+
+.ss-dev__note {
+  margin: 0;
+  font-size: 14px;
+}
+
+.ss-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ss-gallery__title {
+  margin: 0;
+  font-weight: 700;
+}
+
+:root[data-theme='arcade'] .ss-option__label {
+  font-size: 11px;
+}

@@ -1,0 +1,777 @@
+{
+  "name": "Starter clues",
+  "description": "Things to draw: the Don't Jinx It words (adjusted for drawing) plus multi-word clues. No real people, characters or brands.",
+  "clues": [
+    {
+      "answer": "airport"
+    },
+    {
+      "answer": "alarm clock"
+    },
+    {
+      "answer": "anchor"
+    },
+    {
+      "answer": "apple"
+    },
+    {
+      "answer": "astronaut"
+    },
+    {
+      "answer": "avalanche"
+    },
+    {
+      "answer": "baby"
+    },
+    {
+      "answer": "backpack"
+    },
+    {
+      "answer": "bakery"
+    },
+    {
+      "answer": "balloon"
+    },
+    {
+      "answer": "banana"
+    },
+    {
+      "answer": "barber"
+    },
+    {
+      "answer": "baseball"
+    },
+    {
+      "answer": "basket"
+    },
+    {
+      "answer": "bathtub"
+    },
+    {
+      "answer": "battery"
+    },
+    {
+      "answer": "beach"
+    },
+    {
+      "answer": "beard"
+    },
+    {
+      "answer": "bicycle"
+    },
+    {
+      "answer": "birthday cake"
+    },
+    {
+      "answer": "blanket"
+    },
+    {
+      "answer": "blizzard"
+    },
+    {
+      "answer": "boat"
+    },
+    {
+      "answer": "bonfire"
+    },
+    {
+      "answer": "bookshelf"
+    },
+    {
+      "answer": "bowling"
+    },
+    {
+      "answer": "bread"
+    },
+    {
+      "answer": "bridge"
+    },
+    {
+      "answer": "broom"
+    },
+    {
+      "answer": "bubble"
+    },
+    {
+      "answer": "bucket"
+    },
+    {
+      "answer": "butterfly"
+    },
+    {
+      "answer": "cactus"
+    },
+    {
+      "answer": "cake"
+    },
+    {
+      "answer": "camel"
+    },
+    {
+      "answer": "camera"
+    },
+    {
+      "answer": "camping"
+    },
+    {
+      "answer": "candle"
+    },
+    {
+      "answer": "candy"
+    },
+    {
+      "answer": "carnival"
+    },
+    {
+      "answer": "carrot"
+    },
+    {
+      "answer": "castle"
+    },
+    {
+      "answer": "caterpillar"
+    },
+    {
+      "answer": "cave"
+    },
+    {
+      "answer": "cereal"
+    },
+    {
+      "answer": "chess"
+    },
+    {
+      "answer": "chicken"
+    },
+    {
+      "answer": "chimney"
+    },
+    {
+      "answer": "chocolate"
+    },
+    {
+      "answer": "circus"
+    },
+    {
+      "answer": "clock"
+    },
+    {
+      "answer": "cloud"
+    },
+    {
+      "answer": "clown"
+    },
+    {
+      "answer": "coffee"
+    },
+    {
+      "answer": "compass"
+    },
+    {
+      "answer": "cookie"
+    },
+    {
+      "answer": "cowboy"
+    },
+    {
+      "answer": "crayon"
+    },
+    {
+      "answer": "crown"
+    },
+    {
+      "answer": "cupcake"
+    },
+    {
+      "answer": "dentist"
+    },
+    {
+      "answer": "desert"
+    },
+    {
+      "answer": "diamond"
+    },
+    {
+      "answer": "dinosaur"
+    },
+    {
+      "answer": "doctor"
+    },
+    {
+      "answer": "dolphin"
+    },
+    {
+      "answer": "donut"
+    },
+    {
+      "answer": "dragon"
+    },
+    {
+      "answer": "drum"
+    },
+    {
+      "answer": "duck"
+    },
+    {
+      "answer": "eagle"
+    },
+    {
+      "answer": "earthquake"
+    },
+    {
+      "answer": "elephant"
+    },
+    {
+      "answer": "elevator"
+    },
+    {
+      "answer": "envelope"
+    },
+    {
+      "answer": "farm"
+    },
+    {
+      "answer": "feather"
+    },
+    {
+      "answer": "fireworks"
+    },
+    {
+      "answer": "fishing"
+    },
+    {
+      "answer": "flamingo"
+    },
+    {
+      "answer": "flashlight"
+    },
+    {
+      "answer": "football"
+    },
+    {
+      "answer": "forest"
+    },
+    {
+      "answer": "fountain"
+    },
+    {
+      "answer": "frog"
+    },
+    {
+      "answer": "garden"
+    },
+    {
+      "answer": "ghost"
+    },
+    {
+      "answer": "giraffe"
+    },
+    {
+      "answer": "glasses"
+    },
+    {
+      "answer": "glove"
+    },
+    {
+      "answer": "gold"
+    },
+    {
+      "answer": "gorilla"
+    },
+    {
+      "answer": "grandma"
+    },
+    {
+      "answer": "guitar"
+    },
+    {
+      "answer": "hammer"
+    },
+    {
+      "answer": "hamburger"
+    },
+    {
+      "answer": "helicopter"
+    },
+    {
+      "answer": "honey"
+    },
+    {
+      "answer": "horse"
+    },
+    {
+      "answer": "hospital"
+    },
+    {
+      "answer": "hurricane"
+    },
+    {
+      "answer": "igloo"
+    },
+    {
+      "answer": "island"
+    },
+    {
+      "answer": "jacket"
+    },
+    {
+      "answer": "jellyfish"
+    },
+    {
+      "answer": "jungle"
+    },
+    {
+      "answer": "kangaroo"
+    },
+    {
+      "answer": "ketchup"
+    },
+    {
+      "answer": "kitchen"
+    },
+    {
+      "answer": "kite"
+    },
+    {
+      "answer": "ladder"
+    },
+    {
+      "answer": "lemon"
+    },
+    {
+      "answer": "library"
+    },
+    {
+      "answer": "lighthouse"
+    },
+    {
+      "answer": "lion"
+    },
+    {
+      "answer": "lizard"
+    },
+    {
+      "answer": "lobster"
+    },
+    {
+      "answer": "magnet"
+    },
+    {
+      "answer": "mailbox"
+    },
+    {
+      "answer": "map"
+    },
+    {
+      "answer": "marshmallow"
+    },
+    {
+      "answer": "mermaid"
+    },
+    {
+      "answer": "microwave"
+    },
+    {
+      "answer": "mirror"
+    },
+    {
+      "answer": "money"
+    },
+    {
+      "answer": "monkey"
+    },
+    {
+      "answer": "moon"
+    },
+    {
+      "answer": "mountain"
+    },
+    {
+      "answer": "mustache"
+    },
+    {
+      "answer": "necklace"
+    },
+    {
+      "answer": "ninja"
+    },
+    {
+      "answer": "noodle"
+    },
+    {
+      "answer": "ocean"
+    },
+    {
+      "answer": "octopus"
+    },
+    {
+      "answer": "orchestra"
+    },
+    {
+      "answer": "owl"
+    },
+    {
+      "answer": "pajamas"
+    },
+    {
+      "answer": "pancake"
+    },
+    {
+      "answer": "panda"
+    },
+    {
+      "answer": "parachute"
+    },
+    {
+      "answer": "parrot"
+    },
+    {
+      "answer": "party"
+    },
+    {
+      "answer": "peanut"
+    },
+    {
+      "answer": "pencil"
+    },
+    {
+      "answer": "penguin"
+    },
+    {
+      "answer": "piano"
+    },
+    {
+      "answer": "picnic"
+    },
+    {
+      "answer": "pillow"
+    },
+    {
+      "answer": "pirate"
+    },
+    {
+      "answer": "pizza"
+    },
+    {
+      "answer": "planet"
+    },
+    {
+      "answer": "popcorn"
+    },
+    {
+      "answer": "postcard"
+    },
+    {
+      "answer": "pumpkin"
+    },
+    {
+      "answer": "puppet"
+    },
+    {
+      "answer": "puzzle"
+    },
+    {
+      "answer": "pyramid"
+    },
+    {
+      "answer": "queen"
+    },
+    {
+      "answer": "rabbit"
+    },
+    {
+      "answer": "rainbow"
+    },
+    {
+      "answer": "robot"
+    },
+    {
+      "answer": "rocket"
+    },
+    {
+      "answer": "roller coaster"
+    },
+    {
+      "answer": "sandwich"
+    },
+    {
+      "answer": "saxophone"
+    },
+    {
+      "answer": "scarecrow"
+    },
+    {
+      "answer": "school"
+    },
+    {
+      "answer": "scissors"
+    },
+    {
+      "answer": "shark"
+    },
+    {
+      "answer": "sheep"
+    },
+    {
+      "answer": "skeleton"
+    },
+    {
+      "answer": "skunk"
+    },
+    {
+      "answer": "sled"
+    },
+    {
+      "answer": "snail"
+    },
+    {
+      "answer": "snowman"
+    },
+    {
+      "answer": "soccer"
+    },
+    {
+      "answer": "spider"
+    },
+    {
+      "answer": "spoon"
+    },
+    {
+      "answer": "squirrel"
+    },
+    {
+      "answer": "stadium"
+    },
+    {
+      "answer": "starfish"
+    },
+    {
+      "answer": "sunglasses"
+    },
+    {
+      "answer": "superhero"
+    },
+    {
+      "answer": "swamp"
+    },
+    {
+      "answer": "sweater"
+    },
+    {
+      "answer": "taco"
+    },
+    {
+      "answer": "teacher"
+    },
+    {
+      "answer": "telescope"
+    },
+    {
+      "answer": "tent"
+    },
+    {
+      "answer": "lightning"
+    },
+    {
+      "answer": "tiger"
+    },
+    {
+      "answer": "toaster"
+    },
+    {
+      "answer": "toothbrush"
+    },
+    {
+      "answer": "tornado"
+    },
+    {
+      "answer": "tractor"
+    },
+    {
+      "answer": "treasure chest"
+    },
+    {
+      "answer": "turtle"
+    },
+    {
+      "answer": "umbrella"
+    },
+    {
+      "answer": "unicorn"
+    },
+    {
+      "answer": "vacation"
+    },
+    {
+      "answer": "vampire"
+    },
+    {
+      "answer": "violin"
+    },
+    {
+      "answer": "volcano"
+    },
+    {
+      "answer": "waffle"
+    },
+    {
+      "answer": "wallet"
+    },
+    {
+      "answer": "waterfall"
+    },
+    {
+      "answer": "wedding"
+    },
+    {
+      "answer": "whale"
+    },
+    {
+      "answer": "windmill"
+    },
+    {
+      "answer": "wizard"
+    },
+    {
+      "answer": "zebra"
+    },
+    {
+      "answer": "zipper"
+    },
+    {
+      "answer": "zombie"
+    },
+    {
+      "answer": "American flag",
+      "alternates": [
+        "US flag",
+        "USA flag"
+      ]
+    },
+    {
+      "answer": "race car"
+    },
+    {
+      "answer": "cheeseburger",
+      "alternates": [
+        "burger"
+      ]
+    },
+    {
+      "answer": "sushi"
+    },
+    {
+      "answer": "hot dog"
+    },
+    {
+      "answer": "ice cream cone",
+      "alternates": [
+        "ice cream"
+      ]
+    },
+    {
+      "answer": "fire truck",
+      "alternates": [
+        "fire engine"
+      ]
+    },
+    {
+      "answer": "school bus"
+    },
+    {
+      "answer": "traffic light",
+      "alternates": [
+        "stoplight",
+        "traffic signal"
+      ]
+    },
+    {
+      "answer": "stop sign"
+    },
+    {
+      "answer": "hot air balloon"
+    },
+    {
+      "answer": "palm tree"
+    },
+    {
+      "answer": "polar bear"
+    },
+    {
+      "answer": "spider web",
+      "alternates": [
+        "cobweb",
+        "web"
+      ]
+    },
+    {
+      "answer": "snow globe"
+    },
+    {
+      "answer": "light bulb"
+    },
+    {
+      "answer": "paper airplane",
+      "alternates": [
+        "paper plane"
+      ]
+    },
+    {
+      "answer": "fire hydrant",
+      "alternates": [
+        "hydrant"
+      ]
+    },
+    {
+      "answer": "teddy bear"
+    },
+    {
+      "answer": "french fries",
+      "alternates": [
+        "fries"
+      ]
+    },
+    {
+      "answer": "Ferris wheel"
+    },
+    {
+      "answer": "Statue of Liberty",
+      "alternates": [
+        "Lady Liberty"
+      ]
+    },
+    {
+      "answer": "Eiffel Tower"
+    },
+    {
+      "answer": "tic tac toe"
+    },
+    {
+      "answer": "jack-o'-lantern",
+      "alternates": [
+        "carved pumpkin"
+      ]
+    },
+    {
+      "answer": "sand castle"
+    },
+    {
+      "answer": "shooting star"
+    },
+    {
+      "answer": "swimming pool",
+      "alternates": [
+        "pool"
+      ]
+    },
+    {
+      "answer": "bunk bed"
+    },
+    {
+      "answer": "toilet paper",
+      "alternates": [
+        "toilet roll"
+      ]
+    }
+  ]
+}

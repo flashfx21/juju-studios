@@ -1,0 +1,18 @@
+/* ABOUTME: The square drawing canvas: white paper with a frame in the text color. */
+/* ABOUTME: While drawing, the page must not scroll, zoom, select text or show the long-press magnifier. */
+
+.sketch-canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 3px solid currentColor;
+  background: #ffffff;
+}
+
+.sketch-canvas[data-editable] {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: crosshair;
+}
