@@ -31,6 +31,12 @@ export interface GameManifest {
 export type PlayerId = string
 
 /**
+ * Teams for a team game, made by the engine before setup (split at random, then the host can swap and lock).
+ * Each inner list is one team's players.
+ */
+export type Teams = readonly (readonly PlayerId[])[]
+
+/**
  * Everything impure a rule needs, passed in by the engine so rules stay pure.
  * `now` is milliseconds since the epoch; `random` returns a number in [0, 1).
  */
@@ -41,13 +47,14 @@ export interface RulesContext {
 
 /**
  * Players or teams from first place to last. Each inner list is one place;
- * more than one id in a place means a tie.
+ * more than one id in a place means a tie. A team game lists the whole team's players in its place.
  */
 export type FinishingOrder = PlayerId[][]
 
 /** The rulebook: pure functions from state to state. */
 export interface GameRules<State, Settings, Input> {
-  setup(players: readonly PlayerId[], settings: Settings, ctx: RulesContext): State
+  /** Team games get `teams`; individual games never do. */
+  setup(players: readonly PlayerId[], settings: Settings, ctx: RulesContext, teams?: Teams): State
   onInput(state: State, player: PlayerId, input: Input, ctx: RulesContext): State
   onTimer(state: State, ctx: RulesContext): State
   isOver(state: State): boolean
