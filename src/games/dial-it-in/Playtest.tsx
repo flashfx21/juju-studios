@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { PhoneFrame } from '../../ui/PhoneFrame'
 import type { PlayerId, RulesContext } from '../types'
+import { botClue } from './botClues'
 import { DialItInTitle, PhoneScreen } from './PhoneScreen'
 import {
   currentRound,
@@ -37,6 +38,7 @@ function botsLockIn(state: DialItInState): DialItInState {
 
 export function Playtest() {
   const [state, setState] = useState<DialItInState | null>(null)
+  const round = state && state.phase !== 'over' ? currentRound(state) : null
 
   return (
     <PhoneFrame label="Dial It In playtest" cardTag="Playtest">
@@ -46,6 +48,7 @@ export function Playtest() {
             state={state}
             player={YOU}
             names={NAMES}
+            clue={round && round.clueGiver !== YOU ? botClue(round.card, round.target, state!.range) : undefined}
             onGuess={(value) => setState(rules.onInput(state, YOU, { type: 'guess', value }, context()))}
             summaryAction={
               <button type="button" className="phone-button" data-testid="dii-play-again" onClick={() => setState(null)}>
@@ -67,7 +70,7 @@ function Start({ onStart }: { onStart: (range: DialRange) => void }) {
     <>
       <DialItInTitle />
       <p className="cue-card__text">
-        Interface test: you play against two bots that guess at random. Each player gives the clue once. Use the dev
+        Interface test: you play against two bots that guess at random. Each player gives the clue once; a bot shows its clue on screen. Use the dev
         buttons to stand in for the other phones and the timer.
       </p>
       {DIAL_RANGES.map((range) => (

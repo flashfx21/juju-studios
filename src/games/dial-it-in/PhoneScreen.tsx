@@ -27,6 +27,8 @@ interface PhoneScreenProps {
   revealAction?: ReactNode
   /** Shown while guessing, above the spectrum, such as a room's countdown. */
   guessingNote?: ReactNode
+  /** This round's clue when the phone knows it, such as a bot's clue in solo play. People say theirs out loud. */
+  clue?: string
 }
 
 function pointsText(points: number): string {
@@ -150,7 +152,17 @@ function GuessForm({ range, onGuess }: GuessFormProps) {
   )
 }
 
-function Guessing({ state, player, names, onGuess }: PhoneScreenProps) {
+/** The clue as the clue giver said it. */
+function SpokenClue({ name, clue }: { name: string; clue: string }) {
+  return (
+    <div className="cue-card dii-clue" data-testid="dii-clue">
+      <p className="cue-card__label">{name} says</p>
+      <p className="dii-clue__text">"{clue}"</p>
+    </div>
+  )
+}
+
+function Guessing({ state, player, names, onGuess, clue }: PhoneScreenProps) {
   const round = currentRound(state)
   const guessers = guessersFor(state, round)
   const lockedIn = guessers.filter((guesser) => guesser in round.guesses).length
@@ -183,6 +195,7 @@ function Guessing({ state, player, names, onGuess }: PhoneScreenProps) {
       <p className="dii-role" data-testid="dii-role">
         {names[round.clueGiver]} gives the clue
       </p>
+      {clue && <SpokenClue name={names[round.clueGiver]} clue={clue} />}
       <Spectrum
         round={round}
         range={state.range}
@@ -204,7 +217,7 @@ function Guessing({ state, player, names, onGuess }: PhoneScreenProps) {
   )
 }
 
-function Reveal({ state, player, names, revealAction }: PhoneScreenProps) {
+function Reveal({ state, player, names, revealAction, clue }: PhoneScreenProps) {
   const round = currentRound(state)
   const myGuess = round.guesses[player]
   const marks: SpectrumProps['marks'] = [{ value: round.target, kind: 'target', label: 'Target' }]
@@ -218,6 +231,7 @@ function Reveal({ state, player, names, revealAction }: PhoneScreenProps) {
   return (
     <>
       <p className="dii-role">Target: {round.target}</p>
+      {clue && <SpokenClue name={names[round.clueGiver]} clue={clue} />}
       <Spectrum round={round} range={state.range} marks={marks} />
       <p className="dii-headline" role="status" data-testid="dii-reveal">
         {headline}
