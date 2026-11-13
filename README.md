@@ -72,7 +72,7 @@ node -e "import('./src/engine/hashText.ts').then((m) => console.log(m.hashText('
 
 ## Deploy
 
-Every push to `main` runs `.github/workflows/deploy.yml`, which lints, builds and publishes `dist/` to GitHub Pages. Progress shows under the repo's **Actions** tab.
+Every push to `main` runs `.github/workflows/deploy.yml`, which lints, builds and publishes `dist/` to GitHub Pages. Progress shows under the repo's **Actions** tab. The build reads the Firebase settings from the repo's Actions secrets (the same `VITE_FIREBASE_*` lines as `.env.local`); after changing `.env.local`, run `gh secret set -f .env.local` to update them.
 
 ## Firebase
 
