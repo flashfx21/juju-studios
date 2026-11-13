@@ -10,6 +10,8 @@ Ideas and features deliberately left out for now. Each line says why it waits.
 
 - **Playing from a PC as a player.** On hold (Julian, Nov 11) while phone playtests come first. Today a wide landscape screen always gets the TV screens; the proposal is that joining makes you a player on any device and hosting makes you the TV. Fits with the rooms work.
 
+- **Admin room controls** (close a stuck room, remove a player). Wanted (Julian, Nov 13); waits for rooms.
+- **Admin score fixes** (fix or remove a game result). Wanted (Julian, Nov 13); waits for saved results.
 - **Real QR codes** on the Host or join, Host sign-in and lobby screens. Screens show the address as text for now; scannable codes need a QR library (a new dependency).
 - **"New" badge** on Pin Drop's picker tile. Only shown on playable games, and every game is coming soon for now.
 - **Playable picker tile, phone vote rows, vote counts, timer and "Lock in"**. Build them with the first playable game; the picker only draws coming-soon tiles today.
