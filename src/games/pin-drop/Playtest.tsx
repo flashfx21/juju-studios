@@ -16,6 +16,7 @@ import {
 } from './rules'
 import '../../ui/PhoneForm.css'
 import '../../ui/PlaytestDev.css'
+import { botGuess } from './bots'
 import { OptionRow, RoundPhoto } from './Pieces'
 
 const YOU = 'you'
@@ -33,15 +34,12 @@ function context(): RulesContext {
   return { now: Date.now(), random: Math.random }
 }
 
-/** Bots guess somewhere near the answer: up to about 25 degrees off in a random direction. */
+/** Bot A guesses like a sharp player and Bot B like a casual one, always at a real city (see bots.ts). */
 function botsLockIn(state: PinDropState): PinDropState {
   const round = currentRound(state)
   return PLAYERS.filter((player) => player !== YOU && !round.locked.includes(player)).reduce((next, bot) => {
-    const angle = Math.random() * 2 * Math.PI
-    const reach = 0.5 + Math.random() ** 2 * 25
-    const lat = Math.max(-85, Math.min(85, round.photo.lat + Math.sin(angle) * reach))
-    const lng = round.photo.lng + Math.cos(angle) * reach
-    const pinned = rules.onInput(next, bot, { type: 'pin', lat, lng }, context())
+    const pin = botGuess(round.photo, bot === 'bot-a' ? 'sharp' : 'casual', Math.random)
+    const pinned = rules.onInput(next, bot, { type: 'pin', ...pin }, context())
     return rules.onInput(pinned, bot, { type: 'lock' }, context())
   }, state)
 }

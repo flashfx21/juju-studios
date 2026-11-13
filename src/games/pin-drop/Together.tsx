@@ -1,4 +1,4 @@
-// ABOUTME: Pin Drop on two or more phones, no TV: one player starts a room and shares its code, the others join.
+// ABOUTME: Pin Drop on phones, no TV: one player starts a room and shares its code, others join, bots can fill in.
 // ABOUTME: The host's phone runs the rules and the round timer; every phone shows the photo above its own map.
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { createRoom, joinRoom, playerIds, sendInput, takeInputs, watchRoom, writePlay, clearPlay, type Room } from '../../engine/net/rooms'
@@ -11,7 +11,9 @@ import { PlayerSymbol } from '../../ui/PlayerSymbol'
 import { isPlayerSymbolId } from '../../ui/playerSymbols'
 import { Field } from '../../ui/TextField'
 import { useLobbyStyle } from '../../ui/themes/useLobbyStyle'
+import { seededRandom } from '../../engine/seededRandom'
 import type { PlayerId, RulesContext } from '../types'
+import { BOT_SKILLS, botFor, botGuess, botIds, type BotSkill } from './bots'
 import { manifest } from './manifest'
 import { OptionRow, RoundPhoto } from './Pieces'
 import { PhoneScreen, PinDropTitle, type PlayerLook } from './PhoneScreen'
@@ -37,6 +39,9 @@ const SCORING_NAMES = { match: 'Match play', stroke: 'Stroke play' }
 const UNIT_NAMES = { mi: 'Miles', km: 'Kilometers' }
 const PACE_NAMES = { 45: '45 s', 60: '60 s', 90: '90 s' }
 const ROUND_NAMES = { 5: '5', 7: '7', 9: '9' }
+const BOT_COUNTS = [0, 1, 2, 3] as const
+const BOT_COUNT_NAMES = { 0: 'None', 1: '1', 2: '2', 3: '3' }
+const BOT_SKILL_NAMES: Record<BotSkill, string> = { casual: 'Casual', sharp: 'Sharp' }
 
 function context(): RulesContext {
   return { now: Date.now(), random: Math.random }
@@ -199,9 +204,16 @@ function InRoom({ code, self, onLeave }: { code: string; self: Self; onLeave: ()
   )
 }
 
-function usePlayerLooks(room: Room): Record<PlayerId, PlayerLook> {
+/** Names, colors and symbols for everyone in the room, plus any bots in the game. */
+function usePlayerLooks(room: Room, gamePlayers: readonly PlayerId[] = []): Record<PlayerId, PlayerLook> {
   const style = useLobbyStyle()
   const looks: Record<PlayerId, PlayerLook> = {}
+  for (const id of gamePlayers) {
+    const bot = botFor(id)
+    if (!bot) continue
+    const { name, initials, color, symbol } = bot.look
+    looks[id] = { name, initials, color: PLAYER_COLORS[style][color], symbol: style === 'arcade' ? undefined : symbol }
+  }
   for (const [uid, player] of Object.entries(room.players)) {
     const color = PLAYER_COLORS[style][player.color as PlayerColorId] ?? PLAYER_COLORS[style].silver
     // Arcade keeps initials for its high-score look.
@@ -213,16 +225,19 @@ function usePlayerLooks(room: Room): Record<PlayerId, PlayerLook> {
 
 function WaitingRoom({ room, isHost, onLeave }: { room: Room; isHost: boolean; onLeave: () => void }) {
   const [settings, setSettings] = useState<PinDropSettings>(DEFAULT_SETTINGS)
-  const looks = usePlayerLooks(room)
+  const [botCount, setBotCount] = useState<(typeof BOT_COUNTS)[number]>(0)
+  const [botSkill, setBotSkill] = useState<BotSkill>('casual')
   const ids = playerIds(room)
-  const enough = ids.length >= manifest.players.min
+  const bots = isHost ? botIds(botCount, botSkill) : []
+  const looks = usePlayerLooks(room, bots)
+  const enough = ids.length + bots.length >= manifest.players.min
   const choose = <K extends keyof PinDropSettings>(key: K, value: PinDropSettings[K]) =>
     setSettings((current) => ({ ...current, [key]: value }))
 
   function startGame() {
     if (!enough) return
     const ctx = context()
-    const state = rules.setup(ids, settings, ctx)
+    const state = rules.setup([...ids, ...bots], settings, ctx)
     void writePlay(room.code, state, deadlineFor(state, ctx.now))
   }
 
@@ -236,15 +251,15 @@ function WaitingRoom({ room, isHost, onLeave }: { room: Room; isHost: boolean; o
       <ul className="pdt-players" aria-label="Players in the room">
         {ids.map((uid) => (
           <li key={uid} className="pdt-players__row">
-            <span
-              className="pdt-players__dot"
-              style={{ background: looks[uid].color, '--player': looks[uid].color, color: inkOn(looks[uid].color) } as CSSProperties}
-              aria-hidden="true"
-            >
-              {looks[uid].symbol && <PlayerSymbol symbol={looks[uid].symbol} />}
-            </span>
+            <PlayerDot look={looks[uid]} />
             {looks[uid].name}
             {uid === room.host ? ' (host)' : ''}
+          </li>
+        ))}
+        {bots.map((id) => (
+          <li key={id} className="pdt-players__row">
+            <PlayerDot look={looks[id]} />
+            {looks[id].name} (bot)
           </li>
         ))}
       </ul>
@@ -254,6 +269,10 @@ function WaitingRoom({ room, isHost, onLeave }: { room: Room; isHost: boolean; o
           <OptionRow label="Rounds" options={ROUND_COUNTS} names={ROUND_NAMES} value={settings.rounds} onChoose={(v) => choose('rounds', v)} />
           <OptionRow label="Seconds" options={PACES} names={PACE_NAMES} value={settings.pace} onChoose={(v) => choose('pace', v)} />
           <OptionRow label="Units" options={UNITS} names={UNIT_NAMES} value={settings.units} onChoose={(v) => choose('units', v)} />
+          <OptionRow label="Bots" options={BOT_COUNTS} names={BOT_COUNT_NAMES} value={botCount} onChoose={setBotCount} />
+          {botCount > 0 && (
+            <OptionRow label="Bot skill" options={BOT_SKILLS} names={BOT_SKILL_NAMES} value={botSkill} onChoose={setBotSkill} />
+          )}
           <button
             type="button"
             className="phone-button"
@@ -263,7 +282,7 @@ function WaitingRoom({ room, isHost, onLeave }: { room: Room; isHost: boolean; o
           >
             Start game
           </button>
-          {!enough && <p className="pd-status">Waiting for at least {manifest.players.min} players.</p>}
+          {!enough && <p className="pd-status">Waiting for at least {manifest.players.min} players. Bots count.</p>}
         </>
       ) : (
         <p className="pd-status" role="status">
@@ -274,6 +293,18 @@ function WaitingRoom({ room, isHost, onLeave }: { room: Room; isHost: boolean; o
         Leave room
       </button>
     </div>
+  )
+}
+
+function PlayerDot({ look }: { look: PlayerLook }) {
+  return (
+    <span
+      className="pdt-players__dot"
+      style={{ background: look.color, '--player': look.color, color: inkOn(look.color) } as CSSProperties}
+      aria-hidden="true"
+    >
+      {look.symbol && <PlayerSymbol symbol={look.symbol} />}
+    </span>
   )
 }
 
@@ -289,9 +320,9 @@ function useSecondsLeft(deadline: number | null): number | null {
 }
 
 function Game({ room, self, isHost, onLeave }: { room: Room; self: Self; isHost: boolean; onLeave: () => void }) {
-  const looks = usePlayerLooks(room)
   const play = room.play!
   const state = JSON.parse(play.state) as PinDropState
+  const looks = usePlayerLooks(room, state.players)
   const secondsLeft = useSecondsLeft(state.phase === 'guessing' ? play.deadline : null)
   const send = (input: PinDropInput) => void sendInput(room.code, self.uid, input)
   const round = currentRound(state)
@@ -348,6 +379,34 @@ function Game({ room, self, isHost, onLeave }: { room: Room; self: Self; isHost:
   )
 }
 
+/** Earliest and latest a bot locks in, as a share of the round's time. */
+const BOT_LOCK_SHARE: [number, number] = [0.3, 0.85]
+
+/**
+ * Bots whose moment has come drop their pin and lock in. Each bot's moment and guess come from a random
+ * sequence seeded by the room, round and bot, so a host that reloads mid-round gets the same ones. Once
+ * every real player has locked in, the bots don't keep them waiting.
+ */
+function botsMove(code: string, state: PinDropState, deadline: number | null): PinDropState {
+  const round = currentRound(state)
+  const waiting = state.players.filter((id) => botFor(id) && !round.locked.includes(id))
+  if (waiting.length === 0 || deadline === null) return state
+  const peopleDone = state.players.every((id) => botFor(id) || round.locked.includes(id))
+  const roundMs = state.settings.pace * 1000
+  const startedAt = deadline - roundMs
+  let next = state
+  for (const id of waiting) {
+    const random = seededRandom(`${code}-${state.roundIndex}-${id}`)
+    const [earliest, latest] = BOT_LOCK_SHARE
+    const lockAt = startedAt + roundMs * (earliest + (latest - earliest) * random())
+    if (!peopleDone && Date.now() < lockAt) continue
+    const pin = botGuess(round.photo, botFor(id)!.skill, random)
+    next = rules.onInput(next, id, { type: 'pin', ...pin }, context())
+    next = rules.onInput(next, id, { type: 'lock' }, context())
+  }
+  return next
+}
+
 /**
  * Runs on the host's phone only: applies every player's input to the state, moves the game on when a
  * timer runs out, and writes each new state back to the room for every phone to show.
@@ -380,7 +439,15 @@ function HostRunner({ room }: { room: Room }) {
 
     const timer = setInterval(() => {
       const current = latest.current
-      if (!current || current.deadline === null || Date.now() < current.deadline) return
+      if (!current) return
+      if (current.state.phase === 'guessing') {
+        const moved = botsMove(room.code, current.state, current.deadline)
+        if (moved !== current.state) {
+          save(moved, true)
+          return
+        }
+      }
+      if (current.deadline === null || Date.now() < current.deadline) return
       save(rules.onTimer(current.state, context()), false)
     }, 500)
 

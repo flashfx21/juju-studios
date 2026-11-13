@@ -10,6 +10,10 @@ Load it with `loadDictionary()` from `src/engine/dictionary.ts`. It downloads as
 
 ENABLE is from the late 1990s: a few newer words are missing and some obscure ones are accepted. It has no proper nouns, so names and places are not in it. It has no one-letter words ("a", "i"), and it misses some everyday compounds ("sandcastle"), so a game that checks words against it should let players keep a word it doesn't know. Chainword's `packs/chainword/guesses.json` is the 4 to 7 letter part of this same list, plus a few words added by hand.
 
+## `world-cities.json`
+
+About 390 cities and towns on every inhabited continent and the larger islands, each with a country and center coordinates rounded to about a tenth of a degree (roughly 10 km). Written by hand from well-known coordinates; good enough for bots, not for scoring. Load it with `WORLD_CITIES` from `src/engine/worldCities.ts`. Pin Drop bots (`src/games/pin-drop/bots.ts`) guess at these cities so they never land at sea.
+
 ## `word-forms.json`
 
 Irregular word forms (run / ran, mouse / mice), one group per word, that spelling rules can't spot. Check two words with `sameWordForm()` from `src/engine/wordForms.ts`; it also matches regular forms (towel / towels, bake / baking) by their endings, so those don't need listing. Lowercase letters only, each form listed once. Used by Don't Jinx It (close calls, near guesses) and Sketch Showdown (guess matching).
