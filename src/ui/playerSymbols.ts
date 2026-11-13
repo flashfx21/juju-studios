@@ -38,20 +38,24 @@ export const PLAYER_SYMBOLS: Record<PlayerSymbolId, PlayerSymbol> = {
   wolf: {
     name: 'Wolf',
     markup:
-      // Side view, facing left, so it can't be mistaken for the fox's front view.
-      '<path d="M21.6 22.6L20.4 12.6 19.8 2.2 15.4 7.4 11 8.1 5.6 10.2 1.2 12.3 1.5 14.3 6.6 15.6 10.6 17.6 12.6 22.6z"/>' +
-      '<path class="cut" d="M18.5 5.2l-2 2.6 2.3 1.3z"/>' +
-      '<path class="cut" d="M11.6 10.4l2.8-.7-.9 1.8z"/>' +
-      '<path class="cut-line" d="M3.2 14.6l3.6.4" stroke-width="0.9"/>',
+      // Front view with a jagged ruff of fur at the cheeks.
+      '<path d="M4.6 1.6l4.2 4.6h6.4l4.2-4.6.2 8 2.4 2.8-2.8 1 1.4 2.6-3.8.4L12 22.6l-4.8-6.2-3.8-.4 1.4-2.6-2.8-1 2.4-2.8z"/>' +
+      '<path class="cut" d="M6.4 4.6l2 2.6-1.8.8zM17.6 4.6l-2 2.6 1.8.8z"/>' +
+      '<path class="cut" d="M7.4 10.2l3.4 1.6-3 .7zM16.6 10.2l-3.4 1.6 3 .7z"/>' +
+      '<path class="cut" d="M12 12.2l-2 4.6 2 3 2-3z"/>' +
+      '<circle cx="12" cy="18.4" r="1.3"/>',
   },
   fox: {
     name: 'Fox',
     markup:
-      '<path d="M1.5 3.5l7 5.5h7l7-5.5-1.8 9.5L12 21.5 3.3 13z"/>' +
-      '<path class="cut" d="M4.4 6.6l3.6 2.8-2.9 1.2zM19.6 6.6L16 9.4l2.9 1.2z"/>' +
-      '<path class="cut" d="M5.6 13.4l6.4 2.2 6.4-2.2-6.4 6.3z"/>' +
-      '<circle cx="12" cy="17.2" r="1.3"/>' +
-      '<circle class="cut" cx="9" cy="11.6" r="1.1"/><circle class="cut" cx="15" cy="11.6" r="1.1"/>',
+      // Sitting, seen whole: a big pointed head forward, body turned, the full tail curled around the front.
+      '<path d="M3.6 1l3 3.4H10L13 1l.2 5.8-1.6 2.6L8.3 12 5 9.4 3.4 6.8z"/>' +
+      '<path d="M6 10.6c-1.4 2.8-1.8 6.2-1 9.2l.6 1.6h9c2 0 3-1.6 2.6-3.6-.6-3-3.4-6-6.8-7.4z"/>' +
+      '<path d="M14.8 12.6c5.2-1.2 8.8 2 8.4 5.8-.4 3.6-4.4 5.2-10.6 4.8H5.2c-1 0-1.2-1.6 0-1.8h8.4c3.6 0 5.4-1.4 5.2-3.4-.2-1.6-1.8-2.8-4-2.8z"/>' +
+      '<path class="cut" d="M5 3.2l1.4 2-1.3.6zM11.6 3.2l-1.4 2 1.3.6z"/>' +
+      '<path class="cut" d="M4.9 6.8l2.5 1-2.1.7zM11.7 6.8l-2.5 1 2.1.7z"/>' +
+      '<path class="cut" d="M6.8 11.6l1.5 1.6 1.5-1.6-1.5 4.4z"/>' +
+      '<path class="cut-line" d="M5.4 21.4h8.2c3.6 0 5.4-1.4 5.2-3.4" stroke-width="0.9"/>',
   },
   bear: {
     name: 'Bear',
@@ -64,11 +68,12 @@ export const PLAYER_SYMBOLS: Record<PlayerSymbolId, PlayerSymbol> = {
   owl: {
     name: 'Owl',
     markup:
-      '<path d="M4.8 3.6l3.4 2.6c2.5-.9 5.1-.9 7.6 0l3.4-2.6V13c0 5.6-3.1 9.4-7.2 9.4S4.8 18.6 4.8 13z"/>' +
-      '<circle class="cut" cx="8.9" cy="11" r="3.1"/><circle class="cut" cx="15.1" cy="11" r="3.1"/>' +
-      '<circle cx="8.9" cy="11.2" r="1.4"/><circle cx="15.1" cy="11.2" r="1.4"/>' +
-      '<path class="cut" d="M12 13.2l-1.4 1.6 1.4 1.8 1.4-1.8z"/>' +
-      '<path class="cut-line" d="M8.8 18.6l1.6 1.2 1.6-1.2 1.6 1.2 1.6-1.2" stroke-width="1"/>',
+      // Whole owl: head with ear tufts, round eyes, wings drawn as curved lines down each side.
+      '<path d="M5.2 2.6l3.2 2.6c2.3-.8 4.9-.8 7.2 0l3.2-2.6-.2 6.2c0 1.6-.6 2.8-1.4 3.6 1.4 2 1.8 4.2 1.2 6.2-.8 2.4-3.4 4-6.4 4s-5.6-1.6-6.4-4c-.6-2-.2-4.2 1.2-6.2-.8-.8-1.4-2-1.4-3.6z"/>' +
+      '<circle class="cut" cx="9.2" cy="8.8" r="2.4"/><circle class="cut" cx="14.8" cy="8.8" r="2.4"/>' +
+      '<circle cx="9.2" cy="8.9" r="1.1"/><circle cx="14.8" cy="8.9" r="1.1"/>' +
+      '<path class="cut" d="M12 10.6l-1 1.2 1 1.6 1-1.6z"/>' +
+      '<path class="cut-line" d="M7.6 13.4c-.8 2.6-.2 5.4 2 7.4M16.4 13.4c.8 2.6.2 5.4-2 7.4" stroke-width="1.1"/>',
   },
   cat: {
     name: 'Cat',
