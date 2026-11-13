@@ -1,5 +1,5 @@
 // ABOUTME: The player symbols (animals and objects) paired with a player color, drawn as simple one-color shapes.
-// ABOUTME: Each is SVG markup on a 24x24 grid: shapes fill with the ink color; class "cut" (and "cut-line" for strokes) shows the player color through.
+// ABOUTME: SVG markup on a 24x24 grid: shapes fill with ink; "line" strokes in ink; "cut" and "cut-line" show the player color through.
 
 export type PlayerSymbolId =
   | 'wolf'
@@ -38,9 +38,11 @@ export const PLAYER_SYMBOLS: Record<PlayerSymbolId, PlayerSymbol> = {
   wolf: {
     name: 'Wolf',
     markup:
-      '<path d="M3 1.5l5.5 6h7L21 1.5V12l-4 4.5-5 6-5-6-4-4.5z"/>' +
-      '<path class="cut" d="M6.8 10.6l3.6 1.6-3.2.9zM17.2 10.6l-3.6 1.6 3.2.9z"/>' +
-      '<circle class="cut" cx="12" cy="18.4" r="1.4"/>',
+      // Side view, facing left, so it can't be mistaken for the fox's front view.
+      '<path d="M21.6 22.6L20.4 12.6 19.8 2.2 15.4 7.4 11 8.1 5.6 10.2 1.2 12.3 1.5 14.3 6.6 15.6 10.6 17.6 12.6 22.6z"/>' +
+      '<path class="cut" d="M18.5 5.2l-2 2.6 2.3 1.3z"/>' +
+      '<path class="cut" d="M11.6 10.4l2.8-.7-.9 1.8z"/>' +
+      '<path class="cut-line" d="M3.2 14.6l3.6.4" stroke-width="0.9"/>',
   },
   fox: {
     name: 'Fox',
@@ -62,11 +64,11 @@ export const PLAYER_SYMBOLS: Record<PlayerSymbolId, PlayerSymbol> = {
   owl: {
     name: 'Owl',
     markup:
-      '<path d="M3.5 2.5l4.5 3.5h8l4.5-3.5V14a8.5 8.5 0 0 1-17 0z"/>' +
-      '<circle class="cut" cx="8.3" cy="11" r="3.3"/><circle class="cut" cx="15.7" cy="11" r="3.3"/>' +
-      '<circle cx="8.3" cy="11" r="1.5"/><circle cx="15.7" cy="11" r="1.5"/>' +
-      '<path class="cut" d="M12 13.6l-1.6 2.4h3.2z"/>' +
-      '<path class="cut-line" d="M7 18.4h10" stroke-width="1.2"/>',
+      '<path d="M4.8 3.6l3.4 2.6c2.5-.9 5.1-.9 7.6 0l3.4-2.6V13c0 5.6-3.1 9.4-7.2 9.4S4.8 18.6 4.8 13z"/>' +
+      '<circle class="cut" cx="8.9" cy="11" r="3.1"/><circle class="cut" cx="15.1" cy="11" r="3.1"/>' +
+      '<circle cx="8.9" cy="11.2" r="1.4"/><circle cx="15.1" cy="11.2" r="1.4"/>' +
+      '<path class="cut" d="M12 13.2l-1.4 1.6 1.4 1.8 1.4-1.8z"/>' +
+      '<path class="cut-line" d="M8.8 18.6l1.6 1.2 1.6-1.2 1.6 1.2 1.6-1.2" stroke-width="1"/>',
   },
   cat: {
     name: 'Cat',
@@ -136,13 +138,16 @@ export const PLAYER_SYMBOLS: Record<PlayerSymbolId, PlayerSymbol> = {
   bee: {
     name: 'Bee',
     markup:
-      '<ellipse cx="8.6" cy="6.4" rx="3.2" ry="4" transform="rotate(-24 8.6 6.4)"/>' +
-      '<ellipse cx="15.4" cy="6.4" rx="3.2" ry="4" transform="rotate(24 15.4 6.4)"/>' +
-      '<ellipse class="cut" cx="8.6" cy="6.4" rx="1.8" ry="2.6" transform="rotate(-24 8.6 6.4)"/>' +
-      '<ellipse class="cut" cx="15.4" cy="6.4" rx="1.8" ry="2.6" transform="rotate(24 15.4 6.4)"/>' +
-      '<ellipse cx="12" cy="15" rx="7.4" ry="5.6"/><path d="M19 13.4l3.6 1.6-3.6 1.6z"/>' +
-      '<path class="cut-line" d="M9.6 9.8v10.4M13.4 9.6v10.8" stroke-width="1.6"/>' +
-      '<circle class="cut" cx="6.6" cy="13.8" r="1"/>',
+      // Seen from above: head, striped body, a wing each side and two feelers.
+      '<path class="line" d="M10.6 3.6L8.6.9M13.4 3.6l2-2.7" stroke-width="1.2"/>' +
+      '<ellipse cx="5.6" cy="10.6" rx="4" ry="2.8" transform="rotate(-28 5.6 10.6)"/>' +
+      '<ellipse cx="18.4" cy="10.6" rx="4" ry="2.8" transform="rotate(28 18.4 10.6)"/>' +
+      '<ellipse class="cut" cx="5.6" cy="10.6" rx="2.6" ry="1.5" transform="rotate(-28 5.6 10.6)"/>' +
+      '<ellipse class="cut" cx="18.4" cy="10.6" rx="2.6" ry="1.5" transform="rotate(28 18.4 10.6)"/>' +
+      '<circle cx="12" cy="6" r="2.9"/>' +
+      '<ellipse cx="12" cy="14.4" rx="4.6" ry="6.6"/>' +
+      '<path d="M12 23.4l-1.3-2.4h2.6z"/>' +
+      '<path class="cut-line" d="M7.6 12.6h8.8M7.6 16.2h8.8" stroke-width="1.6"/>',
   },
   star: {
     name: 'Star',
