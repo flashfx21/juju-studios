@@ -43,7 +43,10 @@ npm run build    # type-check and build into dist/
 npm run preview  # serve the built dist/ folder
 npm run lint     # ESLint
 npm test         # game rules tests (Vitest)
+npm run emulators  # local Firebase (sign-in and database) on this PC
 ```
+
+`npm run emulators` needs the Firebase CLI (`npm install -g firebase-tools`) and Java 11 or later. It runs a local copy of sign-in and the database, so testing never touches the real project. Ports: sign-in 9099, database 9000, Emulator UI at http://127.0.0.1:4000/. Stop it with Ctrl+C. The app does not connect to it yet.
 
 ## Playtests
 
@@ -71,6 +74,10 @@ node -e "import('./src/engine/hashText.ts').then((m) => console.log(m.hashText('
 
 Every push to `main` runs `.github/workflows/deploy.yml`, which lints, builds and publishes `dist/` to GitHub Pages. Progress shows under the repo's **Actions** tab.
 
+## Firebase
+
+The backend is the Firebase project `juju-studios` (Spark plan, Realtime Database). `.firebaserc` names the project, `firebase.json` sets up the rules file and the emulators, and `database.rules.json` holds the database rules (locked for now). The repo is the source of truth for the rules: change the file, then push it with `firebase deploy --only database`. The web app's config lives in `.env.local` (`VITE_FIREBASE_*`, not committed).
+
 ## Folders
 
 ```
@@ -90,6 +97,7 @@ src/
 packs/            content packs, one folder per game; shared/ holds the English word list (ENABLE) any game can load
 docs/             requirements, tech stack, game specs, design handoff
 .github/workflows/deploy.yml
+firebase.json, .firebaserc, database.rules.json   Firebase project, emulators and database rules
 ```
 
 Most folders are empty for now (each holds a `.gitkeep` so Git tracks it). See `docs/juju-engine-tech-stack-0852.md` for the architecture and build order.
