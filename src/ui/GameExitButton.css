@@ -1,0 +1,33 @@
+/* ABOUTME: A small Exit game button on its own short row at the top of a game screen, right-aligned. */
+/* ABOUTME: Asking to confirm, it turns the style's danger color so the second tap is a clear choice. */
+
+.game-exit {
+  flex: none;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+
+.game-exit__button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-label);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.game-exit__button[data-confirming] {
+  border-color: var(--color-danger);
+  background: var(--color-danger);
+  color: var(--color-danger-ink);
+}
+
+/* Inside the rec room's cream card, the dark ink reads better than the cream text color. */
+:root[data-theme='rec-room'] .phone-frame__card .game-exit__button:not([data-confirming]) {
+  color: var(--color-text-on-surface);
+}

@@ -47,6 +47,37 @@
   box-shadow: var(--shadow-button);
 }
 
+/* The logo goes home; it looks like the logo, with an underline only on hover and focus. */
+.lobby-placeholder__logo-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.lobby-placeholder__logo-link:hover,
+.lobby-placeholder__logo-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 8px;
+}
+
+/* Profile is about you, not a screen to preview: the secondary button colors. */
+.lobby-placeholder__button--profile {
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  box-shadow: var(--shadow-button-secondary);
+}
+
+/* Admin is a tool, not a game screen: outlined in the danger color, with a gear before it. */
+.lobby-placeholder__button--admin {
+  background: transparent;
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 3px var(--color-danger);
+}
+
+.lobby-placeholder__button--admin::before {
+  content: '⚙';
+  margin-right: 10px;
+}
+
 /* Arcade buttons use the pixel label font (docs/design/components.md, Buttons). */
 :root[data-theme='arcade'] .lobby-placeholder__button {
   font-family: var(--font-label);

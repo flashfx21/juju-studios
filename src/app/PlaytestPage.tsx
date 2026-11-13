@@ -1,10 +1,11 @@
 // ABOUTME: Solo play: the pages at #/playtest (games still in testing) and #/playtest/<game-id>, for admins and playtesters.
 // ABOUTME: Unknown game ids get a short message instead of a blank page.
 import { Suspense } from 'react'
+import { GameExitContext } from '../ui/gameExit'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { PlayerBadge } from './PlayerBadge'
 import { PLAYTESTS } from './playtests'
-import { href } from './useHashRoute'
+import { goTo, href } from './useHashRoute'
 import { useMe } from './useMe'
 import '../ui/PhoneForm.css'
 
@@ -97,9 +98,16 @@ export function PlaytestPage({ gameId }: { gameId: string }) {
       {gameId === '' ? (
         <PlaytestList />
       ) : playtest ? (
-        <Suspense fallback={<Loading />}>
-          <playtest.Page />
-        </Suspense>
+        <GameExitContext.Provider
+          value={() => {
+            playtest.onExit?.()
+            goTo('playtest')
+          }}
+        >
+          <Suspense fallback={<Loading />}>
+            <playtest.Page />
+          </Suspense>
+        </GameExitContext.Provider>
       ) : (
         <UnknownPlaytest />
       )}

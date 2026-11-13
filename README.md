@@ -14,7 +14,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 | Host sign-in | `#/host` | "Finish on your phone" | Sign-in form |
 | Sign up, Sign in | `#/sign-up`, `#/sign-in`, `/sent`, `/finish`, `/expired` | | One flow with different words (a new email makes an account): Google or email link (or who is signed in), check your email, finishing the link, link expired |
 | Join | `#/join` | | Two steps: a phone not signed in signs up first (then sets up its profile) and comes back; then the room code, which opens that game's room (Pin Drop today) |
-| Lobby placeholder | `#/lobby` | Who is signed in, links to the game picker, Host settings, Profile, Solo play (playtesters), Admin (admins), Sign in (signed out) and Home, plus the version | same |
+| Lobby placeholder | `#/lobby` | The logo goes home. Who is signed in, links to the game picker, Host settings, Profile (cream), Solo play (playtesters), Admin (admins, outlined with a gear), Sign in (signed out) and Home, plus the version | same |
 | Admin | `#/admin` | | Admins only: every player with a profile; turn Solo play on or off, rename, reset a profile |
 | Solo play | `#/playtest`, `#/playtest/chainword`, `#/playtest/dial-it-in`, `#/playtest/dont-jinx-it`, `#/playtest/pin-drop`, `#/playtest/sketch-showdown` | | Signed-in players only: games still in testing, played against bots |
 | Game picker | `#/picker` | Every game six to a page with Previous and Next; games in testing can be picked (and re-picked) and offer their Solo play pages; the rest show In development or Coming soon | Games in testing as rows to pick, then their buttons; the rest as chips |
@@ -65,7 +65,9 @@ Games still in testing open at `#/playtest`, shown as **Solo play** on the phone
 
 **Sketch Showdown playtest, drawer only:** you draw every round for Pencils (you, Bot A, Bot B) against three bots on Crayons. Pick turns and pace, then **Start**. Pick one of three clues; the dev box's **Bot picks** is the other drawer (different picks are a coin flip), and **Time's up** / **Go** stand in for the pick clock and the countdown. Draw with brush, eraser or line, four sizes and 16 colors, chosen from the Brush and Color buttons in the canvas's top-left corner (**OK** closes each menu); **Undo** removes the last stroke and **Hold to clear** wipes the canvas. Your team's guesses show in the strip under the canvas. The dev box sends a teammate's guess (type one to test the matching, or **Wrong guess**), lets the other team win (**Other team got it**) or ends the round (**Time's up**). A wrong guess locks that bot out for 2 seconds. The reveal shows both drawings and the score; you are the host, so **Next** is yours. If it's level after the last round, vote for yourself to draw the sudden-death round. The result screen pages through every round's drawings. The other team's canvas stays empty: bots don't draw.
 
-**To add a game's playtest**, give it a `Playtest.tsx` in its game folder and one line in `src/app/playtests.ts`.
+Every game in Solo play has **Exit game** at the top of its phone screen; a second tap confirms and goes back to the Solo play list (leaving Pin Drop with others also makes the phone forget that room). It comes from the phone frame, so the TV-shaped desk view of Don't Jinx It on a wide window does not show it.
+
+**To add a game's playtest**, give it a `Playtest.tsx` in its game folder and one line in `src/app/playtests.ts` (add `onExit` there for any clean-up when a player leaves).
 
 ## Admins
 

@@ -1,8 +1,16 @@
 // ABOUTME: Games that can be playtested in Solo play at #/playtest/<game-id>, for signed-in players.
 // ABOUTME: Each page loads only when opened, so its code and word lists stay out of the main download.
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
+import { rememberRoom } from '../engine/rememberedRoom'
 
-export const PLAYTESTS: Record<string, { title: string; Page: LazyExoticComponent<ComponentType> }> = {
+export interface PlaytestEntry {
+  title: string
+  Page: LazyExoticComponent<ComponentType>
+  /** Extra clean-up when a player taps Exit game, such as forgetting the room this phone was in. */
+  onExit?: () => void
+}
+
+export const PLAYTESTS: Record<string, PlaytestEntry> = {
   chainword: {
     title: 'Chainword',
     Page: lazy(() => import('../games/chainword/Playtest').then((module) => ({ default: module.Playtest }))),
@@ -22,6 +30,7 @@ export const PLAYTESTS: Record<string, { title: string; Page: LazyExoticComponen
   'pin-drop-together': {
     title: 'Pin Drop with others (two or more phones)',
     Page: lazy(() => import('../games/pin-drop/Together').then((module) => ({ default: module.Together }))),
+    onExit: () => rememberRoom('pin-drop', ''),
   },
   'sketch-showdown': {
     title: 'Sketch Showdown',

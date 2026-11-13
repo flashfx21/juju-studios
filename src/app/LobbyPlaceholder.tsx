@@ -13,7 +13,11 @@ export function LobbyPlaceholder() {
 
   return (
     <main className="lobby-placeholder">
-      <h1 className="lobby-placeholder__logo">JuJu Studios</h1>
+      <h1 className="lobby-placeholder__logo">
+        <a className="lobby-placeholder__logo-link" href={href('home')} data-testid="lobby-logo-home">
+          JuJu Studios
+        </a>
+      </h1>
       <p className="lobby-placeholder__tagline">The lobby is being built. Here's what's ready to look at.</p>
       <p className="lobby-placeholder__tagline" data-testid="lobby-signed-in">
         {me.kind === 'signed-in'
@@ -29,7 +33,7 @@ export function LobbyPlaceholder() {
         <a className="lobby-placeholder__button" href={href('settings')} data-testid="open-host-settings">
           Host settings
         </a>
-        <a className="lobby-placeholder__button" href={href('profile')} data-testid="open-profile">
+        <a className="lobby-placeholder__button lobby-placeholder__button--profile" href={href('profile')} data-testid="open-profile">
           Your profile
         </a>
         {canPlaytest && (
@@ -38,7 +42,7 @@ export function LobbyPlaceholder() {
           </a>
         )}
         {isAdmin && (
-          <a className="lobby-placeholder__button" href={href('admin')} data-testid="open-admin">
+          <a className="lobby-placeholder__button lobby-placeholder__button--admin" href={href('admin')} data-testid="open-admin">
             Admin
           </a>
         )}
