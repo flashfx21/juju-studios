@@ -1,4 +1,4 @@
-// ABOUTME: Phone sign-in: Google or an emailed link, "check your email", finishing the link, and "link expired".
+// ABOUTME: Phone sign-in and sign-up (one flow): Google or an emailed link, "check your email", finishing the link, "link expired".
 // ABOUTME: A phone stays signed in, so a signed-in visitor sees who they are and can carry on or sign out.
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { emailSignInLink, finishEmailSignIn, signInWithGoogle, signOutOfThisDevice } from '../engine/net/auth'
@@ -10,7 +10,7 @@ import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
 import { checkEmail } from './formRules'
 import { clearPendingEmail, loadPendingEmail, savePendingEmail } from './pendingEmail'
-import { clearPendingProfile } from './pendingProfile'
+import { takeAfterSignIn } from './afterSignIn'
 import { PlayerBadge } from './PlayerBadge'
 import { signInProblem } from './signInProblems'
 import { goTo, href } from './useHashRoute'
@@ -25,12 +25,13 @@ const EXPIRED_STAMP: Record<LobbyStyleId, string> = {
   'rec-room': 'Expired',
 }
 
-/** Where a freshly signed-in host goes. The lobby stands in until rooms exist. */
+/** Where a freshly signed-in player goes: back to where they started (such as Join), or the lobby page. */
 function goOnSignedIn() {
-  goTo('lobby')
+  goTo(takeAfterSignIn())
 }
 
-export function SignIn({ step }: { step: string }) {
+/** Sign up and sign in are the same steps (a new email makes an account); only the words differ. */
+export function SignIn({ step, signingUp = false }: { step: string; signingUp?: boolean }) {
   const content =
     step === 'sent' ? (
       <LinkSent />
@@ -39,20 +40,20 @@ export function SignIn({ step }: { step: string }) {
     ) : step === 'finish' ? (
       <FinishLink />
     ) : (
-      <SignInStart />
+      <SignInStart signingUp={signingUp} />
     )
 
   return (
-    <PhoneFrame label="Sign in" cardTag="Host sign-in">
+    <PhoneFrame label={signingUp ? 'Sign up' : 'Sign in'} cardTag={signingUp ? 'Sign up' : 'Sign in'}>
       <PlayerBadge />
       <div className="phone-top">
         <span className="phone-top__logo" aria-hidden="true">
           JuJu
         </span>
-        <h1 className="phone-top__title">Sign in</h1>
+        <h1 className="phone-top__title">{signingUp ? 'Sign up' : 'Sign in'}</h1>
         <p className="phone-top__tag">
-          <span className="phone-top__tag-main">Host login</span>
-          <span className="phone-top__tag-note">To host a room</span>
+          <span className="phone-top__tag-main">{signingUp ? 'New player' : 'Welcome back'}</span>
+          <span className="phone-top__tag-note">{signingUp ? 'Under a minute' : 'Host or play'}</span>
         </p>
       </div>
       {content}
@@ -60,10 +61,10 @@ export function SignIn({ step }: { step: string }) {
   )
 }
 
-function SignInStart() {
+function SignInStart({ signingUp }: { signingUp: boolean }) {
   const me = useMe()
   if (me.kind === 'checking') return null
-  return me.kind === 'signed-in' ? <SignedIn email={me.player.email} /> : <SignInForm />
+  return me.kind === 'signed-in' ? <SignedIn email={me.player.email} /> : <SignInForm signingUp={signingUp} />
 }
 
 function SignedIn({ email }: { email: string }) {
@@ -84,10 +85,7 @@ function SignedIn({ email }: { email: string }) {
           type="button"
           className="phone-link"
           data-testid="signed-in-sign-out"
-          onClick={() => {
-            clearPendingProfile()
-            void signOutOfThisDevice()
-          }}
+          onClick={() => void signOutOfThisDevice()}
         >
           Not you? Sign out
         </button>
@@ -96,7 +94,7 @@ function SignedIn({ email }: { email: string }) {
   )
 }
 
-function SignInForm() {
+function SignInForm({ signingUp }: { signingUp: boolean }) {
   const [email, setEmail] = useState(loadPendingEmail)
   const [error, setError] = useState('')
   const [problem, setProblem] = useState('')
@@ -104,7 +102,6 @@ function SignInForm() {
 
   async function continueWithGoogle() {
     setProblem('')
-    clearPendingProfile()
     setBusy('google')
     const outcome = await signInWithGoogle()
     setBusy('')
@@ -123,7 +120,6 @@ function SignInForm() {
       return
     }
     setBusy('email')
-    clearPendingProfile()
     savePendingEmail(email.trim())
     const outcome = await emailSignInLink(email.trim())
     setBusy('')
@@ -134,7 +130,10 @@ function SignInForm() {
   return (
     <form className="phone-form" noValidate onSubmit={submit}>
       <div className="cue-card">
-        <h2 className="cue-card__label">Host sign-in</h2>
+        <h2 className="cue-card__label">{signingUp ? 'Make your account' : 'Sign in'}</h2>
+        {signingUp && (
+          <p className="cue-card__text">Use Google, or your email for a one-time link. Next you'll pick your name, color and symbol.</p>
+        )}
         <GoogleButton busy={busy === 'google'} testId="sign-in-google" onClick={continueWithGoogle} />
         <p className="sign-in-or">or</p>
         <TextField

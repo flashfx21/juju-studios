@@ -20,7 +20,7 @@ export function checkEmail(email: string): string {
 }
 
 export function checkRoomCode(code: string): string {
-  return code.length === ROOM_CODE_LENGTH ? '' : `Enter the ${ROOM_CODE_LENGTH}-letter code from the TV.`
+  return code.length === ROOM_CODE_LENGTH ? '' : `Enter the ${ROOM_CODE_LENGTH}-letter room code.`
 }
 
 export function checkUsername(name: string): string {

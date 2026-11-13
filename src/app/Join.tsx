@@ -1,25 +1,18 @@
-// ABOUTME: Phone Join screen, which is also profile setup: room code, username, color and symbol (arcade adds initials).
-// ABOUTME: A phone not signed in yet also signs in here, with Google or an emailed link; the room code isn't checked yet.
+// ABOUTME: Phone Join screen: type the room code from the host and go into that game's room.
+// ABOUTME: A phone not signed in yet signs up first (name, color, symbol), then comes back here for the code.
 import { useState, type FormEvent } from 'react'
-import { emailSignInLink, signInWithGoogle } from '../engine/net/auth'
-import { saveProfile, type Profile } from '../engine/net/profiles'
+import { roomGame } from '../engine/net/rooms'
+import { rememberRoom } from '../engine/rememberedRoom'
 import { CodeBoxes } from '../ui/CodeBoxes'
-import { ColorSwatches } from '../ui/ColorSwatches'
-import { GoogleButton } from '../ui/GoogleButton'
 import { PhoneFrame } from '../ui/PhoneFrame'
-import { PLAYER_COLORS } from '../ui/playerColors'
-import { SymbolPicker } from '../ui/SymbolPicker'
-import { Field, TextField } from '../ui/TextField'
+import { Field } from '../ui/TextField'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
-import { checkEmail, checkRoomCode, INITIALS_LENGTH, ROOM_CODE_LENGTH } from './formRules'
-import { savePendingEmail } from './pendingEmail'
-import { clearPendingProfile, savePendingProfile } from './pendingProfile'
+import { saveAfterSignIn } from './afterSignIn'
+import { checkRoomCode, ROOM_CODE_LENGTH } from './formRules'
 import { PlayerBadge } from './PlayerBadge'
-import { signInProblem } from './signInProblems'
-import { goTo } from './useHashRoute'
+import { goTo, href } from './useHashRoute'
 import { useMe } from './useMe'
-import { useProfileDraft } from './useProfileDraft'
 import './Join.css'
 
 const JOIN_LABELS: Record<LobbyStyleId, string> = {
@@ -28,182 +21,126 @@ const JOIN_LABELS: Record<LobbyStyleId, string> = {
   'rec-room': 'Pull up a chair',
 }
 
+/** Games whose rooms can be joined by code, and the page each room plays on. */
+const ROOM_PAGES: Record<string, string> = {
+  'pin-drop': 'pin-drop-together',
+}
+
+function JoinTop() {
+  return (
+    <div className="join-top">
+      <h1 className="join-top__logo">
+        JuJu<span className="join-top__logo-rest"> Studios</span>
+      </h1>
+      <p className="join-top__tag">
+        <span className="join-top__tag-main">Tonight's contestant · under a minute</span>
+        <span className="join-top__tag-arcade">
+          Player entry
+          <span className="join-top__tag-note">Under 1 minute</span>
+        </span>
+      </p>
+    </div>
+  )
+}
+
 export function Join() {
   const me = useMe()
   if (me.kind === 'checking' || (me.kind === 'signed-in' && me.profile === undefined)) {
     return <PhoneFrame label="Join a game" cardTag="Under a minute" />
   }
-  const signedIn = me.kind === 'signed-in' ? { uid: me.player.uid, profile: me.profile ?? null } : null
-  return <JoinForm key={signedIn?.uid ?? 'signed-out'} signedIn={signedIn} />
+  return me.kind === 'signed-in' ? <CodeScreen /> : <SignUpFirst />
 }
 
-interface JoinFormProps {
-  /** Null when this phone still has to sign in. */
-  signedIn: { uid: string; profile: Profile | null } | null
+/** Step one for a new phone: sign up, then come back to the code screen. */
+function SignUpFirst() {
+  function goSign(screen: 'sign-up' | 'sign-in') {
+    saveAfterSignIn('join')
+    goTo(screen)
+  }
+
+  return (
+    <PhoneFrame label="Join a game" cardTag="Under a minute">
+      <JoinTop />
+      <div className="cue-card join-card">
+        <h2 className="cue-card__label">Step 1 of 2</h2>
+        <p className="cue-card__heading">Sign up first</p>
+        <p className="cue-card__text">
+          Pick your name, color and symbol. It takes a minute, and this phone remembers you after that. Then you'll type
+          the room code.
+        </p>
+      </div>
+      <div className="phone-actions">
+        <button type="button" className="phone-button" data-testid="join-sign-up" onClick={() => goSign('sign-up')}>
+          Sign up
+        </button>
+        <button type="button" className="phone-link" data-testid="join-sign-in" onClick={() => goSign('sign-in')}>
+          Already signed up? Sign in
+        </button>
+        <a className="phone-link phone-link--quiet" href={href('home')}>
+          Back
+        </a>
+      </div>
+    </PhoneFrame>
+  )
 }
 
-function JoinForm({ signedIn }: JoinFormProps) {
+function CodeScreen() {
   const style = useLobbyStyle()
-  const asksInitials = style === 'arcade'
-  const draft = useProfileDraft(signedIn?.profile ?? null)
   const [code, setCode] = useState('')
-  const [email, setEmail] = useState('')
-  const [errors, setErrors] = useState({ code: '', email: '' })
-  const [problem, setProblem] = useState('')
-  const [busy, setBusy] = useState<'google' | 'email' | 'join' | ''>('')
-
-  /** Checks the fields (the email only when it will be used) and focuses the first bad one. */
-  function fieldsAreGood(withEmail: boolean): boolean {
-    const found = { code: checkRoomCode(code), email: withEmail ? checkEmail(email) : '' }
-    setErrors(found)
-    setProblem('')
-    const badProfileField = draft.check(asksInitials)
-    const firstBad = found.code ? 'code' : badProfileField || (found.email ? 'email' : '')
-    if (firstBad) document.getElementById(`join-${firstBad}`)?.focus()
-    return !firstBad
-  }
-
-  async function saveAndGo(uid: string) {
-    try {
-      await saveProfile(uid, draft.toProfile())
-      goTo('lobby')
-    } catch (error) {
-      console.error('Saving the profile failed', error)
-      setProblem("Your profile didn't save. Check you're online and try again.")
-    }
-  }
-
-  async function joinWithGoogle() {
-    if (busy || !fieldsAreGood(false)) return
-    setBusy('google')
-    // Saved as soon as sign-in finishes (see MeProvider), so profile setup never flashes up in between.
-    savePendingProfile(draft.toProfile())
-    const outcome = await signInWithGoogle()
-    setBusy('')
-    if (outcome === 'signed-in') {
-      goTo('lobby')
-      return
-    }
-    clearPendingProfile()
-    setProblem(signInProblem(outcome))
-  }
+  const [error, setError] = useState('')
+  const [busy, setBusy] = useState(false)
 
   async function submit(event: FormEvent) {
     event.preventDefault()
-    if (busy || !fieldsAreGood(signedIn === null)) return
-    if (signedIn) {
-      setBusy('join')
-      await saveAndGo(signedIn.uid)
-      setBusy('')
+    if (busy) return
+    const found = checkRoomCode(code)
+    setError(found)
+    if (found) {
+      document.getElementById('join-code')?.focus()
       return
     }
-    setBusy('email')
-    savePendingEmail(email.trim())
-    const outcome = await emailSignInLink(email.trim())
-    setBusy('')
-    if (outcome !== 'sent') {
-      setProblem(signInProblem(outcome))
-      return
+    setBusy(true)
+    try {
+      const game = await roomGame(code)
+      const page = game ? ROOM_PAGES[game] : undefined
+      if (game && page) {
+        rememberRoom(game, code)
+        goTo('playtest', page)
+        return
+      }
+      setError(game ? "That room's game can't be joined from here yet." : "There's no room with that code.")
+    } catch (problem) {
+      console.error('Looking up the room failed', problem)
+      setError("Couldn't check the code. Check you're online and try again.")
     }
-    savePendingProfile(draft.toProfile())
-    goTo('sign-in', 'sent')
+    setBusy(false)
+    document.getElementById('join-code')?.focus()
   }
 
   return (
     <PhoneFrame label="Join a game" cardTag="Under a minute">
       <PlayerBadge />
-      <div className="join-top">
-        <h1 className="join-top__logo">
-          JuJu<span className="join-top__logo-rest"> Studios</span>
-        </h1>
-        <p className="join-top__tag">
-          <span className="join-top__tag-main">Tonight's contestant · under a minute</span>
-          <span className="join-top__tag-arcade">
-            Player entry
-            <span className="join-top__tag-note">Under 1 minute</span>
-          </span>
-        </p>
-      </div>
-
+      <JoinTop />
       <form className="phone-form" noValidate onSubmit={submit}>
         <div className="cue-card join-card">
-          <h2 className="cue-card__label">Cue card #1</h2>
-          <Field id="join-code" label="Room code" error={errors.code}>
+          <h2 className="cue-card__label">Room code</h2>
+          <Field id="join-code" label="Room code from the host" error={error}>
             <CodeBoxes
               id="join-code"
               value={code}
               length={ROOM_CODE_LENGTH}
-              invalid={!!errors.code}
-              describedBy={errors.code ? 'join-code-error' : undefined}
+              invalid={!!error}
+              describedBy={error ? 'join-code-error' : undefined}
               testId="join-code"
               onChange={setCode}
             />
           </Field>
-          <TextField
-            id="join-username"
-            label="Username"
-            autoComplete="nickname"
-            value={draft.username}
-            error={draft.errors.username}
-            testId="join-username"
-            onChange={draft.changeUsername}
-          />
-          {asksInitials && (
-            <Field id="join-initials" label="Initials" error={draft.errors.initials}>
-              <CodeBoxes
-                id="join-initials"
-                value={draft.initials}
-                length={INITIALS_LENGTH}
-                invalid={!!draft.errors.initials}
-                describedBy={draft.errors.initials ? 'join-initials-error' : undefined}
-                variant="initials"
-                testId="join-initials"
-                onChange={draft.changeInitials}
-              />
-            </Field>
-          )}
-          <fieldset className="join-colors">
-            <legend className="field__label">Your color</legend>
-            <ColorSwatches style={style} value={draft.color} testIdPrefix="join-color" onPick={draft.setColor} />
-          </fieldset>
-          <fieldset className="join-colors">
-            <legend className="field__label">Your symbol</legend>
-            <SymbolPicker
-              colorHex={PLAYER_COLORS[style][draft.color]}
-              value={draft.symbol}
-              testIdPrefix="join-symbol"
-              onPick={draft.setSymbol}
-            />
-          </fieldset>
         </div>
-
-        {signedIn === null && (
-          <div className="cue-card join-card join-sign-in">
-            <h2 className="cue-card__label">Sign in once</h2>
-            <GoogleButton busy={busy === 'google'} testId="join-google" onClick={joinWithGoogle} />
-            <p className="sign-in-or">or</p>
-            <TextField
-              id="join-email"
-              label="Email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              error={errors.email}
-              testId="join-email"
-              onChange={setEmail}
-            />
-            <p className="field__hint">
-              Join below and we'll email you a sign-in link. Tap it once and this phone remembers you. Check your spam
-              folder.
-            </p>
-          </div>
-        )}
-
         <div className="phone-actions join-actions">
           <button
             type="submit"
             className="phone-button join-submit"
-            aria-disabled={busy !== '' || undefined}
+            aria-disabled={busy || undefined}
             data-testid="join-submit"
           >
             <span className="join-submit__dome">{JOIN_LABELS[style]}</span>
@@ -211,10 +148,9 @@ function JoinForm({ signedIn }: JoinFormProps) {
           <p className="join-caption" aria-hidden="true">
             Hit the buzzer
           </p>
-          <p className="preview-note" role="alert" data-testid="join-problem">
-            {problem}
-          </p>
-          <p className="preview-note">Preview: rooms aren't connected yet, so the room code isn't checked.</p>
+          <a className="phone-link phone-link--quiet" href={href('home')}>
+            Back
+          </a>
         </div>
       </form>
     </PhoneFrame>

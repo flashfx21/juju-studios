@@ -6,6 +6,7 @@ export type Screen =
   | 'home'
   | 'host'
   | 'sign-in'
+  | 'sign-up'
   | 'join'
   | 'lobby'
   | 'picker'
@@ -20,7 +21,7 @@ export interface Route {
   step: string
 }
 
-const SCREENS: Screen[] = ['home', 'host', 'sign-in', 'join', 'lobby', 'picker', 'settings', 'profile', 'playtest', 'admin']
+const SCREENS: Screen[] = ['home', 'host', 'sign-in', 'sign-up', 'join', 'lobby', 'picker', 'settings', 'profile', 'playtest', 'admin']
 
 function routeFromHash(hash: string): Route {
   const [name = '', step = ''] = hash.replace(/^#\/?/, '').split('/')

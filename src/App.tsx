@@ -47,7 +47,7 @@ function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle:
     if (signedIn) void saveProfileStyle(signedIn, next).catch((error: unknown) => console.error('Saving the style failed', error))
   }
   // Everyone has a profile: a signed-in player without one sets it up before anything else.
-  if (me.kind === 'signed-in' && me.profile === null && route.screen !== 'sign-in') {
+  if (me.kind === 'signed-in' && me.profile === null && route.screen !== 'sign-in' && route.screen !== 'sign-up') {
     return <Profile style={style} onStyleChange={setStyle} />
   }
 
@@ -66,6 +66,8 @@ function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle:
       return kind === 'tv' ? <HostSignInTv /> : <SignIn step="" />
     case 'sign-in':
       return <SignIn step={route.step} />
+    case 'sign-up':
+      return <SignIn step={route.step} signingUp />
     case 'join':
       return <Join />
     case 'playtest':

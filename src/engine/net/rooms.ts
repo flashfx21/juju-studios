@@ -65,6 +65,12 @@ export async function createRoom(uid: string, game: string, player: RoomPlayer):
   throw new Error('No free room code found.')
 }
 
+/** The game a room is playing, or null when there's no room with that code. */
+export async function roomGame(code: string): Promise<string | null> {
+  const snapshot = await get(roomRef(code, 'game'))
+  return snapshot.exists() ? String(snapshot.val()) : null
+}
+
 export type JoinOutcome = 'joined' | 'no-room' | 'other-game'
 
 /** Joins an existing room for this game. Joining again (after a refresh) is fine. */

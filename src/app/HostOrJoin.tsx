@@ -259,6 +259,9 @@ export function HostOrJoinPhone() {
       ) : (
         <>
           <PhoneChoice kind="host" copy={copy.host} to={href('sign-in')} />
+          <a className="phone-button entry-phone__sign-up" href={href('sign-up')} data-testid="sign-up-button">
+            Sign up
+          </a>
           <a className="entry-phone__link" href={href('sign-in')} data-testid="sign-in-link">
             {copy.signIn}
           </a>

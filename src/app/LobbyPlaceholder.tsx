@@ -47,6 +47,9 @@ export function LobbyPlaceholder() {
             Sign in
           </a>
         )}
+        <a className="lobby-placeholder__button" href={href('home')} data-testid="open-home">
+          Home
+        </a>
       </nav>
       <p className="lobby-placeholder__version" data-testid="app-version">
         v{packageInfo.version}

@@ -14,7 +14,6 @@ import { Field, TextField } from '../ui/TextField'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import '../ui/PhoneForm.css'
 import { INITIALS_LENGTH } from './formRules'
-import { clearPendingProfile } from './pendingProfile'
 import { goTo, href } from './useHashRoute'
 import { useMe } from './useMe'
 import { useProfileDraft } from './useProfileDraft'
@@ -141,7 +140,10 @@ function ProfileForm({ uid, email, saved, style, onStyleChange }: ProfileFormPro
     setSaving(true)
     try {
       await saveProfile(uid, draft.toProfile())
-      goTo(settingUp ? 'lobby' : 'home')
+      // Setup shows in place of whatever screen the player was heading to (such as Join); once saved, that
+      // screen appears by itself. Only setup opened from Profile itself moves on, to the lobby page.
+      if (!settingUp) goTo('home')
+      else if (window.location.hash.startsWith(href('profile'))) goTo('lobby')
     } catch (error) {
       console.error('Saving the profile failed', error)
       setProblem("Your profile didn't save. Check you're online and try again.")
@@ -150,7 +152,6 @@ function ProfileForm({ uid, email, saved, style, onStyleChange }: ProfileFormPro
   }
 
   function signOut() {
-    clearPendingProfile()
     void signOutOfThisDevice()
     goTo('home')
   }

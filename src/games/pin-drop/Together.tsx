@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { createRoom, joinRoom, playerIds, sendInput, takeInputs, watchRoom, writePlay, clearPlay, type Room } from '../../engine/net/rooms'
 import { useMe } from '../../app/useMe'
+import { rememberedRoom, rememberRoom } from '../../engine/rememberedRoom'
 import { CodeBoxes } from '../../ui/CodeBoxes'
 import { PhoneFrame } from '../../ui/PhoneFrame'
 import { inkOn, PLAYER_COLORS, type PlayerColorId } from '../../ui/playerColors'
@@ -31,8 +32,6 @@ import './Together.css'
 
 /** How long the reveal shows before the standings. */
 const REVEAL_SECONDS = 10
-/** This phone's room, so a refresh goes straight back in. */
-const ROOM_KEY = 'juju.pinDropRoom'
 
 const SCORING_NAMES = { match: 'Match play', stroke: 'Stroke play' }
 const UNIT_NAMES = { mi: 'Miles', km: 'Kilometers' }
@@ -41,23 +40,6 @@ const ROUND_NAMES = { 5: '5', 7: '7', 9: '9' }
 
 function context(): RulesContext {
   return { now: Date.now(), random: Math.random }
-}
-
-function rememberedRoom(): string {
-  try {
-    return localStorage.getItem(ROOM_KEY) ?? ''
-  } catch {
-    return ''
-  }
-}
-
-function rememberRoom(code: string) {
-  try {
-    if (code) localStorage.setItem(ROOM_KEY, code)
-    else localStorage.removeItem(ROOM_KEY)
-  } catch {
-    // Storage blocked: a refresh asks for the code again.
-  }
 }
 
 /** When the timer for this phase runs out: guessing uses the pace, the reveal a fixed time, standings wait for Next. */
@@ -69,10 +51,11 @@ function deadlineFor(state: PinDropState, now: number): number | null {
 
 export function Together() {
   const me = useMe()
-  const [code, setCode] = useState(rememberedRoom)
+  // This phone's room (also set by the home Join screen), so a refresh goes straight back in.
+  const [code, setCode] = useState(() => rememberedRoom(manifest.id))
 
   function enter(next: string) {
-    rememberRoom(next)
+    rememberRoom(manifest.id, next)
     setCode(next)
   }
 
