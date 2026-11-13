@@ -1,5 +1,5 @@
 // ABOUTME: This person's own lobby style, saved on this device and applied to <html> as data-theme.
-// ABOUTME: Everyone picks their own: the TV shows the host's style, each phone shows its user's.
+// ABOUTME: Everyone picks their own: the TV shows the host's style, each phone its user's; signed in, App also keeps it in the profile.
 import { useLayoutEffect, useState } from 'react'
 import { DEFAULT_LOBBY_STYLE, isLobbyStyleId, type LobbyStyleId } from '../ui/themes/lobbyStyles'
 

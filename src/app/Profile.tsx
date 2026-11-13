@@ -1,5 +1,5 @@
 // ABOUTME: The phone Profile screen: initials in your color, username, email, color, your style, and stats.
-// ABOUTME: A signed-in player with no profile yet sees it as setup; "Your style" stays on this device.
+// ABOUTME: A signed-in player with no profile yet sees it as setup; "Your style" is saved to the profile too.
 import { useState, type CSSProperties, type FormEvent } from 'react'
 import { signOutOfThisDevice } from '../engine/net/auth'
 import { saveProfile, type Profile as SavedProfile } from '../engine/net/profiles'

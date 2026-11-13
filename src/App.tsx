@@ -1,5 +1,6 @@
 // ABOUTME: Top-level screen switch: applies this person's style, the host's settings and who is signed in, then shows the screen in the URL hash.
 // ABOUTME: Screens with a TV and a phone version pick one by screen shape (see useScreenKind).
+import { useEffect } from 'react'
 import { Admin } from './app/Admin'
 import { GamePicker } from './app/GamePicker'
 import { GameVote } from './app/GameVote'
@@ -16,6 +17,7 @@ import { useHostSettings, type HostSettings as Settings } from './app/useHostSet
 import { MeProvider } from './app/MeProvider'
 import { useMe } from './app/useMe'
 import { useMyStyle } from './app/useMyStyle'
+import { saveProfileStyle } from './engine/net/profiles'
 import type { LobbyStyleId } from './ui/themes/lobbyStyles'
 import { LobbyStyleContext } from './ui/themes/useLobbyStyle'
 import { useScreenKind, type ScreenKind } from './ui/useScreenKind'
@@ -29,8 +31,21 @@ interface ScreenProps {
   setStyle: (style: LobbyStyleId) => void
 }
 
-function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle }: ScreenProps) {
+function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle: setDeviceStyle }: ScreenProps) {
   const me = useMe()
+  const signedIn = me.kind === 'signed-in' && me.profile ? me.player.uid : null
+  const savedStyle = me.kind === 'signed-in' ? me.profile?.style : undefined
+
+  // A signed-in player's saved style follows them to this device.
+  useEffect(() => {
+    if (savedStyle) setDeviceStyle(savedStyle)
+  }, [savedStyle, setDeviceStyle])
+
+  /** Picking a style applies it here and, when signed in, saves it to the profile. */
+  function setStyle(next: LobbyStyleId) {
+    setDeviceStyle(next)
+    if (signedIn) void saveProfileStyle(signedIn, next).catch((error: unknown) => console.error('Saving the style failed', error))
+  }
   // Everyone has a profile: a signed-in player without one sets it up before anything else.
   if (me.kind === 'signed-in' && me.profile === null && route.screen !== 'sign-in') {
     return <Profile style={style} onStyleChange={setStyle} />
