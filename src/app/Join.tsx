@@ -1,4 +1,4 @@
-// ABOUTME: Phone Join screen, which is also profile setup: room code, username and color (arcade adds initials).
+// ABOUTME: Phone Join screen, which is also profile setup: room code, username, color and symbol (arcade adds initials).
 // ABOUTME: A phone not signed in yet also signs in here, with Google or an emailed link; the room code isn't checked yet.
 import { useState, type FormEvent } from 'react'
 import { emailSignInLink, signInWithGoogle } from '../engine/net/auth'
@@ -7,6 +7,8 @@ import { CodeBoxes } from '../ui/CodeBoxes'
 import { ColorSwatches } from '../ui/ColorSwatches'
 import { GoogleButton } from '../ui/GoogleButton'
 import { PhoneFrame } from '../ui/PhoneFrame'
+import { PLAYER_COLORS } from '../ui/playerColors'
+import { SymbolPicker } from '../ui/SymbolPicker'
 import { Field, TextField } from '../ui/TextField'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
@@ -163,6 +165,15 @@ function JoinForm({ signedIn }: JoinFormProps) {
           <fieldset className="join-colors">
             <legend className="field__label">Your color</legend>
             <ColorSwatches style={style} value={draft.color} testIdPrefix="join-color" onPick={draft.setColor} />
+          </fieldset>
+          <fieldset className="join-colors">
+            <legend className="field__label">Your symbol</legend>
+            <SymbolPicker
+              colorHex={PLAYER_COLORS[style][draft.color]}
+              value={draft.symbol}
+              testIdPrefix="join-symbol"
+              onPick={draft.setSymbol}
+            />
           </fieldset>
         </div>
 

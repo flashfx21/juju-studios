@@ -1,0 +1,33 @@
+/* ABOUTME: Symbol picker layout: four rows of four round buttons in the player's color. */
+/* ABOUTME: The chosen symbol gets a thick ring, so the choice doesn't rely on color. */
+
+.symbol-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 56px);
+  justify-content: space-between;
+  gap: 10px 6px;
+}
+
+.symbol-picker__button {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--player);
+  color: var(--player-ink);
+  cursor: pointer;
+}
+
+.symbol-picker__button[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 3px var(--color-background),
+    0 0 0 7px var(--color-text);
+}
+
+:root[data-theme='arcade'] .symbol-picker__button {
+  border-radius: 0;
+}

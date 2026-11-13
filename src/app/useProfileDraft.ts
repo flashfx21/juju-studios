@@ -1,18 +1,22 @@
-// ABOUTME: The username, initials and color being typed on Join, profile setup or Profile, with their checks.
+// ABOUTME: The username, initials, color and symbol being picked on Join, profile setup or Profile, with their checks.
 // ABOUTME: Initials follow the username until the player types their own.
 import { useState } from 'react'
 import type { Profile } from '../engine/net/profiles'
 import type { PlayerColorId } from '../ui/playerColors'
+import { randomPlayerSymbol, type PlayerSymbolId } from '../ui/playerSymbols'
 import { checkInitials, checkUsername, INITIALS_LENGTH, lettersOnly } from './formRules'
 
 export interface ProfileDraft {
   username: string
   initials: string
   color: PlayerColorId
+  /** Undefined only on an older profile that has never picked one. */
+  symbol: PlayerSymbolId | undefined
   errors: { username: string; initials: string }
   changeUsername: (name: string) => void
   changeInitials: (initials: string) => void
   setColor: (color: PlayerColorId) => void
+  setSymbol: (symbol: PlayerSymbolId) => void
   /** Shows any errors; returns the id suffix of the first bad field ("username" or "initials"), or "". */
   check: (asksInitials: boolean) => string
   /** The draft as a profile to save; initials fall back to the username's letters. */
@@ -24,12 +28,15 @@ export function useProfileDraft(start: Profile | null): ProfileDraft {
   const [initials, setInitials] = useState(start?.initials ?? '')
   const [initialsEdited, setInitialsEdited] = useState(start !== null)
   const [color, setColor] = useState<PlayerColorId>(start?.color ?? 'red')
+  // A new profile starts with a random symbol so setup has no extra step.
+  const [symbol, setSymbol] = useState<PlayerSymbolId | undefined>(() => (start ? start.symbol : randomPlayerSymbol()))
   const [errors, setErrors] = useState({ username: '', initials: '' })
 
   return {
     username,
     initials,
     color,
+    symbol,
     errors,
     changeUsername(name) {
       setUsername(name)
@@ -40,6 +47,7 @@ export function useProfileDraft(start: Profile | null): ProfileDraft {
       setInitialsEdited(true)
     },
     setColor,
+    setSymbol,
     check(asksInitials) {
       const noLetters = !initials && !lettersOnly(username, INITIALS_LENGTH)
       const found = {
@@ -50,11 +58,14 @@ export function useProfileDraft(start: Profile | null): ProfileDraft {
       return found.username ? 'username' : found.initials ? 'initials' : ''
     },
     toProfile() {
-      return {
+      const profile: Profile = {
         username: username.trim(),
         initials: initials || lettersOnly(username, INITIALS_LENGTH),
         color,
       }
+      // Left out when unset: the database refuses undefined values.
+      if (symbol) profile.symbol = symbol
+      return profile
     },
   }
 }

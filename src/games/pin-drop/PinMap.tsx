@@ -5,12 +5,17 @@ import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from 'react'
 import type { PlayerId } from '../types'
 import type { Pin } from './rules'
+import { inkOn } from '../../ui/playerColors'
+import { playerSymbolHtml, type PlayerSymbolId } from '../../ui/playerSymbols'
+import '../../ui/PlayerSymbol.css'
 import './PinMap.css'
 
 export interface MapPlayer {
   id: PlayerId
   initials: string
   color: string
+  /** Shown on the pin in place of the initials. */
+  symbol?: PlayerSymbolId
 }
 
 interface PinMapProps {
@@ -30,10 +35,17 @@ const TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 const ATTRIBUTION = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 const WORLD_CENTER: L.LatLngTuple = [20, 0]
 
+/** Text for HTML: pins are built as an HTML string, and initials come from other players. */
+function escapeHtml(text: string): string {
+  return text.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
+}
+
 function pinIcon(player: MapPlayer): L.DivIcon {
   return L.divIcon({
     className: 'pd-map-pin',
-    html: `<span class="pd-map-pin__head" style="background:${player.color}">${player.initials}</span>`,
+    html: `<span class="pd-map-pin__head" style="background:${player.color};--player:${player.color};color:${inkOn(player.color)}">${
+      player.symbol ? playerSymbolHtml(player.symbol) : escapeHtml(player.initials)
+    }</span>`,
     iconSize: [34, 44],
     iconAnchor: [17, 44],
   })

@@ -1,7 +1,8 @@
-// ABOUTME: The signed-in player's initials in their color, in the top corner of phone menu screens.
+// ABOUTME: The signed-in player's symbol (arcade: initials) in their color, in the top corner of phone menu screens.
 // ABOUTME: Tapping it opens Profile. Shows nothing while signed out or before the profile loads.
 import type { CSSProperties } from 'react'
 import { inkOn, PLAYER_COLORS } from '../ui/playerColors'
+import { PlayerSymbol } from '../ui/PlayerSymbol'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
 import { href } from './useHashRoute'
 import { useMe } from './useMe'
@@ -11,7 +12,7 @@ export function PlayerBadge() {
   const me = useMe()
   const style = useLobbyStyle()
   if (me.kind !== 'signed-in' || !me.profile) return null
-  const { username, initials, color } = me.profile
+  const { username, initials, color, symbol } = me.profile
   const hex = PLAYER_COLORS[style][color]
 
   return (
@@ -23,7 +24,11 @@ export function PlayerBadge() {
         aria-label={`Your profile: ${username}`}
         data-testid="player-badge"
       >
-        <span aria-hidden="true">{initials.slice(0, style === 'arcade' ? 3 : 2)}</span>
+        {symbol && style !== 'arcade' ? (
+          <PlayerSymbol symbol={symbol} />
+        ) : (
+          <span aria-hidden="true">{initials.slice(0, style === 'arcade' ? 3 : 2)}</span>
+        )}
       </a>
     </div>
   )

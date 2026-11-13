@@ -1,11 +1,13 @@
 // ABOUTME: Pin Drop on two or more phones, no TV: one player starts a room and shares its code, the others join.
 // ABOUTME: The host's phone runs the rules and the round timer; every phone shows the photo above its own map.
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { createRoom, joinRoom, playerIds, sendInput, takeInputs, watchRoom, writePlay, clearPlay, type Room } from '../../engine/net/rooms'
 import { useMe } from '../../app/useMe'
 import { CodeBoxes } from '../../ui/CodeBoxes'
 import { PhoneFrame } from '../../ui/PhoneFrame'
-import { PLAYER_COLORS, type PlayerColorId } from '../../ui/playerColors'
+import { inkOn, PLAYER_COLORS, type PlayerColorId } from '../../ui/playerColors'
+import { PlayerSymbol } from '../../ui/PlayerSymbol'
+import { isPlayerSymbolId } from '../../ui/playerSymbols'
 import { Field } from '../../ui/TextField'
 import { useLobbyStyle } from '../../ui/themes/useLobbyStyle'
 import type { PlayerId, RulesContext } from '../types'
@@ -89,6 +91,7 @@ interface Self {
   username: string
   initials: string
   color: PlayerColorId
+  symbol?: string
 }
 
 function StartOrJoin({ self, onEnter }: { self: Self; onEnter: (code: string) => void }) {
@@ -218,7 +221,9 @@ function usePlayerLooks(room: Room): Record<PlayerId, PlayerLook> {
   const looks: Record<PlayerId, PlayerLook> = {}
   for (const [uid, player] of Object.entries(room.players)) {
     const color = PLAYER_COLORS[style][player.color as PlayerColorId] ?? PLAYER_COLORS[style].silver
-    looks[uid] = { name: player.username, initials: player.initials, color }
+    // Arcade keeps initials for its high-score look.
+    const symbol = style !== 'arcade' && isPlayerSymbolId(player.symbol) ? player.symbol : undefined
+    looks[uid] = { name: player.username, initials: player.initials, color, symbol }
   }
   return looks
 }
@@ -248,7 +253,13 @@ function WaitingRoom({ room, isHost, onLeave }: { room: Room; isHost: boolean; o
       <ul className="pdt-players" aria-label="Players in the room">
         {ids.map((uid) => (
           <li key={uid} className="pdt-players__row">
-            <span className="pdt-players__dot" style={{ background: looks[uid].color }} aria-hidden="true" />
+            <span
+              className="pdt-players__dot"
+              style={{ background: looks[uid].color, '--player': looks[uid].color, color: inkOn(looks[uid].color) } as CSSProperties}
+              aria-hidden="true"
+            >
+              {looks[uid].symbol && <PlayerSymbol symbol={looks[uid].symbol} />}
+            </span>
             {looks[uid].name}
             {uid === room.host ? ' (host)' : ''}
           </li>

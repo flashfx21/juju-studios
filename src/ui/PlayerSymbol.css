@@ -1,0 +1,24 @@
+/* ABOUTME: Draws a player symbol inside its colored circle: shapes in the ink color, cutouts in the player color. */
+/* ABOUTME: The circle sets --player (the player color) and color (the ink) for the symbol to use. */
+
+.player-symbol {
+  width: 64%;
+  height: 64%;
+  overflow: visible;
+}
+
+.player-symbol .cut {
+  fill: var(--player);
+}
+
+.player-symbol .cut-line {
+  fill: none;
+  stroke: var(--player);
+  stroke-linecap: round;
+}
+
+.player-symbol .line {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+}

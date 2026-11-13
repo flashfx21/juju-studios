@@ -180,3 +180,17 @@ export const PLAYER_SYMBOLS: Record<PlayerSymbolId, PlayerSymbol> = {
 }
 
 export const PLAYER_SYMBOL_IDS = Object.keys(PLAYER_SYMBOLS) as PlayerSymbolId[]
+
+export function isPlayerSymbolId(value: unknown): value is PlayerSymbolId {
+  return typeof value === 'string' && value in PLAYER_SYMBOLS
+}
+
+/** A symbol for a new profile, so setup needs no extra step; the player can pick another. */
+export function randomPlayerSymbol(): PlayerSymbolId {
+  return PLAYER_SYMBOL_IDS[Math.floor(Math.random() * PLAYER_SYMBOL_IDS.length)]
+}
+
+/** The symbol as an SVG string, for places that take HTML (map pins). Style it with PlayerSymbol.css. */
+export function playerSymbolHtml(symbol: PlayerSymbolId): string {
+  return `<svg class="player-symbol" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">${PLAYER_SYMBOLS[symbol].markup}</svg>`
+}

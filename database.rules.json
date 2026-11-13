@@ -21,6 +21,9 @@
         },
         "style": {
           ".validate": "newData.isString() && newData.val().matches(/^(game-show|arcade|rec-room)$/)"
+        },
+        "symbol": {
+          ".validate": "newData.isString() && newData.val().matches(/^(wolf|fox|bear|owl|cat|dog|pig|rabbit|frog|turtle|penguin|bee|star|moon|rocket|crown)$/)"
         }
       },
       ".read": "auth != null && root.child('admins').child(auth.uid).val() === true"
@@ -33,7 +36,19 @@
         "players": {
           "$uid": {
             ".write": "auth != null && auth.token.email_verified === true && auth.uid === $uid && data.parent().parent().child('host').exists()",
-            ".validate": "newData.hasChildren(['username', 'initials', 'color', 'joinedAt'])"
+            ".validate": "newData.hasChildren(['username', 'initials', 'color', 'joinedAt'])",
+            "username": {
+              ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 25"
+            },
+            "initials": {
+              ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{1,3}$/)"
+            },
+            "color": {
+              ".validate": "newData.isString() && newData.val().matches(/^(red|gold|teal|blue|pink|olive|orange|purple|brown|silver)$/)"
+            },
+            "symbol": {
+              ".validate": "newData.isString() && newData.val().matches(/^(wolf|fox|bear|owl|cat|dog|pig|rabbit|frog|turtle|penguin|bee|star|moon|rocket|crown)$/)"
+            }
           }
         },
         "play": {

@@ -19,6 +19,8 @@ export interface RoomPlayer {
   username: string
   initials: string
   color: string
+  /** The player symbol id, when their profile has one. */
+  symbol?: string
 }
 
 export interface Room {

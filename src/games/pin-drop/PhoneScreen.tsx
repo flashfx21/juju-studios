@@ -1,6 +1,7 @@
 // ABOUTME: Pin Drop on a player's phone: the guessing map with Lock in, your result with the Flag photo button,
 // ABOUTME: round standings with the host's Next round control, and the final standings.
 import { useMemo, type ReactNode } from 'react'
+import type { PlayerSymbolId } from '../../ui/playerSymbols'
 import type { PlayerId } from '../types'
 import { distanceText } from './format'
 import { PinMap, type MapPlayer } from './PinMap'
@@ -12,6 +13,8 @@ export interface PlayerLook {
   name: string
   initials: string
   color: string
+  /** Shown on map pins in place of the initials. */
+  symbol?: PlayerSymbolId
 }
 
 interface PhoneScreenProps {
@@ -48,7 +51,7 @@ export function PinDropTitle() {
 
 function useMapPlayers(state: PinDropState, looks: Record<PlayerId, PlayerLook>): MapPlayer[] {
   return useMemo(
-    () => state.players.map((id) => ({ id, initials: looks[id].initials, color: looks[id].color })),
+    () => state.players.map((id) => ({ id, initials: looks[id].initials, color: looks[id].color, symbol: looks[id].symbol })),
     [state.players, looks],
   )
 }

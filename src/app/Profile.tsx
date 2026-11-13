@@ -1,4 +1,4 @@
-// ABOUTME: The phone Profile screen: initials in your color, then two tabs: Profile (name, color, style) and Stats.
+// ABOUTME: The phone Profile screen: your symbol in your color, then two tabs: Profile (name, color, symbol, style) and Stats.
 // ABOUTME: A signed-in player with no profile yet sees it as setup; "Your style" is saved to the profile too.
 import { useRef, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from 'react'
 import { signOutOfThisDevice } from '../engine/net/auth'
@@ -7,7 +7,9 @@ import { CodeBoxes } from '../ui/CodeBoxes'
 import { ColorSwatches } from '../ui/ColorSwatches'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { inkOn, PLAYER_COLORS } from '../ui/playerColors'
+import { PlayerSymbol } from '../ui/PlayerSymbol'
 import { StyleCards } from '../ui/StyleCards'
+import { SymbolPicker } from '../ui/SymbolPicker'
 import { Field, TextField } from '../ui/TextField'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import '../ui/PhoneForm.css'
@@ -164,8 +166,14 @@ function ProfileForm({ uid, email, saved, style, onStyleChange }: ProfileFormPro
           aria-hidden="true"
           data-testid="profile-avatar"
         >
-          <span className="profile__initials-2">{initials.slice(0, 2)}</span>
-          <span className="profile__initials-3">{initials}</span>
+          {draft.symbol && style !== 'arcade' ? (
+            <PlayerSymbol symbol={draft.symbol} />
+          ) : (
+            <>
+              <span className="profile__initials-2">{initials.slice(0, 2)}</span>
+              <span className="profile__initials-3">{initials}</span>
+            </>
+          )}
         </span>
         <div className="profile__who">
           <p className="profile__name" data-testid="profile-name">
@@ -239,6 +247,11 @@ function ProfileForm({ uid, email, saved, style, onStyleChange }: ProfileFormPro
           <fieldset className="profile__group">
             <legend className="profile__label">{copy.color}</legend>
             <ColorSwatches style={style} value={draft.color} testIdPrefix="profile-color" onPick={draft.setColor} />
+          </fieldset>
+
+          <fieldset className="profile__group">
+            <legend className="profile__label">Your symbol</legend>
+            <SymbolPicker colorHex={colorHex} value={draft.symbol} testIdPrefix="profile-symbol" onPick={draft.setSymbol} />
           </fieldset>
 
           {!settingUp && <StyleGroup style={style} onStyleChange={onStyleChange} />}
