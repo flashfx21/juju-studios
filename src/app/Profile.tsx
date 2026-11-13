@@ -1,6 +1,6 @@
-// ABOUTME: The phone Profile screen: initials in your color, username, email, color, your style, and stats.
+// ABOUTME: The phone Profile screen: initials in your color, then two tabs: Profile (name, color, style) and Stats.
 // ABOUTME: A signed-in player with no profile yet sees it as setup; "Your style" is saved to the profile too.
-import { useState, type CSSProperties, type FormEvent } from 'react'
+import { useRef, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from 'react'
 import { signOutOfThisDevice } from '../engine/net/auth'
 import { saveProfile, type Profile as SavedProfile } from '../engine/net/profiles'
 import { CodeBoxes } from '../ui/CodeBoxes'
@@ -123,6 +123,7 @@ function ProfileForm({ uid, email, saved, style, onStyleChange }: ProfileFormPro
   const draft = useProfileDraft(saved)
   const [problem, setProblem] = useState('')
   const [saving, setSaving] = useState(false)
+  const [tab, setTab] = useState<ProfileTab>('profile')
   const colorHex = PLAYER_COLORS[style][draft.color]
   const initials = draft.toProfile().initials
 
@@ -156,99 +157,161 @@ function ProfileForm({ uid, email, saved, style, onStyleChange }: ProfileFormPro
     <PhoneFrame label={settingUp ? 'Set up your profile' : 'Your profile'} cardTag="Game night">
       <h1 className="profile__title">{settingUp ? copy.setupTitle : copy.title}</h1>
 
-      <form className="phone-form" noValidate onSubmit={submit}>
-        <div className="profile__id">
-          <span
-            className="profile__avatar"
-            style={{ '--player': colorHex, '--player-ink': inkOn(colorHex) } as CSSProperties}
-            aria-hidden="true"
-            data-testid="profile-avatar"
-          >
-            <span className="profile__initials-2">{initials.slice(0, 2)}</span>
-            <span className="profile__initials-3">{initials}</span>
-          </span>
-          <div className="profile__who">
-            <p className="profile__name" data-testid="profile-name">
-              {draft.username.trim() || 'New player'}
-            </p>
-            <p className="profile__email" data-testid="profile-email">
-              {email}
-            </p>
-          </div>
-        </div>
-
-        {settingUp && (
-          <p className="cue-card__text">You're signed in. Pick the name and color everyone sees in games.</p>
-        )}
-
-        <div className="cue-card">
-          <TextField
-            id="profile-username"
-            label="Username"
-            autoComplete="nickname"
-            value={draft.username}
-            error={draft.errors.username}
-            testId="profile-username"
-            onChange={draft.changeUsername}
-          />
-          {asksInitials && (
-            <Field id="profile-initials" label="Initials" error={draft.errors.initials}>
-              <CodeBoxes
-                id="profile-initials"
-                value={draft.initials}
-                length={INITIALS_LENGTH}
-                invalid={!!draft.errors.initials}
-                describedBy={draft.errors.initials ? 'profile-initials-error' : undefined}
-                variant="initials"
-                testId="profile-initials"
-                onChange={draft.changeInitials}
-              />
-            </Field>
-          )}
-        </div>
-
-        <fieldset className="profile__group">
-          <legend className="profile__label">{copy.color}</legend>
-          <ColorSwatches style={style} value={draft.color} testIdPrefix="profile-color" onPick={draft.setColor} />
-        </fieldset>
-
-        {!settingUp && (
-          <>
-            <StyleGroup style={style} onStyleChange={onStyleChange} />
-            <dl className="profile__stats">
-              <div className="profile__stat">
-                <dt>Games played</dt>
-                <dd>0</dd>
-              </div>
-              <div className="profile__stat">
-                <dt>Total points</dt>
-                <dd>{style === 'arcade' ? '00000' : '0'}</dd>
-              </div>
-              <div className="profile__stat">
-                <dt>Average</dt>
-                <dd>-</dd>
-              </div>
-            </dl>
-          </>
-        )}
-
-        <div className="phone-actions">
-          <button
-            type="submit"
-            className="phone-button"
-            aria-disabled={saving || undefined}
-            data-testid="profile-save"
-          >
-            {settingUp ? 'Save' : copy.save}
-          </button>
-          <p className="preview-note" role="alert" data-testid="profile-problem">
-            {problem}
+      <div className="profile__id">
+        <span
+          className="profile__avatar"
+          style={{ '--player': colorHex, '--player-ink': inkOn(colorHex) } as CSSProperties}
+          aria-hidden="true"
+          data-testid="profile-avatar"
+        >
+          <span className="profile__initials-2">{initials.slice(0, 2)}</span>
+          <span className="profile__initials-3">{initials}</span>
+        </span>
+        <div className="profile__who">
+          <p className="profile__name" data-testid="profile-name">
+            {draft.username.trim() || 'New player'}
           </p>
-          <button type="button" className="phone-link" data-testid="profile-sign-out" onClick={signOut}>
-            Sign out of this phone
-          </button>
+          <p className="profile__email" data-testid="profile-email">
+            {email}
+          </p>
         </div>
-      </form>
+      </div>
+
+      {!settingUp && <ProfileTabs tab={tab} onChange={setTab} />}
+
+      {tab === 'stats' ? (
+        <div className="profile__panel" role="tabpanel" id="profile-panel-stats" aria-labelledby="profile-tab-stats">
+          <dl className="profile__stats">
+            <div className="profile__stat">
+              <dt>Games played</dt>
+              <dd>0</dd>
+            </div>
+            <div className="profile__stat">
+              <dt>Total points</dt>
+              <dd>{style === 'arcade' ? '00000' : '0'}</dd>
+            </div>
+            <div className="profile__stat">
+              <dt>Average</dt>
+              <dd>-</dd>
+            </div>
+          </dl>
+          <p className="cue-card__text">Stats start counting once game results are saved.</p>
+        </div>
+      ) : (
+        <form
+          className="phone-form"
+          noValidate
+          onSubmit={submit}
+          role={settingUp ? undefined : 'tabpanel'}
+          id="profile-panel-profile"
+          aria-labelledby={settingUp ? undefined : 'profile-tab-profile'}
+        >
+          {settingUp && (
+            <p className="cue-card__text">You're signed in. Pick the name and color everyone sees in games.</p>
+          )}
+
+          <div className="cue-card">
+            <TextField
+              id="profile-username"
+              label="Username"
+              autoComplete="nickname"
+              value={draft.username}
+              error={draft.errors.username}
+              testId="profile-username"
+              onChange={draft.changeUsername}
+            />
+            {asksInitials && (
+              <Field id="profile-initials" label="Initials" error={draft.errors.initials}>
+                <CodeBoxes
+                  id="profile-initials"
+                  value={draft.initials}
+                  length={INITIALS_LENGTH}
+                  invalid={!!draft.errors.initials}
+                  describedBy={draft.errors.initials ? 'profile-initials-error' : undefined}
+                  variant="initials"
+                  testId="profile-initials"
+                  onChange={draft.changeInitials}
+                />
+              </Field>
+            )}
+          </div>
+
+          <fieldset className="profile__group">
+            <legend className="profile__label">{copy.color}</legend>
+            <ColorSwatches style={style} value={draft.color} testIdPrefix="profile-color" onPick={draft.setColor} />
+          </fieldset>
+
+          {!settingUp && <StyleGroup style={style} onStyleChange={onStyleChange} />}
+
+          <div className="phone-actions">
+            <button
+              type="submit"
+              className="phone-button"
+              aria-disabled={saving || undefined}
+              data-testid="profile-save"
+            >
+              {settingUp ? 'Save' : copy.save}
+            </button>
+            <p className="preview-note" role="alert" data-testid="profile-problem">
+              {problem}
+            </p>
+            <button type="button" className="phone-link" data-testid="profile-sign-out" onClick={signOut}>
+              Sign out of this phone
+            </button>
+          </div>
+        </form>
+      )}
     </PhoneFrame>
+  )
+}
+
+type ProfileTab = 'profile' | 'stats'
+
+const TABS: { id: ProfileTab; label: string }[] = [
+  { id: 'profile', label: 'Profile' },
+  { id: 'stats', label: 'Stats' },
+]
+
+/** Profile and Stats tabs. Arrow keys, Home and End move between them, as screen reader users expect. */
+function ProfileTabs({ tab, onChange }: { tab: ProfileTab; onChange: (tab: ProfileTab) => void }) {
+  const buttons = useRef<Partial<Record<ProfileTab, HTMLButtonElement | null>>>({})
+
+  function onKeyDown(event: KeyboardEvent) {
+    const index = TABS.findIndex((t) => t.id === tab)
+    const moves: Record<string, number> = {
+      ArrowRight: (index + 1) % TABS.length,
+      ArrowLeft: (index - 1 + TABS.length) % TABS.length,
+      Home: 0,
+      End: TABS.length - 1,
+    }
+    const next = moves[event.key]
+    if (next === undefined) return
+    event.preventDefault()
+    onChange(TABS[next].id)
+    buttons.current[TABS[next].id]?.focus()
+  }
+
+  return (
+    <div className="profile__tabs" role="tablist" aria-label="Profile sections" onKeyDown={onKeyDown}>
+      {TABS.map(({ id, label }) => (
+        <button
+          key={id}
+          ref={(element) => {
+            buttons.current[id] = element
+          }}
+          type="button"
+          role="tab"
+          id={`profile-tab-${id}`}
+          className="profile__tab"
+          aria-selected={tab === id}
+          aria-controls={`profile-panel-${id}`}
+          tabIndex={tab === id ? 0 : -1}
+          data-testid={`profile-tab-${id}`}
+          onClick={() => onChange(id)}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
   )
 }

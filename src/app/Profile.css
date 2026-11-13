@@ -314,3 +314,36 @@
   font-weight: 700;
   font-size: 30px;
 }
+
+/* ---------- Profile and Stats tabs (all styles) ---------- */
+.profile__tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 3px solid var(--color-primary);
+}
+
+.profile__tab {
+  flex: 1;
+  min-height: var(--space-hit-target-min);
+  border: 2px solid var(--color-primary);
+  border-bottom: 0;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* Selected: filled, so the choice doesn't rely on color contrast alone. */
+.profile__tab[aria-selected='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+}
+
+.profile__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
