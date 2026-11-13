@@ -4,7 +4,7 @@
 export const ROOM_CODE_LENGTH = 4
 export const INITIALS_LENGTH = 3
 const USERNAME_MIN = 2
-const USERNAME_MAX = 16
+const USERNAME_MAX = 25
 
 /** Keeps only letters, upper-cased, up to the given length (room codes and initials). */
 export function lettersOnly(value: string, max: number): string {

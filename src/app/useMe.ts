@@ -7,8 +7,17 @@ import type { Profile } from '../engine/net/profiles'
 export type Me =
   | { kind: 'checking' }
   | { kind: 'signed-out' }
-  /** profile is undefined while it loads and null when this player has none yet. */
-  | { kind: 'signed-in'; player: SignedInPlayer; profile: Profile | null | undefined }
+  /**
+   * profile is undefined while it loads and null when this player has none yet. isAdmin and canPlaytest
+   * (Solo play) stay false until their flags load.
+   */
+  | {
+      kind: 'signed-in'
+      player: SignedInPlayer
+      profile: Profile | null | undefined
+      isAdmin: boolean
+      canPlaytest: boolean
+    }
 
 export const MeContext = createContext<Me>({ kind: 'checking' })
 

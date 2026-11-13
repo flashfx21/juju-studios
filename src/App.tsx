@@ -1,5 +1,6 @@
 // ABOUTME: Top-level screen switch: applies this person's style, the host's settings and who is signed in, then shows the screen in the URL hash.
 // ABOUTME: Screens with a TV and a phone version pick one by screen shape (see useScreenKind).
+import { Admin } from './app/Admin'
 import { GamePicker } from './app/GamePicker'
 import { GameVote } from './app/GameVote'
 import { HostOrJoinPhone, HostOrJoinTv } from './app/HostOrJoin'
@@ -56,6 +57,8 @@ function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle 
       return <PlaytestPage gameId={route.step} />
     case 'lobby':
       return <LobbyPlaceholder />
+    case 'admin':
+      return <Admin />
     default:
       return kind === 'tv' ? <HostOrJoinTv /> : <HostOrJoinPhone />
   }

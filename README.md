@@ -14,7 +14,8 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 | Host sign-in | `#/host` | "Finish on your phone" | Sign-in form |
 | Sign in | `#/sign-in`, `/sent`, `/finish`, `/expired` | | Google or email link (or who is signed in), check your email, finishing the link, link expired |
 | Join (profile setup) | `#/join` | | Room code, username, color (arcade adds initials); a phone not signed in also signs in here (Google or email link) |
-| Lobby placeholder | `#/lobby` | Who is signed in, links to the game picker, Host settings, Profile and Solo play (Sign in when signed out), plus the version | same |
+| Lobby placeholder | `#/lobby` | Who is signed in, links to the game picker, Host settings, Profile, Solo play (playtesters), Admin (admins) and Sign in (signed out), plus the version | same |
+| Admin | `#/admin` | | Admins only: every player with a profile; turn Solo play on or off, rename, reset a profile |
 | Solo play | `#/playtest`, `#/playtest/chainword`, `#/playtest/dial-it-in`, `#/playtest/dont-jinx-it`, `#/playtest/pin-drop`, `#/playtest/sketch-showdown` | | Signed-in players only: games still in testing, played against bots |
 | Game picker | `#/picker` | Full lineup, all coming soon | Coming-soon list, nothing to vote on |
 | Host settings | `#/settings` | Your style, game choice (group vote / leader pick), CRT scanlines | |
@@ -50,7 +51,7 @@ npm run emulators  # local Firebase (sign-in and database) on this PC
 
 ## Playtests
 
-Games still in testing open at `#/playtest`, shown as **Solo play** on the phone front door and the lobby page once you are signed in. Signed out, Solo play asks you to sign in first. The addresses keep the word "playtest" for now; Solo play is a temporary menu item until real game nights work.
+Games still in testing open at `#/playtest`, shown as **Solo play** on the phone front door and the lobby page for admins and playtesters. Signed out, Solo play asks you to sign in first; signed in but not a playtester, it says to ask an admin. The addresses keep the word "playtest" for now; Solo play is a temporary menu item until real game nights work.
 
 **Chainword playtest, no server:** one person taps **Make a code for everyone** (pick letters per word, words in the chain and hard mode first) and reads the code out, for example `KPDT53` (a code ending in `H`, like `KPDT53H`, plays in hard mode). Everyone else types it under **Got a chain code?** and gets the same words. Say go, play, then compare totals: fewest guesses wins, faster time breaks a tie. **End game** stops early (the word you're on and any left count 7 each). Everyone should load the site fresh first: a code deals from the word lists, so phones on different versions of the site can get different words.
 
@@ -66,13 +67,17 @@ Games still in testing open at `#/playtest`, shown as **Solo play** on the phone
 
 **To add a game's playtest**, give it a `Playtest.tsx` in its game folder and one line in `src/app/playtests.ts`.
 
+## Admins
+
+An admin is a signed-in account with `admins/{uid}: true` in the database. There is no way to become one from the app: add the entry by hand in the Firebase console (Realtime Database, Data tab), using the account's User UID from Authentication, Users. The database rules enforce what admins can do (read every profile, rename or reset one, choose who gets Solo play); the app only shows or hides the buttons.
+
 ## Deploy
 
 Every push to `main` runs `.github/workflows/deploy.yml`, which lints, builds and publishes `dist/` to GitHub Pages. Progress shows under the repo's **Actions** tab. The build reads the Firebase settings from the repo's Actions secrets (the same `VITE_FIREBASE_*` lines as `.env.local`); after changing `.env.local`, run `gh secret set -f .env.local` to update them.
 
 ## Firebase
 
-The backend is the Firebase project `juju-studios` (Spark plan, Realtime Database). `.firebaserc` names the project, `firebase.json` sets up the rules file and the emulators, and `database.rules.json` holds the database rules: everything is locked except `profiles/{uid}`, which only that signed-in player (with a verified email) can read and write, with the fields checked. The repo is the source of truth for the rules: change the file, then push it with `firebase deploy --only database`. The web app's config lives in `.env.local` (`VITE_FIREBASE_*`, not committed).
+The backend is the Firebase project `juju-studios` (Spark plan, Realtime Database). `.firebaserc` names the project, `firebase.json` sets up the rules file and the emulators, and `database.rules.json` holds the database rules: everything is locked except `profiles/{uid}` (that player reads and writes their own, admins read and change any; fields checked), `admins/{uid}` and `playtesters/{uid}` (each player reads their own flag; admins set playtesters; admins are added only in the console), and `rooms/{code}` (signed-in players read a room; the host writes the game, each player writes only their own entry and inputs). The repo is the source of truth for the rules: change the file, then push it with `firebase deploy --only database`. The web app's config lives in `.env.local` (`VITE_FIREBASE_*`, not committed).
 
 ## Folders
 

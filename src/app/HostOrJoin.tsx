@@ -227,7 +227,9 @@ const PHONE_COPY: Record<LobbyStyleId, PhoneCopy> = {
 export function HostOrJoinPhone() {
   const style = useLobbyStyle()
   const copy = PHONE_COPY[style]
-  const signedIn = useMe().kind === 'signed-in'
+  const me = useMe()
+  const signedIn = me.kind === 'signed-in'
+  const canPlaytest = me.kind === 'signed-in' && me.canPlaytest
 
   return (
     <PhoneFrame label="Host or join" cardTag="Game night">
@@ -248,9 +250,11 @@ export function HostOrJoinPhone() {
       {signedIn ? (
         <>
           <PhoneChoice kind="host" copy={{ ...copy.host, action: copy.hostSignedIn }} to={href('lobby')} />
-          <a className="entry-phone__link" href={href('playtest')} data-testid="solo-play-link">
-            Solo play
-          </a>
+          {canPlaytest && (
+            <a className="entry-phone__link" href={href('playtest')} data-testid="solo-play-link">
+              Solo play
+            </a>
+          )}
         </>
       ) : (
         <>

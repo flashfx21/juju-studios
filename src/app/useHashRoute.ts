@@ -2,7 +2,17 @@
 // ABOUTME: Hash URLs work on GitHub Pages without server rewrites, and survive a refresh.
 import { useEffect, useState } from 'react'
 
-export type Screen = 'home' | 'host' | 'sign-in' | 'join' | 'lobby' | 'picker' | 'settings' | 'profile' | 'playtest'
+export type Screen =
+  | 'home'
+  | 'host'
+  | 'sign-in'
+  | 'join'
+  | 'lobby'
+  | 'picker'
+  | 'settings'
+  | 'profile'
+  | 'playtest'
+  | 'admin'
 
 export interface Route {
   screen: Screen
@@ -10,7 +20,7 @@ export interface Route {
   step: string
 }
 
-const SCREENS: Screen[] = ['home', 'host', 'sign-in', 'join', 'lobby', 'picker', 'settings', 'profile', 'playtest']
+const SCREENS: Screen[] = ['home', 'host', 'sign-in', 'join', 'lobby', 'picker', 'settings', 'profile', 'playtest', 'admin']
 
 function routeFromHash(hash: string): Route {
   const [name = '', step = ''] = hash.replace(/^#\/?/, '').split('/')

@@ -1,4 +1,4 @@
-// ABOUTME: Solo play: the pages at #/playtest (games still in testing) and #/playtest/<game-id>, for signed-in players only.
+// ABOUTME: Solo play: the pages at #/playtest (games still in testing) and #/playtest/<game-id>, for admins and playtesters.
 // ABOUTME: Unknown game ids get a short message instead of a blank page.
 import { Suspense } from 'react'
 import { PhoneFrame } from '../ui/PhoneFrame'
@@ -67,12 +67,30 @@ function SignInFirst() {
   )
 }
 
+/** Signed in, but an admin hasn't added this player to Solo play yet. */
+function NotAPlaytester() {
+  return (
+    <PhoneFrame label="Solo play" cardTag="Solo play">
+      <div className="phone-top">
+        <h1 className="phone-top__title">Solo play</h1>
+      </div>
+      <p className="cue-card__text" data-testid="solo-play-not-yet">
+        Solo play is for playtesters. Ask an admin to add you, then open this page again.
+      </p>
+      <a className="phone-link phone-link--quiet" href={href('home')}>
+        Back
+      </a>
+    </PhoneFrame>
+  )
+}
+
 export function PlaytestPage({ gameId }: { gameId: string }) {
   const me = useMe()
   const playtest = PLAYTESTS[gameId]
 
   if (me.kind === 'checking') return <Loading />
   if (me.kind === 'signed-out') return <SignInFirst />
+  if (!me.canPlaytest) return <NotAPlaytester />
 
   return (
     <>

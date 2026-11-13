@@ -1,0 +1,68 @@
+/* ABOUTME: The admin page's player list: a color dot and name, then Solo play, Rename and Reset buttons. */
+/* ABOUTME: Colors and fonts come from the lobby style's tokens. */
+
+.admin-players {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-player {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--color-line);
+}
+
+.admin-player__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-player__dot {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--color-text);
+}
+
+.admin-player__name {
+  font-size: 19px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.admin-player__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-player__button {
+  min-height: var(--space-hit-target-min);
+  padding: 0 12px;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Solo play on: filled, so it doesn't rely on the word alone. */
+.admin-player__button[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+}
+
+.admin-player__button[aria-disabled='true'] {
+  cursor: default;
+}
