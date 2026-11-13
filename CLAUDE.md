@@ -28,7 +28,7 @@ A suite of phone party games for family and friends, played like Jackbox: one sh
 ## Stack
 - TypeScript, Vite, React. Deploy to GitHub Pages with GitHub Actions (`.github/workflows/deploy.yml`, every push to `main`). Site: https://flashfx21.github.io/juju-studios/ (Vite `base` is `/juju-studios/`).
 - Backend: **Firebase** (decided Nov 11), Spark free plan, Realtime Database. Keep backend calls behind `src/engine/net/` so it can be swapped. Full stack and data model: `docs/juju-engine-tech-stack-0852.md`.
-- Sign-in: verified email, any provider. No guest play. Profiles: username, color, initials. Method is **open**: email link vs. email + password (tech stack doc, section 9).
+- Sign-in: verified email, any provider. No guest play. Profiles: username, color, initials. Method is **decided** (Nov 13): Google sign-in plus email link, option D (tech stack doc, section 9). Non-Google players sign up ahead of game night because of the 5-a-day link limit.
 - Lobby styles: tokens in `src/ui/themes/themes.css` (copied from `docs/design/tokens/`), selected with `data-theme` on `<html>`.
 
 ## Working style

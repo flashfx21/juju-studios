@@ -18,7 +18,7 @@ Replaces: `juju-engine-tech-stack-2244.md`. Change: Firebase is now the decided 
 | Backend | **Firebase** | **Decided (Nov 11)** | One service for sign-in, live play and saved data. Alternatives (Convex, InstantDB, Cloudflare) kept in mind for later |
 | Live game connection | Firebase Realtime Database | Proposed | See section 3 |
 | Saved data (profiles, results, leaderboard) | Firebase Realtime Database | Proposed | One database for live and saved data keeps setup small |
-| Sign-in | Firebase Authentication, email link (passwordless), any provider | Decided, **but see section 9** | Free plan allows only 5 sign-in-link emails per day |
+| Sign-in | Firebase Authentication: Google sign-in plus email link (passwordless) for everyone else | **Decided (Nov 13), option D in section 9** | Free plan allows only 5 sign-in-link emails per day, so non-Google players sign up ahead of game night |
 | Firebase plan | Spark (free) | Decided direction | No card, stops at caps instead of charging |
 | Local testing | Firebase Emulator Suite + browser tabs | Proposed | Full game night on one PC with fake players, no quota used, no real emails sent |
 | Unit tests | Vitest | Proposed | Tests each game's rules without a browser |
@@ -162,10 +162,12 @@ Each phone only needs a sign-in email once, then it stays signed in. The limit h
 
 **Claude's recommendation:** start with **A** (email + password + verification) on Spark for launch: free, no daily wall, still verified. Revisit C if you later want server code or one-tap links.
 
+**Decided Nov 13 (Julian): D.** Google sign-in for Google users, email link for everyone else, on Spark. Non-Google family members sign up before a game night so the 5-a-day link limit is not hit on the night. The link limit counts every link sent, including a resend or a new phone or browser, so a new non-Google guest on the night may have to wait for tomorrow. The Email/Password provider has to be switched on in the console for email link to work; no password screens are offered.
+
 Also before game night:
 - Add `flashfx21.github.io` to Firebase Authentication's authorized domains
 - Test sign-in emails with an AOL and a .edu address (spam folders)
 
 ## 10. Open decisions
-1. Sign-in option A, B, C or D (section 9)
+1. ~~Sign-in option A, B, C or D (section 9)~~ Decided Nov 13: D
 2. When a room closes: host taps "Close room," or rooms expire after inactivity
