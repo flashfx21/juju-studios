@@ -20,6 +20,8 @@ export const GAME_TILE_COLORS: Record<LobbyStyleId, Record<string, TileColors>> 
     chainword: { bg: '#177A74', ink: '#FFF6D6' },
     'sketch-showdown': { bg: '#C2302B', ink: '#FFF6D6' },
     'pin-drop': { bg: '#3563C7', ink: '#FFF6D6' },
+    // Not in the design (it was a coming-soon game there); picked to sit beside the six designed doors.
+    'dont-jinx-it': { bg: '#E8489A', ink: '#12204A' },
   },
   arcade: {
     'no-filler': { bg: '#141414', ink: '#FFFFFF', accent: '#39FF6A' },
@@ -28,6 +30,8 @@ export const GAME_TILE_COLORS: Record<LobbyStyleId, Record<string, TileColors>> 
     chainword: { bg: '#FFE600', ink: '#FFFFFF', accent: '#FFE600' },
     'sketch-showdown': { bg: '#FF2EA6', ink: '#FFFFFF', accent: '#22E4FF' },
     'pin-drop': { bg: '#2E2A3A', ink: '#FFFFFF', accent: '#39FF6A' },
+    // Not in the design (it was a coming-soon game there); picked to sit beside the six designed cabinets.
+    'dont-jinx-it': { bg: '#7B93FF', ink: '#FFFFFF', accent: '#FF2EA6' },
   },
   'rec-room': {
     'no-filler': { bg: '#0B0B0B', ink: '#F5D000', stripe: ['#2DBE4E', '#F5D000', '#E5322B'] },

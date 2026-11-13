@@ -17,7 +17,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 | Lobby placeholder | `#/lobby` | Who is signed in, links to the game picker, Host settings, Profile, Solo play (playtesters), Admin (admins), Sign in (signed out) and Home, plus the version | same |
 | Admin | `#/admin` | | Admins only: every player with a profile; turn Solo play on or off, rename, reset a profile |
 | Solo play | `#/playtest`, `#/playtest/chainword`, `#/playtest/dial-it-in`, `#/playtest/dont-jinx-it`, `#/playtest/pin-drop`, `#/playtest/sketch-showdown` | | Signed-in players only: games still in testing, played against bots |
-| Game picker | `#/picker` | Full lineup, all coming soon | Coming-soon list, nothing to vote on |
+| Game picker | `#/picker` | Every game six to a page with Previous and Next; games in testing can be picked (and re-picked) and offer their Solo play pages; the rest show In development or Coming soon | Games in testing as rows to pick, then their buttons; the rest as chips |
 | Host settings | `#/settings` | Your style, game choice (group vote / leader pick), CRT scanlines | |
 | Profile | `#/profile` | | Symbol (arcade: initials), username, email, color, symbol, **your style**; Stats on its own tab; first time after sign-in it is profile setup; signed out it offers Sign in |
 
@@ -26,7 +26,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 - Host settings are saved in this browser until rooms exist.
 - Addresses stand in for the design's QR codes (see `docs/later.md`).
 - TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.
-- The game lineup is `src/games/lineup.ts`. Every game is "coming soon".
+- The game lineup is `src/games/lineup.ts`, with each game's lineup number and phase (keep these in step with `docs/games/README.md`). Every game's status is still "coming soon"; for a playtester, games with a Solo play page show as **In testing** in the picker and can be picked before anyone joins. Picking a game offers its Solo play pages (Pin Drop also offers Start a room). Votes, the timer and Lock in wait for rooms.
 - Chainword has its rules, tests and a phone playtest (see Playtests below). No TV screen yet.
 - Dial It In has its rules, tests, a phone screen and a single-player interface playtest (see Playtests below). No TV screen yet. Spectrum cards live in `packs/dial-it-in/spectrums.json`.
 - Don't Jinx It (branch `game/dont-jinx-it`) has its individual-mode rules, tests, phone and TV screens with instructions and host settings (game-show style), and a single-player interface playtest (see Playtests below). Mystery words and irregular word forms live in `packs/dont-jinx-it/`.

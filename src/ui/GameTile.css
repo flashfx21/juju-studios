@@ -1,5 +1,5 @@
-/* ABOUTME: Coming-soon game tile looks per lobby style: striped prize door, out-of-order cabinet, shrink-wrapped box. */
-/* ABOUTME: Small tiles follow the design's coming-soon row; large tiles extend that look to the big slots. */
+/* ABOUTME: Game tile looks per lobby style: prize door, cabinet, game box. Not-ready games are striped, out of order or shrink-wrapped. */
+/* ABOUTME: In-testing tiles drop the wrapping and show their pitch; the picked tile gets a stamp and the others dim. */
 
 .game-tile {
   position: relative;
@@ -32,6 +32,46 @@
 .game-tile__coin-door,
 .game-tile__sticker {
   display: none;
+}
+
+.game-tile__pitch {
+  display: none;
+}
+
+/* ---------- Every style: in testing, picked, dimmed ---------- */
+.game-tile[data-state='ready'] {
+  cursor: pointer;
+}
+
+.game-tile[data-state='ready'] .game-tile__pitch {
+  display: block;
+  font-size: 17px;
+  line-height: 1.25;
+  color: var(--tile-ink, inherit);
+}
+
+.game-tile[data-dimmed] {
+  opacity: 0.45;
+}
+
+.game-tile[data-picked] {
+  outline: 5px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+.game-tile__picked {
+  position: absolute;
+  z-index: 3;
+  right: 12px;
+  bottom: 12px;
+  padding: 4px 12px;
+  background: var(--color-danger);
+  color: var(--color-danger-ink);
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
 }
 
 .game-tile__note {
@@ -98,6 +138,15 @@
 
 :root[data-theme='game-show'] .game-tile--large[data-long] .game-tile__title {
   font-size: 26px;
+}
+
+/* In testing: no shrink-wrap stripes, and the kicker shows the game's number instead of its state. */
+:root[data-theme='game-show'] .game-tile--large[data-colored][data-state='ready'] {
+  background-image: none;
+}
+
+:root[data-theme='game-show'] .game-tile[data-state='ready'] .game-tile__status {
+  display: none;
 }
 
 :root[data-theme='game-show'] .game-tile__note {
@@ -219,6 +268,20 @@
   background: #2a2733;
 }
 
+/* In testing: the screen lights up and the marquee glows. */
+:root[data-theme='arcade'] .game-tile[data-state='ready'] .game-tile__face {
+  box-shadow: inset 0 0 0 3px var(--tile-accent), 0 0 18px var(--tile-accent);
+}
+
+:root[data-theme='arcade'] .game-tile[data-state='ready'] .game-tile__pitch {
+  font-size: 11px;
+  color: var(--color-text-strong);
+}
+
+:root[data-theme='arcade'] .game-tile__number {
+  display: none;
+}
+
 :root[data-theme='arcade'] .game-tile__note {
   background: var(--color-background);
   box-shadow: inset 0 0 0 3px var(--color-frame);
@@ -338,6 +401,29 @@
   top: 22px;
   padding: 5px 10px;
   font-size: 15px;
+}
+
+/* In testing: the box is unwrapped (no sheen) and its sticker turns from gold to cream. */
+:root[data-theme='rec-room'] .game-tile[data-state='ready']::after {
+  display: none;
+}
+
+:root[data-theme='rec-room'] .game-tile[data-state='ready'] .game-tile__sticker {
+  background: var(--color-surface);
+  color: var(--color-text-on-surface);
+}
+
+:root[data-theme='rec-room'] .game-tile[data-state='ready'] .game-tile__pitch {
+  max-width: 300px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root[data-theme='rec-room'] .game-tile__number {
+  display: none;
 }
 
 :root[data-theme='rec-room'] .game-tile__note {

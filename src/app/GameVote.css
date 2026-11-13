@@ -1,4 +1,4 @@
-/* ABOUTME: Phone vote screen styles per lobby style: title, the "nothing to vote on" box and coming-soon chips. */
+/* ABOUTME: Phone picker styles per lobby style: title, game rows to pick, their buttons, and the coming-soon chips. */
 /* ABOUTME: Chip and divider looks follow the Vote screen in docs/design/source. */
 
 /* ---------- Retro game show ---------- */
@@ -47,6 +47,89 @@
   font-family: var(--font-label);
   font-size: 18px;
   letter-spacing: 0.06em;
+}
+
+/* Game rows (games in testing): the game's color, its number, and a Picked mark. */
+.game-vote__rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.game-vote__row {
+  width: 100%;
+  min-height: 58px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  background: var(--row-bg, var(--color-surface));
+  color: var(--row-ink, var(--color-text));
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.game-vote__row[aria-pressed='true'] {
+  outline: 4px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.game-vote__number {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-label);
+  font-size: 15px;
+}
+
+.game-vote__row-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-vote__row-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.game-vote__row-tag {
+  font-family: var(--font-label);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.game-vote__mark {
+  padding: 3px 8px;
+  background: var(--color-danger);
+  color: var(--color-danger-ink);
+  font-family: var(--font-label);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.game-vote__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.game-vote__chip-state {
+  opacity: 0.75;
 }
 
 /* ---------- 90s arcade ---------- */
@@ -109,6 +192,16 @@
   font-size: 24px;
   letter-spacing: 0;
   color: var(--color-text);
+}
+
+:root[data-theme='arcade'] .game-vote__row-title {
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+:root[data-theme='rec-room'] .game-vote__row {
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 :root[data-theme='rec-room'] .game-vote__chips {

@@ -35,15 +35,67 @@
   display: none;
 }
 
-.game-picker__soon {
+/* The picked game with its buttons on the left, the pages on the right. */
+.game-picker__controls {
   position: absolute;
   left: 40px;
   top: 556px;
   width: 1200px;
   height: 82px;
-  display: grid;
-  grid-template-columns: 2fr repeat(5, 1fr);
-  gap: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.game-picker__pick,
+.game-picker__pager {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.game-picker__pick-name {
+  font-family: var(--font-display);
+  font-size: 30px;
+  color: var(--color-accent);
+}
+
+.game-picker__pick-hint,
+.game-picker__page {
+  font-family: var(--font-label);
+  font-size: 20px;
+  letter-spacing: 0.08em;
+}
+
+.game-picker__action,
+.game-picker__page-button {
+  min-height: var(--space-hit-target-min);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 18px;
+  border: 0;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-family: var(--font-label);
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-button);
+}
+
+.game-picker__page-button {
+  min-width: var(--space-hit-target-min);
+  justify-content: center;
+  padding: 0;
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+}
+
+.game-picker__page-button[aria-disabled='true'] {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .game-picker__footer {
@@ -89,10 +141,22 @@
   display: contents;
 }
 
-:root[data-theme='arcade'] .game-picker__soon {
-  top: 470px;
-  height: 150px;
-  gap: 19px;
+:root[data-theme='arcade'] .game-picker__controls {
+  top: 500px;
+  height: 100px;
+}
+
+:root[data-theme='arcade'] .game-picker__pick-name {
+  font-size: 22px;
+  text-transform: uppercase;
+}
+
+:root[data-theme='arcade'] .game-picker__action,
+:root[data-theme='arcade'] .game-picker__page-button,
+:root[data-theme='arcade'] .game-picker__pick-hint,
+:root[data-theme='arcade'] .game-picker__page {
+  font-size: 13px;
+  text-transform: uppercase;
 }
 
 :root[data-theme='arcade'] .game-picker__footer {
@@ -118,13 +182,19 @@
 }
 
 /* ---------- 70s rec room: game boxes on shelves ---------- */
-:root[data-theme='rec-room'] .game-picker__soon {
+:root[data-theme='rec-room'] .game-picker__controls {
   left: 60px;
   top: 110px;
   width: 1160px;
   height: 76px;
-  align-items: end;
-  gap: 18px;
+}
+
+:root[data-theme='rec-room'] .game-picker__pick-name {
+  color: var(--color-text-strong);
+}
+
+:root[data-theme='rec-room'] .game-picker__action {
+  border-radius: 8px;
 }
 
 :root[data-theme='rec-room'] .game-picker__board {
