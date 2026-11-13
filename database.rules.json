@@ -20,6 +20,28 @@
           ".validate": false
         }
       }
+    },
+    "rooms": {
+      "$code": {
+        ".read": "auth != null && auth.token.email_verified === true",
+        ".write": "auth != null && auth.token.email_verified === true && !data.exists() && newData.child('host').val() === auth.uid",
+        ".validate": "$code.matches(/^[A-Z]{4}$/)",
+        "players": {
+          "$uid": {
+            ".write": "auth != null && auth.token.email_verified === true && auth.uid === $uid && data.parent().parent().child('host').exists()",
+            ".validate": "newData.hasChildren(['username', 'initials', 'color', 'joinedAt'])"
+          }
+        },
+        "play": {
+          ".write": "auth != null && data.parent().child('host').val() === auth.uid",
+          ".validate": "newData.hasChildren(['state']) && newData.child('state').isString()"
+        },
+        "inputs": {
+          "$id": {
+            ".write": "auth != null && auth.token.email_verified === true && data.parent().parent().child('host').exists() && ((!data.exists() && newData.child('by').val() === auth.uid && data.parent().parent().child('players').child(auth.uid).exists()) || (!newData.exists() && data.parent().parent().child('host').val() === auth.uid))"
+          }
+        }
+      }
     }
   }
 }
