@@ -26,6 +26,8 @@ interface PhoneScreenProps {
   onPass: () => void
   /** Shown under the final standings, such as the playtest's Play again button. */
   summaryAction?: ReactNode
+  /** Shown under your result at the reveal, such as the room host's Next turn. */
+  revealAction?: ReactNode
 }
 
 const PROBLEM_TEXT: Record<ClueProblem, string> = {
@@ -594,7 +596,13 @@ export function PhoneScreen(props: PhoneScreenProps) {
 
   let body: ReactNode
   if (view.phase === 'over') body = <GameOver {...props} />
-  else if (view.phase === 'reveal') body = <Result view={view} player={player} seats={seats} />
+  else if (view.phase === 'reveal')
+    body = (
+      <>
+        <Result view={view} player={player} seats={seats} />
+        {props.revealAction}
+      </>
+    )
   else if (view.phase === 'guess' || view.phase === 'verdict')
     body = <Survivors view={view} seats={seats} secondsLeft={secondsLeft} onGuess={onGuess} onPass={onPass} />
   else if (view.isGuesser || word === null) body = <GuesserWait view={view} seat={seats[player]} />

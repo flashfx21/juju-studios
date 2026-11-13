@@ -17,6 +17,7 @@ import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
 import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { usePlayerLooks } from '../room/usePlayerLooks'
+import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { RulesContext } from '../types'
 import { manifest } from './manifest'
 import { DialItInTitle, PhoneScreen } from './PhoneScreen'
@@ -115,17 +116,6 @@ async function publish(room: Room, game: RoomGame, deadline: number | null): Pro
     if (!botFor(player)) await writePlayerView(room.code, player, privateView(game.state, player))
   }
   await writePlay(room.code, { state: publicState(game.state), pace: game.pace }, deadline)
-}
-
-/** Seconds left until the deadline, ticking. Null when there is no deadline. */
-function useSecondsLeft(deadline: number | null): number | null {
-  const [now, setNow] = useState(() => Date.now())
-  useEffect(() => {
-    if (deadline === null) return
-    const timer = setInterval(() => setNow(Date.now()), 250)
-    return () => clearInterval(timer)
-  }, [deadline])
-  return deadline === null ? null : Math.max(0, Math.ceil((deadline - now) / 1000))
 }
 
 function Game({ room, self, isHost, onLeave }: RoomScreenProps) {

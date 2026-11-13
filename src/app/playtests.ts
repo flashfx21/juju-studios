@@ -29,6 +29,11 @@ export const PLAYTESTS: Record<string, PlaytestEntry> = {
     Page: lazy(() => import('../games/dial-it-in/Together').then((module) => ({ default: module.Together }))),
     onExit: () => rememberRoom('dial-it-in', ''),
   },
+  'dont-jinx-it-together': {
+    title: "Don't Jinx It with others (three or more phones)",
+    Page: lazy(() => import('../games/dont-jinx-it/Together').then((module) => ({ default: module.Together }))),
+    onExit: () => rememberRoom('dont-jinx-it', ''),
+  },
   'dont-jinx-it': {
     title: "Don't Jinx It",
     Page: lazy(() => import('../games/dont-jinx-it/Playtest').then((module) => ({ default: module.Playtest }))),
