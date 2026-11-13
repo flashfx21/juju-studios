@@ -5,8 +5,10 @@ import { TvStage } from '../ui/TvStage'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
 import '../ui/TvChrome.css'
+import { PlayerBadge } from './PlayerBadge'
 import { siteAddress } from './siteAddress'
 import { href } from './useHashRoute'
+import { useMe } from './useMe'
 import './HostOrJoin.css'
 
 interface ChoiceCopy {
@@ -160,6 +162,8 @@ interface PhoneCopy {
   tagline: string
   join: Omit<ChoiceCopy, 'seal'>
   host: Omit<ChoiceCopy, 'seal'>
+  /** Host call to action once this phone is signed in. */
+  hostSignedIn: string
   signIn: string
 }
 
@@ -179,6 +183,7 @@ const PHONE_COPY: Record<LobbyStyleId, PhoneCopy> = {
       body: 'Run the show from this phone and put the board up on a TV.',
       action: 'Sign in to host ▸',
     },
+    hostSignedIn: 'Start hosting ▸',
     signIn: 'Already have an account? Sign in',
   },
   arcade: {
@@ -196,6 +201,7 @@ const PHONE_COPY: Record<LobbyStyleId, PhoneCopy> = {
       body: 'Run the show from this phone and put the board up on a TV.',
       action: 'Sign in to host ▸',
     },
+    hostSignedIn: 'Start hosting ▸',
     signIn: 'Have an account? Sign in',
   },
   'rec-room': {
@@ -213,6 +219,7 @@ const PHONE_COPY: Record<LobbyStyleId, PhoneCopy> = {
       body: 'Run the show from this phone and put the board up on a TV.',
       action: 'Sign in to host →',
     },
+    hostSignedIn: 'Start hosting →',
     signIn: 'Already have an account? Sign in',
   },
 }
@@ -220,9 +227,11 @@ const PHONE_COPY: Record<LobbyStyleId, PhoneCopy> = {
 export function HostOrJoinPhone() {
   const style = useLobbyStyle()
   const copy = PHONE_COPY[style]
+  const signedIn = useMe().kind === 'signed-in'
 
   return (
     <PhoneFrame label="Host or join" cardTag="Game night">
+      <PlayerBadge />
       <div className="entry-phone__header">
         <h1 className="entry-phone__heading">
           {style === 'arcade' ? (
@@ -236,13 +245,21 @@ export function HostOrJoinPhone() {
         {copy.tagline && <p className="entry-phone__tagline">{copy.tagline}</p>}
       </div>
       <PhoneChoice kind="join" copy={copy.join} to={href('join')} />
-      <PhoneChoice kind="host" copy={copy.host} to={href('sign-in')} />
-      <a className="entry-phone__link" href={href('sign-in')} data-testid="sign-in-link">
-        {copy.signIn}
-      </a>
-      <a className="entry-phone__link" href={href('playtest')} data-testid="playtest-link">
-        Playtest a game
-      </a>
+      {signedIn ? (
+        <>
+          <PhoneChoice kind="host" copy={{ ...copy.host, action: copy.hostSignedIn }} to={href('lobby')} />
+          <a className="entry-phone__link" href={href('playtest')} data-testid="solo-play-link">
+            Solo play
+          </a>
+        </>
+      ) : (
+        <>
+          <PhoneChoice kind="host" copy={copy.host} to={href('sign-in')} />
+          <a className="entry-phone__link" href={href('sign-in')} data-testid="sign-in-link">
+            {copy.signIn}
+          </a>
+        </>
+      )}
     </PhoneFrame>
   )
 }

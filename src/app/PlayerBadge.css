@@ -1,0 +1,29 @@
+/* ABOUTME: The round initials badge at the top of phone menu screens, in the player's color. */
+/* ABOUTME: Its own short row on the right, so it never covers a screen's heading. */
+
+.player-badge-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -4px;
+}
+
+.player-badge {
+  width: var(--space-hit-target-min);
+  height: var(--space-hit-target-min);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--player);
+  color: var(--player-ink);
+  box-shadow: 0 0 0 2px var(--color-text);
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+:root[data-theme='arcade'] .player-badge {
+  border-radius: 0;
+  font-size: 14px;
+}

@@ -1,4 +1,4 @@
-// ABOUTME: Games that can be playtested at #/playtest/<game-id>, behind the playtest code.
+// ABOUTME: Games that can be playtested in Solo play at #/playtest/<game-id>, for signed-in players.
 // ABOUTME: Each page loads only when opened, so its code and word lists stay out of the main download.
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 

@@ -1,4 +1,4 @@
-// ABOUTME: Top-level screen switch: applies this person's style and the host's settings, then shows the screen in the URL hash.
+// ABOUTME: Top-level screen switch: applies this person's style, the host's settings and who is signed in, then shows the screen in the URL hash.
 // ABOUTME: Screens with a TV and a phone version pick one by screen shape (see useScreenKind).
 import { GamePicker } from './app/GamePicker'
 import { GameVote } from './app/GameVote'
@@ -12,6 +12,8 @@ import { Profile } from './app/Profile'
 import { SignIn } from './app/SignIn'
 import { useHashRoute, type Route } from './app/useHashRoute'
 import { useHostSettings, type HostSettings as Settings } from './app/useHostSettings'
+import { MeProvider } from './app/MeProvider'
+import { useMe } from './app/useMe'
 import { useMyStyle } from './app/useMyStyle'
 import type { LobbyStyleId } from './ui/themes/lobbyStyles'
 import { LobbyStyleContext } from './ui/themes/useLobbyStyle'
@@ -27,6 +29,12 @@ interface ScreenProps {
 }
 
 function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle }: ScreenProps) {
+  const me = useMe()
+  // Everyone has a profile: a signed-in player without one sets it up before anything else.
+  if (me.kind === 'signed-in' && me.profile === null && route.screen !== 'sign-in') {
+    return <Profile style={style} onStyleChange={setStyle} />
+  }
+
   switch (route.screen) {
     case 'settings':
       return <HostSettings settings={settings} onChange={updateSettings} style={style} onStyleChange={setStyle} />
@@ -61,14 +69,16 @@ function App() {
 
   return (
     <LobbyStyleContext.Provider value={style}>
-      <CurrentScreen
-        route={route}
-        kind={kind}
-        settings={settings}
-        updateSettings={updateSettings}
-        style={style}
-        setStyle={setStyle}
-      />
+      <MeProvider>
+        <CurrentScreen
+          route={route}
+          kind={kind}
+          settings={settings}
+          updateSettings={updateSettings}
+          style={style}
+          setStyle={setStyle}
+        />
+      </MeProvider>
     </LobbyStyleContext.Provider>
   )
 }

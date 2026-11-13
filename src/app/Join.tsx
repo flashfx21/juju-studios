@@ -1,28 +1,23 @@
 // ABOUTME: Phone Join screen, which is also profile setup: room code, username and color (arcade adds initials).
 // ABOUTME: A phone not signed in yet also signs in here, with Google or an emailed link; the room code isn't checked yet.
 import { useState, type FormEvent } from 'react'
-import { emailSignInLink, signedInPlayer, signInWithGoogle } from '../engine/net/auth'
+import { emailSignInLink, signInWithGoogle } from '../engine/net/auth'
+import { saveProfile, type Profile } from '../engine/net/profiles'
 import { CodeBoxes } from '../ui/CodeBoxes'
+import { ColorSwatches } from '../ui/ColorSwatches'
 import { GoogleButton } from '../ui/GoogleButton'
 import { PhoneFrame } from '../ui/PhoneFrame'
-import { inkOn, PLAYER_COLOR_IDS, PLAYER_COLOR_NAMES, PLAYER_COLORS, type PlayerColorId } from '../ui/playerColors'
 import { Field, TextField } from '../ui/TextField'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
-import {
-  checkEmail,
-  checkInitials,
-  checkRoomCode,
-  checkUsername,
-  INITIALS_LENGTH,
-  lettersOnly,
-  ROOM_CODE_LENGTH,
-} from './formRules'
-import { saveProfile } from './localProfile'
+import { checkEmail, checkRoomCode, INITIALS_LENGTH, ROOM_CODE_LENGTH } from './formRules'
 import { savePendingEmail } from './pendingEmail'
+import { clearPendingProfile, savePendingProfile } from './pendingProfile'
+import { PlayerBadge } from './PlayerBadge'
 import { signInProblem } from './signInProblems'
 import { goTo } from './useHashRoute'
-import { useSignedInPlayer } from './useSignedInPlayer'
+import { useMe } from './useMe'
+import { useProfileDraft } from './useProfileDraft'
 import './Join.css'
 
 const JOIN_LABELS: Record<LobbyStyleId, string> = {
@@ -31,71 +26,73 @@ const JOIN_LABELS: Record<LobbyStyleId, string> = {
   'rec-room': 'Pull up a chair',
 }
 
-const NO_ERRORS = { code: '', username: '', initials: '', email: '' }
-
 export function Join() {
+  const me = useMe()
+  if (me.kind === 'checking' || (me.kind === 'signed-in' && me.profile === undefined)) {
+    return <PhoneFrame label="Join a game" cardTag="Under a minute" />
+  }
+  const signedIn = me.kind === 'signed-in' ? { uid: me.player.uid, profile: me.profile ?? null } : null
+  return <JoinForm key={signedIn?.uid ?? 'signed-out'} signedIn={signedIn} />
+}
+
+interface JoinFormProps {
+  /** Null when this phone still has to sign in. */
+  signedIn: { uid: string; profile: Profile | null } | null
+}
+
+function JoinForm({ signedIn }: JoinFormProps) {
   const style = useLobbyStyle()
   const asksInitials = style === 'arcade'
+  const draft = useProfileDraft(signedIn?.profile ?? null)
   const [code, setCode] = useState('')
-  const [username, setUsername] = useState('')
-  const [initials, setInitials] = useState('')
-  const [initialsEdited, setInitialsEdited] = useState(false)
   const [email, setEmail] = useState('')
-  const [color, setColor] = useState<PlayerColorId>('red')
-  const [errors, setErrors] = useState(NO_ERRORS)
+  const [errors, setErrors] = useState({ code: '', email: '' })
   const [problem, setProblem] = useState('')
-  const [busy, setBusy] = useState<'google' | 'email' | ''>('')
-  const player = useSignedInPlayer()
-  const needsSignIn = player === null
-
-  function changeUsername(name: string) {
-    setUsername(name)
-    if (!initialsEdited) setInitials(lettersOnly(name, INITIALS_LENGTH))
-  }
+  const [busy, setBusy] = useState<'google' | 'email' | 'join' | ''>('')
 
   /** Checks the fields (the email only when it will be used) and focuses the first bad one. */
   function fieldsAreGood(withEmail: boolean): boolean {
-    const found = {
-      code: checkRoomCode(code),
-      username: checkUsername(username),
-      initials: asksInitials ? checkInitials(initials) : '',
-      email: withEmail ? checkEmail(email) : '',
-    }
+    const found = { code: checkRoomCode(code), email: withEmail ? checkEmail(email) : '' }
     setErrors(found)
     setProblem('')
-    const firstBad = (Object.keys(found) as (keyof typeof found)[]).find((field) => found[field])
+    const badProfileField = draft.check(asksInitials)
+    const firstBad = found.code ? 'code' : badProfileField || (found.email ? 'email' : '')
     if (firstBad) document.getElementById(`join-${firstBad}`)?.focus()
     return !firstBad
   }
 
-  function keepProfile(profileEmail: string) {
-    saveProfile({
-      username: username.trim(),
-      initials: initials || lettersOnly(username, INITIALS_LENGTH),
-      color,
-      email: profileEmail,
-    })
+  async function saveAndGo(uid: string) {
+    try {
+      await saveProfile(uid, draft.toProfile())
+      goTo('lobby')
+    } catch (error) {
+      console.error('Saving the profile failed', error)
+      setProblem("Your profile didn't save. Check you're online and try again.")
+    }
   }
 
   async function joinWithGoogle() {
     if (busy || !fieldsAreGood(false)) return
     setBusy('google')
+    // Saved as soon as sign-in finishes (see MeProvider), so profile setup never flashes up in between.
+    savePendingProfile(draft.toProfile())
     const outcome = await signInWithGoogle()
     setBusy('')
-    if (outcome !== 'signed-in') {
-      setProblem(signInProblem(outcome))
+    if (outcome === 'signed-in') {
+      goTo('lobby')
       return
     }
-    keepProfile(signedInPlayer()?.email ?? '')
-    goTo('lobby')
+    clearPendingProfile()
+    setProblem(signInProblem(outcome))
   }
 
   async function submit(event: FormEvent) {
     event.preventDefault()
-    if (busy || player === undefined || !fieldsAreGood(needsSignIn)) return
-    if (player) {
-      keepProfile(player.email)
-      goTo('lobby')
+    if (busy || !fieldsAreGood(signedIn === null)) return
+    if (signedIn) {
+      setBusy('join')
+      await saveAndGo(signedIn.uid)
+      setBusy('')
       return
     }
     setBusy('email')
@@ -106,12 +103,13 @@ export function Join() {
       setProblem(signInProblem(outcome))
       return
     }
-    keepProfile(email.trim())
+    savePendingProfile(draft.toProfile())
     goTo('sign-in', 'sent')
   }
 
   return (
     <PhoneFrame label="Join a game" cardTag="Under a minute">
+      <PlayerBadge />
       <div className="join-top">
         <h1 className="join-top__logo">
           JuJu<span className="join-top__logo-rest"> Studios</span>
@@ -143,54 +141,32 @@ export function Join() {
             id="join-username"
             label="Username"
             autoComplete="nickname"
-            value={username}
-            error={errors.username}
+            value={draft.username}
+            error={draft.errors.username}
             testId="join-username"
-            onChange={changeUsername}
+            onChange={draft.changeUsername}
           />
           {asksInitials && (
-            <Field id="join-initials" label="Initials" error={errors.initials}>
+            <Field id="join-initials" label="Initials" error={draft.errors.initials}>
               <CodeBoxes
                 id="join-initials"
-                value={initials}
+                value={draft.initials}
                 length={INITIALS_LENGTH}
-                invalid={!!errors.initials}
-                describedBy={errors.initials ? 'join-initials-error' : undefined}
+                invalid={!!draft.errors.initials}
+                describedBy={draft.errors.initials ? 'join-initials-error' : undefined}
                 variant="initials"
                 testId="join-initials"
-                onChange={(value) => {
-                  setInitials(value)
-                  setInitialsEdited(true)
-                }}
+                onChange={draft.changeInitials}
               />
             </Field>
           )}
           <fieldset className="join-colors">
             <legend className="field__label">Your color</legend>
-            <div className="swatches">
-              {PLAYER_COLOR_IDS.map((id) => {
-                const hex = PLAYER_COLORS[style][id]
-                const selected = id === color
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    className="swatch"
-                    style={{ background: hex, color: inkOn(hex) }}
-                    aria-label={PLAYER_COLOR_NAMES[id]}
-                    aria-pressed={selected}
-                    data-testid={`join-color-${id}`}
-                    onClick={() => setColor(id)}
-                  >
-                    {selected ? '✓' : ''}
-                  </button>
-                )
-              })}
-            </div>
+            <ColorSwatches style={style} value={draft.color} testIdPrefix="join-color" onPick={draft.setColor} />
           </fieldset>
         </div>
 
-        {needsSignIn && (
+        {signedIn === null && (
           <div className="cue-card join-card join-sign-in">
             <h2 className="cue-card__label">Sign in once</h2>
             <GoogleButton busy={busy === 'google'} testId="join-google" onClick={joinWithGoogle} />
@@ -216,7 +192,7 @@ export function Join() {
           <button
             type="submit"
             className="phone-button join-submit"
-            aria-disabled={busy !== '' || player === undefined || undefined}
+            aria-disabled={busy !== '' || undefined}
             data-testid="join-submit"
           >
             <span className="join-submit__dome">{JOIN_LABELS[style]}</span>

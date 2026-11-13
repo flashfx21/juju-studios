@@ -10,18 +10,18 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 
 | Screen | Address | TV | Phone |
 |---|---|---|---|
-| Host or join (front door) | `#/` | Host a game / Join a game | Join, Host, Sign in, Playtest a game |
+| Host or join (front door) | `#/` | Host a game / Join a game | Join, Host; signed out: Sign in; signed in: Start hosting and Solo play |
 | Host sign-in | `#/host` | "Finish on your phone" | Sign-in form |
 | Sign in | `#/sign-in`, `/sent`, `/finish`, `/expired` | | Google or email link (or who is signed in), check your email, finishing the link, link expired |
 | Join (profile setup) | `#/join` | | Room code, username, color (arcade adds initials); a phone not signed in also signs in here (Google or email link) |
-| Lobby placeholder | `#/lobby` | Links to the game picker, Host settings, Profile and Playtests, plus the version | same |
-| Playtests | `#/playtest`, `#/playtest/chainword`, `#/playtest/dial-it-in`, `#/playtest/dont-jinx-it`, `#/playtest/pin-drop`, `#/playtest/sketch-showdown` | | Behind the playtest code: games still in testing |
+| Lobby placeholder | `#/lobby` | Who is signed in, links to the game picker, Host settings, Profile and Solo play (Sign in when signed out), plus the version | same |
+| Solo play | `#/playtest`, `#/playtest/chainword`, `#/playtest/dial-it-in`, `#/playtest/dont-jinx-it`, `#/playtest/pin-drop`, `#/playtest/sketch-showdown` | | Signed-in players only: games still in testing, played against bots |
 | Game picker | `#/picker` | Full lineup, all coming soon | Coming-soon list, nothing to vote on |
 | Host settings | `#/settings` | Your style, game choice (group vote / leader pick), CRT scanlines | |
-| Profile | `#/profile` | | Initials, username, email, color, **your style**, stats |
+| Profile | `#/profile` | | Initials, username, email, color, **your style**, stats; first time after sign-in it is profile setup; signed out it offers Sign in |
 
-- **Everyone picks their own style.** The TV shows the host's style; each phone shows its own user's, changed on Profile (or in Host settings on the TV). It's saved on the device until profiles move to the backend.
-- **Sign-in works** (Firebase Authentication): Google, or a one-time link emailed to you. The free plan sends only 5 link emails a day for the whole site, so non-Google players should sign up before game night. A phone stays signed in. Rooms are **not connected yet**: Join doesn't check the room code, and signing in leads to the lobby placeholder. Join remembers your profile on this phone; "Sign out of this phone" on Profile clears it and signs the phone out.
+- **Everyone picks their own style.** The TV shows the host's style; each phone shows its own user's, changed on Profile (or in Host settings on the TV). The style is saved on each device; it is not part of the saved profile.
+- **Sign-in works** (Firebase Authentication): Google, or a one-time link emailed to you. The free plan sends only 5 link emails a day for the whole site, so non-Google players should sign up before game night. A phone stays signed in. Rooms are **not connected yet**: Join doesn't check the room code, and signing in leads to the lobby placeholder. - **Profiles are saved in the database** (`profiles/{uid}`: username, color, initials), so they follow you to any device you sign in on. Your email stays in sign-in, not the profile. Everyone has a profile: after a first sign-in you set it up (Join counts as setup), and you can change your name and color on Profile any time. A badge with your initials in your color sits in the top corner of the phone menu screens and opens Profile. "Sign out of this phone" is on Profile.
 - Host settings are saved in this browser until rooms exist.
 - Addresses stand in for the design's QR codes (see `docs/later.md`).
 - TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.
@@ -50,7 +50,7 @@ npm run emulators  # local Firebase (sign-in and database) on this PC
 
 ## Playtests
 
-Games still in testing open at `#/playtest` (phone front door: **Playtest a game**; lobby page: **Playtests**). A playtest code keeps casual visitors out; each device asks once and remembers it. It is not real security: the code can be worked out from the site's code.
+Games still in testing open at `#/playtest`, shown as **Solo play** on the phone front door and the lobby page once you are signed in. Signed out, Solo play asks you to sign in first. The addresses keep the word "playtest" for now; Solo play is a temporary menu item until real game nights work.
 
 **Chainword playtest, no server:** one person taps **Make a code for everyone** (pick letters per word, words in the chain and hard mode first) and reads the code out, for example `KPDT53` (a code ending in `H`, like `KPDT53H`, plays in hard mode). Everyone else types it under **Got a chain code?** and gets the same words. Say go, play, then compare totals: fewest guesses wins, faster time breaks a tie. **End game** stops early (the word you're on and any left count 7 each). Everyone should load the site fresh first: a code deals from the word lists, so phones on different versions of the site can get different words.
 
@@ -62,12 +62,6 @@ Games still in testing open at `#/playtest` (phone front door: **Playtest a game
 
 **Sketch Showdown playtest, drawer only:** you draw every round for Pencils (you, Bot A, Bot B) against three bots on Crayons. Pick turns and pace, then **Start**. Pick one of three clues; the dev box's **Bot picks** is the other drawer (different picks are a coin flip), and **Time's up** / **Go** stand in for the pick clock and the countdown. Draw with brush, eraser or line, four sizes and 16 colors, chosen from the Brush and Color buttons in the canvas's top-left corner (**OK** closes each menu); **Undo** removes the last stroke and **Hold to clear** wipes the canvas. Your team's guesses show in the strip under the canvas. The dev box sends a teammate's guess (type one to test the matching, or **Wrong guess**), lets the other team win (**Other team got it**) or ends the round (**Time's up**). A wrong guess locks that bot out for 2 seconds. The reveal shows both drawings and the score; you are the host, so **Next** is yours. If it's level after the last round, vote for yourself to draw the sudden-death round. The result screen pages through every round's drawings. The other team's canvas stays empty: bots don't draw.
 
-**To change the playtest code**, run this in the project folder with the new code in place of `newcode`, then put the number it prints into `PLAYTEST_CODE_HASH` in `src/app/playtestCode.ts`. Every device then asks for the new code.
-
-```powershell
-node -e "import('./src/engine/hashText.ts').then((m) => console.log(m.hashText('newcode')))"
-```
-
 **To add a game's playtest**, give it a `Playtest.tsx` in its game folder and one line in `src/app/playtests.ts`.
 
 ## Deploy
@@ -76,7 +70,7 @@ Every push to `main` runs `.github/workflows/deploy.yml`, which lints, builds an
 
 ## Firebase
 
-The backend is the Firebase project `juju-studios` (Spark plan, Realtime Database). `.firebaserc` names the project, `firebase.json` sets up the rules file and the emulators, and `database.rules.json` holds the database rules (locked for now). The repo is the source of truth for the rules: change the file, then push it with `firebase deploy --only database`. The web app's config lives in `.env.local` (`VITE_FIREBASE_*`, not committed).
+The backend is the Firebase project `juju-studios` (Spark plan, Realtime Database). `.firebaserc` names the project, `firebase.json` sets up the rules file and the emulators, and `database.rules.json` holds the database rules: everything is locked except `profiles/{uid}`, which only that signed-in player (with a verified email) can read and write, with the fields checked. The repo is the source of truth for the rules: change the file, then push it with `firebase deploy --only database`. The web app's config lives in `.env.local` (`VITE_FIREBASE_*`, not committed).
 
 ## Folders
 

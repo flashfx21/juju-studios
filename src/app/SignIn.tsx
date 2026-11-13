@@ -10,9 +10,11 @@ import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
 import { checkEmail } from './formRules'
 import { clearPendingEmail, loadPendingEmail, savePendingEmail } from './pendingEmail'
+import { clearPendingProfile } from './pendingProfile'
+import { PlayerBadge } from './PlayerBadge'
 import { signInProblem } from './signInProblems'
 import { goTo, href } from './useHashRoute'
-import { useSignedInPlayer } from './useSignedInPlayer'
+import { useMe } from './useMe'
 
 /** Seconds before "Resend link" can be used again (design placeholder). */
 const RESEND_WAIT = 45
@@ -42,6 +44,7 @@ export function SignIn({ step }: { step: string }) {
 
   return (
     <PhoneFrame label="Sign in" cardTag="Host sign-in">
+      <PlayerBadge />
       <div className="phone-top">
         <span className="phone-top__logo" aria-hidden="true">
           JuJu
@@ -58,9 +61,9 @@ export function SignIn({ step }: { step: string }) {
 }
 
 function SignInStart() {
-  const player = useSignedInPlayer()
-  if (player === undefined) return null
-  return player ? <SignedIn email={player.email} /> : <SignInForm />
+  const me = useMe()
+  if (me.kind === 'checking') return null
+  return me.kind === 'signed-in' ? <SignedIn email={me.player.email} /> : <SignInForm />
 }
 
 function SignedIn({ email }: { email: string }) {
@@ -81,7 +84,10 @@ function SignedIn({ email }: { email: string }) {
           type="button"
           className="phone-link"
           data-testid="signed-in-sign-out"
-          onClick={() => void signOutOfThisDevice()}
+          onClick={() => {
+            clearPendingProfile()
+            void signOutOfThisDevice()
+          }}
         >
           Not you? Sign out
         </button>
@@ -98,6 +104,7 @@ function SignInForm() {
 
   async function continueWithGoogle() {
     setProblem('')
+    clearPendingProfile()
     setBusy('google')
     const outcome = await signInWithGoogle()
     setBusy('')
@@ -116,6 +123,7 @@ function SignInForm() {
       return
     }
     setBusy('email')
+    clearPendingProfile()
     savePendingEmail(email.trim())
     const outcome = await emailSignInLink(email.trim())
     setBusy('')

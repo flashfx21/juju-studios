@@ -17,7 +17,7 @@ A suite of phone party games for family and friends, played like Jackbox: one sh
 - Games never calculate leaderboard points. They report a finishing order; `src/engine/scoring` applies the rules.
 - New games start with status "coming soon" and only become "playable" after tests pass and a local playtest.
 - Every game is in one phase: Not Started, Design, Development, Solo test, Group test, Production. Definitions and exit rules: `docs/games/README.md`. Only Production sets `status: 'playable'` in code. Keep each spec's Status line and the README table current when a game changes phase.
-- Games in testing get a `Playtest.tsx` listed in `src/app/playtests.ts`; they open at `#/playtest/<game-id>` behind the playtest code (README, Playtests).
+- Games in testing get a `Playtest.tsx` listed in `src/app/playtests.ts`; they open at `#/playtest/<game-id>` under Solo play, for signed-in players only (README, Playtests).
 
 ## Scoring (decided)
 - Every game is worth 100 points total.

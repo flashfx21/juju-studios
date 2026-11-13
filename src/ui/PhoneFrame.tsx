@@ -9,7 +9,7 @@ interface PhoneFrameProps {
   cardTag?: string
   /** Exactly one screen tall with tighter edges, for game screens that must never scroll. */
   fit?: boolean
-  children: ReactNode
+  children?: ReactNode
 }
 
 export function PhoneFrame({ label, cardTag, fit, children }: PhoneFrameProps) {

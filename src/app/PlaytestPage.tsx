@@ -1,15 +1,16 @@
-// ABOUTME: The pages at #/playtest (list of games in testing) and #/playtest/<game-id>, behind the playtest code.
+// ABOUTME: Solo play: the pages at #/playtest (games still in testing) and #/playtest/<game-id>, for signed-in players only.
 // ABOUTME: Unknown game ids get a short message instead of a blank page.
 import { Suspense } from 'react'
 import { PhoneFrame } from '../ui/PhoneFrame'
-import { PlaytestGate } from './PlaytestGate'
+import { PlayerBadge } from './PlayerBadge'
 import { PLAYTESTS } from './playtests'
 import { href } from './useHashRoute'
+import { useMe } from './useMe'
 import '../ui/PhoneForm.css'
 
 function Loading() {
   return (
-    <PhoneFrame label="Loading playtest" cardTag="Playtest">
+    <PhoneFrame label="Loading the game" cardTag="Solo play">
       <p className="cue-card__text" role="status">
         Loading the game...
       </p>
@@ -19,11 +20,12 @@ function Loading() {
 
 function PlaytestList() {
   return (
-    <PhoneFrame label="Playtests" cardTag="Playtest">
+    <PhoneFrame label="Solo play" cardTag="Solo play">
+      <PlayerBadge />
       <div className="phone-top">
-        <h1 className="phone-top__title">Playtests</h1>
+        <h1 className="phone-top__title">Solo play</h1>
       </div>
-      <p className="cue-card__text">Games still being tested. Pick one to play.</p>
+      <p className="cue-card__text">Games still being tested, played on this phone against bots. Pick one.</p>
       {Object.entries(PLAYTESTS).map(([id, playtest]) => (
         <a key={id} className="phone-button" href={href('playtest', id)} data-testid={`playtest-${id}`}>
           {playtest.title}
@@ -38,20 +40,42 @@ function PlaytestList() {
 
 function UnknownPlaytest() {
   return (
-    <PhoneFrame label="No playtest" cardTag="Playtest">
-      <p className="cue-card__text">There's no playtest for that game.</p>
+    <PhoneFrame label="No such game" cardTag="Solo play">
+      <p className="cue-card__text">There's no solo play for that game.</p>
       <a className="phone-link" href={href('playtest')}>
-        See the playtests
+        See Solo play
+      </a>
+    </PhoneFrame>
+  )
+}
+
+/** Solo play is for signed-in players; anyone else is asked to sign in first. */
+function SignInFirst() {
+  return (
+    <PhoneFrame label="Sign in for Solo play" cardTag="Solo play">
+      <div className="phone-top">
+        <h1 className="phone-top__title">Solo play</h1>
+      </div>
+      <p className="cue-card__text">Sign in to play the games still being tested.</p>
+      <a className="phone-button" href={href('sign-in')} data-testid="solo-play-sign-in">
+        Sign in
+      </a>
+      <a className="phone-link phone-link--quiet" href={href('home')}>
+        Back
       </a>
     </PhoneFrame>
   )
 }
 
 export function PlaytestPage({ gameId }: { gameId: string }) {
+  const me = useMe()
   const playtest = PLAYTESTS[gameId]
 
+  if (me.kind === 'checking') return <Loading />
+  if (me.kind === 'signed-out') return <SignInFirst />
+
   return (
-    <PlaytestGate>
+    <>
       {gameId === '' ? (
         <PlaytestList />
       ) : playtest ? (
@@ -61,6 +85,6 @@ export function PlaytestPage({ gameId }: { gameId: string }) {
       ) : (
         <UnknownPlaytest />
       )}
-    </PlaytestGate>
+    </>
   )
 }
