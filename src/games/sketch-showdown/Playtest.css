@@ -68,17 +68,6 @@
   font-size: 14px;
 }
 
-.ss-gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.ss-gallery__title {
-  margin: 0;
-  font-weight: 700;
-}
-
 :root[data-theme='arcade'] .ss-option__label {
   font-size: 11px;
 }

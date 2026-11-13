@@ -273,6 +273,31 @@
     0 0 0 6px currentColor;
 }
 
+/* ---------- Guess box ---------- */
+.ss-guess.cue-card {
+  margin-top: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  transform: none;
+}
+
+.ss-guess__input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ss-guess__send {
+  flex: 0 0 auto;
+  width: auto;
+  padding-inline: 18px;
+}
+
+.ss-guess__send[aria-disabled='true'] {
+  opacity: 0.6;
+}
+
 /* ---------- Team guess strip (never covers the canvas) ---------- */
 .ss-strip {
   display: flex;

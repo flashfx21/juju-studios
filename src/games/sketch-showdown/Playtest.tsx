@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { loadDictionary, type Dictionary } from '../../engine/dictionary'
 import { PhoneFrame } from '../../ui/PhoneFrame'
 import type { PlayerId, RulesContext } from '../types'
+import { Gallery } from './Gallery'
 import { PhoneScreen, SketchShowdownTitle } from './PhoneScreen'
 import {
   currentRound,
@@ -17,7 +18,6 @@ import {
   type SketchShowdownSettings,
   type SketchShowdownState,
 } from './rules'
-import { SketchCanvas } from './SketchCanvas'
 import { TEAM_LOOKS } from './teams'
 import '../../ui/PhoneForm.css'
 import '../../ui/PlaytestDev.css'
@@ -102,10 +102,11 @@ export function Playtest() {
         onUndo={() => input(YOU, { type: 'undo' })}
         onClear={() => input(YOU, { type: 'clear' })}
         onVote={(nominee) => input(YOU, { type: 'vote', nominee })}
+        onGuess={(text) => input(YOU, { type: 'guess', text })}
         onNext={() => apply((s) => rules.onTimer(s, context()))}
         summaryAction={
           <>
-            <Gallery state={state} />
+            <Gallery items={tvView(state).gallery ?? []} />
             <button type="button" className="phone-button" data-testid="ss-play-again" onClick={() => setState(null)}>
               Play again
             </button>
@@ -165,40 +166,6 @@ function Start({ onStart }: { onStart: (settings: SketchShowdownSettings) => voi
       </button>
       <p className="preview-note">Playtest: nothing is saved. There's no clock; the dev box ends each step.</p>
     </>
-  )
-}
-
-/** Stands in for the TV's game-over gallery: page through every round's two drawings. */
-function Gallery({ state }: { state: SketchShowdownState }) {
-  const gallery = tvView(state).gallery ?? []
-  const [index, setIndex] = useState(0)
-  if (gallery.length === 0) return null
-  const item = gallery[Math.min(index, gallery.length - 1)]
-  return (
-    <section className="ss-gallery" aria-label="Gallery">
-      <p className="ss-gallery__title">
-        Round {index + 1} of {gallery.length}: {item.clue.answer}
-      </p>
-      <div className="ss-pair">
-        {item.drawings.map((strokes, team) => (
-          <SketchCanvas key={team} label={`${TEAM_LOOKS[team].name} drawing`} strokes={strokes} />
-        ))}
-      </div>
-      <div className="playtest-dev__buttons">
-        <button type="button" className="playtest-dev__button" disabled={index === 0} data-testid="ss-gallery-prev" onClick={() => setIndex(index - 1)}>
-          Previous
-        </button>
-        <button
-          type="button"
-          className="playtest-dev__button"
-          disabled={index >= gallery.length - 1}
-          data-testid="ss-gallery-next"
-          onClick={() => setIndex(index + 1)}
-        >
-          Next
-        </button>
-      </div>
-    </section>
   )
 }
 
@@ -289,7 +256,13 @@ function DevBar({ state, rules, onChange }: DevBarProps) {
               type="button"
               className="playtest-dev__button"
               data-testid="ss-dev-other-wins"
-              onClick={() => onChange((s) => rules.onInput(s, 'bot-d', { type: 'guess', text: currentRound(s).clue!.answer }, context()))}
+              onClick={() =>
+                onChange((s) => {
+                  // Any of the other team's guessers: their drawer never guesses.
+                  const guesser = TEAMS[1].find((bot) => bot !== currentRound(s).drawers[1])!
+                  return rules.onInput(s, guesser, { type: 'guess', text: currentRound(s).clue!.answer }, context())
+                })
+              }
             >
               Other team got it
             </button>

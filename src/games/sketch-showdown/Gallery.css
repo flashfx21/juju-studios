@@ -1,0 +1,13 @@
+/* ABOUTME: The game-over gallery: the round title above its pair of drawings and the paging buttons. */
+/* ABOUTME: The drawings use the reveal's side-by-side pair layout from PhoneScreen.css. */
+
+.ss-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ss-gallery__title {
+  margin: 0;
+  font-weight: 700;
+}

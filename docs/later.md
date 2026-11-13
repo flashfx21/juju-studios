@@ -10,6 +10,7 @@ Ideas and features deliberately left out for now. Each line says why it waits.
 
 - **Playing from a PC as a player.** On hold (Julian, Nov 11) while phone playtests come first. Today a wide landscape screen always gets the TV screens; the proposal is that joining makes you a player on any device and hosting makes you the TV. Fits with the rooms work.
 
+- **Sketch Showdown: team swap, mid-stroke sync, drawing bots.** Rooms pick teams at random; the spec's host swap and lock waits for the engine's teams. Teammates see each stroke when the drawer lifts their finger, not while it's drawn. Bots don't draw, so a bot team's canvas stays blank.
 - **One host account open twice.** If the host's account has the same room game open in two tabs or on two devices, both run the game and fight over it (seen in testing with a leftover tab). The TV view's display-only mode will need the same guard: only one runner per room.
 - **Admin room controls** (close a stuck room, remove a player). Wanted (Julian, Nov 13); waits for rooms.
 - **Admin score fixes** (fix or remove a game result). Wanted (Julian, Nov 13); waits for saved results.

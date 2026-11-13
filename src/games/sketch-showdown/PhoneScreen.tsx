@@ -1,7 +1,8 @@
-// ABOUTME: Sketch Showdown on the drawer's phone: picking the clue, the countdown, the canvas with its tool menu and the
-// ABOUTME: team guess strip, the reveal of both drawings, the sudden-death vote and the result. Takes only playerView(), never full state.
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+// ABOUTME: Sketch Showdown on a phone: picking the clue, the countdown, the drawer's canvas with its tools, the guesser's live sketch
+// ABOUTME: and guess box, the team guess strip, the reveal of both drawings, the sudden-death vote and the result. Takes only playerView().
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import type { PlayerId } from '../types'
+import { cleanGuess } from './matching'
 import { SketchCanvas } from './SketchCanvas'
 import { BRUSH_SIZES, SWATCHES, TEAM_INDEXES, TOOLS, type BrushSize, type PlayerView, type Stroke, type TeamGuess, type TeamIndex, type Tool } from './rules'
 import { TEAM_LOOKS } from './teams'
@@ -20,7 +21,12 @@ interface PhoneScreenProps {
   onUndo: () => void
   onClear: () => void
   onVote: (nominee: PlayerId) => void
+  onGuess: (text: string) => void
   onNext: () => void
+  /** Seconds left on the current phase's clock, or null when nothing is timed. */
+  secondsLeft?: number | null
+  /** Shown under the race, such as the room host's End round. */
+  raceAction?: ReactNode
   /** Shown under the result, such as the playtest's gallery and Play again button. */
   summaryAction?: ReactNode
 }
@@ -193,6 +199,77 @@ function Menu({ label, kind, onDone, children }: { label: string; kind: MenuKind
   )
 }
 
+/** True while a wrong guess still locks this player out, re-checked as the lockout runs down. */
+function useLockedOut(lockedUntil: number): boolean {
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    if (lockedUntil <= Date.now()) return
+    const timer = window.setTimeout(() => setNow(Date.now()), lockedUntil - Date.now() + 50)
+    return () => window.clearTimeout(timer)
+  }, [lockedUntil, now])
+  return now < lockedUntil
+}
+
+/** A guesser's race: the team's sketch as it's drawn, a guess box that clears after every guess, and the team's guesses. */
+function GuessRace({ view, names, onGuess }: PhoneScreenProps) {
+  const [typed, setTyped] = useState('')
+  const [note, setNote] = useState('')
+  const lockedOut = useLockedOut(view.lockedUntil)
+  const guesses = view.guesses[view.team] ?? []
+  const drawer = view.drawers[view.team]
+
+  function submit(event: FormEvent) {
+    event.preventDefault()
+    const cleaned = cleanGuess(typed)
+    setTyped('')
+    if (!cleaned) setNote('Type a guess')
+    else if (lockedOut) setNote('Wait: locked out for 2 seconds after a wrong guess')
+    else if (guesses.some((guess) => cleanGuess(guess.text) === cleaned)) setNote('Already guessed')
+    else {
+      setNote('')
+      onGuess(typed)
+    }
+  }
+
+  return (
+    <>
+      <p className="ss-draw-line">
+        Guess what <strong>{names[drawer]}</strong> is drawing
+      </p>
+      <div className="ss-canvas-box">
+        <div className="ss-paper">
+          <SketchCanvas label={`${names[drawer]}'s drawing so far`} strokes={view.drawings[view.team] ?? []} />
+        </div>
+      </div>
+      <GuessStrip guesses={guesses} names={names} />
+      {/* Inside a cue card, like every shared field: the field takes its text color from the card. */}
+      <form className="cue-card ss-guess" noValidate onSubmit={submit}>
+        <label className="visually-hidden" htmlFor="ss-guess">
+          Your guess
+        </label>
+        <input
+          id="ss-guess"
+          className="field__input ss-guess__input"
+          type="text"
+          placeholder="Type a guess"
+          autoComplete="off"
+          autoCapitalize="none"
+          enterKeyHint="send"
+          value={typed}
+          data-testid="ss-guess-input"
+          onChange={(event) => setTyped(event.target.value)}
+        />
+        <button type="submit" className="phone-button ss-guess__send" data-testid="ss-guess-send" aria-disabled={lockedOut ? 'true' : undefined}>
+          Guess
+        </button>
+      </form>
+      <p className="ss-status" role="status" data-testid="ss-guess-note">
+        {lockedOut ? 'Locked out for 2 seconds after a wrong guess' : note}
+      </p>
+    </>
+  )
+}
+
 function Race(props: PhoneScreenProps) {
   const { view, names, onStroke, onUndo, onClear } = props
   const [tool, setTool] = useState<Tool>('brush')
@@ -201,7 +278,7 @@ function Race(props: PhoneScreenProps) {
   const [menu, setMenu] = useState<MenuKind | null>(null)
   const brushButton = useRef<HTMLButtonElement>(null)
   const colorButton = useRef<HTMLButtonElement>(null)
-  if (view.role !== 'drawer') return <p className="ss-status">Guess what your drawer is drawing</p>
+  if (view.role !== 'drawer') return <GuessRace {...props} />
   const strokes = view.drawings[view.team] ?? []
   const closeMenu = () => {
     const opener = menu === 'color' ? colorButton : brushButton
@@ -404,6 +481,11 @@ export function PhoneScreen(props: PhoneScreenProps) {
             {view.suddenDeath ? 'Sudden death' : `Round ${view.roundNumber} of ${view.regularRounds}`}
           </span>
         )}
+        {props.secondsLeft != null && (
+          <span className="ss-top__round" role="timer" aria-live={props.secondsLeft <= 10 ? 'polite' : 'off'} data-testid="ss-clock">
+            {props.secondsLeft} s
+          </span>
+        )}
       </div>
       <p className="ss-role">
         <TeamBadge team={view.team} /> {view.role === 'drawer' ? 'You draw' : 'You guess'}
@@ -411,6 +493,7 @@ export function PhoneScreen(props: PhoneScreenProps) {
       {view.phase === 'pick' && <Pick {...props} />}
       {view.phase === 'countdown' && <Countdown {...props} />}
       {view.phase === 'race' && <Race {...props} />}
+      {view.phase === 'race' && props.raceAction}
       {view.phase === 'reveal' && <Reveal {...props} />}
       {view.phase === 'vote' && <Vote {...props} />}
       {view.phase === 'over' && <Over {...props} />}
