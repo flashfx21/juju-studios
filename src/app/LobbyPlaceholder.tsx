@@ -1,5 +1,5 @@
-// ABOUTME: Stand-in for the lobby until it is built: who is signed in, links to the game picker, Host settings, Profile and Solo play, plus the version.
-// ABOUTME: Restyles with the active lobby style through the theme tokens. Solo play shows for playtesters, Admin for admins.
+// ABOUTME: Stand-in for the lobby until it is built: the logo (with a home icon) goes home; links to the game picker, Host settings and Profile.
+// ABOUTME: Restyles with the active lobby style through the theme tokens. Admin shows for admins; games are reached through the game picker.
 import packageInfo from '../../package.json'
 import { href } from './useHashRoute'
 import { useMe } from './useMe'
@@ -8,13 +8,15 @@ import './LobbyPlaceholder.css'
 export function LobbyPlaceholder() {
   const me = useMe()
   const signedIn = me.kind === 'signed-in'
-  const canPlaytest = me.kind === 'signed-in' && me.canPlaytest
   const isAdmin = me.kind === 'signed-in' && me.isAdmin
 
   return (
     <main className="lobby-placeholder">
       <h1 className="lobby-placeholder__logo">
-        <a className="lobby-placeholder__logo-link" href={href('home')} data-testid="lobby-logo-home">
+        <a className="lobby-placeholder__logo-link" href={href('home')} aria-label="JuJu Studios, home" data-testid="lobby-logo-home">
+          <svg className="lobby-placeholder__home-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z" fill="currentColor" />
+          </svg>
           JuJu Studios
         </a>
       </h1>
@@ -36,11 +38,6 @@ export function LobbyPlaceholder() {
         <a className="lobby-placeholder__button lobby-placeholder__button--profile" href={href('profile')} data-testid="open-profile">
           Your profile
         </a>
-        {canPlaytest && (
-          <a className="lobby-placeholder__button" href={href('playtest')} data-testid="open-solo-play">
-            Solo play
-          </a>
-        )}
         {isAdmin && (
           <a className="lobby-placeholder__button lobby-placeholder__button--admin" href={href('admin')} data-testid="open-admin">
             Admin
@@ -51,9 +48,6 @@ export function LobbyPlaceholder() {
             Sign in
           </a>
         )}
-        <a className="lobby-placeholder__button" href={href('home')} data-testid="open-home">
-          Home
-        </a>
       </nav>
       <p className="lobby-placeholder__version" data-testid="app-version">
         v{packageInfo.version}

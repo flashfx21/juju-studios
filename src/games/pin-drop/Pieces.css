@@ -1,46 +1,5 @@
-/* ABOUTME: Pin Drop pieces shared by the solo and two-phone playtests: setting option rows and the round photo. */
+/* ABOUTME: Pin Drop pieces shared by the solo and two-phone playtests: the round photo. */
 /* ABOUTME: The photo is a strip above the map; tapped, it fills the screen on a dark backdrop. */
-
-.pd-option {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.pd-option__label {
-  font-family: var(--font-label);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-size: 15px;
-}
-
-.pd-option__buttons {
-  display: flex;
-  gap: 6px;
-}
-
-.pd-option__button {
-  flex: 1;
-  min-height: var(--space-hit-target-min);
-  border: 2px solid currentColor;
-  background: transparent;
-  color: inherit;
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-/* Selected: filled, and a check mark so it doesn't depend on color alone. */
-.pd-option__button[aria-pressed='true'] {
-  background: var(--color-primary);
-  color: var(--color-primary-ink);
-  border-color: var(--color-primary);
-}
-
-.pd-option__button[aria-pressed='true']::before {
-  content: '✓ ';
-}
 
 .pd-tv {
   flex: 0 0 auto;
@@ -108,8 +67,4 @@
   justify-content: space-between;
   padding: 8px;
   border: 3px solid currentColor;
-}
-
-:root[data-theme='arcade'] .pd-option__label {
-  font-size: 11px;
 }

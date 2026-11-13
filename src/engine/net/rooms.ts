@@ -1,4 +1,4 @@
-// ABOUTME: Game rooms in the Realtime Database at rooms/{code}: who hosts, who joined, the game state, and inputs.
+// ABOUTME: Game rooms in the Realtime Database at rooms/{code}: who hosts, who joined, the game state, inputs, and progress.
 // ABOUTME: The host's device runs the game: players send inputs, the host applies them and writes the new state.
 
 import {
@@ -31,6 +31,8 @@ export interface Room {
   players: Record<string, RoomPlayer & { joinedAt: number }>
   /** The game's state, written by the host. Null before the game starts. */
   play: { state: string; deadline: number | null } | null
+  /** What each player (or bot) shares about their own game, as JSON, for games where every phone plays its own copy. */
+  progress: Record<string, string>
 }
 
 /** Letters that can't be mistaken for each other or for numbers when read off a screen. */
@@ -98,6 +100,7 @@ export function watchRoom(code: string, onChange: (room: Room | null) => void, o
         game: value.game,
         players: value.players ?? {},
         play: value.play ? { state: value.play.state, deadline: value.play.deadline ?? null } : null,
+        progress: value.progress ?? {},
       })
     },
     onError,
@@ -116,9 +119,15 @@ export function writePlay(code: string, state: unknown, deadline: number | null)
   return set(roomRef(code, 'play'), { state: JSON.stringify(state), deadline })
 }
 
-/** Host only: clears the game so the room is back in its waiting state. */
-export function clearPlay(code: string): Promise<void> {
-  return remove(roomRef(code, 'play'))
+/** Host only: clears the game (and everyone's progress) so the room is back in its waiting state. */
+export async function clearPlay(code: string): Promise<void> {
+  await remove(roomRef(code, 'progress'))
+  await remove(roomRef(code, 'play'))
+}
+
+/** Shares a player's own progress (as JSON). A player writes their own; the host also writes for bots. */
+export function writeProgress(code: string, id: string, progress: unknown): Promise<void> {
+  return set(roomRef(code, `progress/${id}`), JSON.stringify(progress))
 }
 
 /** A player sends one input to the host. */

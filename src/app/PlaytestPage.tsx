@@ -101,7 +101,7 @@ export function PlaytestPage({ gameId }: { gameId: string }) {
         <GameExitContext.Provider
           value={() => {
             playtest.onExit?.()
-            goTo('playtest')
+            goTo('picker')
           }}
         >
           <Suspense fallback={<Loading />}>

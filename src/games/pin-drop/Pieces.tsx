@@ -1,39 +1,9 @@
-// ABOUTME: Pin Drop pieces shared by the solo and two-phone playtests: a row of setting options and the round photo.
+// ABOUTME: Pin Drop pieces shared by the solo and two-phone playtests: the round photo.
 // ABOUTME: The photo stands in for the TV until Pin Drop has a TV screen; tap it to see it full screen.
 import { useEffect, useState } from 'react'
 import { creditText } from './format'
 import type { Photo } from './rules'
 import './Pieces.css'
-
-interface OptionRowProps<T extends string | number> {
-  label: string
-  options: readonly T[]
-  names: Record<T, string>
-  value: T
-  onChoose: (value: T) => void
-}
-
-export function OptionRow<T extends string | number>({ label, options, names, value, onChoose }: OptionRowProps<T>) {
-  return (
-    <div className="pd-option" role="group" aria-label={label}>
-      <span className="pd-option__label">{label}</span>
-      <div className="pd-option__buttons">
-        {options.map((option) => (
-          <button
-            key={option}
-            type="button"
-            className="pd-option__button"
-            aria-pressed={option === value}
-            data-testid={`pd-option-${label.toLowerCase()}-${option}`}
-            onClick={() => onChoose(option)}
-          >
-            {names[option]}
-          </button>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 /** The round's photo, small above the map; tap it to see it full screen. A credit that names the place waits. */
 export function RoundPhoto({ photo }: { photo: Photo }) {

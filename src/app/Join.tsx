@@ -24,6 +24,7 @@ const JOIN_LABELS: Record<LobbyStyleId, string> = {
 /** Games whose rooms can be joined by code, and the page each room plays on. */
 const ROOM_PAGES: Record<string, string> = {
   'pin-drop': 'pin-drop-together',
+  chainword: 'chainword-together',
 }
 
 function JoinTop() {

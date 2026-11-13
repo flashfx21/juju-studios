@@ -17,7 +17,8 @@ import {
 import '../../ui/PhoneForm.css'
 import '../../ui/PlaytestDev.css'
 import { botGuess } from './bots'
-import { OptionRow, RoundPhoto } from './Pieces'
+import { OptionRow } from '../../ui/OptionRow'
+import { RoundPhoto } from './Pieces'
 
 const YOU = 'you'
 const PLAYERS: PlayerId[] = [YOU, 'bot-a', 'bot-b']

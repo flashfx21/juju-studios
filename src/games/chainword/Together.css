@@ -1,0 +1,66 @@
+/* ABOUTME: Chainword in a room: your place in the top bar, and the standings list under your final total. */
+/* ABOUTME: Colors and fonts come from the lobby style's tokens, so it follows every style. */
+
+.cwt-place {
+  font-family: var(--font-label);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cwt-results {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.cwt-results__heading {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.cwt-results__note {
+  margin: 0;
+  font-size: 15px;
+  text-align: center;
+}
+
+.cwt-standings {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cwt-standings__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.cwt-standings__place {
+  flex: none;
+  width: 34px;
+  font-family: var(--font-label);
+}
+
+.cwt-standings__name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+.cwt-standings__score {
+  flex: none;
+  font-size: 14px;
+}

@@ -1,0 +1,65 @@
+/* ABOUTME: The waiting room shared by room games: the big room code, who has joined (color and symbol), and status lines. */
+/* ABOUTME: Colors and fonts come from the lobby style's tokens, so it follows every style. */
+
+.room-waiting {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.room-code {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.room-code__label {
+  font-family: var(--font-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+
+.room-code__letters {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+}
+
+.room-players {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.room-players__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+}
+
+.room-players__dot {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--color-text);
+}
+
+.room-status {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.35;
+}

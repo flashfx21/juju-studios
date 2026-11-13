@@ -59,6 +59,13 @@
           "$id": {
             ".write": "auth != null && auth.token.email_verified === true && data.parent().parent().child('host').exists() && ((!data.exists() && newData.child('by').val() === auth.uid && data.parent().parent().child('players').child(auth.uid).exists()) || (!newData.exists() && data.parent().parent().child('host').val() === auth.uid))"
           }
+        },
+        "progress": {
+          ".write": "auth != null && data.parent().child('host').val() === auth.uid && !newData.exists()",
+          "$id": {
+            ".write": "auth != null && auth.token.email_verified === true && ((auth.uid === $id && data.parent().parent().child('players').child(auth.uid).exists()) || (data.parent().parent().child('host').val() === auth.uid && $id.beginsWith('bot-')))",
+            ".validate": "newData.isString() && newData.val().length <= 2000"
+          }
         }
       }
     },

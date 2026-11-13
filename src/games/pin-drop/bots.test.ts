@@ -2,7 +2,8 @@
 // ABOUTME: Uses a seeded random so each run checks the same few hundred guesses.
 import { describe, expect, it } from 'vitest'
 import { seededRandom } from '../../engine/seededRandom'
-import { botFor, botGuess, botIds, BOTS, nearestCity, type BotSkill } from './bots'
+import type { BotSkill } from '../room/bots'
+import { botGuess, nearestCity } from './bots'
 import { distanceKm, PHOTOS, type Difficulty } from './rules'
 
 function medianMiss(skill: BotSkill, difficulty: Difficulty): number {
@@ -48,18 +49,3 @@ describe('botGuess', () => {
   })
 })
 
-describe('bot ids', () => {
-  it('carry the skill, so a reloaded host knows each bot', () => {
-    const ids = botIds(3, 'sharp')
-    expect(ids).toEqual(['bot-sharp-1', 'bot-sharp-2', 'bot-sharp-3'])
-    expect(botFor(ids[1])).toEqual({ skill: 'sharp', look: BOTS[1] })
-    expect(botFor('bot-casual-1')?.skill).toBe('casual')
-  })
-
-  it('never mistake a real player for a bot', () => {
-    expect(botFor('gsArVLQwSdXr9WEUAkD8fvQlsea2')).toBeNull()
-    expect(botFor('bot-sharp-9')).toBeNull()
-    expect(botFor('bot-wild-1')).toBeNull()
-    expect(botIds(0, 'casual')).toEqual([])
-  })
-})

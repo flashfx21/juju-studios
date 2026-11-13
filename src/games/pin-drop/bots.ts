@@ -1,13 +1,8 @@
 // ABOUTME: How Pin Drop bots guess: always a real city (so never in the ocean), missing by an amount that grows
 // ABOUTME: with the photo's difficulty. Sharp bots miss by less than casual ones. Pure, so tests can seed it.
 import { WORLD_CITIES } from '../../engine/worldCities'
-import type { PlayerColorId } from '../../ui/playerColors'
-import type { PlayerSymbolId } from '../../ui/playerSymbols'
-import type { PlayerId } from '../types'
+import type { BotSkill } from '../room/bots'
 import { distanceKm, wrapLongitude, type Difficulty, type Photo, type Pin } from './rules'
-
-export type BotSkill = 'casual' | 'sharp'
-export const BOT_SKILLS: readonly BotSkill[] = ['casual', 'sharp']
 
 /** How far off a bot aims, in km: [nearest, farthest]. Real players get the city on easy photos, the region on hard. */
 const MISS_KM: Record<BotSkill, Record<Difficulty, [number, number]>> = {
@@ -55,21 +50,3 @@ export function nearestCity(pin: Pin): { name: string; km: number } {
   return best
 }
 
-/** The bots a host can add, in order. Each has its own look so players can tell them apart. */
-export const BOTS: readonly { name: string; initials: string; color: PlayerColorId; symbol: PlayerSymbolId }[] = [
-  { name: 'Bot Ada', initials: 'BA', color: 'silver', symbol: 'rocket' },
-  { name: 'Bot Max', initials: 'BM', color: 'brown', symbol: 'moon' },
-  { name: 'Bot Kit', initials: 'BK', color: 'olive', symbol: 'star' },
-]
-
-/** Player ids for the bots in a game. The skill is part of the id, so a host that reloads still knows it. */
-export function botIds(count: number, skill: BotSkill): PlayerId[] {
-  return BOTS.slice(0, count).map((_, i) => `bot-${skill}-${i + 1}`)
-}
-
-/** The bot behind a player id, or null for a real player. */
-export function botFor(id: PlayerId): { skill: BotSkill; look: (typeof BOTS)[number] } | null {
-  const match = /^bot-(casual|sharp)-(\d)$/.exec(id)
-  const look = match ? BOTS[Number(match[2]) - 1] : undefined
-  return match && look ? { skill: match[1] as BotSkill, look } : null
-}

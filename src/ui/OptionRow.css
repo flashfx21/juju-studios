@@ -1,0 +1,47 @@
+/* ABOUTME: Option row styles: a small uppercase label over a row of equal buttons; the chosen one is filled. */
+/* ABOUTME: Colors and fonts come from the lobby style's tokens. */
+
+.option-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.option-row__label {
+  font-family: var(--font-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+
+.option-row__buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.option-row__button {
+  flex: 1;
+  min-height: var(--space-hit-target-min);
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Selected: filled, and a check mark so it doesn't depend on color alone. */
+.option-row__button[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+}
+
+.option-row__button[aria-pressed='true']::before {
+  content: '✓ ';
+}
+
+:root[data-theme='arcade'] .option-row__label {
+  font-size: 11px;
+}

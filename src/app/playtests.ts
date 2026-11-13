@@ -15,6 +15,11 @@ export const PLAYTESTS: Record<string, PlaytestEntry> = {
     title: 'Chainword',
     Page: lazy(() => import('../games/chainword/Playtest').then((module) => ({ default: module.Playtest }))),
   },
+  'chainword-together': {
+    title: 'Chainword with others (two or more phones)',
+    Page: lazy(() => import('../games/chainword/Together').then((module) => ({ default: module.Together }))),
+    onExit: () => rememberRoom('chainword', ''),
+  },
   'dial-it-in': {
     title: 'Dial It In',
     Page: lazy(() => import('../games/dial-it-in/Playtest').then((module) => ({ default: module.Playtest }))),
