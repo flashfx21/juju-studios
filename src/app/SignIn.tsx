@@ -1,13 +1,18 @@
-// ABOUTME: Phone sign-in in four states: email link form, password form, "check your email", and "link expired".
-// ABOUTME: Not connected to a backend yet: forms check their fields, then move on; nothing is sent.
-import { useEffect, useState, type FormEvent } from 'react'
+// ABOUTME: Phone sign-in: Google or an emailed link, "check your email", finishing the link, and "link expired".
+// ABOUTME: A phone stays signed in, so a signed-in visitor sees who they are and can carry on or sign out.
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { emailSignInLink, finishEmailSignIn, signInWithGoogle, signOutOfThisDevice } from '../engine/net/auth'
+import { GoogleButton } from '../ui/GoogleButton'
+import '../ui/PhoneForm.css'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { TextField } from '../ui/TextField'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
-import { checkEmail, checkPassword } from './formRules'
-import { loadPendingEmail, savePendingEmail } from './pendingEmail'
+import { checkEmail } from './formRules'
+import { clearPendingEmail, loadPendingEmail, savePendingEmail } from './pendingEmail'
+import { signInProblem } from './signInProblems'
 import { goTo, href } from './useHashRoute'
+import { useSignedInPlayer } from './useSignedInPlayer'
 
 /** Seconds before "Resend link" can be used again (design placeholder). */
 const RESEND_WAIT = 45
@@ -18,14 +23,21 @@ const EXPIRED_STAMP: Record<LobbyStyleId, string> = {
   'rec-room': 'Expired',
 }
 
+/** Where a freshly signed-in host goes. The lobby stands in until rooms exist. */
+function goOnSignedIn() {
+  goTo('lobby')
+}
+
 export function SignIn({ step }: { step: string }) {
   const content =
     step === 'sent' ? (
       <LinkSent />
     ) : step === 'expired' ? (
       <LinkExpired />
+    ) : step === 'finish' ? (
+      <FinishLink />
     ) : (
-      <SignInForm withPassword={step === 'password'} />
+      <SignInStart />
     )
 
   return (
@@ -45,73 +57,105 @@ export function SignIn({ step }: { step: string }) {
   )
 }
 
-function SignInForm({ withPassword }: { withPassword: boolean }) {
-  const [email, setEmail] = useState(loadPendingEmail)
-  const [password, setPassword] = useState('')
-  const [errors, setErrors] = useState({ email: '', password: '' })
-  const [notConnected, setNotConnected] = useState(false)
+function SignInStart() {
+  const player = useSignedInPlayer()
+  if (player === undefined) return null
+  return player ? <SignedIn email={player.email} /> : <SignInForm />
+}
 
-  function submit(event: FormEvent) {
+function SignedIn({ email }: { email: string }) {
+  return (
+    <>
+      <div className="cue-card cue-card--message cue-card--sent">
+        <h2 className="cue-card__label">Signed in</h2>
+        <p className="cue-card__text">This phone is signed in as</p>
+        <p className="cue-card__email" data-testid="signed-in-email">
+          {email}
+        </p>
+      </div>
+      <div className="phone-actions">
+        <button type="button" className="phone-button" data-testid="signed-in-continue" onClick={goOnSignedIn}>
+          Continue
+        </button>
+        <button
+          type="button"
+          className="phone-link"
+          data-testid="signed-in-sign-out"
+          onClick={() => void signOutOfThisDevice()}
+        >
+          Not you? Sign out
+        </button>
+      </div>
+    </>
+  )
+}
+
+function SignInForm() {
+  const [email, setEmail] = useState(loadPendingEmail)
+  const [error, setError] = useState('')
+  const [problem, setProblem] = useState('')
+  const [busy, setBusy] = useState<'google' | 'email' | ''>('')
+
+  async function continueWithGoogle() {
+    setProblem('')
+    setBusy('google')
+    const outcome = await signInWithGoogle()
+    setBusy('')
+    if (outcome === 'signed-in') goOnSignedIn()
+    else setProblem(signInProblem(outcome))
+  }
+
+  async function submit(event: FormEvent) {
     event.preventDefault()
-    const found = { email: checkEmail(email), password: withPassword ? checkPassword(password) : '' }
-    setErrors(found)
-    if (found.email || found.password) {
-      document.getElementById(found.email ? 'sign-in-email' : 'sign-in-password')?.focus()
+    if (busy) return
+    const found = checkEmail(email)
+    setError(found)
+    setProblem('')
+    if (found) {
+      document.getElementById('sign-in-email')?.focus()
       return
     }
+    setBusy('email')
     savePendingEmail(email.trim())
-    if (withPassword) setNotConnected(true)
-    else goTo('sign-in', 'sent')
+    const outcome = await emailSignInLink(email.trim())
+    setBusy('')
+    if (outcome === 'sent') goTo('sign-in', 'sent')
+    else setProblem(signInProblem(outcome))
   }
 
   return (
     <form className="phone-form" noValidate onSubmit={submit}>
       <div className="cue-card">
         <h2 className="cue-card__label">Host sign-in</h2>
+        <GoogleButton busy={busy === 'google'} testId="sign-in-google" onClick={continueWithGoogle} />
+        <p className="sign-in-or">or</p>
         <TextField
           id="sign-in-email"
           label="Email"
           type="email"
           autoComplete="email"
           value={email}
-          error={errors.email}
+          error={error}
           testId="sign-in-email"
           onChange={setEmail}
         />
-        {withPassword ? (
-          <TextField
-            id="sign-in-password"
-            label="Password"
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            error={errors.password}
-            testId="sign-in-password"
-            onChange={setPassword}
-          />
-        ) : (
-          <p className="field__hint">
-            We'll email you a sign-in link. Tap it on this phone and you're in. Check your spam folder.
-          </p>
-        )}
+        <p className="field__hint">
+          We'll email you a sign-in link. Tap it on this phone and you're in. Check your spam folder.
+        </p>
       </div>
 
       <div className="phone-actions">
-        <button type="submit" className="phone-button" data-testid="sign-in-submit">
-          {withPassword ? 'Sign in' : 'Email me a link'}
-        </button>
-        <p className="preview-note" role="status">
-          {notConnected
-            ? "Sign-in isn't connected yet, so you can't sign in with a password today."
-            : "Preview: sign-in isn't connected yet, so no email is sent."}
-        </p>
-        <a
-          className="phone-link"
-          href={withPassword ? href('sign-in') : href('sign-in', 'password')}
-          data-testid="sign-in-switch"
+        <button
+          type="submit"
+          className="phone-button"
+          aria-disabled={busy !== '' || undefined}
+          data-testid="sign-in-submit"
         >
-          {withPassword ? 'Email me a link instead' : 'Use a password instead'}
-        </a>
+          {busy === 'email' ? 'Sending' : 'Email me a link'}
+        </button>
+        <p className="preview-note" role="alert" data-testid="sign-in-problem">
+          {problem}
+        </p>
         <a className="phone-link phone-link--quiet" href={href('home')}>
           Back
         </a>
@@ -135,7 +179,19 @@ function useCountdown(seconds: number) {
 function LinkSent() {
   const email = loadPendingEmail()
   const [secondsLeft, restart] = useCountdown(RESEND_WAIT)
-  const waiting = secondsLeft > 0
+  const [problem, setProblem] = useState('')
+  const [sending, setSending] = useState(false)
+  const waiting = secondsLeft > 0 || sending || !email
+
+  async function resend() {
+    if (waiting) return
+    setProblem('')
+    setSending(true)
+    const outcome = await emailSignInLink(email)
+    setSending(false)
+    if (outcome === 'sent') restart()
+    else setProblem(signInProblem(outcome))
+  }
 
   return (
     <>
@@ -147,7 +203,7 @@ function LinkSent() {
           {email || 'your email'}
         </p>
         <p className="cue-card__text">
-          Open it on this phone. The link works once and expires in 15 minutes. Not there? Check your spam folder.
+          Open it on this phone. The link works once. Not there? Check your spam folder.
         </p>
       </div>
       <div className="phone-actions">
@@ -156,13 +212,13 @@ function LinkSent() {
           className="phone-button phone-button--secondary"
           aria-disabled={waiting || undefined}
           data-testid="resend-link"
-          onClick={() => {
-            if (!waiting) restart()
-          }}
+          onClick={resend}
         >
-          {waiting ? `Resend link in 0:${String(secondsLeft).padStart(2, '0')}` : 'Resend link'}
+          {secondsLeft > 0 ? `Resend link in 0:${String(secondsLeft).padStart(2, '0')}` : 'Resend link'}
         </button>
-        <p className="preview-note">Preview: sign-in isn't connected yet, so no email was actually sent.</p>
+        <p className="preview-note" role="alert" data-testid="sent-problem">
+          {problem}
+        </p>
         <a className="phone-link" href={href('sign-in')} data-testid="different-email">
           Use a different email
         </a>
@@ -171,9 +227,108 @@ function LinkSent() {
   )
 }
 
+/** The page the emailed link opens. Signs in with the email this phone remembers, or asks for it. */
+function FinishLink() {
+  const [remembered] = useState(loadPendingEmail)
+  const [email, setEmail] = useState('')
+  const [error, setError] = useState('')
+  const [problem, setProblem] = useState('')
+  const [working, setWorking] = useState(remembered !== '')
+  const started = useRef(false)
+
+  async function finish(address: string) {
+    setProblem('')
+    setWorking(true)
+    const outcome = await finishEmailSignIn(address, window.location.href)
+    setWorking(false)
+    if (outcome === 'signed-in') {
+      clearPendingEmail()
+      window.history.replaceState(null, '', window.location.pathname + window.location.hash)
+      goOnSignedIn()
+    } else if (outcome === 'expired') {
+      window.history.replaceState(null, '', window.location.pathname + window.location.hash)
+      goTo('sign-in', 'expired')
+    } else {
+      setProblem(signInProblem(outcome))
+    }
+  }
+
+  useEffect(() => {
+    if (started.current || !remembered) return
+    started.current = true
+    void finish(remembered)
+  }, [remembered])
+
+  function submit(event: FormEvent) {
+    event.preventDefault()
+    if (working) return
+    const found = checkEmail(email)
+    setError(found)
+    if (found) {
+      document.getElementById('finish-email')?.focus()
+      return
+    }
+    void finish(email.trim())
+  }
+
+  if (working) {
+    return (
+      <div className="cue-card cue-card--message cue-card--sent" role="status">
+        <h2 className="cue-card__label">Sign-in link</h2>
+        <p className="cue-card__heading">Signing you in</p>
+      </div>
+    )
+  }
+
+  return (
+    <form className="phone-form" noValidate onSubmit={submit}>
+      <div className="cue-card">
+        <h2 className="cue-card__label">Sign-in link</h2>
+        <p className="cue-card__text">
+          This browser didn't send the link, so type the email it went to. That proves the link is yours.
+        </p>
+        <TextField
+          id="finish-email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          value={email}
+          error={error}
+          testId="finish-email"
+          onChange={setEmail}
+        />
+      </div>
+      <div className="phone-actions">
+        <button type="submit" className="phone-button" data-testid="finish-submit">
+          Sign in
+        </button>
+        <p className="preview-note" role="alert" data-testid="finish-problem">
+          {problem}
+        </p>
+      </div>
+    </form>
+  )
+}
+
 function LinkExpired() {
   const style = useLobbyStyle()
   const email = loadPendingEmail()
+  const [problem, setProblem] = useState('')
+  const [sending, setSending] = useState(false)
+
+  async function sendNewLink() {
+    if (!email) {
+      goTo('sign-in')
+      return
+    }
+    if (sending) return
+    setProblem('')
+    setSending(true)
+    const outcome = await emailSignInLink(email)
+    setSending(false)
+    if (outcome === 'sent') goTo('sign-in', 'sent')
+    else setProblem(signInProblem(outcome))
+  }
 
   return (
     <>
@@ -182,7 +337,7 @@ function LinkExpired() {
         <h2 className="cue-card__label">Sign-in link</h2>
         <p className="cue-card__heading">This link has expired</p>
         <p className="cue-card__text">
-          Sign-in links work once and expire after 15 minutes. We can send a new one
+          Sign-in links work once and don't last long. We can send a new one
           {email ? ` to ${email}.` : '.'}
         </p>
       </div>
@@ -190,11 +345,15 @@ function LinkExpired() {
         <button
           type="button"
           className="phone-button"
+          aria-disabled={sending || undefined}
           data-testid="send-new-link"
-          onClick={() => goTo('sign-in', email ? 'sent' : undefined)}
+          onClick={sendNewLink}
         >
           Send a new link
         </button>
+        <p className="preview-note" role="alert" data-testid="expired-problem">
+          {problem}
+        </p>
         <a className="phone-link" href={href('home')}>
           Back to start
         </a>

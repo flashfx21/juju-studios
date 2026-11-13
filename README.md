@@ -2,7 +2,7 @@
 
 Phone party games for family and friends. One shared screen (TV or laptop) hosts, and everyone joins on their phone with a room code.
 
-Live site: https://flashfx21.github.io/juju-studios/ (screens only for now: no backend, no playable games yet).
+Live site: https://flashfx21.github.io/juju-studios/ (screens and sign-in for now: no rooms, no playable games yet).
 
 ## What works so far
 
@@ -12,8 +12,8 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 |---|---|---|---|
 | Host or join (front door) | `#/` | Host a game / Join a game | Join, Host, Sign in, Playtest a game |
 | Host sign-in | `#/host` | "Finish on your phone" | Sign-in form |
-| Sign in | `#/sign-in`, `/password`, `/sent`, `/expired` | | Email link, password, check your email, link expired |
-| Join (profile setup) | `#/join` | | Room code, username, email, color (arcade adds initials) |
+| Sign in | `#/sign-in`, `/sent`, `/finish`, `/expired` | | Google or email link (or who is signed in), check your email, finishing the link, link expired |
+| Join (profile setup) | `#/join` | | Room code, username, color (arcade adds initials); a phone not signed in also signs in here (Google or email link) |
 | Lobby placeholder | `#/lobby` | Links to the game picker, Host settings, Profile and Playtests, plus the version | same |
 | Playtests | `#/playtest`, `#/playtest/chainword`, `#/playtest/dial-it-in`, `#/playtest/dont-jinx-it`, `#/playtest/pin-drop`, `#/playtest/sketch-showdown` | | Behind the playtest code: games still in testing |
 | Game picker | `#/picker` | Full lineup, all coming soon | Coming-soon list, nothing to vote on |
@@ -21,7 +21,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 | Profile | `#/profile` | | Initials, username, email, color, **your style**, stats |
 
 - **Everyone picks their own style.** The TV shows the host's style; each phone shows its own user's, changed on Profile (or in Host settings on the TV). It's saved on the device until profiles move to the backend.
-- Sign-in and joining are **not connected yet**: forms check their fields and move on, but nothing is sent. Each screen says so. Join remembers your profile on this phone; "Sign out of this phone" clears it.
+- **Sign-in works** (Firebase Authentication): Google, or a one-time link emailed to you. The free plan sends only 5 link emails a day for the whole site, so non-Google players should sign up before game night. A phone stays signed in. Rooms are **not connected yet**: Join doesn't check the room code, and signing in leads to the lobby placeholder. Join remembers your profile on this phone; "Sign out of this phone" on Profile clears it and signs the phone out.
 - Host settings are saved in this browser until rooms exist.
 - Addresses stand in for the design's QR codes (see `docs/later.md`).
 - TV screens are laid out at 1280x720 and scaled to fit the window, letterboxed when the shape differs.
@@ -46,7 +46,7 @@ npm test         # game rules tests (Vitest)
 npm run emulators  # local Firebase (sign-in and database) on this PC
 ```
 
-`npm run emulators` needs the Firebase CLI (`npm install -g firebase-tools`) and Java 11 or later. It runs a local copy of sign-in and the database, so testing never touches the real project. Ports: sign-in 9099, database 9000, Emulator UI at http://127.0.0.1:4000/. Stop it with Ctrl+C. The app does not connect to it yet.
+`npm run emulators` needs the Firebase CLI (`npm install -g firebase-tools`) and Java 11 or later. It runs a local copy of sign-in and the database, so testing never touches the real project. Ports: sign-in 9099, database 9000, Emulator UI at http://127.0.0.1:4000/. Stop it with Ctrl+C. `npm run dev` signs in against the emulators, so start them first: Google sign-in shows a stand-in account picker, and sign-in emails are not sent (the link appears in the emulator's terminal and under Authentication in the Emulator UI).
 
 ## Playtests
 

@@ -1,0 +1,51 @@
+/* ABOUTME: Google's light sign-in button (white, grey outline, dark label) and the "or" line under it. */
+/* ABOUTME: Colors are Google's, not the lobby style's, so they are set here rather than as theme tokens. */
+
+.google-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: var(--space-hit-target-min);
+  padding: 10px 16px;
+  border: 1px solid #747775;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #1f1f1f;
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.google-button__logo {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.google-button[aria-disabled='true'] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.sign-in-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 4px;
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sign-in-or::before,
+.sign-in-or::after {
+  content: '';
+  flex: 1;
+  border-top: 2px solid currentColor;
+  opacity: 0.4;
+}

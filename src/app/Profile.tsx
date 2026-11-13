@@ -6,6 +6,7 @@ import { inkOn, PLAYER_COLOR_IDS, PLAYER_COLOR_NAMES, PLAYER_COLORS, type Player
 import { StyleCards } from '../ui/StyleCards'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import '../ui/PhoneForm.css'
+import { signOutOfThisDevice } from '../engine/net/auth'
 import { clearProfile, loadProfile, saveProfile } from './localProfile'
 import { goTo, href } from './useHashRoute'
 import './Profile.css'
@@ -42,6 +43,7 @@ export function Profile({ style, onStyleChange }: ProfileProps) {
 
   function signOut() {
     clearProfile()
+    void signOutOfThisDevice()
     goTo('join')
   }
 

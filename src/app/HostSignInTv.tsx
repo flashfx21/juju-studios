@@ -1,5 +1,5 @@
 // ABOUTME: The big screen while the host signs in on their phone: where to go, and "Finish on your phone".
-// ABOUTME: Sign-in isn't connected to a backend yet, so the screen says so and links to the lobby preview.
+// ABOUTME: The TV cannot hear from the phone until rooms exist, so the screen says so and links to the lobby preview.
 import { TvHeader } from '../ui/TvHeader'
 import { TvStage } from '../ui/TvStage'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
@@ -48,7 +48,7 @@ export function HostSignInTv() {
             <p className="host-sign-in__headline">Finish on your phone</p>
             <p className="host-sign-in__body">Sign in with your email on your phone and this screen opens your room.</p>
             <p className="host-sign-in__preview">
-              Sign-in isn't connected yet.{' '}
+              This screen can't see your phone yet.{' '}
               <a href={href('lobby')} data-testid="lobby-preview-link">
                 Preview the lobby ▸
               </a>

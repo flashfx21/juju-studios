@@ -1,5 +1,5 @@
 // ABOUTME: Field checks for the sign-in and join forms, each returning an error message or an empty string.
-// ABOUTME: Kept loose on purpose: real address checks happen when sign-in is connected.
+// ABOUTME: Kept loose on purpose: Firebase checks the address when it sends the sign-in link.
 
 export const ROOM_CODE_LENGTH = 4
 export const INITIALS_LENGTH = 3
@@ -17,10 +17,6 @@ export function lettersOnly(value: string, max: number): string {
 export function checkEmail(email: string): string {
   if (!email.trim()) return 'Enter your email.'
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ? '' : "That email doesn't look right."
-}
-
-export function checkPassword(password: string): string {
-  return password ? '' : 'Enter your password.'
 }
 
 export function checkRoomCode(code: string): string {

@@ -11,7 +11,6 @@ Ideas and features deliberately left out for now. Each line says why it waits.
 - **Playing from a PC as a player.** On hold (Julian, Nov 11) while phone playtests come first. Today a wide landscape screen always gets the TV screens; the proposal is that joining makes you a player on any device and hosting makes you the TV. Fits with the rooms work.
 
 - **Real QR codes** on the Host or join, Host sign-in and lobby screens. Screens show the address as text for now; scannable codes need a QR library (a new dependency).
-- **Forgot your password** flow. Not designed (design open question 4), and the sign-in method is still undecided.
 - **"New" badge** on Pin Drop's picker tile. Only shown on playable games, and every game is coming soon for now.
 - **Playable picker tile, phone vote rows, vote counts, timer and "Lock in"**. Build them with the first playable game; the picker only draws coming-soon tiles today.
 - **Phone lobby, waiting room, TV lobby, instructions, pause, game over, leaderboard, loading states, error screens, create account / password reset, picker spin and remote focus.** Designed in all three styles (Nov 11 design update), not built yet.
