@@ -37,7 +37,12 @@ export function GameVote({ gameChoice }: { gameChoice: GameChoice }) {
 
   return (
     <PhoneFrame label="Pick a game">
-      <PlayerBadge />
+      <div className="game-vote__top">
+        <a className="game-vote__back" href={href('lobby')} data-testid="vote-back-top">
+          ‹ Back
+        </a>
+        <PlayerBadge />
+      </div>
       <h1 className="game-vote__title">{TITLES[style][gameChoice]}</h1>
       {ready.length === 0 ? (
         <p className="game-vote__empty" data-testid="vote-empty">
@@ -105,6 +110,11 @@ export function GameVote({ gameChoice }: { gameChoice: GameChoice }) {
           )
         })}
       </ul>
+      <div className="phone-actions">
+        <a className="phone-link" href={href('lobby')} data-testid="vote-back">
+          Back
+        </a>
+      </div>
     </PhoneFrame>
   )
 }

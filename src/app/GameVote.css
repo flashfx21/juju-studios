@@ -11,6 +11,30 @@
   color: var(--color-accent);
 }
 
+/* Back to the lobby page on the left of the top row (your badge on the right), and again at the bottom. */
+.game-vote__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.game-vote__top .player-badge-row {
+  margin-bottom: 0;
+}
+
+.game-vote__back {
+  min-height: var(--space-hit-target-min);
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text);
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 .game-vote__empty {
   margin: 0;
   padding: 18px 16px;
