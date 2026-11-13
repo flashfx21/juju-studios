@@ -50,6 +50,11 @@
   --player-blue: #3D6FD9;
   --player-pink: #E8489A;
   --player-olive: #7A8B3A;
+  /* Added beyond the design's six player colors (src/ui/playerColors.ts). */
+  --player-orange: #F07F1A;
+  --player-purple: #7A4FC9;
+  --player-brown: #8B5A2F;
+  --player-silver: #A9B0BC;
   --font-logo: 'Shrikhand', serif;
   --font-display: 'Shrikhand', serif;
   --font-label: 'Bebas Neue', sans-serif;
@@ -165,6 +170,11 @@
   --player-blue: #7B93FF;
   --player-pink: #FF2EA6;
   --player-olive: #39FF6A;
+  /* Added beyond the design's six player colors (src/ui/playerColors.ts). */
+  --player-orange: #FF9A1F;
+  --player-purple: #B86BFF;
+  --player-brown: #C98A5A;
+  --player-silver: #D9D9E8;
   --font-logo: 'Monoton', sans-serif;
   --font-display: 'Bungee', sans-serif;
   --font-label: 'Press Start 2P', monospace;
@@ -280,6 +290,11 @@
   --player-blue: #2E4F8F;
   --player-pink: #B8456E;
   --player-olive: #7A8B3A;
+  /* Added beyond the design's six player colors (src/ui/playerColors.ts). */
+  --player-orange: #E0762A;
+  --player-purple: #6E4C8E;
+  --player-brown: #6B4426;
+  --player-silver: #8C8478;
   --font-logo: 'Righteous', sans-serif;
   --font-display: 'Righteous', sans-serif;
   --font-label: 'Courier Prime', monospace;

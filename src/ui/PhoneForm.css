@@ -240,10 +240,12 @@
   gap: 6px;
 }
 
+/* Two rows of five, so all ten player colors fit a phone. */
 .swatches {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, 44px);
   justify-content: space-between;
-  gap: 6px;
+  gap: 10px 6px;
 }
 
 .swatch {

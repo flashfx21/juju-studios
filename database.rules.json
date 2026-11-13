@@ -11,7 +11,7 @@
           ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 16"
         },
         "color": {
-          ".validate": "newData.isString() && newData.val().matches(/^(red|gold|teal|blue|pink|olive)$/)"
+          ".validate": "newData.isString() && newData.val().matches(/^(red|gold|teal|blue|pink|olive|orange|purple|brown|silver)$/)"
         },
         "initials": {
           ".validate": "newData.isString() && newData.val().matches(/^[A-Z]{1,3}$/)"
