@@ -1,5 +1,5 @@
 // ABOUTME: Game rooms in the Realtime Database at rooms/{code}: who hosts, who joined, the game state, inputs, and progress.
-// ABOUTME: The host's device runs the game: players send inputs, the host applies them and writes the new state.
+// ABOUTME: The host's device runs the game. A lobby room lasts the night: it votes, then switches from game to game.
 
 import {
   get,
@@ -23,10 +23,18 @@ export interface RoomPlayer {
   symbol?: string
 }
 
+/** The game id a lobby room shows between games. */
+export const LOBBY = 'lobby'
+
 export interface Room {
   code: string
   host: string
+  /** The game the room is on now; a lobby room is on LOBBY between games. */
   game: string
+  /** A room for the night: it starts in the lobby and moves from game to game. */
+  lobby: boolean
+  /** In a lobby room, each player's vote for the next game (a game id). */
+  votes: Record<string, string>
   /** By player id (the sign-in uid), in the order they joined. */
   players: Record<string, RoomPlayer & { joinedAt: number }>
   /** The game's state, written by the host. Null before the game starts. */
@@ -51,13 +59,13 @@ function joinAs(code: string, uid: string, player: RoomPlayer): Promise<void> {
   return set(roomRef(code, `players/${uid}`), { ...player, joinedAt: serverTimestamp() })
 }
 
-/** Opens a new room hosted by this player and joins it. Tries new codes if one is taken. */
+/** Opens a new room hosted by this player and joins it. Tries new codes if one is taken. Pass LOBBY for a room for the night. */
 export async function createRoom(uid: string, game: string, player: RoomPlayer): Promise<string> {
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = newCode()
     try {
       // The rules only allow creating a room that doesn't exist yet, so a taken code is refused.
-      await set(roomRef(code), { host: uid, game, createdAt: serverTimestamp() })
+      await set(roomRef(code), { host: uid, game, lobby: game === LOBBY, createdAt: serverTimestamp() })
     } catch {
       continue
     }
@@ -77,9 +85,10 @@ export type JoinOutcome = 'joined' | 'no-room' | 'other-game'
 
 /** Joins an existing room for this game. Joining again (after a refresh) is fine. */
 export async function joinRoom(code: string, uid: string, game: string, player: RoomPlayer): Promise<JoinOutcome> {
-  const snapshot = await get(roomRef(code, 'game'))
+  const snapshot = await get(roomRef(code))
   if (!snapshot.exists()) return 'no-room'
-  if (snapshot.val() !== game) return 'other-game'
+  // A lobby room can be joined from any of its games; other rooms only for their own game.
+  if (snapshot.child('game').val() !== game && !snapshot.child('lobby').val()) return 'other-game'
   await joinAs(code, uid, player)
   return 'joined'
 }
@@ -98,6 +107,8 @@ export function watchRoom(code: string, onChange: (room: Room | null) => void, o
         code,
         host: value.host,
         game: value.game,
+        lobby: value.lobby === true,
+        votes: value.votes ?? {},
         players: value.players ?? {},
         play: value.play ? { state: value.play.state, deadline: value.play.deadline ?? null } : null,
         progress: value.progress ?? {},
@@ -123,6 +134,18 @@ export function writePlay(code: string, state: unknown, deadline: number | null)
 export async function clearPlay(code: string): Promise<void> {
   await remove(roomRef(code, 'progress'))
   await remove(roomRef(code, 'play'))
+}
+
+/** Host only: moves a lobby room to another game (or back to LOBBY), clearing the last game and the votes. */
+export async function switchGame(code: string, game: string): Promise<void> {
+  await clearPlay(code)
+  await remove(roomRef(code, 'votes'))
+  await set(roomRef(code, 'game'), game)
+}
+
+/** In a lobby room: this player's vote for the next game. */
+export function castVote(code: string, uid: string, game: string): Promise<void> {
+  return set(roomRef(code, `votes/${uid}`), game)
 }
 
 /** Shares a player's own progress (as JSON). A player writes their own; the host also writes for bots. */

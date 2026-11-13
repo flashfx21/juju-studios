@@ -14,7 +14,7 @@ Ideas and features deliberately left out for now. Each line says why it waits.
 - **Admin score fixes** (fix or remove a game result). Wanted (Julian, Nov 13); waits for saved results.
 - **Real QR codes** on the Host or join, Host sign-in and lobby screens. Screens show the address as text for now; scannable codes need a QR library (a new dependency).
 - **"New" badge** on Pin Drop's picker tile. Only shown on playable games, and every game is coming soon for now.
-- **Picker vote counts, timer, "Lock in", "In the lead" and remote focus.** Wait for rooms in the lobby. The picker already lets a playtester pick an in-testing game and open its Solo play pages (Nov 14).
+- **Lobby vote timer, "Lock in", ties (spin), "In the lead", remote focus, and the TV view of the lobby and picker.** Tonight's lobby (`#/room`, Nov 14) already votes with voters' icons and counts on phones, and the host starts a game. The TV view needs a display-only screen so it doesn't also run games as the host's account.
 - **Phone lobby, waiting room, TV lobby, instructions, pause, game over, leaderboard, loading states, error screens, create account / password reset, picker spin and remote focus.** Designed in all three styles (Nov 11 design update), not built yet.
 - **Room Open / Locked** toggle in Host settings. Designed; built when rooms exist, since it has nothing to lock yet.
 - **Verified badge** on Profile. Left off until sign-in is connected, so nothing claims an email is verified when it isn't.

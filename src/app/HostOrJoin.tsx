@@ -249,7 +249,7 @@ export function HostOrJoinPhone() {
       <PhoneChoice kind="join" copy={copy.join} to={href('join')} />
       {signedIn ? (
         <>
-          <PhoneChoice kind="host" copy={{ ...copy.host, action: copy.hostSignedIn }} to={href('lobby')} />
+          <PhoneChoice kind="host" copy={{ ...copy.host, action: copy.hostSignedIn }} to={href('room')} />
           {canPlaytest && (
             <a className="entry-phone__link" href={href('playtest')} data-testid="solo-play-link">
               Solo play

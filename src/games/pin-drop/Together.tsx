@@ -5,7 +5,7 @@ import { clearPlay, sendInput, takeInputs, writePlay, type Room } from '../../en
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
-import { RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import type { RulesContext } from '../types'
 import { botGuess } from './bots'
@@ -154,6 +154,7 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
               Play again
             </button>
           )}
+          <BackToLobby room={room} isHost={isHost} />
           <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
             Leave room
           </button>

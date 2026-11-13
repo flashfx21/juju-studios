@@ -1,0 +1,42 @@
+/* ABOUTME: Tonight's lobby: the vote heading and, on each game row, the voters' icons and the count. */
+/* ABOUTME: Game rows reuse the phone picker's row styles (GameVote.css). */
+
+.lobby-room {
+  padding-bottom: 12px;
+}
+
+.lobby-room__heading {
+  margin: 8px 0 0;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.lobby-room__row {
+  min-height: 72px;
+}
+
+.lobby-room__voters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+/* Voters' icons are smaller than the room list's, so several fit on one row. */
+.lobby-room__voters .room-players__dot {
+  width: 26px;
+  height: 26px;
+}
+
+.lobby-room__count {
+  margin-left: 4px;
+  font-family: var(--font-label);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

@@ -1,8 +1,9 @@
 // ABOUTME: Phone Join screen: type the room code from the host and go into that game's room.
 // ABOUTME: A phone not signed in yet signs up first (name, color, symbol), then comes back here for the code.
 import { useState, type FormEvent } from 'react'
-import { roomGame } from '../engine/net/rooms'
+import { LOBBY, roomGame } from '../engine/net/rooms'
 import { rememberRoom } from '../engine/rememberedRoom'
+import { roomPageFor } from '../games/room/roomPages'
 import { CodeBoxes } from '../ui/CodeBoxes'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { Field } from '../ui/TextField'
@@ -19,12 +20,6 @@ const JOIN_LABELS: Record<LobbyStyleId, string> = {
   'game-show': 'Join',
   arcade: 'Press start',
   'rec-room': 'Pull up a chair',
-}
-
-/** Games whose rooms can be joined by code, and the page each room plays on. */
-const ROOM_PAGES: Record<string, string> = {
-  'pin-drop': 'pin-drop-together',
-  chainword: 'chainword-together',
 }
 
 function JoinTop() {
@@ -103,7 +98,12 @@ function CodeScreen() {
     setBusy(true)
     try {
       const game = await roomGame(code)
-      const page = game ? ROOM_PAGES[game] : undefined
+      if (game === LOBBY) {
+        rememberRoom(LOBBY, code)
+        goTo('room')
+        return
+      }
+      const page = game ? roomPageFor(game) : undefined
       if (game && page) {
         rememberRoom(game, code)
         goTo('playtest', page)

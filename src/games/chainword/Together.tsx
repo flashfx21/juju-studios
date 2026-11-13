@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { clearPlay, writePlay, writeProgress, type Room } from '../../engine/net/rooms'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
-import { PlayerDot, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { BackToLobby, PlayerDot, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import type { PlayerId } from '../types'
 import { makeChainCode, readChainCode } from './chainCode'
@@ -260,6 +260,7 @@ function Results({ room, play, isHost, onLeave }: { room: Room; play: ChainPlay;
           Play again
         </button>
       )}
+      {over && <BackToLobby room={room} isHost={isHost} />}
       <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
         Leave room
       </button>

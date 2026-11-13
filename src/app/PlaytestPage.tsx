@@ -1,6 +1,8 @@
 // ABOUTME: Solo play: the pages at #/playtest (games still in testing) and #/playtest/<game-id>, for admins and playtesters.
 // ABOUTME: Unknown game ids get a short message instead of a blank page.
 import { Suspense } from 'react'
+import { LOBBY } from '../engine/net/rooms'
+import { rememberedRoom } from '../engine/rememberedRoom'
 import { GameExitContext } from '../ui/gameExit'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { PlayerBadge } from './PlayerBadge'
@@ -101,7 +103,8 @@ export function PlaytestPage({ gameId }: { gameId: string }) {
         <GameExitContext.Provider
           value={() => {
             playtest.onExit?.()
-            goTo('picker')
+            // Inside tonight's lobby room, leaving a game goes back to the lobby; otherwise to the game picker.
+            goTo(rememberedRoom(LOBBY) ? 'room' : 'picker')
           }}
         >
           <Suspense fallback={<Loading />}>

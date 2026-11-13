@@ -9,6 +9,7 @@ import { HostSettings } from './app/HostSettings'
 import { HostSignInTv } from './app/HostSignInTv'
 import { Join } from './app/Join'
 import { LobbyPlaceholder } from './app/LobbyPlaceholder'
+import { LobbyRoom } from './app/LobbyRoom'
 import { PlaytestPage } from './app/PlaytestPage'
 import { Profile } from './app/Profile'
 import { SignIn } from './app/SignIn'
@@ -76,6 +77,8 @@ function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle:
       return <LobbyPlaceholder />
     case 'admin':
       return <Admin />
+    case 'room':
+      return <LobbyRoom />
     default:
       return kind === 'tv' ? <HostOrJoinTv /> : <HostOrJoinPhone />
   }

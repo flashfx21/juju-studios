@@ -66,6 +66,17 @@
             ".write": "auth != null && auth.token.email_verified === true && ((auth.uid === $id && data.parent().parent().child('players').child(auth.uid).exists()) || (data.parent().parent().child('host').val() === auth.uid && $id.beginsWith('bot-')))",
             ".validate": "newData.isString() && newData.val().length <= 2000"
           }
+        },
+        "game": {
+          ".write": "auth != null && data.parent().child('host').val() === auth.uid && data.parent().child('lobby').val() === true",
+          ".validate": "newData.isString() && newData.val().matches(/^[a-z-]{1,40}$/)"
+        },
+        "votes": {
+          ".write": "auth != null && data.parent().child('host').val() === auth.uid && !newData.exists()",
+          "$uid": {
+            ".write": "auth != null && auth.token.email_verified === true && auth.uid === $uid && data.parent().parent().child('players').child(auth.uid).exists()",
+            ".validate": "newData.isString() && newData.val().matches(/^[a-z-]{1,40}$/)"
+          }
         }
       }
     },

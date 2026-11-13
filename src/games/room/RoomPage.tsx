@@ -1,8 +1,9 @@
 // ABOUTME: The room around any phones-only game: start a room or join one by code, the waiting room, and what each player looks like.
-// ABOUTME: A game supplies its title, its setup choices and the screen to show once the host starts; bots can fill seats.
-import { useEffect, useState, type ComponentType, type CSSProperties, type ReactNode } from 'react'
+// ABOUTME: A game supplies its title, setup choices and game screen; bots can fill seats; a lobby room moves every phone between games.
+import { useEffect, useRef, useState, type ComponentType, type CSSProperties, type ReactNode } from 'react'
+import { goTo } from '../../app/useHashRoute'
 import { useMe } from '../../app/useMe'
-import { createRoom, joinRoom, playerIds, watchRoom, type Room } from '../../engine/net/rooms'
+import { createRoom, joinRoom, LOBBY, playerIds, switchGame, watchRoom, type Room } from '../../engine/net/rooms'
 import { rememberedRoom, rememberRoom } from '../../engine/rememberedRoom'
 import { CodeBoxes } from '../../ui/CodeBoxes'
 import { OptionRow } from '../../ui/OptionRow'
@@ -12,6 +13,7 @@ import { PlayerSymbol } from '../../ui/PlayerSymbol'
 import { Field } from '../../ui/TextField'
 import type { PlayerId } from '../types'
 import { BOT_COUNT_NAMES, BOT_COUNTS, BOT_SKILL_NAMES, BOT_SKILLS, botIds, type BotCount, type BotSkill } from './bots'
+import { roomPageFor } from './roomPages'
 import { usePlayerLooks, type PlayerLook } from './usePlayerLooks'
 import '../../ui/PhoneForm.css'
 import './RoomPage.css'
@@ -42,9 +44,11 @@ interface RoomPageProps {
   intro: string
   /** What to show inside the room: usually the waiting room, then the game once the host starts it. */
   children: (props: RoomScreenProps) => ReactNode
+  /** The small tag on the rec room's card. */
+  cardTag?: string
 }
 
-export function RoomPage({ gameId, gameName, Title, intro, children }: RoomPageProps) {
+export function RoomPage({ gameId, gameName, Title, intro, children, cardTag = 'Solo play' }: RoomPageProps) {
   const me = useMe()
   // This phone's room (also set by the home Join screen), so a refresh goes straight back in.
   const [code, setCode] = useState(() => rememberedRoom(gameId))
@@ -54,11 +58,11 @@ export function RoomPage({ gameId, gameName, Title, intro, children }: RoomPageP
     setCode(next)
   }
 
-  if (me.kind !== 'signed-in' || !me.profile) return <PhoneFrame label={gameName} cardTag="Solo play" />
+  if (me.kind !== 'signed-in' || !me.profile) return <PhoneFrame label={gameName} cardTag={cardTag} />
   const self: RoomSelf = { uid: me.player.uid, ...me.profile }
 
   return (
-    <PhoneFrame label={`${gameName} with others`} cardTag="Solo play" fit={code !== ''}>
+    <PhoneFrame label={gameId === LOBBY ? gameName : `${gameName} with others`} cardTag={cardTag} fit={code !== '' && gameId !== LOBBY}>
       {code ? (
         <InRoom key={code} code={code} gameId={gameId} self={self} Title={Title} onLeave={() => enter('')}>
           {children}
@@ -177,6 +181,27 @@ function InRoom({ code, gameId, self, Title, onLeave, children }: InRoomProps) {
     if (room && !inRoom) void joinRoom(code, self.uid, gameId, self)
   }, [room, inRoom, code, gameId, self])
 
+  // A lobby room moves every phone along with it: game pages follow it back to the lobby or on to another game;
+  // the lobby screen follows it into a game the host starts while the phone is watching.
+  const lastGame = useRef<string | undefined>(undefined)
+  useEffect(() => {
+    if (!room) return
+    const before = lastGame.current
+    lastGame.current = room.game
+    if (!room.lobby || room.game === gameId) return
+    const switchedNow = before !== undefined && before !== room.game
+    if (gameId === LOBBY && !switchedNow) return
+    if (room.game === LOBBY) {
+      rememberRoom(LOBBY, code)
+      goTo('room')
+      return
+    }
+    const page = roomPageFor(room.game)
+    if (!page) return
+    rememberRoom(room.game, code)
+    goTo('playtest', page)
+  }, [room, gameId, code])
+
   if (room === undefined) return <p className="cue-card__text">Opening room {code}...</p>
   if (room === null) {
     return (
@@ -198,6 +223,49 @@ function InRoom({ code, gameId, self, Title, onLeave, children }: InRoomProps) {
           {problem}
         </p>
       )}
+    </>
+  )
+}
+
+/** In a lobby room, the host's way back to the lobby for the next vote; every phone follows. */
+export function BackToLobby({ room, isHost }: { room: Room; isHost: boolean }) {
+  if (!room.lobby || !isHost) return null
+  return (
+    <button
+      type="button"
+      className="phone-button phone-button--secondary"
+      data-testid="room-back-to-lobby"
+      onClick={() => void switchGame(room.code, LOBBY)}
+    >
+      Back to lobby
+    </button>
+  )
+}
+
+/** The room code and everyone in it, with any extra rows (such as bots) after them. */
+export function RoomHeader({ room, looks, extra = [] }: { room: Room; looks: Record<PlayerId, PlayerLook>; extra?: PlayerId[] }) {
+  const ids = playerIds(room)
+  return (
+    <>
+      <p className="room-code" data-testid="room-code">
+        <span className="room-code__label">Room code</span>
+        <span className="room-code__letters">{room.code}</span>
+      </p>
+      <ul className="room-players" aria-label="Players in the room">
+        {ids.map((uid) => (
+          <li key={uid} className="room-players__row">
+            <PlayerDot look={looks[uid]} />
+            {looks[uid].name}
+            {uid === room.host ? ' (host)' : ''}
+          </li>
+        ))}
+        {extra.map((id) => (
+          <li key={id} className="room-players__row">
+            <PlayerDot look={looks[id]} />
+            {looks[id].name} (bot)
+          </li>
+        ))}
+      </ul>
     </>
   )
 }
@@ -240,25 +308,7 @@ export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart
   return (
     <div className="room-waiting">
       <Title />
-      <p className="room-code" data-testid="room-code">
-        <span className="room-code__label">Room code</span>
-        <span className="room-code__letters">{room.code}</span>
-      </p>
-      <ul className="room-players" aria-label="Players in the room">
-        {ids.map((uid) => (
-          <li key={uid} className="room-players__row">
-            <PlayerDot look={looks[uid]} />
-            {looks[uid].name}
-            {uid === room.host ? ' (host)' : ''}
-          </li>
-        ))}
-        {bots.map((id) => (
-          <li key={id} className="room-players__row">
-            <PlayerDot look={looks[id]} />
-            {looks[id].name} (bot)
-          </li>
-        ))}
-      </ul>
+      <RoomHeader room={room} looks={looks} extra={bots} />
       {isHost ? (
         <>
           {settings}
@@ -282,6 +332,7 @@ export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart
           Waiting for the host to start
         </p>
       )}
+      <BackToLobby room={room} isHost={isHost} />
       <button type="button" className="phone-link phone-link--quiet" data-testid="room-leave" onClick={onLeave}>
         Leave room
       </button>
