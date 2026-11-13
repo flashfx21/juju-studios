@@ -23,6 +23,10 @@ interface PhoneScreenProps {
   onGuess: (value: number) => void
   /** Shown under the final standings, such as the playtest's Play again button. */
   summaryAction?: ReactNode
+  /** Shown under a round's reveal, such as the room host's Next round. */
+  revealAction?: ReactNode
+  /** Shown while guessing, above the spectrum, such as a room's countdown. */
+  guessingNote?: ReactNode
 }
 
 function pointsText(points: number): string {
@@ -200,7 +204,7 @@ function Guessing({ state, player, names, onGuess }: PhoneScreenProps) {
   )
 }
 
-function Reveal({ state, player, names }: PhoneScreenProps) {
+function Reveal({ state, player, names, revealAction }: PhoneScreenProps) {
   const round = currentRound(state)
   const myGuess = round.guesses[player]
   const marks: SpectrumProps['marks'] = [{ value: round.target, kind: 'target', label: 'Target' }]
@@ -227,6 +231,7 @@ function Reveal({ state, player, names }: PhoneScreenProps) {
           </li>
         ))}
       </ul>
+      {revealAction}
     </>
   )
 }
@@ -268,6 +273,7 @@ export function PhoneScreen(props: PhoneScreenProps) {
           </span>
         )}
       </div>
+      {state.phase === 'guessing' && props.guessingNote}
       {state.phase === 'guessing' && <Guessing {...props} />}
       {state.phase === 'reveal' && <Reveal {...props} />}
       {state.phase === 'over' && <Standings {...props} />}

@@ -91,3 +91,10 @@
 :root[data-theme='arcade'] .dii-dial__value {
   font-size: 26px;
 }
+
+/* The stop peg between the top number and 1, in the danger color so the end of the scale stands out. */
+.dii-dial__stop {
+  stroke: var(--color-danger);
+  stroke-width: 5;
+  stroke-linecap: round;
+}

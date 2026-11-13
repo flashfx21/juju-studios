@@ -10,6 +10,7 @@ import {
   currentRound,
   DEFAULT_SETTINGS,
   DIAL_RANGES,
+  guessersFor,
   rules,
   SPECTRUM_CARDS,
   totalScores,
@@ -68,6 +69,23 @@ describe('spectrum pack', () => {
 })
 
 describe('setup', () => {
+  it('rotates only the named clue givers, as many turns each as asked', () => {
+    const state = rules.setup(['ana', 'bot-1', 'bo'], { range: 100, clueGivers: ['ana', 'bo'], turnsEach: 2 }, seeded(7))
+    expect(state.rounds.map((round) => round.clueGiver)).toEqual(['ana', 'bo', 'ana', 'bo'])
+    expect(state.players).toEqual(['ana', 'bot-1', 'bo'])
+    const cards = state.rounds.map((round) => round.card.left + round.card.right)
+    expect(new Set(cards).size).toBe(cards.length)
+  })
+
+  it('a bot still guesses when it never gives a clue', () => {
+    const state = rules.setup(['ana', 'bot-1', 'bo'], { range: 100, clueGivers: ['ana', 'bo'] }, seeded(7))
+    expect(guessersFor(state, state.rounds[0])).toEqual(['bot-1', 'bo'])
+  })
+
+  it('needs a clue giver who is playing', () => {
+    expect(() => rules.setup(['ana', 'bo', 'cy'], { range: 100, clueGivers: ['zed'] }, CTX)).toThrow(/clue giver/)
+  })
+
   it('deals one round per player with the clue giver rotating in turn order', () => {
     const state = newGame()
     expect(state.rounds.map((round) => round.clueGiver)).toEqual(['ana', 'bo', 'cy'])

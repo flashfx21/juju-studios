@@ -19,8 +19,15 @@ export type DialRange = 50 | 100
 
 export const DIAL_RANGES: readonly DialRange[] = [50, 100]
 
+export type TurnsEach = 1 | 2 | 3
+export const TURNS_EACH: readonly TurnsEach[] = [1, 2, 3]
+
 export interface DialItInSettings {
   range: DialRange
+  /** Players who take turns giving the clue, in turn order. Leave out to have everyone give clues (bots can't). */
+  clueGivers?: readonly PlayerId[]
+  /** How many times the clue goes round each clue giver. Leave out for once each. */
+  turnsEach?: TurnsEach
 }
 
 export const DEFAULT_SETTINGS: DialItInSettings = { range: 100 }
@@ -36,7 +43,7 @@ export interface Round {
   points: Record<string, number>
 }
 
-/** guessing: guessers enter numbers. reveal: target and points on screen. over: every player has given a clue. */
+/** guessing: guessers enter numbers. reveal: target and points on screen. over: every clue-giving turn is done. */
 export type Phase = 'guessing' | 'reveal' | 'over'
 
 export interface DialItInState {
@@ -116,16 +123,19 @@ function startNextRound(state: DialItInState): DialItInState {
 }
 
 export const rules: GameRules<DialItInState, DialItInSettings, DialItInInput> = {
-  /** Players arrive in turn order; that order is the clue-giver rotation. */
+  /** Players arrive in turn order; that order (or the clue givers named in settings) is the clue-giver rotation. */
   setup(players, settings, ctx) {
     if (players.length < manifest.players.min) {
       throw new Error(`Dial It In needs at least ${manifest.players.min} players.`)
     }
-    if (players.length > SPECTRUM_CARDS.length) {
-      throw new Error(`The spectrum pack has only ${SPECTRUM_CARDS.length} cards for ${players.length} players.`)
+    const givers = (settings.clueGivers ?? players).filter((player) => players.includes(player))
+    if (givers.length === 0) throw new Error('Dial It In needs at least one clue giver.')
+    const order = Array.from({ length: settings.turnsEach ?? 1 }, () => givers).flat()
+    if (order.length > SPECTRUM_CARDS.length) {
+      throw new Error(`The spectrum pack has only ${SPECTRUM_CARDS.length} cards for ${order.length} rounds.`)
     }
     const cards = shuffled(SPECTRUM_CARDS, ctx.random)
-    const rounds = players.map((player, i) => ({
+    const rounds = order.map((player, i) => ({
       clueGiver: player,
       card: cards[i],
       target: 1 + Math.floor(ctx.random() * settings.range),

@@ -1,5 +1,5 @@
 // ABOUTME: The arithmetic behind the safe-style guess dial: turning the face changes the number under the top mark.
-// ABOUTME: One full turn covers the whole range; clockwise counts up, and turning past either end wraps like a safe.
+// ABOUTME: One full turn covers the whole range; clockwise counts up, and the dial stops at 1 and at the top number.
 
 /** Degrees clockwise from the top of the dial to a point, 0 to 360. */
 export function angleFromTop(dx: number, dy: number): number {
@@ -13,14 +13,14 @@ export function turnBetween(from: number, to: number): number {
   return turn === -180 ? 180 : turn
 }
 
-/** Keeps a number within 1 to range, wrapping past either end (range + 1 becomes 1, 0 becomes range). */
-export function wrapToRange(value: number, range: number): number {
-  return ((((value - 1) % range) + range) % range) + 1
+/** Keeps a number within 1 to range: turning past either end stops there, since the ends are opposites on the scale. */
+export function clampToRange(value: number, range: number): number {
+  return Math.min(range, Math.max(1, value))
 }
 
 /** The unrounded number after turning a dial that started at `start` by `degrees` (clockwise positive). */
 export function turnedValue(start: number, degrees: number, range: number): number {
-  return wrapToRange(start + (degrees / 360) * range, range)
+  return clampToRange(start + (degrees / 360) * range, range)
 }
 
 /** How far the face is turned so `value` sits under the top mark. Numbers run counterclockwise around the face. */
@@ -35,5 +35,5 @@ export function numberAngle(value: number, range: number): number {
 
 /** The whole number a turned dial shows, always 1 to range. */
 export function shownNumber(value: number, range: number): number {
-  return wrapToRange(Math.round(value), range)
+  return clampToRange(Math.round(value), range)
 }

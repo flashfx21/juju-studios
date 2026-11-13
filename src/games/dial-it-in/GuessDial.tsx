@@ -1,4 +1,4 @@
-// ABOUTME: A safe-style dial for choosing a guess: drag the face clockwise to count up, counterclockwise to count down.
+// ABOUTME: A safe-style dial for choosing a guess: drag clockwise to count up, counterclockwise to count down; it stops at the ends.
 // ABOUTME: Works as a slider for keyboards and screen readers (arrow keys, Page Up/Down, Home/End).
 import { useRef, type KeyboardEvent, type PointerEvent } from 'react'
 import { angleFromTop, faceRotation, numberAngle, shownNumber, turnBetween, turnedValue } from './dialTurns'
@@ -31,6 +31,7 @@ function Face({ range }: { range: number }) {
   return (
     <>
       <circle className="dii-dial__face" cx={CENTER} cy={CENTER} r={FACE_RADIUS} />
+      <Stop range={range} />
       {numbers.map((n) => {
         const angle = numberAngle(n, range)
         const long = n === 1 || n % 5 === 0
@@ -68,6 +69,14 @@ function Face({ range }: { range: number }) {
         })}
     </>
   )
+}
+
+/** A peg between the top number and 1: the dial stops here, so it never jumps from one end of the scale to the other. */
+function Stop({ range }: { range: number }) {
+  const angle = numberAngle(range + 0.5, range)
+  const outer = pointAt(angle, FACE_RADIUS - 1)
+  const inner = pointAt(angle, FACE_RADIUS - 22)
+  return <line className="dii-dial__stop" x1={outer.x} y1={outer.y} x2={inner.x} y2={inner.y} />
 }
 
 export function GuessDial({ value, range, label, onChange }: GuessDialProps) {
@@ -152,7 +161,7 @@ export function GuessDial({ value, range, label, onChange }: GuessDialProps) {
         <span className="dii-dial__mark" aria-hidden="true" />
       </div>
       <p className="dii-dial__hint" aria-hidden="true">
-        Turn clockwise to go up, counterclockwise to go down
+        Turn clockwise to go up, counterclockwise to go down. It stops at both ends.
       </p>
     </div>
   )

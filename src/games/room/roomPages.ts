@@ -5,6 +5,7 @@
 const ROOM_PAGES: Record<string, string> = {
   'pin-drop': 'pin-drop-together',
   chainword: 'chainword-together',
+  'dial-it-in': 'dial-it-in-together',
 }
 
 export function roomPageFor(game: string): string | undefined {

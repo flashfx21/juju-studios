@@ -130,10 +130,44 @@ export function writePlay(code: string, state: unknown, deadline: number | null)
   return set(roomRef(code, 'play'), { state: JSON.stringify(state), deadline })
 }
 
-/** Host only: clears the game (and everyone's progress) so the room is back in its waiting state. */
+/** Host only: clears the game (everyone's progress and the game's secrets too) so the room is back in its waiting state. */
 export async function clearPlay(code: string): Promise<void> {
   await remove(roomRef(code, 'progress'))
+  await remove(secretRef(code))
   await remove(roomRef(code, 'play'))
+}
+
+/**
+ * Secrets live outside the room, at roomSecrets/{code}, because anyone who can read a room can read all of it.
+ * There the host keeps the full game, and each player has a view only they can read (a target, their own guess).
+ */
+function secretRef(code: string, path = ''): DatabaseReference {
+  return ref(firebaseBackend().database, `roomSecrets/${code}${path ? `/${path}` : ''}`)
+}
+
+/** Host only: the full game, with every secret in it, so a host that reloads can carry on. */
+export function writeHostGame(code: string, state: unknown): Promise<void> {
+  return set(secretRef(code, 'host'), JSON.stringify(state))
+}
+
+/** Host only: reads back the full game; null when there isn't one. */
+export async function readHostGame(code: string): Promise<unknown> {
+  const snapshot = await get(secretRef(code, 'host'))
+  return snapshot.exists() ? JSON.parse(String(snapshot.val())) : null
+}
+
+/** Host only: what one player alone may see. */
+export function writePlayerView(code: string, uid: string, view: unknown): Promise<void> {
+  return set(secretRef(code, `views/${uid}`), JSON.stringify(view))
+}
+
+/** This player's own view, kept up to date (null until the host writes one). Returns a stop function. */
+export function watchPlayerView(code: string, uid: string, onChange: (view: unknown) => void): () => void {
+  return onValue(
+    secretRef(code, `views/${uid}`),
+    (snapshot) => onChange(snapshot.exists() ? JSON.parse(String(snapshot.val())) : null),
+    () => onChange(null),
+  )
 }
 
 /** Host only: moves a lobby room to another game (or back to LOBBY), clearing the last game and the votes. */

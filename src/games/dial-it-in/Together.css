@@ -1,0 +1,16 @@
+/* ABOUTME: Dial It In in a room: the guessing countdown and the "waiting for the host" line on the reveal. */
+/* ABOUTME: Colors and fonts come from the lobby style's tokens. */
+
+.diit-clock {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.diit-wait {
+  margin: 0;
+  font-size: 16px;
+  text-align: center;
+}

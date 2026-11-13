@@ -92,6 +92,23 @@
         ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
         ".validate": "newData.isBoolean()"
       }
+    },
+    "roomSecrets": {
+      "$code": {
+        ".write": "auth != null && root.child('rooms').child($code).child('host').val() === auth.uid && !newData.exists()",
+        "host": {
+          ".read": "auth != null && root.child('rooms').child($code).child('host').val() === auth.uid",
+          ".write": "auth != null && root.child('rooms').child($code).child('host').val() === auth.uid",
+          ".validate": "newData.isString()"
+        },
+        "views": {
+          "$uid": {
+            ".read": "auth != null && auth.uid === $uid",
+            ".write": "auth != null && root.child('rooms').child($code).child('host').val() === auth.uid",
+            ".validate": "newData.isString() && newData.val().length <= 4000"
+          }
+        }
+      }
     }
   }
 }

@@ -1,8 +1,8 @@
-// ABOUTME: Tests for the guess dial's arithmetic: angles, turn direction, wrapping and the number under the mark.
+// ABOUTME: Tests for the guess dial's arithmetic: angles, turn direction, stopping at the ends and the number under the mark.
 // ABOUTME: Run with `npm test`.
 
 import { describe, expect, it } from 'vitest'
-import { angleFromTop, faceRotation, numberAngle, shownNumber, turnBetween, turnedValue, wrapToRange } from './dialTurns'
+import { angleFromTop, clampToRange, faceRotation, numberAngle, shownNumber, turnBetween, turnedValue } from './dialTurns'
 
 describe('angleFromTop', () => {
   it('measures clockwise from the top', () => {
@@ -25,17 +25,18 @@ describe('turnBetween', () => {
   })
 })
 
-describe('wrapToRange', () => {
-  it('wraps past either end like a safe', () => {
-    expect(wrapToRange(101, 100)).toBe(1)
-    expect(wrapToRange(0, 100)).toBe(100)
-    expect(wrapToRange(51, 50)).toBe(1)
-    expect(wrapToRange(-4, 50)).toBe(46)
+describe('clampToRange', () => {
+  it('stops at either end instead of wrapping', () => {
+    expect(clampToRange(101, 100)).toBe(100)
+    expect(clampToRange(0, 100)).toBe(1)
+    expect(clampToRange(51, 50)).toBe(50)
+    expect(clampToRange(-4, 50)).toBe(1)
   })
 
   it('leaves numbers inside the range alone', () => {
-    expect(wrapToRange(1, 100)).toBe(1)
-    expect(wrapToRange(100, 100)).toBe(100)
+    expect(clampToRange(1, 100)).toBe(1)
+    expect(clampToRange(100, 100)).toBe(100)
+    expect(clampToRange(37.5, 100)).toBe(37.5)
   })
 })
 
@@ -46,14 +47,21 @@ describe('turnedValue', () => {
   })
 
   it('covers the whole range in one turn on both dials', () => {
-    expect(turnedValue(10, 360, 100)).toBeCloseTo(10)
+    expect(turnedValue(1, 360, 100)).toBeCloseTo(100)
     expect(turnedValue(10, 180, 100)).toBeCloseTo(60)
     expect(turnedValue(10, 180, 50)).toBeCloseTo(35)
   })
 
-  it('wraps from the top number back to 1', () => {
-    expect(shownNumber(turnedValue(99, 7.2, 100), 100)).toBe(1)
-    expect(shownNumber(turnedValue(2, -7.2, 100), 100)).toBe(100)
+  it('stops at the top number and at 1 when turned past them', () => {
+    expect(shownNumber(turnedValue(99, 7.2, 100), 100)).toBe(100)
+    expect(shownNumber(turnedValue(2, -7.2, 100), 100)).toBe(1)
+    expect(turnedValue(100, 90, 100)).toBe(100)
+    expect(turnedValue(1, -90, 50)).toBe(1)
+  })
+
+  it('turns back down straight away after hitting the top', () => {
+    const stopped = turnedValue(95, 90, 100)
+    expect(turnedValue(stopped, -36, 100)).toBeCloseTo(90)
   })
 })
 
@@ -74,7 +82,7 @@ describe('shownNumber', () => {
   it('rounds to a whole number and never shows 0 or more than the range', () => {
     expect(shownNumber(49.6, 100)).toBe(50)
     expect(shownNumber(100.4, 100)).toBe(100)
-    expect(shownNumber(100.6, 100)).toBe(1)
+    expect(shownNumber(100.6, 100)).toBe(100)
     expect(shownNumber(0.6, 100)).toBe(1)
   })
 })

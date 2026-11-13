@@ -24,6 +24,11 @@ export const PLAYTESTS: Record<string, PlaytestEntry> = {
     title: 'Dial It In',
     Page: lazy(() => import('../games/dial-it-in/Playtest').then((module) => ({ default: module.Playtest }))),
   },
+  'dial-it-in-together': {
+    title: 'Dial It In with others (two or more phones)',
+    Page: lazy(() => import('../games/dial-it-in/Together').then((module) => ({ default: module.Together }))),
+    onExit: () => rememberRoom('dial-it-in', ''),
+  },
   'dont-jinx-it': {
     title: "Don't Jinx It",
     Page: lazy(() => import('../games/dont-jinx-it/Playtest').then((module) => ({ default: module.Playtest }))),
