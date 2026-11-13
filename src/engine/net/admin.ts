@@ -3,7 +3,7 @@
 
 import { onValue, ref, remove, set } from 'firebase/database'
 import { firebaseBackend } from './firebase'
-import type { Profile } from './profiles'
+import { asProfile, type Profile } from './profiles'
 
 function flagRef(list: 'admins' | 'playtesters', uid: string) {
   return ref(firebaseBackend().database, `${list}/${uid}`)
@@ -29,7 +29,12 @@ export function watchPlayers(
   const stopProfiles = onValue(
     ref(database, 'profiles'),
     (snapshot) => {
-      profiles = snapshot.val() ?? {}
+      // Anything under profiles that is not shaped like a profile (say, a hand-made console entry) is left out.
+      profiles = {}
+      for (const [uid, value] of Object.entries(snapshot.val() ?? {})) {
+        const profile = asProfile(value)
+        if (profile) profiles[uid] = profile
+      }
       onChange(profiles, playtesters)
     },
     onError,

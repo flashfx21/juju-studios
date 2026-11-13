@@ -17,7 +17,7 @@ function profileRef(uid: string) {
 }
 
 /** A stored value as a Profile, or null when it is missing or not shaped like one. */
-function asProfile(value: unknown): Profile | null {
+export function asProfile(value: unknown): Profile | null {
   if (!value || typeof value !== 'object') return null
   const { username, initials, color } = value as Record<string, unknown>
   if (typeof username !== 'string' || typeof initials !== 'string') return null
