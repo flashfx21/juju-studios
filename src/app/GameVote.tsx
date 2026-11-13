@@ -41,9 +41,9 @@ export function GameVote({ gameChoice }: { gameChoice: GameChoice }) {
         <a className="game-vote__back" href={href('lobby')} data-testid="vote-back-top">
           ‹ Back
         </a>
+        <h1 className="game-vote__title">{TITLES[style][gameChoice]}</h1>
         <PlayerBadge />
       </div>
-      <h1 className="game-vote__title">{TITLES[style][gameChoice]}</h1>
       {ready.length === 0 ? (
         <p className="game-vote__empty" data-testid="vote-empty">
           No games are ready to pick yet. Games in testing open for playtesters.

@@ -11,14 +11,30 @@
   color: var(--color-accent);
 }
 
-/* Back to the lobby page on the left of the top row (your badge on the right), and again at the bottom. */
+/* Top row: Back on the left, the title in the middle, your badge on the right; Back again at the bottom. */
+/* Equal side columns keep the title centered whether or not the badge is there. */
 .game-vote__top {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
+}
+
+.game-vote__top .game-vote__title {
+  text-align: center;
+}
+
+.game-vote__top .game-vote__back {
+  justify-self: start;
+  white-space: nowrap;
+}
+
+:root[data-theme='arcade'] .game-vote__back {
+  font-size: 11px;
 }
 
 .game-vote__top .player-badge-row {
+  justify-self: end;
   margin-bottom: 0;
 }
 
