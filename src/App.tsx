@@ -7,6 +7,7 @@ import { GameVote } from './app/GameVote'
 import { HostOrJoinPhone, HostOrJoinTv } from './app/HostOrJoin'
 import { HostSettings } from './app/HostSettings'
 import { HostSignInTv } from './app/HostSignInTv'
+import { HowToPlay } from './app/HowToPlay'
 import { Join } from './app/Join'
 import { LobbyPlaceholder } from './app/LobbyPlaceholder'
 import { LobbyRoom } from './app/LobbyRoom'
@@ -79,6 +80,8 @@ function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle:
       return <Admin />
     case 'room':
       return <LobbyRoom />
+    case 'how-to-play':
+      return <HowToPlay gameId={route.step} />
     default:
       return kind === 'tv' ? <HostOrJoinTv /> : <HostOrJoinPhone />
   }

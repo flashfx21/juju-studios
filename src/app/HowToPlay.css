@@ -1,0 +1,122 @@
+/* ABOUTME: How to play pages and the panel the lobby opens: the title and facts line, section cards and lists, */
+/* ABOUTME: and the "?" button. Cards reuse the cue card from PhoneForm.css, so each style dresses them its own way. */
+
+.how-to-play__top {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 4px;
+}
+
+.how-to-play__facts {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+}
+
+.how-to-play__intro {
+  margin: 0;
+  padding: 0 4px;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.how-to-play__list {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* The game show's cue cards tilt back and forth down the page. */
+:root[data-theme='game-show'] .how-to-play__card:nth-of-type(even) {
+  transform: rotate(1deg);
+}
+
+/* Arcade form screens hide the title behind the logo; here the game's name has to show. */
+:root[data-theme='arcade'] .how-to-play__top .phone-top__title {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  font-family: var(--font-label);
+  font-size: 22px;
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+}
+
+/* Rec room form screens drop the card labels; here they are the section headings, so they stay. */
+:root[data-theme='rec-room'] .how-to-play__card {
+  margin-top: 8px;
+}
+
+:root[data-theme='rec-room'] .how-to-play__card .cue-card__label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  border-bottom-color: currentColor;
+}
+
+:root[data-theme='arcade'] .how-to-play__facts {
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* ---------- The "?" button beside a game row ---------- */
+.how-to-play__open {
+  flex: none;
+  width: 48px;
+  min-height: var(--space-hit-target-min);
+  border: 0;
+  cursor: pointer;
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  font-family: var(--font-display);
+  font-size: 26px;
+  box-shadow: var(--shadow-button-secondary);
+}
+
+/* A game row with its "?" button: the row takes the width, the button sits at its end. */
+.how-to-play__row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+/* ---------- The panel over the lobby ---------- */
+.how-to-play__panel {
+  width: min(430px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  padding: 20px;
+  border: 3px solid currentColor;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+.how-to-play__panel[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.how-to-play__panel::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Rec room plays on its cream card, so the panel matches the card. */
+:root[data-theme='rec-room'] .how-to-play__panel {
+  background: var(--color-surface);
+  color: var(--color-text-on-surface);
+  --focus-ring: var(--color-text-on-surface);
+}

@@ -13,7 +13,7 @@ A suite of phone party games for family and friends, played like Jackbox: one sh
 - Games keep their lineup number (`docs/games/<nn>-<id>.md`) whenever docs, notes and reports in this repo name them: "06 Pin Drop", "05 Sketch Showdown". Ids, folders and on-screen titles have no number.
 
 ## Rules for games (the cartridge contract)
-- Each game folder has: `manifest.ts` (title, pitch, tag, players, modes, status), `rules.ts` (pure logic: setup, onInput, onTimer, isOver, finishingOrder), `TvScreen.tsx`, `PhoneScreen.tsx`, `Instructions.tsx`, `rules.test.ts`.
+- Each game folder has: `manifest.ts` (title, pitch, tag, players, modes, status), `rules.ts` (pure logic: setup, onInput, onTimer, isOver, finishingOrder), `TvScreen.tsx`, `PhoneScreen.tsx`, `Instructions.tsx`, `howToPlay.ts` (the words on its How to play page, listed in `src/app/howToPlayPages.ts`), `rules.test.ts`.
 - Games never calculate leaderboard points. They report a finishing order; `src/engine/scoring` applies the rules.
 - New games start with status "coming soon" and only become "playable" after tests pass and a local playtest.
 - Every game is in one phase: Not Started, Design, Development, Solo test, Group test, Production. Definitions and exit rules: `docs/games/README.md`. Only Production sets `status: 'playable'` in code. Keep each spec's Status line and the README table current when a game changes phase.

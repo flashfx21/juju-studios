@@ -126,6 +126,9 @@ export function HostOrJoinTv() {
               _
             </span>
           </span>
+          <a className="entry-tv__how-to-play" href={href('how-to-play')} data-testid="how-to-play-link">
+            How to play
+          </a>
         </div>
       </div>
     </TvStage>
@@ -265,6 +268,9 @@ export function HostOrJoinPhone() {
           </a>
         </>
       )}
+      <a className="entry-phone__link" href={href('how-to-play')} data-testid="how-to-play-link">
+        How to play
+      </a>
     </PhoneFrame>
   )
 }

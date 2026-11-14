@@ -28,6 +28,19 @@ export interface GameManifest {
   settings: readonly GameSetting[]
 }
 
+/** The words on a game's How to play page, written for players. Title, tag, players and length come from the manifest. */
+export interface HowToPlay {
+  /** One or two sentences that open the page. */
+  intro: string
+  /** What the TV and the phones do. */
+  needs: readonly string[]
+  steps: readonly string[]
+  scoring: readonly string[]
+  goodToKnow: readonly string[]
+  /** Each setting the host picks before the game, with its choices. */
+  hostPicks: readonly string[]
+}
+
 export type PlayerId = string
 
 /**

@@ -19,6 +19,7 @@ import { usePlayerLooks } from '../games/room/usePlayerLooks'
 import { GAME_TILE_COLORS } from '../ui/gameTileColors'
 import { OptionRow } from '../ui/OptionRow'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
+import { HowToPlayButton } from './HowToPlay'
 import { pickerState } from './pickerGames'
 import { PlayerBadge } from './PlayerBadge'
 import { goTo } from './useHashRoute'
@@ -210,7 +211,7 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
                   .map(([uid]) => uid)
                 const colors = GAME_TILE_COLORS[style][game.id]
                 return (
-                  <li key={game.id}>
+                  <li key={game.id} className="how-to-play__row">
                     <button
                       type="button"
                       className="game-vote__row lobby-room__row"
@@ -232,6 +233,7 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
                       </span>
                       {myVote === game.id && <span className="game-vote__mark">My vote</span>}
                     </button>
+                    <HowToPlayButton gameId={game.id} />
                   </li>
                 )
               })}

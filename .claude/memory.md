@@ -71,6 +71,7 @@
 - 2026-11-13: Pin Drop pack grown to 93 photos (28 easy, 31 medium, 34 hard; Julian: not only monuments). Built from Wikidata and Commons by a research pass, every URL checked for HTTP 200; Aral Sea left out (its photo is about 150 km from Wikidata's point). Places on borders list every country ("Canada and United States"); `country` is display data only. Ids have a gap at pd-0044.
 - 2026-11-13: Arcade phone home shows "JuJu Studios" (Julian), not the design's "JuJu"; the font shrinks on narrow phones to stay on one line.
 - 2026-11-13: Admin is linked from the phone home screen for admins (it was only on the lobby placeholder, which Start hosting stopped visiting).
+- 2026-11-14: How to play pages (Julian approved the 06 Pin Drop draft text, then "build for the 5 games"): 02, 04, 05, 06, 12. Words live in each game's `howToPlay.ts` (`HowToPlay` in `src/games/types.ts`); `src/app/howToPlayPages.ts` lists them and pulls title, tag, players and length from the manifest. Pages at `#/how-to-play` and `#/how-to-play/<id>`, open to everyone, reached from home (phone link, TV floor link), the picker (How to play beside the picked game's buttons; pickers only let playtesters pick) and the lobby ("?" beside each vote row opens a modal panel so the player stays in the room). Don't Jinx It's TV Instructions take their steps from its `howToPlay.ts`. Pages say "The TV shows..." with a "No TV?" line, ahead of TV screens being built. Pin Drop lists Map labels as a host pick though the room setup doesn't offer it yet.
 
 ## Preferences
 - Julian wants each step explained briefly as we go (relearning mode).
@@ -136,6 +137,9 @@
 - Next: Julian's phone test of 05 drawing (live since the Nov 12 merge).
 - Blockers: none. Sign-in decided Nov 13 (D).
 - Next: Julian's pick (live example game, more screens, or Firebase).
+### Week of 2026-11-09 (continued, Nov 14)
+- Done: tech stack in the README; How to play pages for the five games in development (home, picker, lobby panel), checked in headless Edge against the emulators in all three styles.
+- Next: Julian's next test run.
 ### Week of 2026-11-09 (continued, Nov 13 evening)
 - Done: first group playtest feedback. Saved results and Profile Stats; lobby night (games tonight, Game N of M, End the night, recap); Admin link on home; Pin Drop rooms (host-driven reveal, instant Lock in, locked-in count by the clock, bigger map, runner race fixed, Leaflet mid-zoom error fixed); Pin Drop pack to 93 photos; Chainword rooms (clock, done count, everyone's guesses per word, tap the chain to look back); arcade home title. Checked end to end in headless Edge against the emulators.
 - Next: the next group playtest.

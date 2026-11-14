@@ -1,6 +1,7 @@
 // ABOUTME: Don't Jinx It's instructions on the big screen, with the host's settings (pace, long game) and Start game.
 // ABOUTME: Individual mode only until teams exist; the length estimate is the handoff's placeholder math.
 import { TvHeader } from '../../ui/TvHeader'
+import { howToPlay } from './howToPlay'
 import { PACE_SECONDS, PACES, type DontJinxItSettings, type Pace } from './rules'
 import './TvScreen.css'
 import './Instructions.css'
@@ -17,13 +18,6 @@ const PACE_NAMES: Record<Pace, string> = { quick: 'Quick', normal: 'Normal', rel
 /** Rough minutes per turn by pace, from the design handoff. A placeholder until real games are timed. */
 const MINUTES_PER_TURN: Record<Pace, number> = { quick: 2, normal: 2.5, relaxed: 3.5 }
 
-const STEPS = [
-  'One player guesses. Everyone else sees the word.',
-  'Everyone else writes a one-word clue.',
-  'Any clue written twice gets jinxed.',
-  'Guess from what survives.',
-]
-
 function lengthSummary(playerCount: number, settings: DontJinxItSettings): string {
   const turns = playerCount * (settings.longGame ? 2 : 1)
   const minutes = Math.round(turns * MINUTES_PER_TURN[settings.pace])
@@ -39,7 +33,7 @@ export function Instructions({ playerCount, settings, onChange, onStart }: Instr
           <div className="dji-howto__rules">
             <h2 className="dji-howto__title">Don't Jinx It</h2>
             <ol className="dji-howto__steps">
-              {STEPS.map((step) => (
+              {howToPlay.steps.map((step) => (
                 <li key={step}>{step}</li>
               ))}
             </ol>

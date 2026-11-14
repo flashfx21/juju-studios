@@ -7,6 +7,7 @@ import { PICKER_STATE_LABELS } from '../ui/gameTileStates'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
+import { howToPlayFor } from './howToPlayPages'
 import { pickActions, pickerState } from './pickerGames'
 import { PlayerBadge } from './PlayerBadge'
 import { href } from './useHashRoute'
@@ -89,6 +90,11 @@ export function GameVote({ gameChoice }: { gameChoice: GameChoice }) {
               {action.label}
             </a>
           ))}
+          {howToPlayFor(pickedGame.id) && (
+            <a className="phone-button phone-button--secondary" href={href('how-to-play', pickedGame.id)} data-testid="pick-how-to-play">
+              How to play
+            </a>
+          )}
         </div>
       )}
 

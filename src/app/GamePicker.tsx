@@ -7,6 +7,7 @@ import { TvHeader } from '../ui/TvHeader'
 import { TvStage } from '../ui/TvStage'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
+import { howToPlayFor } from './howToPlayPages'
 import { pickActions, pickerState, TILES_PER_PAGE } from './pickerGames'
 import { href } from './useHashRoute'
 import type { GameChoice } from './useHostSettings'
@@ -108,6 +109,11 @@ export function GamePicker({ gameChoice }: { gameChoice: GameChoice }) {
                     {action.label}
                   </a>
                 ))}
+                {howToPlayFor(pickedGame.id) && (
+                  <a className="game-picker__action" href={href('how-to-play', pickedGame.id)} data-testid="pick-how-to-play">
+                    How to play
+                  </a>
+                )}
               </>
             ) : (
               <span className="game-picker__pick-hint">
