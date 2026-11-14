@@ -1,14 +1,22 @@
-// ABOUTME: Chainword in a room: what each phone shares (word results and guess counts, never letters), the standings, and bots.
+// ABOUTME: Chainword in a room: what each phone shares (word results, and guesses once a word is done), the standings, and bots.
 // ABOUTME: Pure, so tests can check the standings order and seed the bots.
 import { seededRandom } from '../../engine/seededRandom'
 import type { BotSkill } from '../room/bots'
 import type { PlayerId } from '../types'
 import { GUESSES_PER_WORD, MISSED_WORD_COST, totalGuesses, totalTime, type ChainwordState } from './rules'
 
+/** One finished word: how many guesses it cost (7 for a missed word) and, from people, the guesses themselves. */
+export interface WordProgress {
+  solved: boolean
+  cost: number
+  /** The guesses in order. Bots have none. The word in progress never shares its guesses. */
+  guesses?: string[]
+}
+
 /** What one player shares with the room. */
 export interface Progress {
-  /** One entry per finished word, in chain order: how many guesses it cost (7 for a missed word). */
-  words: { solved: boolean; cost: number }[]
+  /** One entry per finished word, in chain order. */
+  words: WordProgress[]
   /** Guesses made on the word in progress. */
   current: number
   finished: boolean
@@ -24,7 +32,11 @@ export function progressOf(state: ChainwordState, player: PlayerId): Progress {
   const finished = run.finishedAt !== null
   const done = finished ? run.attempts : run.attempts.slice(0, -1)
   return {
-    words: done.map((attempt) => ({ solved: attempt.solved, cost: attempt.solved ? attempt.guesses.length : MISSED_WORD_COST })),
+    words: done.map((attempt) => ({
+      solved: attempt.solved,
+      cost: attempt.solved ? attempt.guesses.length : MISSED_WORD_COST,
+      guesses: attempt.guesses,
+    })),
     current: finished ? 0 : run.attempts[run.attempts.length - 1].guesses.length,
     finished,
     totalGuesses: totalGuesses(run),
@@ -64,6 +76,25 @@ export function standings(players: readonly PlayerId[], shared: Record<PlayerId,
 /** The game is over once every player has finished their chain. */
 export function everyoneFinished(players: readonly PlayerId[], shared: Record<PlayerId, Progress>): boolean {
   return players.every((player) => shared[player]?.finished)
+}
+
+/** The whole chain's time limit: 100 seconds a word, so a 3-word chain gets 5 minutes. */
+export const SECONDS_PER_WORD = 100
+
+export function chainTimeLimitMs(chainLength: number): number {
+  return chainLength * SECONDS_PER_WORD * 1000
+}
+
+/** The standings as a finishing order: each place's players together, best first. */
+export function finishingOrderOf(table: Standing[]): PlayerId[][] {
+  const order: PlayerId[][] = []
+  for (const row of table) {
+    const last = order[order.length - 1]
+    const lastPlace = last ? table.find((other) => other.player === last[0])!.place : null
+    if (last && lastPlace === row.place) last.push(row.player)
+    else order.push([row.player])
+  }
+  return order
 }
 
 /** Chance of solving a word on guess 1 to 6, then of missing it. Sharp bots solve sooner and miss less. */

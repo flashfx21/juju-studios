@@ -1,10 +1,11 @@
 // ABOUTME: Chainword on a player's phone: chain progress, the guess grid filled from an on-screen keyboard, and results.
-// ABOUTME: Shows how each finished word went before moving on, and says why a refused guess doesn't count.
+// ABOUTME: Shows how each finished word went (and, in a room, everyone's guesses on it); tap the chain to look back at a word.
 import { useEffect, useState, type CSSProperties, type PointerEvent, type ReactNode } from 'react'
 import type { PlayerId } from '../types'
 import {
   checkGuess,
   GUESSES_PER_WORD,
+  markGuess,
   MISSED_WORD_COST,
   totalGuesses,
   totalTime,
@@ -17,12 +18,26 @@ import {
 import '../../ui/PhoneForm.css'
 import './PhoneScreen.css'
 
+/** Another player in the same chain, as far as they've shared. */
+export interface OtherPlayer {
+  id: PlayerId
+  name: string
+  /** Their color and symbol, shown before the name. */
+  badge?: ReactNode
+  /** Their finished words in chain order; guesses are missing for bots. */
+  words: { solved: boolean; guesses?: string[] }[]
+}
+
 interface PhoneScreenProps {
   state: ChainwordState
   player: PlayerId
   onGuess: (word: string) => void
   /** Extra controls for the top bar, such as the playtest's chain code and End game. */
   topAction?: ReactNode
+  /** A line under the top bar, such as a room's clock and who has finished. */
+  infoLine?: ReactNode
+  /** In a room: the other players, whose guesses show under a word once you've finished it. */
+  others?: OtherPlayer[]
   /** Shown under the final total, such as the playtest's New chain button. */
   summaryAction?: ReactNode
 }
@@ -227,8 +242,16 @@ function chainSteps(state: ChainwordState, run: PlayerRun, shown: number): Chain
   })
 }
 
-/** One numbered segment per chain word, and the running total. */
-function ChainProgress({ state, run, shown }: { state: ChainwordState; run: PlayerRun; shown: number }) {
+interface ChainProgressProps {
+  state: ChainwordState
+  run: PlayerRun
+  shown: number
+  /** Opens a finished word to look back at it. */
+  onPick: (index: number) => void
+}
+
+/** One numbered segment per chain word, and the running total. A finished word's segment opens that word. */
+function ChainProgress({ state, run, shown, onPick }: ChainProgressProps) {
   const finishedAll = shown >= state.chain.length
   const total = totalGuesses(run)
   return (
@@ -237,11 +260,31 @@ function ChainProgress({ state, run, shown }: { state: ChainwordState; run: Play
         {finishedAll ? 'Chain done' : `Word ${shown + 1} of ${state.chain.length}`}
       </p>
       <ol className="cw-chain__bar" aria-label="Guesses per word" data-testid="cw-chain-bar">
-        {chainSteps(state, run, shown).map((step, i) => (
-          <li key={i} className="cw-chain__step" data-status={step.status} aria-label={step.spoken}>
-            <span aria-hidden="true">{step.count ?? ''}</span>
-          </li>
-        ))}
+        {chainSteps(state, run, shown).map((step, i) => {
+          const done = step.status === 'solved' || step.status === 'missed'
+          return (
+            <li key={i} className="cw-chain__item">
+              {done ? (
+                <button
+                  type="button"
+                  className="cw-chain__step"
+                  data-status={step.status}
+                  data-shown={i === shown ? 'true' : undefined}
+                  aria-label={`${step.spoken}. Show the guesses`}
+                  aria-current={i === shown ? 'step' : undefined}
+                  data-testid={`cw-step-${i + 1}`}
+                  onClick={() => onPick(i)}
+                >
+                  <span aria-hidden="true">{step.count ?? ''}</span>
+                </button>
+              ) : (
+                <span className="cw-chain__step" data-status={step.status} role="img" aria-label={step.spoken}>
+                  <span aria-hidden="true">{step.count ?? ''}</span>
+                </span>
+              )}
+            </li>
+          )
+        })}
       </ol>
       <p className="cw-chain__total" data-testid="cw-running-total" aria-label={`${guessCount(total)} in total`}>
         Total {total}
@@ -268,6 +311,46 @@ function WordResults({ state, attempts }: { state: ChainwordState; attempts: Wor
   )
 }
 
+/** How a player did on one word, in a few words. */
+function wordOutcome(word: OtherPlayer['words'][number] | undefined): string {
+  if (!word) return 'Still playing'
+  if (!word.solved) return 'Missed'
+  return word.guesses ? `Solved in ${word.guesses.length}` : 'Solved'
+}
+
+/** Everyone else's guesses on one word, as small boards. Players still on that word show as still playing. */
+function OthersOnWord({ index, answer, others }: { index: number; answer: string; others: OtherPlayer[] }) {
+  return (
+    <section className="cw-others" aria-label={`Everyone's guesses on word ${index + 1}`} data-testid="cw-others">
+      <ul className="cw-others__list">
+        {others.map((other) => {
+          const word = other.words[index]
+          return (
+            <li key={other.id} className="cw-others__player" data-testid={`cw-other-${other.id}`}>
+              <p className="cw-others__name">
+                {other.badge}
+                <span>{other.name}</span>
+              </p>
+              <p className="cw-others__outcome">{wordOutcome(word)}</p>
+              {word?.guesses && word.guesses.length > 0 && (
+                <ol
+                  className="cw-others__board"
+                  aria-label={`${other.name}'s guesses`}
+                  style={{ '--cw-letters': answer.length } as CSSProperties}
+                >
+                  {word.guesses.map((guess, g) => (
+                    <GuessRow key={g} guess={guess} marks={markGuess(guess, answer)} />
+                  ))}
+                </ol>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}
+
 /** The game's name as the screen heading; arcade shows it as its neon logo. */
 export function ChainwordTitle() {
   return (
@@ -280,19 +363,31 @@ export function ChainwordTitle() {
   )
 }
 
-export function PhoneScreen({ state, player, onGuess, topAction, summaryAction }: PhoneScreenProps) {
+export function PhoneScreen({ state, player, onGuess, topAction, infoLine, others, summaryAction }: PhoneScreenProps) {
   const [typing, setTyping] = useState('')
   const [message, setMessage] = useState('')
-  /** The word whose result is on screen after its last guess, until the player moves on. */
+  /** The word whose result is on screen after its last guess, or one picked from the chain, until the player moves on. */
   const [reviewIndex, setReviewIndex] = useState<number | null>(null)
+  /** True when the word on screen was picked from the chain rather than just finished. */
+  const [lookedBack, setLookedBack] = useState(false)
 
   const run = state.runs[player]
   const finished = run.finishedAt !== null
   const reviewed = reviewIndex !== null ? run.attempts[reviewIndex] : undefined
-  const reviewing = reviewIndex !== null && reviewed !== undefined && isWordDone(reviewed)
+  // Once the chain is over, every word can be looked at, including ones the clock or End game cut short.
+  const reviewing = reviewIndex !== null && reviewed !== undefined && (isWordDone(reviewed) || finished)
   const shownIndex = reviewing ? reviewIndex : finished ? state.chain.length : run.attempts.length - 1
   const shown = run.attempts[shownIndex]
-  const isLastWord = shownIndex === state.chain.length - 1
+  const currentIndex = run.attempts.length - 1
+  // Straight after a word, the button goes on to the next one; looking back at an older word, it goes back.
+  const justFinished = reviewIndex === currentIndex - 1 && run.attempts[currentIndex]?.guesses.length === 0
+  const moveOnText = finished
+    ? reviewIndex === state.chain.length - 1 && !lookedBack
+      ? 'See your total'
+      : 'Back to your total'
+    : justFinished && !lookedBack
+      ? 'Next word'
+      : `Back to word ${currentIndex + 1}`
   const time = totalTime(state, run)
 
   function addLetter(letter: string) {
@@ -312,6 +407,7 @@ export function PhoneScreen({ state, player, onGuess, topAction, summaryAction }
       return
     }
     setReviewIndex(run.attempts.length - 1)
+    setLookedBack(false)
     onGuess(typing)
     setTyping('')
     setMessage('')
@@ -319,6 +415,13 @@ export function PhoneScreen({ state, player, onGuess, topAction, summaryAction }
 
   function moveOn() {
     setReviewIndex(null)
+    setLookedBack(false)
+  }
+
+  function lookBack(index: number) {
+    setMessage('')
+    setReviewIndex(index)
+    setLookedBack(true)
   }
 
   // A physical keyboard types too (laptops, tablets with keyboards).
@@ -357,13 +460,15 @@ export function PhoneScreen({ state, player, onGuess, topAction, summaryAction }
           <ChainwordTitle />
           {topAction && <div className="cw-top__action">{topAction}</div>}
         </div>
-        <ChainProgress state={state} run={run} shown={shownIndex} />
+        {infoLine}
+        <ChainProgress state={state} run={run} shown={shownIndex} onPick={lookBack} />
       </header>
 
       {finished && !reviewing ? (
         <section className="cw-summary" aria-label="Your result" data-testid="cw-summary">
           <p className="cw-summary__big">{guessCount(totalGuesses(run))}</p>
           {time !== null && <p className="cw-summary__time">Time {formatTime(time)}</p>}
+          {others && <p className="cw-summary__hint">Tap a word in the chain to see everyone's guesses.</p>}
           <WordResults state={state} attempts={run.attempts} />
           {summaryAction && <div className="cw-summary__action">{summaryAction}</div>}
         </section>
@@ -380,11 +485,12 @@ export function PhoneScreen({ state, player, onGuess, topAction, summaryAction }
               <p className="cw-review__result" data-solved={shown.solved}>
                 {shown.solved
                   ? `Solved in ${guessCount(shown.guesses.length)}!`
-                  : `Out of guesses. The word was ${state.chain[shownIndex].toUpperCase()}.`}
+                  : `${shown.guesses.length === GUESSES_PER_WORD ? 'Out of guesses' : 'Not finished'}. The word was ${state.chain[shownIndex].toUpperCase()}.`}
               </p>
               {!shown.solved && <p className="cw-review__note">It counts {MISSED_WORD_COST}.</p>}
+              {others && others.length > 0 && <OthersOnWord index={shownIndex} answer={state.chain[shownIndex]} others={others} />}
               <button type="button" className="phone-button" data-testid="cw-next" autoFocus onClick={moveOn}>
-                {isLastWord ? 'See your total' : 'Next word'}
+                {moveOnText}
               </button>
             </section>
           ) : (

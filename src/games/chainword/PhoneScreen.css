@@ -24,11 +24,13 @@
   gap: 6px;
 }
 
+/* Wraps when a wide title (arcade's neon logo) leaves no room, so the action never runs off the screen. */
 .cw-top__row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 0 12px;
 }
 
 .cw-top__row .phone-top {
@@ -36,6 +38,7 @@
 }
 
 .cw-top__action {
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -65,6 +68,11 @@
   gap: 4px;
 }
 
+.cw-chain__item {
+  flex: 1;
+  display: flex;
+}
+
 .cw-chain__step {
   flex: 1;
   height: 24px;
@@ -85,6 +93,23 @@
   font-size: 16px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* A finished word's segment is a button that opens the word: taller, so it's easy to tap. */
+button.cw-chain__step {
+  height: 32px;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+button.cw-chain__step:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.cw-chain__step[data-shown] {
+  box-shadow: 0 0 0 2px currentColor;
 }
 
 .cw-chain__step[data-status='current'] {
@@ -354,4 +379,69 @@
 :root[data-theme='rec-room'] .cw-chain__step {
   font-family: var(--font-label);
   font-size: 16px;
+}
+
+/* ---------- Everyone's guesses on a finished word: small boards that wrap, scrolling if there are many ---------- */
+.cw-others {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 34dvh;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.cw-others__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.cw-others__player {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cw-review .cw-others__name,
+.cw-review .cw-others__outcome {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.cw-others__name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.cw-others__board {
+  --cw-tile: 18px;
+  --cw-gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+
+.cw-others__board .cw-tile {
+  border-width: 1px;
+  font-size: 11px;
+}
+
+.cw-others__board .cw-tile[data-mark='yellow']::after {
+  right: 1px;
+  bottom: 1px;
+  width: 4px;
+  height: 4px;
+}
+
+.cw-summary__hint {
+  font-size: 15px;
+  text-align: center;
 }

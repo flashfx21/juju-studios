@@ -1,16 +1,26 @@
 // ABOUTME: Chainword on phones through a room: everyone races the same hidden chain on their own phone, with live standings.
-// ABOUTME: Only a chain code goes through the room, never the words; each phone shares word results and guess counts.
+// ABOUTME: Only a chain code goes through the room; each phone shares word results, and its guesses once a word is done.
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { clearPlay, writePlay, writeProgress, type Room } from '../../engine/net/rooms'
+import { clearPlay, startPlay, writePlay, writeProgress, type Room } from '../../engine/net/rooms'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
 import { BackToLobby, PlayerDot, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { saveFinishedGame } from '../room/saveFinishedGame'
 import { usePlayerLooks } from '../room/usePlayerLooks'
+import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { PlayerId } from '../types'
 import { makeChainCode, readChainCode } from './chainCode'
 import { manifest } from './manifest'
-import { ChainwordTitle, PhoneScreen } from './PhoneScreen'
-import { botProgress, everyoneFinished, progressOf, standings, type Progress } from './roomProgress'
+import { ChainwordTitle, PhoneScreen, type OtherPlayer } from './PhoneScreen'
+import {
+  botProgress,
+  chainTimeLimitMs,
+  everyoneFinished,
+  finishingOrderOf,
+  progressOf,
+  standings,
+  type Progress,
+} from './roomProgress'
 import { CHAIN_LENGTHS, DEFAULT_SETTINGS, endGame, rules, WORD_LENGTHS, type ChainwordSettings, type ChainwordState } from './rules'
 import './Playtest.css'
 import './Together.css'
@@ -21,6 +31,40 @@ interface ChainPlay {
   players: PlayerId[]
   startedAt: number
   endedAt: number | null
+}
+
+/** When the chain's clock runs out. */
+function deadlineOf(play: ChainPlay): number {
+  return play.startedAt + chainTimeLimitMs(readChainCode(play.chainCode)!.settings.chainLength)
+}
+
+/** Phones get a few seconds after the clock runs out to share their last word before the game counts as over. */
+const REPORT_GRACE_MS = 5000
+
+/**
+ * When the game stopped for everyone still playing: the host's End game, or the clock running out.
+ * Null while the game is still on.
+ */
+function stoppedAt(play: ChainPlay, now: number): number | null {
+  if (play.endedAt !== null) return play.endedAt
+  const deadline = deadlineOf(play)
+  return now >= deadline ? deadline : null
+}
+
+/** Over once everyone has finished, or (for anyone whose phone has gone quiet) a moment after the game stopped. */
+function gameOver(play: ChainPlay, shared: Record<PlayerId, Progress>, now: number): boolean {
+  const stopped = stoppedAt(play, now)
+  return everyoneFinished(play.players, shared) || (stopped !== null && now >= stopped + REPORT_GRACE_MS)
+}
+
+/** Ticks once a second, so the clock and anything waiting on it stay current. */
+function useNow(): number {
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+  return now
 }
 
 const WORD_LENGTH_NAMES = { 4: '4', 5: '5', 6: '6', 7: '7' }
@@ -61,6 +105,7 @@ export function Together() {
       {(props) => (
         <>
           {props.isHost && props.room.play && <BotRunner room={props.room} />}
+          {props.isHost && props.room.play && <ResultSaver room={props.room} />}
           {props.room.play ? <Game key={props.room.play.state} {...props} /> : <ChainwordWaitingRoom {...props} />}
         </>
       )}
@@ -80,10 +125,13 @@ function ChainwordWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
       onLeave={onLeave}
       onStart={(players) => {
         const play: ChainPlay = { chainCode: makeChainCode(settings, Math.random), players, startedAt: Date.now(), endedAt: null }
-        void writePlay(room.code, play, null)
+        void startPlay(room.code, play, null)
       }}
       settings={
         <>
+          <p className="room-status">
+            The chain has a clock: {Math.round(chainTimeLimitMs(settings.chainLength) / 60_000 * 10) / 10} minutes for {settings.chainLength} words.
+          </p>
           <OptionRow
             label="Letters"
             options={WORD_LENGTHS}
@@ -137,6 +185,7 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
   const play = JSON.parse(room.play!.state) as ChainPlay
   const key = storageKey(room.code, play.chainCode)
   const playing = play.players.includes(self.uid)
+  const others = useOthers(room, play, self.uid)
   const [state, setState] = useState<ChainwordState | null>(() => {
     if (!playing) return null
     const shared = readChainCode(play.chainCode)!
@@ -158,8 +207,9 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
     void writeProgress(room.code, self.uid, progressOf(state, self.uid))
   }, [state, key, room.code, self.uid])
 
-  // The host ended the game: anyone still playing stops, with the rest of their chain counted as missed.
-  const endedAt = play.endedAt
+  // The host ended the game or the clock ran out: anyone still playing stops, with the rest of their chain counted as missed.
+  const now = useNow()
+  const endedAt = stoppedAt(play, now)
   const endedEarly = state !== null && endedAt !== null && state.runs[self.uid].finishedAt === null
   const shown = useMemo(
     () => (state && endedEarly && endedAt !== null ? endGame(state, { now: endedAt, random: Math.random }) : state),
@@ -188,25 +238,57 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
       state={shown}
       player={self.uid}
       onGuess={(word) => update(rules.onInput(state, self.uid, { type: 'guess', word }, { now: Date.now(), random: Math.random }))}
-      topAction={<TopBar room={room} play={play} self={self.uid} isHost={isHost} />}
+      topAction={<EndGameButton room={room} play={play} isHost={isHost} />}
+      infoLine={<InfoLine room={room} play={play} self={self.uid} />}
+      others={others}
       summaryAction={<Results room={room} play={play} isHost={isHost} onLeave={onLeave} />}
     />
   )
 }
 
-/** While playing: your place so far, and for the host, End game (a second tap confirms). */
-function TopBar({ room, play, self, isHost }: { room: Room; play: ChainPlay; self: PlayerId; isHost: boolean }) {
-  const [confirming, setConfirming] = useState(false)
-  const table = standings(play.players, sharedProgress(room))
+/** The chain's clock, your place so far, and how many have finished. */
+function InfoLine({ room, play, self }: { room: Room; play: ChainPlay; self: PlayerId }) {
+  const shared = sharedProgress(room)
+  const table = standings(play.players, shared)
   const mine = table.find((row) => row.player === self)
+  const finished = play.players.filter((id) => shared[id]?.finished).length
+  const secondsLeft = useSecondsLeft(play.endedAt === null ? deadlineOf(play) : null)
+
+  return (
+    <p className="cwt-info" data-testid="cwt-info">
+      {secondsLeft !== null && (
+        <span role="timer" aria-live={secondsLeft <= 30 && secondsLeft % 10 === 0 ? 'polite' : 'off'} data-testid="cwt-clock">
+          {timeText(secondsLeft * 1000)} left
+        </span>
+      )}
+      {mine && <span data-testid="cwt-place">{placeText(mine.place)} of {table.length}</span>}
+      <span role="status" data-testid="cwt-finished">
+        {finished} of {play.players.length} done
+      </span>
+    </p>
+  )
+}
+
+/** The other players' finished words, for the phone to show once this player has finished the same word. */
+function useOthers(room: Room, play: ChainPlay, self: PlayerId): OtherPlayer[] {
+  const looks = usePlayerLooks(room, play.players)
+  const shared = sharedProgress(room)
+  return play.players
+    .filter((id) => id !== self)
+    .map((id) => ({
+      id,
+      name: looks[id]?.name ?? 'Player',
+      badge: looks[id] ? <PlayerDot look={looks[id]} /> : undefined,
+      words: shared[id]?.words ?? [],
+    }))
+}
+
+/** While playing, for the host: End game (a second tap confirms). */
+function EndGameButton({ room, play, isHost }: { room: Room; play: ChainPlay; isHost: boolean }) {
+  const [confirming, setConfirming] = useState(false)
 
   return (
     <>
-      {mine && (
-        <span className="cwt-place" data-testid="cwt-place">
-          {placeText(mine.place)} of {table.length}
-        </span>
-      )}
       {isHost && play.endedAt === null && (
         <button
           type="button"
@@ -233,7 +315,8 @@ function Results({ room, play, isHost, onLeave }: { room: Room; play: ChainPlay;
   const shared = sharedProgress(room)
   const table = standings(play.players, shared)
   const looks = usePlayerLooks(room, play.players)
-  const over = everyoneFinished(play.players, shared)
+  const now = useNow()
+  const over = gameOver(play, shared, now)
 
   return (
     <div className="cwt-results">
@@ -268,6 +351,18 @@ function Results({ room, play, isHost, onLeave }: { room: Room; play: ChainPlay;
   )
 }
 
+/** Runs on the host's phone only: once the game is over, saves the final standings as the game's result. */
+function ResultSaver({ room }: { room: Room }) {
+  const play = JSON.parse(room.play!.state) as ChainPlay
+  const shared = sharedProgress(room)
+  const now = useNow()
+  const over = gameOver(play, shared, now)
+  useEffect(() => {
+    if (over) saveFinishedGame(room, manifest.id, finishingOrderOf(standings(play.players, shared)))
+  })
+  return null
+}
+
 /**
  * Runs on the host's phone only: plays the bots by sharing their progress as time passes.
  * Each bot's game is fixed by the room, chain and bot, so a host that reloads shows the same bots.
@@ -282,7 +377,8 @@ function BotRunner({ room }: { room: Room }) {
     if (bots.length === 0) return
     function tick() {
       for (const id of bots) {
-        const progress = botProgress(`${room.code}-${play.chainCode}-${id}`, botFor(id)!.skill, chainLength, Date.now() - play.startedAt, play.endedAt === null ? null : play.endedAt - play.startedAt)
+        const stopped = play.endedAt ?? deadlineOf(play)
+        const progress = botProgress(`${room.code}-${play.chainCode}-${id}`, botFor(id)!.skill, chainLength, Date.now() - play.startedAt, stopped - play.startedAt)
         const json = JSON.stringify(progress)
         if (written.current[id] === json) continue
         written.current[id] = json

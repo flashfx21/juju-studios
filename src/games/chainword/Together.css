@@ -1,11 +1,19 @@
-/* ABOUTME: Chainword in a room: your place in the top bar, and the standings list under your final total. */
+/* ABOUTME: Chainword in a room: the clock, your place and who has finished under the top bar, and the standings list. */
 /* ABOUTME: Colors and fonts come from the lobby style's tokens, so it follows every style. */
 
-.cwt-place {
+.cwt-info {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
   font-family: var(--font-label);
   font-size: 15px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+:root[data-theme='arcade'] .cwt-info {
+  font-size: 10px;
 }
 
 .cwt-results {

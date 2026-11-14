@@ -2,7 +2,7 @@
 // ABOUTME: Bot tests use fixed seeds so the same games are checked every run.
 import { describe, expect, it } from 'vitest'
 import { seededRandom } from '../../engine/seededRandom'
-import { botProgress, everyoneFinished, progressOf, standings, type Progress } from './roomProgress'
+import { botProgress, everyoneFinished, finishingOrderOf, progressOf, standings, type Progress } from './roomProgress'
 import { endGame, rules, totalGuesses, type ChainwordState } from './rules'
 
 function freshGame(): ChainwordState {
@@ -29,17 +29,17 @@ const going = (wordsDone: number, totalGuesses: number): Progress => ({
 })
 
 describe('progressOf', () => {
-  it('shares counts that match the phone, and no letters', () => {
+  it('shares counts that match the phone, and the guesses of finished words only', () => {
     let state = freshGame()
     state = guess(state, 'crane')
     state = guess(state, state.chain[0])
-    state = guess(state, 'crane')
+    state = guess(state, 'slate')
     const progress = progressOf(state, 'me')
-    expect(progress.words).toEqual([{ solved: true, cost: 2 }])
+    expect(progress.words).toEqual([{ solved: true, cost: 2, guesses: ['crane', state.chain[0]] }])
     expect(progress.current).toBe(1)
     expect(progress.totalGuesses).toBe(totalGuesses(state.runs.me))
-    expect(JSON.stringify(progress)).not.toContain(state.chain[0])
-    expect(JSON.stringify(progress)).not.toContain('crane')
+    expect(JSON.stringify(progress)).not.toContain('slate')
+    expect(JSON.stringify(progress)).not.toContain(state.chain[1])
   })
 
   it('a game ended early counts the rest as missed', () => {
@@ -66,6 +66,7 @@ describe('standings', () => {
   it('players level on everything share a place', () => {
     const table = standings(['a', 'b', 'c'], { a: done(9, 60_000), b: done(9, 60_000), c: done(12, 1) })
     expect(table.map((row) => row.place)).toEqual([1, 1, 3])
+    expect(finishingOrderOf(table)).toEqual([['a', 'b'], ['c']])
   })
 
   it('players who have shared nothing yet sit at the bottom, and the game is not over', () => {
