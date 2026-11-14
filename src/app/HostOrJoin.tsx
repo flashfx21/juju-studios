@@ -236,15 +236,7 @@ export function HostOrJoinPhone() {
     <PhoneFrame label="Host or join" cardTag="Game night">
       <PlayerBadge />
       <div className="entry-phone__header">
-        <h1 className="entry-phone__heading">
-          {style === 'arcade' ? (
-            <>
-              JuJu<span className="visually-hidden"> Studios</span>
-            </>
-          ) : (
-            copy.heading
-          )}
-        </h1>
+        <h1 className="entry-phone__heading">{copy.heading}</h1>
         {copy.tagline && <p className="entry-phone__tagline">{copy.tagline}</p>}
       </div>
       <PhoneChoice kind="join" copy={copy.join} to={href('join')} />

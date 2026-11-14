@@ -543,7 +543,8 @@
 }
 
 :root[data-theme='arcade'] .entry-phone__heading {
-  font-size: 46px;
+  /* Shrinks on narrow phones so "JuJu Studios" stays on one line. */
+  font-size: min(46px, 11.4vw);
   color: #ffd1ec;
   text-shadow:
     0 0 4px #ff2ea6,
