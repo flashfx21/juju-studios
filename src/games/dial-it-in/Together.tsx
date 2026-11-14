@@ -5,6 +5,7 @@ import {
   clearPlay,
   readHostGame,
   sendInput,
+  startPlay,
   takeInputs,
   watchPlayerView,
   writeHostGame,
@@ -15,6 +16,7 @@ import {
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
+import { saveFinishedGame } from '../room/saveFinishedGame'
 import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import { useSecondsLeft } from '../room/useSecondsLeft'
@@ -93,7 +95,7 @@ function DialWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
         // People give the clues; bots only guess.
         const clueGivers = players.filter((id) => !botFor(id))
         const state = rules.setup(players, { ...settings, clueGivers, turnsEach }, context())
-        void publish(room, { state, pace }, Date.now() + pace * 1000)
+        void publish(room, { state, pace }, Date.now() + pace * 1000, true)
       }}
       settings={
         <>
@@ -108,14 +110,15 @@ function DialWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
 
 /**
  * Host only: saves the full game where only the host can read it, gives each person their own secrets,
- * and puts the masked game in the room for every phone.
+ * and puts the masked game in the room for every phone. `starting` stamps a new game's start; a finished game is saved.
  */
-async function publish(room: Room, game: RoomGame, deadline: number | null): Promise<void> {
+async function publish(room: Room, game: RoomGame, deadline: number | null, starting = false): Promise<void> {
   await writeHostGame(room.code, game)
   for (const player of game.state.players) {
     if (!botFor(player)) await writePlayerView(room.code, player, privateView(game.state, player))
   }
-  await writePlay(room.code, { state: publicState(game.state), pace: game.pace }, deadline)
+  await (starting ? startPlay : writePlay)(room.code, { state: publicState(game.state), pace: game.pace }, deadline)
+  if (rules.isOver(game.state)) saveFinishedGame(room, manifest.id, rules.finishingOrder(game.state))
 }
 
 function Game({ room, self, isHost, onLeave }: RoomScreenProps) {

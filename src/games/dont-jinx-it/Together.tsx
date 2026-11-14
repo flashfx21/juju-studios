@@ -6,6 +6,7 @@ import {
   clearPlay,
   readHostGame,
   sendInput,
+  startPlay,
   takeInputs,
   watchPlayerView,
   writeHostGame,
@@ -17,6 +18,7 @@ import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { PLAYER_COLOR_IDS, type PlayerColorId } from '../../ui/playerColors'
 import { botFor } from '../room/bots'
+import { saveFinishedGame } from '../room/saveFinishedGame'
 import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { FinishingOrder, PlayerId, RulesContext } from '../types'
@@ -103,7 +105,7 @@ function JinxWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
       onLeave={onLeave}
       onStart={(players) => {
         const state = rules.setup(players, settings, context())
-        void publish(room, state, deadlineFor(state))
+        void publish(room, state, deadlineFor(state), true)
       }}
       settings={
         <>
@@ -123,9 +125,9 @@ function JinxWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
 
 /**
  * Host only: saves the full game where only the host can read it, gives each person their own view,
- * and puts only who is playing and the phase in the room.
+ * and puts only who is playing and the phase in the room. `starting` stamps a new game's start; a finished game is saved.
  */
-async function publish(room: Room, state: DontJinxItState, deadline: number | null): Promise<void> {
+async function publish(room: Room, state: DontJinxItState, deadline: number | null, starting = false): Promise<void> {
   await writeHostGame(room.code, state)
   const now = Date.now()
   for (const player of state.players) {
@@ -137,7 +139,8 @@ async function publish(room: Room, state: DontJinxItState, deadline: number | nu
     turnIndex: state.turnIndex,
     standings: rules.isOver(state) ? rules.finishingOrder(state) : null,
   }
-  await writePlay(room.code, shared, deadline)
+  await (starting ? startPlay : writePlay)(room.code, shared, deadline)
+  if (rules.isOver(state)) saveFinishedGame(room, manifest.id, rules.finishingOrder(state))
 }
 
 /** How each player appears: people as their room entry, bots as their own look. */

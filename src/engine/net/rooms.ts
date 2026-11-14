@@ -10,6 +10,7 @@ import {
   remove,
   serverTimestamp,
   set,
+  update,
   type DatabaseReference,
 } from 'firebase/database'
 import { firebaseBackend } from './firebase'
@@ -37,10 +38,38 @@ export interface Room {
   votes: Record<string, string>
   /** By player id (the sign-in uid), in the order they joined. */
   players: Record<string, RoomPlayer & { joinedAt: number }>
-  /** The game's state, written by the host. Null before the game starts. */
-  play: { state: string; deadline: number | null } | null
+  /** The game's state, written by the host. Null before the game starts. `startedAt` names this game for its saved result. */
+  play: { state: string; deadline: number | null; startedAt: number | null } | null
   /** What each player (or bot) shares about their own game, as JSON, for games where every phone plays its own copy. */
   progress: Record<string, string>
+  /** A lobby room's night: how many games were planned, the games finished so far, and whether the host ended it. */
+  session: Session
+}
+
+/** One finished game in a lobby room's night. */
+export interface SessionGame {
+  game: string
+  at: number
+  /** Leaderboard points for each person (bots aren't kept). */
+  points: Record<string, number>
+}
+
+export interface Session {
+  /** Games planned for the night; null until the host starts the first game. */
+  planned: number | null
+  /** Finished games by result id. */
+  games: Record<string, SessionGame>
+  ended: boolean
+}
+
+/** Finished games in the order they were played. */
+export function sessionGames(session: Session): SessionGame[] {
+  return Object.values(session.games).sort((a, b) => a.at - b.at)
+}
+
+/** The night is over once the planned games are played or the host ends it. */
+export function sessionOver(session: Session): boolean {
+  return session.ended || (session.planned !== null && Object.keys(session.games).length >= session.planned)
 }
 
 /** Letters that can't be mistaken for each other or for numbers when read off a screen. */
@@ -110,8 +139,15 @@ export function watchRoom(code: string, onChange: (room: Room | null) => void, o
         lobby: value.lobby === true,
         votes: value.votes ?? {},
         players: value.players ?? {},
-        play: value.play ? { state: value.play.state, deadline: value.play.deadline ?? null } : null,
+        play: value.play
+          ? { state: value.play.state, deadline: value.play.deadline ?? null, startedAt: value.play.startedAt ?? null }
+          : null,
         progress: value.progress ?? {},
+        session: {
+          planned: typeof value.session?.planned === 'number' ? value.session.planned : null,
+          games: value.session?.games ?? {},
+          ended: value.session?.ended === true,
+        },
       })
     },
     onError,
@@ -125,9 +161,14 @@ export function playerIds(room: Room): string[] {
     .map(([uid]) => uid)
 }
 
+/** Host only: starts a game with its first state, stamped with the start time that names its saved result. */
+export function startPlay(code: string, state: unknown, deadline: number | null): Promise<void> {
+  return set(roomRef(code, 'play'), { state: JSON.stringify(state), deadline, startedAt: Date.now() })
+}
+
 /** Host only: saves the game state (as JSON, so empty lists survive) and when the current timer runs out. */
 export function writePlay(code: string, state: unknown, deadline: number | null): Promise<void> {
-  return set(roomRef(code, 'play'), { state: JSON.stringify(state), deadline })
+  return update(roomRef(code, 'play'), { state: JSON.stringify(state), deadline })
 }
 
 /** Host only: clears the game (everyone's progress and the game's secrets too) so the room is back in its waiting state. */
@@ -175,6 +216,21 @@ export async function switchGame(code: string, game: string): Promise<void> {
   await clearPlay(code)
   await remove(roomRef(code, 'votes'))
   await set(roomRef(code, 'game'), game)
+}
+
+/** Host only, in a lobby room: how many games the night will have. */
+export function planSession(code: string, games: number): Promise<void> {
+  return set(roomRef(code, 'session/planned'), games)
+}
+
+/** Host only, in a lobby room: adds a finished game to the night. */
+export function addSessionGame(code: string, resultId: string, game: SessionGame): Promise<void> {
+  return set(roomRef(code, `session/games/${resultId}`), game)
+}
+
+/** Host only, in a lobby room: ends the night early, going straight to the recap. */
+export function endSession(code: string): Promise<void> {
+  return set(roomRef(code, 'session/ended'), true)
 }
 
 /** In a lobby room: this player's vote for the next game. */

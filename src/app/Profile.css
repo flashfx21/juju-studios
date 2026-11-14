@@ -132,6 +132,34 @@
   line-height: 1;
 }
 
+/* The game log under the stats: one row per saved game, newest first. */
+.profile__log {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile__log-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 10px;
+  padding: 8px 2px;
+  border-bottom: 1px solid currentColor;
+  font-size: 16px;
+}
+
+.profile__log-game {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.profile__log-date {
+  min-width: 3.6em;
+  text-align: right;
+}
+
 /* ---------- 90s arcade ---------- */
 :root[data-theme='arcade'] .profile__title {
   padding: 0;

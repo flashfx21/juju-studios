@@ -6,6 +6,7 @@ import {
   clearPlay,
   readHostGame,
   sendInput,
+  startPlay,
   takeInputs,
   watchPlayerView,
   writeHostGame,
@@ -16,6 +17,7 @@ import {
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
+import { saveFinishedGame } from '../room/saveFinishedGame'
 import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import { useSecondsLeft } from '../room/useSecondsLeft'
@@ -52,7 +54,7 @@ import {
 const TURN_NAMES: Record<Turns, string> = { once: 'Draw once', twice: 'Draw twice' }
 const PACE_NAMES: Record<Pace, string> = { quick: '90 s', normal: '2 min', relaxed: '3 min' }
 
-/** Setting up deals no guesses, so it needs no word list. */
+/** Setting up and ranking a finished game check no guesses, so they need no word list. */
 const DEALER = sketchShowdownRules(() => false)
 
 /** Earliest and latest a bot drawer picks its clue, as a share of the pick time. */
@@ -116,7 +118,7 @@ function SketchWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
         }
         setProblem('')
         const state = DEALER.setup(players, settings, context(), split.teams)
-        void publish(room, state, deadlineFor(state))
+        void publish(room, state, deadlineFor(state), true)
       }}
       settings={
         <>
@@ -137,8 +139,9 @@ function SketchWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
 /**
  * Host only: saves the full game where only the host can read it, gives each person their own view,
  * and puts only the teams and the phase in the room (every drawing once the game is over).
+ * `starting` stamps a new game's start; a finished game is saved.
  */
-async function publish(room: Room, state: SketchShowdownState, deadline: number | null): Promise<void> {
+async function publish(room: Room, state: SketchShowdownState, deadline: number | null, starting = false): Promise<void> {
   await writeHostGame(room.code, state)
   for (const player of [...state.teams[0], ...state.teams[1]]) {
     if (!botFor(player)) await writePlayerView(room.code, player, playerView(state, player))
@@ -149,7 +152,8 @@ async function publish(room: Room, state: SketchShowdownState, deadline: number 
     roundNumber: state.rounds.length,
     gallery: state.phase === 'over' ? tvView(state).gallery : null,
   }
-  await writePlay(room.code, shared, deadline)
+  await (starting ? startPlay : writePlay)(room.code, shared, deadline)
+  if (DEALER.isOver(state)) saveFinishedGame(room, manifest.id, DEALER.finishingOrder(state), state.teams)
 }
 
 /**

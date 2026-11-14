@@ -14,6 +14,7 @@ import { Field, TextField } from '../ui/TextField'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import '../ui/PhoneForm.css'
 import { INITIALS_LENGTH } from './formRules'
+import { ProfileStats } from './ProfileStats'
 import { goTo, href } from './useHashRoute'
 import { useMe } from './useMe'
 import { useProfileDraft } from './useProfileDraft'
@@ -190,21 +191,7 @@ function ProfileForm({ uid, email, saved, style, onStyleChange }: ProfileFormPro
 
       {tab === 'stats' ? (
         <div className="profile__panel" role="tabpanel" id="profile-panel-stats" aria-labelledby="profile-tab-stats">
-          <dl className="profile__stats">
-            <div className="profile__stat">
-              <dt>Games played</dt>
-              <dd>0</dd>
-            </div>
-            <div className="profile__stat">
-              <dt>Total points</dt>
-              <dd>{style === 'arcade' ? '00000' : '0'}</dd>
-            </div>
-            <div className="profile__stat">
-              <dt>Average</dt>
-              <dd>-</dd>
-            </div>
-          </dl>
-          <p className="cue-card__text">Stats start counting once game results are saved.</p>
+          <ProfileStats uid={uid} style={style} />
         </div>
       ) : (
         <form
