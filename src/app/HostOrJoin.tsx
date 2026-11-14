@@ -230,6 +230,7 @@ export function HostOrJoinPhone() {
   const me = useMe()
   const signedIn = me.kind === 'signed-in'
   const canPlaytest = me.kind === 'signed-in' && me.canPlaytest
+  const isAdmin = me.kind === 'signed-in' && me.isAdmin
 
   return (
     <PhoneFrame label="Host or join" cardTag="Game night">
@@ -253,6 +254,11 @@ export function HostOrJoinPhone() {
           {canPlaytest && (
             <a className="entry-phone__link" href={href('playtest')} data-testid="solo-play-link">
               Solo play
+            </a>
+          )}
+          {isAdmin && (
+            <a className="entry-phone__link" href={href('admin')} data-testid="admin-link">
+              Admin
             </a>
           )}
         </>

@@ -81,7 +81,7 @@ function PlayerList({ selfUid }: { selfUid: string }) {
         ))}
       </ul>
       <div className="phone-actions">
-        <a className="phone-link" href={href('lobby')} data-testid="admin-back">
+        <a className="phone-link" href={href('home')} data-testid="admin-back">
           Back
         </a>
       </div>
