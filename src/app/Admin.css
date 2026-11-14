@@ -66,3 +66,14 @@
 .admin-player__button[aria-disabled='true'] {
   cursor: default;
 }
+
+/* A titled block of admin controls, such as Your style. */
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-section__heading {
+  color: var(--color-text);
+}

@@ -77,7 +77,7 @@ function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle:
     case 'lobby':
       return <LobbyPlaceholder />
     case 'admin':
-      return <Admin />
+      return <Admin style={style} onStyleChange={setStyle} />
     case 'room':
       return <LobbyRoom />
     case 'how-to-play':

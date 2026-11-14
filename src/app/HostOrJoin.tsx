@@ -1,5 +1,7 @@
 // ABOUTME: The front door: host a game on this screen, or join one from a phone. TV and phone versions.
 // ABOUTME: Shows the site address where the design has QR codes; real QR codes wait for a QR library.
+import { LOBBY } from '../engine/net/rooms'
+import { rememberedRoom } from '../engine/rememberedRoom'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { TvStage } from '../ui/TvStage'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
@@ -245,6 +247,11 @@ export function HostOrJoinPhone() {
       <PhoneChoice kind="join" copy={copy.join} to={href('join')} />
       {signedIn ? (
         <>
+          {rememberedRoom(LOBBY) && (
+            <a className="phone-button" href={href('room')} data-testid="back-to-room">
+              Back to tonight's room
+            </a>
+          )}
           <PhoneChoice kind="host" copy={{ ...copy.host, action: copy.hostSignedIn }} to={href('room')} />
           {canPlaytest && (
             <a className="entry-phone__link" href={href('playtest')} data-testid="solo-play-link">

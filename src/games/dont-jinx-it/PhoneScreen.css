@@ -605,6 +605,11 @@
   font-size: 16px;
 }
 
+/* The missed guess on the result screen sits outside a list, so it drops the paragraph margin. */
+.dji-missed {
+  margin: 0;
+}
+
 .dji-lines__line--boxed {
   padding: 12px;
 }

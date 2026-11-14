@@ -209,6 +209,7 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
 
   // The host ended the game or the clock ran out: anyone still playing stops, with the rest of their chain counted as missed.
   const now = useNow()
+  const over = gameOver(play, sharedProgress(room), now)
   const endedAt = stoppedAt(play, now)
   const endedEarly = state !== null && endedAt !== null && state.runs[self.uid].finishedAt === null
   const shown = useMemo(
@@ -239,18 +240,16 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
       player={self.uid}
       onGuess={(word) => update(rules.onInput(state, self.uid, { type: 'guess', word }, { now: Date.now(), random: Math.random }))}
       topAction={<EndGameButton room={room} play={play} isHost={isHost} />}
-      infoLine={<InfoLine room={room} play={play} self={self.uid} />}
-      others={others}
+      infoLine={<InfoLine room={room} play={play} />}
+      others={over ? others : undefined}
       summaryAction={<Results room={room} play={play} isHost={isHost} onLeave={onLeave} />}
     />
   )
 }
 
-/** The chain's clock, your place so far, and how many have finished. */
-function InfoLine({ room, play, self }: { room: Room; play: ChainPlay; self: PlayerId }) {
+/** The chain's clock and how many have finished. Places stay hidden until the game is over. */
+function InfoLine({ room, play }: { room: Room; play: ChainPlay }) {
   const shared = sharedProgress(room)
-  const table = standings(play.players, shared)
-  const mine = table.find((row) => row.player === self)
   const finished = play.players.filter((id) => shared[id]?.finished).length
   const secondsLeft = useSecondsLeft(play.endedAt === null ? deadlineOf(play) : null)
 
@@ -261,7 +260,6 @@ function InfoLine({ room, play, self }: { room: Room; play: ChainPlay; self: Pla
           {timeText(secondsLeft * 1000)} left
         </span>
       )}
-      {mine && <span data-testid="cwt-place">{placeText(mine.place)} of {table.length}</span>}
       <span role="status" data-testid="cwt-finished">
         {finished} of {play.players.length} done
       </span>
@@ -310,10 +308,11 @@ function EndGameButton({ room, play, isHost }: { room: Room; play: ChainPlay; is
   )
 }
 
-/** After your chain: everyone's standing, live until the last player finishes, then the host's Play again. */
+/** After your chain: who has finished while the game runs, then the final standings and the host's Play again. */
 function Results({ room, play, isHost, onLeave }: { room: Room; play: ChainPlay; isHost: boolean; onLeave: () => void }) {
   const shared = sharedProgress(room)
-  const table = standings(play.players, shared)
+  // While the game runs the list keeps the room's order, so it gives nothing away about who is ahead.
+  const ranked = standings(play.players, shared)
   const looks = usePlayerLooks(room, play.players)
   const now = useNow()
   const over = gameOver(play, shared, now)
@@ -321,18 +320,22 @@ function Results({ room, play, isHost, onLeave }: { room: Room; play: ChainPlay;
   return (
     <div className="cwt-results">
       <p className="cwt-results__heading" role="status">
-        {over ? 'Final standings' : 'Standings so far'}
+        {over ? 'Final standings' : "Who's finished"}
       </p>
-      <ol className="cwt-standings" aria-label={over ? 'Final standings' : 'Standings so far'}>
-        {table.map(({ player, place, progress }) => (
+      <ol className="cwt-standings" aria-label={over ? 'Final standings' : "Who's finished"}>
+        {(over ? ranked : [...ranked].sort((a, b) => play.players.indexOf(a.player) - play.players.indexOf(b.player))).map(({ player, place, progress }) => (
           <li key={player} className="cwt-standings__row" data-testid={`cwt-standing-${player}`}>
-            <span className="cwt-standings__place">{placeText(place)}</span>
+            {over && <span className="cwt-standings__place">{placeText(place)}</span>}
             {looks[player] && <PlayerDot look={looks[player]} />}
             <span className="cwt-standings__name">{looks[player]?.name ?? 'Player'}</span>
             <span className="cwt-standings__score">
-              {progress.finished
-                ? `${progress.totalGuesses} guesses · ${timeText(progress.timeMs ?? 0)}`
-                : `word ${progress.words.length + 1} of ${readChainCode(play.chainCode)!.settings.chainLength}`}
+              {!over
+                ? progress.finished
+                  ? 'Finished'
+                  : 'Still playing'
+                : progress.finished
+                  ? `${progress.totalGuesses} guesses · ${timeText(progress.timeMs ?? 0)}`
+                  : `word ${progress.words.length + 1} of ${readChainCode(play.chainCode)!.settings.chainLength}`}
             </span>
           </li>
         ))}

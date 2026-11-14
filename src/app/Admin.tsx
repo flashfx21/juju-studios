@@ -6,7 +6,9 @@ import { saveProfile, type Profile } from '../engine/net/profiles'
 import '../ui/PhoneForm.css'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { PLAYER_COLORS } from '../ui/playerColors'
+import { StyleCards } from '../ui/StyleCards'
 import { TextField } from '../ui/TextField'
+import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
 import { checkUsername } from './formRules'
 import { PlayerBadge } from './PlayerBadge'
@@ -14,7 +16,12 @@ import { href } from './useHashRoute'
 import { useMe } from './useMe'
 import './Admin.css'
 
-export function Admin() {
+interface AdminProps {
+  style: LobbyStyleId
+  onStyleChange: (style: LobbyStyleId) => void
+}
+
+export function Admin({ style, onStyleChange }: AdminProps) {
   const me = useMe()
   if (me.kind === 'checking' || (me.kind === 'signed-in' && me.profile === undefined)) {
     return <PhoneFrame label="Admin" cardTag="Admin" />
@@ -32,10 +39,10 @@ export function Admin() {
       </PhoneFrame>
     )
   }
-  return <PlayerList selfUid={me.player.uid} />
+  return <PlayerList selfUid={me.player.uid} style={style} onStyleChange={onStyleChange} />
 }
 
-function PlayerList({ selfUid }: { selfUid: string }) {
+function PlayerList({ selfUid, style, onStyleChange }: { selfUid: string } & AdminProps) {
   const [players, setPlayers] = useState<{ profiles: Record<string, Profile>; playtesters: Record<string, boolean> }>()
   const [problem, setProblem] = useState('')
 
@@ -62,6 +69,12 @@ function PlayerList({ selfUid }: { selfUid: string }) {
       <p className="cue-card__text">
         Everyone with a profile. Solo play lets a player into the games still in testing; admins always have it.
       </p>
+      <section className="admin-section" aria-labelledby="admin-style-heading">
+        <h2 className="cue-card__label admin-section__heading" id="admin-style-heading">
+          Your style
+        </h2>
+        <StyleCards current={style} size="phone" labelledBy="admin-style-heading" onPick={onStyleChange} />
+      </section>
       {problem && (
         <p className="preview-note" role="alert">
           {problem}

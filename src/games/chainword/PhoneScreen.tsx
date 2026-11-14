@@ -468,7 +468,26 @@ export function PhoneScreen({ state, player, onGuess, topAction, infoLine, other
         <section className="cw-summary" aria-label="Your result" data-testid="cw-summary">
           <p className="cw-summary__big">{guessCount(totalGuesses(run))}</p>
           {time !== null && <p className="cw-summary__time">Time {formatTime(time)}</p>}
-          {others && <p className="cw-summary__hint">Tap a word in the chain to see everyone's guesses.</p>}
+          {others && (
+            <div className="cw-everyone" role="group" aria-labelledby="cw-everyone-heading">
+              <p className="cw-everyone__heading" id="cw-everyone-heading">
+                See everyone's guesses
+              </p>
+              <div className="cw-everyone__words">
+                {state.chain.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className="phone-button phone-button--secondary cw-everyone__word"
+                    data-testid={`cw-everyone-${index}`}
+                    onClick={() => lookBack(index)}
+                  >
+                    Word {index + 1}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <WordResults state={state} attempts={run.attempts} />
           {summaryAction && <div className="cw-summary__action">{summaryAction}</div>}
         </section>

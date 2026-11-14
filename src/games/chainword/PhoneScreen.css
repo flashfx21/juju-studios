@@ -441,7 +441,32 @@ button.cw-chain__step:focus-visible {
   height: 4px;
 }
 
-.cw-summary__hint {
-  font-size: 15px;
+/* Once the game is over: one button per word opens everyone's guesses on it. */
+.cw-everyone {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cw-everyone__heading {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.1em;
   text-align: center;
+  text-transform: uppercase;
+}
+
+.cw-everyone__words {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.cw-everyone__word {
+  flex: 1 1 0;
+  min-width: 64px;
+  min-height: 48px;
+  font-size: 18px;
 }

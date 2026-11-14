@@ -530,6 +530,11 @@ function Result({ view, player, seats }: { view: PlayerView; player: PlayerId; s
         {view.word && <WordTiles word={view.word} {...TILES.small} />}
         <span className="dji-label">{RESULT_TEXT[view.result ?? 'pass']}</span>
       </div>
+      {view.result === 'miss' && view.guess && (
+        <p className="dji-lines__line dji-lines__line--boxed dji-missed" data-testid="dji-missed-guess">
+          {view.isGuesser ? 'You' : seats[view.guesser].name} guessed <b>{view.guess}</b>
+        </p>
+      )}
       {view.isGuesser ? (
         <>
           <span className="dji-label">Who wrote what</span>

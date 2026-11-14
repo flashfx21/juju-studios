@@ -22,7 +22,7 @@ import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
 import { HowToPlayButton } from './HowToPlay'
 import { pickerState } from './pickerGames'
 import { PlayerBadge } from './PlayerBadge'
-import { goTo } from './useHashRoute'
+import { goTo, href } from './useHashRoute'
 import { useMe } from './useMe'
 import './GameVote.css'
 import './LobbyRoom.css'
@@ -123,6 +123,9 @@ function Recap({ room, onLeave }: { room: Room; onLeave: () => void }) {
         </>
       )}
       <p className="cue-card__text">Want to keep playing? Start a new lobby from the home screen.</p>
+      <a className="phone-link phone-link--quiet" href={href('home')} data-testid="lobby-home">
+        Home
+      </a>
       <button type="button" className="phone-button" data-testid="room-leave" onClick={onLeave}>
         Leave room
       </button>
@@ -274,6 +277,9 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
           {confirmingEnd ? 'Tap again to end the night' : 'End the night'}
         </button>
       )}
+      <a className="phone-link phone-link--quiet" href={href('home')} data-testid="lobby-home">
+        Home
+      </a>
       <button type="button" className="phone-link phone-link--quiet" data-testid="room-leave" onClick={onLeave}>
         Leave room
       </button>
