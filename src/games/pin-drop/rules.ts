@@ -104,7 +104,8 @@ export interface PinDropState {
   flags: Record<PlayerId, string>
 }
 
-export type PinDropInput = { type: 'pin'; lat: number; lng: number } | { type: 'lock' } | { type: 'flag' }
+/** A lock-in can carry the pin, so it counts even if the phone's last pin move hasn't reached the host. */
+export type PinDropInput = { type: 'pin'; lat: number; lng: number } | { type: 'lock'; lat?: number; lng?: number } | { type: 'flag' }
 
 /** Straight-line distance over the curve of the earth, in kilometers. */
 export function distanceKm(a: Pin, b: Pin): number {
@@ -171,7 +172,7 @@ function shuffled<T>(items: T[], random: () => number): T[] {
   return copy
 }
 
-function isValidPin(input: { lat: unknown; lng: unknown }): boolean {
+function isValidPin(input: { lat?: unknown; lng?: unknown }): boolean {
   const { lat, lng } = input
   return typeof lat === 'number' && typeof lng === 'number' && Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90
 }
@@ -242,7 +243,7 @@ export const rules: GameRules<PinDropState, PinDropSettings, PinDropInput> = {
   },
 
   /**
-   * pin: place or move your pin until you lock in. lock: your pin is final; when everyone has locked in
+   * pin: place or move your pin until you lock in. lock: your pin (or the one sent with it) is final; when everyone has locked in
    * the round reveals early. flag: during the reveal or standings, flag this round's photo, once per game.
    */
   onInput(state, player, input) {
@@ -263,9 +264,12 @@ export const rules: GameRules<PinDropState, PinDropSettings, PinDropInput> = {
     }
 
     if (input.type === 'lock') {
-      if (!round.pins[player]) return state
+      const sentPin = input.lat !== undefined || input.lng !== undefined
+      if (sentPin && !isValidPin(input)) return state
+      const pins = sentPin ? { ...round.pins, [player]: { lat: input.lat!, lng: wrapLongitude(input.lng!) } } : round.pins
+      if (!pins[player]) return state
       const locked = [...round.locked, player]
-      const updated = withCurrentRound(state, { locked })
+      const updated = withCurrentRound(state, { pins, locked })
       return state.players.every((p) => locked.includes(p)) ? revealRound(updated) : updated
     }
 

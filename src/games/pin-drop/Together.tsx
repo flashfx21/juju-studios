@@ -1,12 +1,14 @@
 // ABOUTME: Pin Drop on phones, no TV: one player starts a room and shares its code, others join, bots can fill in.
 // ABOUTME: The host's phone runs the rules and the round timer; every phone shows the photo above its own map.
 import { useEffect, useRef, useState } from 'react'
-import { clearPlay, sendInput, takeInputs, writePlay, type Room } from '../../engine/net/rooms'
+import { clearPlay, sendInput, startPlay, takeInputs, writePlay, type Room } from '../../engine/net/rooms'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
 import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { saveFinishedGame } from '../room/saveFinishedGame'
 import { usePlayerLooks } from '../room/usePlayerLooks'
+import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { RulesContext } from '../types'
 import { botGuess } from './bots'
 import { manifest } from './manifest'
@@ -24,10 +26,9 @@ import {
   type PinDropSettings,
   type PinDropState,
 } from './rules'
-import './Together.css'
 
-/** How long the reveal shows before the standings. */
-const REVEAL_SECONDS = 10
+/** Moves sent to the host: the game's own, or the host's Next on the reveal and the standings. */
+type RoomInput = PinDropInput | { type: 'next' }
 
 const SCORING_NAMES = { match: 'Match play', stroke: 'Stroke play' }
 const UNIT_NAMES = { mi: 'Miles', km: 'Kilometers' }
@@ -38,11 +39,9 @@ function context(): RulesContext {
   return { now: Date.now(), random: Math.random }
 }
 
-/** When the timer for this phase runs out: guessing uses the pace, the reveal a fixed time, standings wait for Next. */
+/** When the timer for this phase runs out: guessing uses the pace; the reveal and standings wait for the host's Next. */
 function deadlineFor(state: PinDropState, now: number): number | null {
-  if (state.phase === 'guessing') return now + state.settings.pace * 1000
-  if (state.phase === 'reveal') return now + REVEAL_SECONDS * 1000
-  return null
+  return state.phase === 'guessing' ? now + state.settings.pace * 1000 : null
 }
 
 export function Together() {
@@ -78,7 +77,7 @@ function PinDropWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
       onStart={(players) => {
         const ctx = context()
         const state = rules.setup(players, settings, ctx)
-        void writePlay(room.code, state, deadlineFor(state, ctx.now))
+        void startPlay(room.code, state, deadlineFor(state, ctx.now))
       }}
       settings={
         <>
@@ -92,23 +91,12 @@ function PinDropWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
   )
 }
 
-/** Seconds left until the deadline, ticking. Null when there is no deadline. */
-function useSecondsLeft(deadline: number | null): number | null {
-  const [now, setNow] = useState(() => Date.now())
-  useEffect(() => {
-    if (deadline === null) return
-    const timer = setInterval(() => setNow(Date.now()), 250)
-    return () => clearInterval(timer)
-  }, [deadline])
-  return deadline === null ? null : Math.max(0, Math.ceil((deadline - now) / 1000))
-}
-
 function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
   const play = room.play!
   const state = JSON.parse(play.state) as PinDropState
   const looks = usePlayerLooks(room, state.players)
   const secondsLeft = useSecondsLeft(state.phase === 'guessing' ? play.deadline : null)
-  const send = (input: PinDropInput) => void sendInput(room.code, self.uid, input)
+  const send = (input: RoomInput) => void sendInput(room.code, self.uid, input)
   const round = currentRound(state)
   const playing = state.players.includes(self.uid)
 
@@ -130,23 +118,12 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
       player={self.uid}
       looks={looks}
       isHost={isHost}
+      secondsLeft={secondsLeft}
       onPin={(pin) => send({ type: 'pin', ...pin })}
-      onLock={() => send({ type: 'lock' })}
+      onLock={(pin) => send({ type: 'lock', ...pin })}
       onFlag={() => send({ type: 'flag' })}
-      onNext={() => {
-        const next = rules.onTimer(state, context())
-        void writePlay(room.code, next, deadlineFor(next, Date.now()))
-      }}
-      above={
-        <>
-          {secondsLeft !== null && (
-            <p className="pdt-clock" role="timer" aria-live={secondsLeft <= 10 ? 'polite' : 'off'} data-testid="pdt-clock">
-              {secondsLeft} s left
-            </p>
-          )}
-          <RoundPhoto key={round.photo.id} photo={round.photo} />
-        </>
-      }
+      onNext={() => send({ type: 'next' })}
+      above={<RoundPhoto key={round.photo.id} photo={round.photo} />}
       summaryAction={
         <>
           {isHost && (
@@ -194,39 +171,52 @@ function botsMove(code: string, state: PinDropState, deadline: number | null): P
 
 /**
  * Runs on the host's phone only: applies every player's input to the state, moves the game on when a
- * timer runs out, and writes each new state back to the room for every phone to show.
+ * timer runs out, and writes each new state back to the room for every phone to show. It reads the game
+ * from the room once when the game starts (or the host reloads) and keeps its own copy after that, so an
+ * input is never applied to a state the room hasn't caught up on yet.
  */
 function HostRunner({ room }: { room: Room }) {
   const latest = useRef<{ state: PinDropState; deadline: number | null } | null>(null)
-  const hasPlay = room.play !== null
-
-  // Keep the newest state from the room (the host's own writes come back here too).
+  // The room as last seen: where the runner picks the game up, and what a saved result is filed under.
+  const seen = useRef(room)
   useEffect(() => {
-    latest.current = room.play ? { state: JSON.parse(room.play.state) as PinDropState, deadline: room.play.deadline } : null
-  }, [room.play])
+    seen.current = room
+  }, [room])
+  const hasPlay = room.play !== null
+  const { code, host } = room
 
   useEffect(() => {
     if (!hasPlay) return
+    const play = seen.current.play
+    latest.current = play ? { state: JSON.parse(play.state) as PinDropState, deadline: play.deadline } : null
 
     function save(next: PinDropState, keepDeadline: boolean) {
       const current = latest.current
       if (!current || next === current.state) return
-      const deadline = keepDeadline && next.phase === current.state.phase ? current.deadline : deadlineFor(next, Date.now())
+      const samePhase = next.phase === current.state.phase && next.roundIndex === current.state.roundIndex
+      const deadline = keepDeadline && samePhase ? current.deadline : deadlineFor(next, Date.now())
       latest.current = { state: next, deadline }
-      void writePlay(room.code, next, deadline)
+      void writePlay(code, next, deadline)
+      if (rules.isOver(next)) saveFinishedGame(seen.current, manifest.id, rules.finishingOrder(next))
     }
 
-    const stopInputs = takeInputs(room.code, (by, input) => {
+    const stopInputs = takeInputs(code, (by, input) => {
       const current = latest.current
       if (!current) return
-      save(rules.onInput(current.state, by, input as PinDropInput, context()), true)
+      const move = input as RoomInput
+      if (move.type === 'next') {
+        const phase = current.state.phase
+        if (by === host && (phase === 'reveal' || phase === 'standings')) save(rules.onTimer(current.state, context()), false)
+        return
+      }
+      save(rules.onInput(current.state, by, move, context()), true)
     })
 
     const timer = setInterval(() => {
       const current = latest.current
       if (!current) return
       if (current.state.phase === 'guessing') {
-        const moved = botsMove(room.code, current.state, current.deadline)
+        const moved = botsMove(code, current.state, current.deadline)
         if (moved !== current.state) {
           save(moved, true)
           return
@@ -240,7 +230,7 @@ function HostRunner({ room }: { room: Room }) {
       stopInputs()
       clearInterval(timer)
     }
-  }, [hasPlay, room.code])
+  }, [hasPlay, code, host])
 
   return null
 }

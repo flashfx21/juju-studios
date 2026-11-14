@@ -172,7 +172,8 @@ export function PinMap({ label, pins, players, answer, me, onPin }: PinMapProps)
     if (answer) {
       group.addLayer(L.marker([answer.lat, answer.lng], { icon: ANSWER_ICON, keyboard: false, zIndexOffset: 2000 }))
       points.push([answer.lat, answer.lng])
-      current.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 12 })
+      // No animation: the results map is new each reveal, and Leaflet errors if a map is removed mid-zoom (the host can tap on quickly).
+      current.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 12, animate: false })
     }
   }, [pins, players, answer, me, editable])
 

@@ -66,7 +66,7 @@ export function Playtest() {
         looks={LOOKS}
         isHost
         onPin={(pin) => apply((s) => rules.onInput(s, YOU, { type: 'pin', ...pin }, context()))}
-        onLock={() => apply((s) => rules.onInput(s, YOU, { type: 'lock' }, context()))}
+        onLock={(pin) => apply((s) => rules.onInput(s, YOU, { type: 'lock', ...pin }, context()))}
         onFlag={() => apply((s) => rules.onInput(s, YOU, { type: 'flag' }, context()))}
         onNext={() => apply((s) => rules.onTimer(s, context()))}
         above={<RoundPhoto key={currentRound(state).photo.id} photo={currentRound(state).photo} />}
@@ -117,7 +117,7 @@ interface DevBarProps {
 
 /** Controls a real game gets from the other phones and the engine timer. */
 function DevBar({ state, onChange }: DevBarProps) {
-  if (state.phase !== 'guessing' && state.phase !== 'reveal') return null
+  if (state.phase !== 'guessing') return null
   const round = currentRound(state)
   const botsWaiting = PLAYERS.some((player) => player !== YOU && !round.locked.includes(player))
 
@@ -125,7 +125,7 @@ function DevBar({ state, onChange }: DevBarProps) {
     <section className="playtest-dev" aria-label="Playtest controls">
       <h2 className="playtest-dev__heading">Dev</h2>
       <div className="playtest-dev__buttons">
-        {state.phase === 'guessing' && botsWaiting && (
+        {botsWaiting && (
           <button type="button" className="playtest-dev__button" data-testid="pd-dev-bots" onClick={() => onChange(botsLockIn)}>
             Bots lock in
           </button>
@@ -136,7 +136,7 @@ function DevBar({ state, onChange }: DevBarProps) {
           data-testid="pd-dev-timer"
           onClick={() => onChange((s) => rules.onTimer(s, context()))}
         >
-          {state.phase === 'guessing' ? "Time's up" : 'Reveal done'}
+          Time's up
         </button>
       </div>
     </section>

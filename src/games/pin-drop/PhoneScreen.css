@@ -80,3 +80,41 @@
   font-size: 18px;
   line-height: 1.4;
 }
+
+/* Guessing: the clock and lock-in count on one line, and a short Lock in beside the status so the map gets the room. */
+.pd-info {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+}
+
+.pd-actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pd-actions .pd-status {
+  flex: 1 1 auto;
+  font-size: 15px;
+}
+
+.pd-actions__button {
+  flex: none;
+  min-height: var(--space-hit-target-min);
+  padding: 6px 18px;
+  font-size: 20px;
+}
+
+:root[data-theme='arcade'] .pd-info {
+  font-size: 11px;
+}
+
+:root[data-theme='arcade'] .pd-actions__button {
+  font-size: 14px;
+}

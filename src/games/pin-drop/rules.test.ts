@@ -129,6 +129,17 @@ describe('pins and lock-ins', () => {
     expect(pin(state, 'zed', 1, 1)).toBe(state)
   })
 
+  it('locks in the pin sent with the lock-in, even when no pin arrived before it', () => {
+    let state = pin(newGame(), 'ana', 10, 20)
+    state = rules.onInput(state, 'ana', { type: 'lock', lat: 30, lng: 40 }, CTX)
+    expect(currentRound(state).pins.ana).toEqual({ lat: 30, lng: 40 })
+    expect(currentRound(state).locked).toContain('ana')
+    state = rules.onInput(state, 'bo', { type: 'lock', lat: 5, lng: 6 }, CTX)
+    expect(currentRound(state).pins.bo).toEqual({ lat: 5, lng: 6 })
+    expect(currentRound(state).locked).toContain('bo')
+    expect(rules.onInput(state, 'cy', { type: 'lock', lat: 95, lng: 0 }, CTX)).toBe(state)
+  })
+
   it('refuses pins off the map but wraps longitudes past 180', () => {
     const state = newGame()
     expect(pin(state, 'ana', 91, 0)).toBe(state)

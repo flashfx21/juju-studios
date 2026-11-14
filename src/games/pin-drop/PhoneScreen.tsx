@@ -1,6 +1,6 @@
 // ABOUTME: Pin Drop on a player's phone: the guessing map with Lock in, your result with the Flag photo button,
-// ABOUTME: round standings with the host's Next round control, and the final standings.
-import { useMemo, type ReactNode } from 'react'
+// ABOUTME: the host's Standings and Next round controls, and the final standings.
+import { useMemo, useState, type ReactNode } from 'react'
 import type { PlayerSymbolId } from '../../ui/playerSymbols'
 import type { PlayerId } from '../types'
 import { distanceText } from './format'
@@ -22,10 +22,13 @@ interface PhoneScreenProps {
   player: PlayerId
   /** Name, initials and pin color by player id. */
   looks: Record<PlayerId, PlayerLook>
-  /** The host's phone gets Next round on the standings. */
+  /** The host's phone gets Standings on the reveal and Next round on the standings. */
   isHost: boolean
+  /** Seconds left to guess, shown beside how many have locked in. Null or missing when nothing is timed. */
+  secondsLeft?: number | null
   onPin: (pin: Pin) => void
-  onLock: () => void
+  /** Locks in this pin: the one on this phone's map, which the host may not have yet. */
+  onLock: (pin: Pin) => void
   onFlag: () => void
   onNext: () => void
   /** Shown above the map, such as the playtest's stand-in for the TV photo. */
@@ -56,17 +59,40 @@ function useMapPlayers(state: PinDropState, looks: Record<PlayerId, PlayerLook>)
   )
 }
 
+/** The round clock and how many have locked in, in one line above the photo. */
+function GuessingInfo({ state, secondsLeft }: Pick<PhoneScreenProps, 'state' | 'secondsLeft'>) {
+  const lockedCount = currentRound(state).locked.length
+  return (
+    <p className="pd-info" data-testid="pd-info">
+      {secondsLeft !== undefined && secondsLeft !== null && (
+        <span role="timer" aria-live={secondsLeft <= 10 ? 'polite' : 'off'} data-testid="pd-clock">
+          {secondsLeft} s left
+        </span>
+      )}
+      <span role="status" data-testid="pd-locked-count">
+        {lockedCount} of {state.players.length} locked in
+      </span>
+    </p>
+  )
+}
+
 function Guessing({ state, player, looks, onPin, onLock }: PhoneScreenProps) {
   const round = currentRound(state)
   const mapPlayers = useMapPlayers(state, looks)
-  const myPin = round.pins[player]
+  // The pin on this phone's map shows and can be locked at once, before the host's copy comes back.
+  const [draft, setDraft] = useState<{ round: number; pin: Pin } | null>(null)
+  const myPin = draft?.round === state.roundIndex ? draft.pin : round.pins[player]
   const locked = round.locked.includes(player)
   const myPins = useMemo(() => (myPin ? { [player]: myPin } : {}), [myPin, player])
-  const lockedCount = round.locked.length
+
+  function place(pin: Pin) {
+    setDraft({ round: state.roundIndex, pin })
+    onPin(pin)
+  }
 
   let status: string
-  if (locked) status = `Locked in. ${lockedCount} of ${state.players.length} locked in.`
-  else if (myPin) status = 'Drag your pin or tap somewhere else to move it.'
+  if (locked) status = 'Locked in. Waiting for the others.'
+  else if (myPin) status = 'Drag your pin or tap to move it.'
   else status = 'Tap the map to drop your pin.'
 
   return (
@@ -77,22 +103,24 @@ function Guessing({ state, player, looks, onPin, onLock }: PhoneScreenProps) {
         pins={myPins}
         players={mapPlayers}
         me={locked ? undefined : player}
-        onPin={locked ? undefined : onPin}
+        onPin={locked ? undefined : place}
       />
-      <p className="pd-status" role="status" data-testid="pd-status">
-        {status}
-      </p>
-      {!locked && (
-        <button
-          type="button"
-          className="phone-button"
-          aria-disabled={myPin ? undefined : 'true'}
-          data-testid="pd-lock-in"
-          onClick={() => myPin && onLock()}
-        >
-          Lock in
-        </button>
-      )}
+      <div className="pd-actions">
+        <p className="pd-status" role="status" data-testid="pd-status">
+          {status}
+        </p>
+        {!locked && (
+          <button
+            type="button"
+            className="phone-button pd-actions__button"
+            aria-disabled={myPin ? undefined : 'true'}
+            data-testid="pd-lock-in"
+            onClick={() => myPin && onLock(myPin)}
+          >
+            Lock in
+          </button>
+        )}
+      </div>
     </>
   )
 }
@@ -121,8 +149,21 @@ function FlagButton({ state, player, onFlag }: Pick<PhoneScreenProps, 'state' | 
   )
 }
 
+/** The host moves the game on; everyone else waits for them. */
+function HostNext({ isHost, onNext, label }: { isHost: boolean; onNext: () => void; label: string }) {
+  return isHost ? (
+    <button type="button" className="phone-button" data-testid="pd-next" onClick={onNext}>
+      {label}
+    </button>
+  ) : (
+    <p className="pd-status" role="status">
+      Waiting for the host
+    </p>
+  )
+}
+
 function Reveal(props: PhoneScreenProps) {
-  const { state, player, looks } = props
+  const { state, player, looks, isHost, onNext } = props
   const round = currentRound(state)
   const mapPlayers = useMapPlayers(state, looks)
   const result = round.results?.[player]
@@ -144,6 +185,7 @@ function Reveal(props: PhoneScreenProps) {
         {headline}
       </p>
       <FlagButton {...props} />
+      <HostNext isHost={isHost} onNext={onNext} label="Standings" />
     </>
   )
 }
@@ -195,15 +237,7 @@ function Standings(props: PhoneScreenProps) {
       <p className="pd-hint">{state.settings.scoring === 'match' ? 'Round points, then total' : 'This round, then total distance'}</p>
       <StandingsList state={state} looks={looks} final={false} />
       <FlagButton {...props} />
-      {isHost ? (
-        <button type="button" className="phone-button" data-testid="pd-next" onClick={onNext}>
-          {lastRound ? 'Final standings' : 'Next round'}
-        </button>
-      ) : (
-        <p className="pd-status" role="status">
-          Waiting for the host
-        </p>
-      )}
+      <HostNext isHost={isHost} onNext={onNext} label={lastRound ? 'Final standings' : 'Next round'} />
     </>
   )
 }
@@ -230,6 +264,7 @@ export function PhoneScreen(props: PhoneScreenProps) {
           </span>
         )}
       </div>
+      {state.phase === 'guessing' && <GuessingInfo state={state} secondsLeft={props.secondsLeft} />}
       {state.phase === 'guessing' && above}
       {state.phase === 'guessing' && <Guessing {...props} />}
       {state.phase === 'reveal' && <Reveal {...props} />}
