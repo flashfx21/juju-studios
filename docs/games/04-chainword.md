@@ -18,6 +18,8 @@ Race through a chain of hidden words. Fewest guesses wins.
 - Everyone guesses on their own phone; the TV shows each player's colored squares and counts, never letters
 - Phone play screen (Julian, Nov 11): letters go straight into the boxes from an on-screen keyboard (keys take each letter's best color for the current word; a physical keyboard also works), a progress bar shows the chain with each word's guess count (green solved, gray missed at 7) and a running total, and the screen never scrolls. After a word's last guess the phone shows how it went ("Solved in 3 guesses!" or the missed word) before moving on
 - The host can end the game early. Anyone still playing has the word they are on and every word not reached count as 7
+- In a room the chain has a clock (Julian, Nov 13, after the first playtest): 100 seconds a word, so 5 minutes for 3 words. When it runs out it works like End game. Phones show the clock, your place and how many have finished
+- In a room, once you've finished a word you can see everyone's guesses on it (Julian, Nov 13): each phone shares its guesses on a word when that word is done, never on the word in progress. Tapping a finished word in the chain bar opens it again, while playing or from the final total
 - Playtest without a server (`#/playtest/chainword`, in Solo play for signed-in players): a chain code such as `KPDT53` (4 letters, then letters per word and words in the chain, then `H` if hard mode is on, e.g. `KPDT53H`) deals the same chain on every phone; players compare totals out loud
 
 ## Open questions

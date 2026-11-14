@@ -17,6 +17,10 @@ A photo appears on the TV. Everyone drops a pin on a map on their phone. Closest
 - Units: miles (default) or kilometers
 - Map labels: on (default) or off. Off hides names but keeps borders
 
+### Phones-only rooms (Julian, Nov 13, after the first playtest)
+- Without a TV, the reveal waits for the host's **Standings** tap, then the standings wait for **Next round**
+- The clock and how many have locked in sit on one line above the photo; the map takes the space and Lock in is a short button beside the status; the screen never scrolls
+
 ### Round flow
 1. Photo appears on the TV. Each phone shows a world map, zoomed out
 2. Players tap to place a pin and drag to move it. Lock in is optional and final; the round ends early when everyone has locked in
