@@ -98,6 +98,21 @@ Every push to `main` runs `.github/workflows/deploy.yml`, which lints, builds an
 
 The backend is the Firebase project `juju-studios` (Spark plan, Realtime Database). `.firebaserc` names the project, `firebase.json` sets up the rules file and the emulators, and `database.rules.json` holds the database rules: everything is locked except `profiles/{uid}` (that player reads and writes their own, admins read and change any; fields checked), `admins/{uid}` and `playtesters/{uid}` (each player reads their own flag; admins set playtesters; admins are added only in the console), and `rooms/{code}` (signed-in players read a room; the host writes the game, each player writes only their own entry and inputs; room entries have their name, initials, color and symbol checked like profiles), `roomSecrets/{code}` (only the host reads and writes the full game; each player reads only their own view), and `results/{resultId}` (signed-in players read; only the room's host writes, once per game, for people in the room; nobody changes or deletes one from the app). The repo is the source of truth for the rules: change the file, then push it with `firebase deploy --only database`. The web app's config lives in `.env.local` (`VITE_FIREBASE_*`, not committed).
 
+## Tech stack
+
+Exact package versions are in `package.json`.
+
+| Area | Tools | Used for |
+|---|---|---|
+| Languages | TypeScript (with TSX), CSS, HTML, JSON, SVG, YAML, Markdown | App and game code; the three styles' tokens; content packs and Firebase config; player symbols; the deploy workflow; docs |
+| App | React, Leaflet with OpenStreetMap tiles, Google Fonts | Screens; the Pin Drop map; each style's lettering |
+| Backend | Firebase (Spark plan): JS SDK, Authentication, Realtime Database, Emulators | Google and email-link sign-in; profiles, rooms and results; local testing |
+| Build and test | Node.js and npm, Vite, Vitest, ESLint (typescript-eslint, React Hooks and React Refresh plugins) | Dev server and build; rules tests; lint |
+| Hosting | GitHub, GitHub Actions, GitHub Pages | Source; lint, build and deploy on every push to `main`; the live site |
+| Command line | Git, GitHub CLI (`gh`), Firebase CLI, Java 11 or later, PowerShell | Version control; repo secrets; rules deploys and emulators; the Database emulator |
+| Testing in a browser | Microsoft Edge (headless, driven over the DevTools protocol by Node) | Multi-phone flow checks with no extra packages |
+| Content | Wikimedia Commons, ENABLE word list | Pin Drop photos; the shared English dictionary |
+
 ## Folders
 
 ```
