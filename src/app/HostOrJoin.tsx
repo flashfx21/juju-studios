@@ -128,7 +128,10 @@ export function HostOrJoinTv() {
               _
             </span>
           </span>
-          <a className="entry-tv__how-to-play" href={href('how-to-play')} data-testid="how-to-play-link">
+          <a className="entry-tv__floor-link entry-tv__floor-link--left" href={href('leaderboard')} data-testid="leaderboard-link">
+            Leaderboard
+          </a>
+          <a className="entry-tv__floor-link entry-tv__floor-link--right" href={href('how-to-play')} data-testid="how-to-play-link">
             How to play
           </a>
         </div>
@@ -169,7 +172,6 @@ interface PhoneCopy {
   host: Omit<ChoiceCopy, 'seal'>
   /** Host call to action once this phone is signed in. */
   hostSignedIn: string
-  signIn: string
 }
 
 const PHONE_COPY: Record<LobbyStyleId, PhoneCopy> = {
@@ -189,7 +191,6 @@ const PHONE_COPY: Record<LobbyStyleId, PhoneCopy> = {
       action: 'Sign in to host ▸',
     },
     hostSignedIn: 'Start hosting ▸',
-    signIn: 'Already have an account? Sign in',
   },
   arcade: {
     heading: 'JuJu Studios',
@@ -207,7 +208,6 @@ const PHONE_COPY: Record<LobbyStyleId, PhoneCopy> = {
       action: 'Sign in to host ▸',
     },
     hostSignedIn: 'Start hosting ▸',
-    signIn: 'Have an account? Sign in',
   },
   'rec-room': {
     heading: "What's the plan?",
@@ -225,7 +225,6 @@ const PHONE_COPY: Record<LobbyStyleId, PhoneCopy> = {
       action: 'Sign in to host →',
     },
     hostSignedIn: 'Start hosting →',
-    signIn: 'Already have an account? Sign in',
   },
 }
 
@@ -244,41 +243,40 @@ export function HostOrJoinPhone() {
         <h1 className="entry-phone__heading">{copy.heading}</h1>
         {copy.tagline && <p className="entry-phone__tagline">{copy.tagline}</p>}
       </div>
-      <PhoneChoice kind="join" copy={copy.join} to={href('join')} />
-      {signedIn ? (
-        <>
-          {rememberedRoom(LOBBY) && (
-            <a className="phone-button" href={href('room')} data-testid="back-to-room">
-              Back to tonight's room
-            </a>
-          )}
-          <PhoneChoice kind="host" copy={{ ...copy.host, action: copy.hostSignedIn }} to={href('room')} />
-          {canPlaytest && (
-            <a className="entry-phone__link" href={href('playtest')} data-testid="solo-play-link">
-              Solo play
-            </a>
-          )}
-          {isAdmin && (
-            <a className="entry-phone__link" href={href('admin')} data-testid="admin-link">
-              Admin
-            </a>
-          )}
-        </>
-      ) : (
-        <>
-          <PhoneChoice kind="host" copy={copy.host} to={href('sign-in')} />
-          <a className="phone-button entry-phone__sign-up" href={href('sign-up')} data-testid="sign-up-button">
-            Sign up
-          </a>
-          <a className="entry-phone__link" href={href('sign-in')} data-testid="sign-in-link">
-            {copy.signIn}
-          </a>
-        </>
+      <div className="entry-phone__choices">
+        <PhoneChoice kind="join" copy={copy.join} to={href('join')} />
+        <PhoneChoice
+          kind="host"
+          copy={signedIn ? { ...copy.host, action: copy.hostSignedIn } : copy.host}
+          to={href(signedIn ? 'room' : 'sign-in')}
+        />
+      </div>
+      {signedIn && rememberedRoom(LOBBY) && (
+        <a className="phone-button" href={href('room')} data-testid="back-to-room">
+          Back to tonight's room
+        </a>
       )}
-      <a className="entry-phone__link" href={href('how-to-play')} data-testid="how-to-play-link">
-        How to play
-      </a>
+      {!signedIn && (
+        <a className="phone-button" href={href('sign-up')} data-testid="sign-up-button">
+          Sign up
+        </a>
+      )}
+      <nav className="entry-phone__menu" aria-label="More">
+        <MenuButton to={href('leaderboard')} testId="leaderboard-link" label="Leaderboard" />
+        <MenuButton to={href('how-to-play')} testId="how-to-play-link" label="How to play" />
+        {canPlaytest && <MenuButton to={href('playtest')} testId="solo-play-link" label="Solo play" />}
+        {isAdmin && <MenuButton to={href('admin')} testId="admin-link" label="Admin" />}
+        {!signedIn && <MenuButton to={href('sign-in')} testId="sign-in-link" label="Sign in" />}
+      </nav>
     </PhoneFrame>
+  )
+}
+
+function MenuButton({ to, testId, label }: { to: string; testId: string; label: string }) {
+  return (
+    <a className="phone-button phone-button--secondary entry-phone__menu-button" href={to} data-testid={testId}>
+      {label}
+    </a>
   )
 }
 

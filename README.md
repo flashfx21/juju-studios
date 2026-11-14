@@ -10,7 +10,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 
 | Screen | Address | TV | Phone |
 |---|---|---|---|
-| Host or join (front door) | `#/` | Host a game / Join a game | Join, Host; signed out: Sign up button and Sign in link; signed in: Start hosting and Solo play |
+| Host or join (front door) | `#/` | Host a game / Join a game, with Leaderboard and How to play at the ends of the floor | Join and Host as two compact cards, then styled buttons two to a row: Leaderboard, How to play, plus Solo play (playtesters) and Admin (admins); signed out: Sign up and Sign in; with a lobby room remembered: Back to tonight's room |
 | Host sign-in | `#/host` | "Finish on your phone" | Sign-in form |
 | Sign up, Sign in | `#/sign-up`, `#/sign-in`, `/sent`, `/finish`, `/expired` | | One flow with different words (a new email makes an account): Google or email link (or who is signed in), check your email, finishing the link, link expired |
 | Tonight's lobby | `#/room` | | A room for the night: the code, who's in, how many games the night has (host picks 3, 5 or 7), and a vote on the next room game with voters' icons and each game's How to play; the host taps Start on the game with the most votes (a tie is a random pick every phone agrees on) and every phone follows; Back to lobby brings everyone back; after the last game (or the host's End the night) a recap of the night |
