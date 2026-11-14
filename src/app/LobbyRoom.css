@@ -40,3 +40,65 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+.lobby-room__night {
+  margin: 4px 0 0;
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* The night's recap: totals as a ranked list, then a line per game. */
+.lobby-recap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lobby-recap__table,
+.lobby-recap__games {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lobby-recap__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+}
+
+.lobby-recap__place {
+  flex: none;
+  width: 24px;
+  font-family: var(--font-label);
+}
+
+.lobby-recap__name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+.lobby-recap__points {
+  flex: none;
+}
+
+.lobby-recap__subheading {
+  margin: 6px 0 0;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lobby-recap__games {
+  font-size: 16px;
+}
