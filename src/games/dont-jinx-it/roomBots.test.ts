@@ -2,7 +2,7 @@
 // ABOUTME: bots write the right number of different clues, and guess right more often with more clues.
 import { describe, expect, it } from 'vitest'
 import { seededRandom } from '../../engine/seededRandom'
-import { botClues, botGuess, cluesFor, rightChance } from './roomBots'
+import { botClues, botGuess, cluesFor, rankGuesses } from './roomBots'
 import { MYSTERY_WORDS } from './rules'
 
 describe("Don't Jinx It room bots", () => {
@@ -23,12 +23,38 @@ describe("Don't Jinx It room bots", () => {
     for (let i = 0; i < 50; i++) expect(botClues('beach', 1, 'sharp', random)).not.toContain('sand')
   })
 
-  it('passes with no clues left, and is right more often with more clues and when sharp', () => {
-    expect(botGuess('beach', 0, 'sharp', Math.random)).toEqual({ type: 'pass' })
-    expect(rightChance(3, 'casual')).toBeGreaterThan(rightChance(1, 'casual'))
-    expect(rightChance(2, 'sharp')).toBeGreaterThan(rightChance(2, 'casual'))
-    expect(botGuess('beach', 2, 'sharp', () => 0)).toEqual({ type: 'guess', word: 'beach' })
-    const miss = botGuess('beach', 2, 'casual', () => 0.99)
-    expect(miss.type === 'guess' && miss.word !== 'beach').toBe(true)
+  it('passes with no clues left', () => {
+    expect(botGuess([], 'sharp', Math.random)).toEqual({ type: 'pass' })
+  })
+
+  it('ranks the words the clues point to, more obvious clues counting more', () => {
+    const ranked = rankGuesses(['sand', 'waves'], MYSTERY_WORDS)
+    expect(ranked[0].word).toBe('beach')
+    expect(ranked.map((entry) => entry.word)).toContain('ocean')
+  })
+
+  it('matches another form of a listed clue', () => {
+    expect(rankGuesses(['waves'], ['beach'])[0]?.word).toBe('beach')
+    expect(rankGuesses(['wave'], ['beach'])[0]?.word).toBe('beach')
+  })
+
+  it('a sharp bot takes the best match', () => {
+    for (let i = 0; i < 20; i++) expect(botGuess(['sand', 'sun'], 'sharp', seededRandom(`s${i}`))).toEqual({ type: 'guess', word: 'beach' })
+  })
+
+  it('a casual bot sometimes settles on a runner-up', () => {
+    const guesses = new Set<string>()
+    for (let i = 0; i < 60; i++) {
+      const move = botGuess(['sand'], 'casual', seededRandom(`c${i}`))
+      if (move.type === 'guess') guesses.add(move.word)
+    }
+    expect(guesses.has('beach')).toBe(true)
+    expect(guesses.size).toBeGreaterThan(1)
+  })
+
+  it('rules out words it was told were played, and guesses blind when no clue matches', () => {
+    expect(botGuess(['sand', 'sun'], 'sharp', () => 0, MYSTERY_WORDS.filter((word) => word !== 'beach'))).not.toEqual({ type: 'guess', word: 'beach' })
+    const blind = botGuess(['zzzz'], 'sharp', () => 0, ['apple', 'anchor'])
+    expect(blind).toEqual({ type: 'guess', word: 'apple' })
   })
 })

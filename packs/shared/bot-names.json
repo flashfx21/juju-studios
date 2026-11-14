@@ -1,0 +1,19 @@
+{
+  "about": "Room bot names by skill. Sharp bots sound clever, casual bots sound like they'd rather be napping. A room draws its bots at random from the chosen skill's list. Names are 2 to 25 characters; initials are 1 to 3 capital letters (the arcade style shows them).",
+  "sharp": [
+    { "name": "Big Brain Bot", "initials": "BBB", "color": "silver", "symbol": "rocket" },
+    { "name": "Professor Smarty", "initials": "PS", "color": "purple", "symbol": "owl" },
+    { "name": "Dr. Know-It-All", "initials": "DK", "color": "teal", "symbol": "crown" },
+    { "name": "Brainy Brian", "initials": "BB", "color": "blue", "symbol": "star" },
+    { "name": "Clever Clara", "initials": "CC", "color": "pink", "symbol": "fox" },
+    { "name": "Genius Gus", "initials": "GG", "color": "gold", "symbol": "bee" }
+  ],
+  "casual": [
+    { "name": "Meh Bot", "initials": "MB", "color": "silver", "symbol": "cat" },
+    { "name": "Snooze Button", "initials": "SB", "color": "brown", "symbol": "moon" },
+    { "name": "Slow Sandy", "initials": "SS", "color": "olive", "symbol": "turtle" },
+    { "name": "Lazy Larry", "initials": "LL", "color": "orange", "symbol": "pig" },
+    { "name": "Dozy Dot", "initials": "DD", "color": "purple", "symbol": "rabbit" },
+    { "name": "Whatever Wanda", "initials": "WW", "color": "red", "symbol": "frog" }
+  ]
+}

@@ -12,7 +12,7 @@ import { inkOn, type PlayerColorId } from '../../ui/playerColors'
 import { PlayerSymbol } from '../../ui/PlayerSymbol'
 import { Field } from '../../ui/TextField'
 import type { PlayerId } from '../types'
-import { BOT_COUNT_NAMES, BOT_COUNTS, BOT_SKILL_NAMES, BOT_SKILLS, botIds, type BotCount, type BotSkill } from './bots'
+import { BOT_COUNT_NAMES, BOT_COUNTS, BOT_SKILL_NAMES, BOT_SKILLS, botIds, shuffledBotOrder, type BotCount, type BotSkill } from './bots'
 import { roomPageFor } from './roomPages'
 import { usePlayerLooks, type PlayerLook } from './usePlayerLooks'
 import '../../ui/PhoneForm.css'
@@ -301,7 +301,9 @@ export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart
   const [botCount, setBotCount] = useState<BotCount>(0)
   const [botSkill, setBotSkill] = useState<BotSkill>('casual')
   const ids = playerIds(room)
-  const bots = isHost ? botIds(botCount, botSkill) : []
+  // Each waiting room draws its own bots from the skill's names.
+  const [botOrder] = useState(() => ({ casual: shuffledBotOrder('casual', Math.random), sharp: shuffledBotOrder('sharp', Math.random) }))
+  const bots = isHost ? botIds(botCount, botSkill, botOrder[botSkill]) : []
   const looks = usePlayerLooks(room, bots)
   const enough = ids.length + bots.length >= minPlayers
 

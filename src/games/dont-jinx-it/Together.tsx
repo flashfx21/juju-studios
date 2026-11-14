@@ -30,6 +30,7 @@ import {
   cluesPerWriter,
   currentTurn,
   DEFAULT_SETTINGS,
+  MYSTERY_WORDS,
   PACE_SECONDS,
   PACES,
   phaseSeconds,
@@ -268,7 +269,9 @@ function botsMove(code: string, state: DontJinxItState, deadline: number | null)
   if (state.phase === 'guess' && bot) {
     const random = botRandom(code, state, turn.guesser)
     if (Date.now() < botMoment(deadline, PACE_SECONDS[state.pace].guess, BOT_GUESS_SHARE, random)) return state
-    const move = botGuess(turn.word, survivors(state, turn).length, bot.skill, random)
+    // The words of earlier turns were revealed to everyone, so a bot can rule them out like a person would.
+    const played = state.turns.slice(0, state.turnIndex).map((earlier) => earlier.word)
+    const move = botGuess(survivors(state, turn), bot.skill, random, MYSTERY_WORDS.filter((word) => !played.includes(word)))
     return rules.onInput(state, turn.guesser, move, context())
   }
   return state
