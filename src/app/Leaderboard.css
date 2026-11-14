@@ -1,0 +1,235 @@
+/* ABOUTME: The leaderboard page: facts line, game and sort chips, ranked rows, the unranked list and the empty state. */
+/* ABOUTME: Base look is the game show (top three on gold, cream and orange faces); arcade and rec room follow below. */
+
+.board__facts {
+  margin: 0;
+  padding: 0 4px;
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* Six game chips wrap onto two lines instead of squeezing. */
+.board__filters .option-row__buttons {
+  flex-wrap: wrap;
+}
+
+.board__filters .option-row__button {
+  flex: 1 1 auto;
+}
+
+.board {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.board-row {
+  min-height: 52px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.board-row__rank {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  font-family: var(--font-label);
+  font-size: 15px;
+}
+
+.board-row__dot {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.board-row__dot svg {
+  width: 20px;
+  height: 20px;
+}
+
+.board-row__initials {
+  flex: none;
+  width: 44px;
+  font-family: var(--font-label);
+  font-size: 12px;
+}
+
+.board-row__who {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.board-row__name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.board-row__you {
+  font-family: var(--font-label);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+.board-row__detail {
+  font-family: var(--font-label);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+}
+
+.board-row__total {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 26px;
+}
+
+.board__unranked-heading {
+  margin: 8px 0 0;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.board__empty {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--color-surface);
+}
+
+.board__empty-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+}
+
+/* ---------- Retro game show: the top three get gold, cream and orange faces ---------- */
+:root[data-theme='game-show'] .board-row[data-rank='1'] {
+  background: var(--color-accent);
+  color: var(--color-background);
+}
+
+:root[data-theme='game-show'] .board-row[data-rank='2'] {
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+}
+
+:root[data-theme='game-show'] .board-row[data-rank='3'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+}
+
+/* ---------- 90s arcade: high-score table on black ---------- */
+:root[data-theme='arcade'] .board__facts {
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+:root[data-theme='arcade'] .board__title {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  font-family: var(--font-label);
+  font-size: 22px;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+}
+
+:root[data-theme='arcade'] .board-row {
+  background: none;
+  gap: 8px;
+}
+
+:root[data-theme='arcade'] .board-row[data-me] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+}
+
+:root[data-theme='arcade'] .board-row__rank {
+  width: 30px;
+  background: none;
+  color: var(--color-accent);
+  font-size: 11px;
+}
+
+:root[data-theme='arcade'] .board-row__name {
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+:root[data-theme='arcade'] .board-row__you,
+:root[data-theme='arcade'] .board-row__detail {
+  font-size: 9px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='arcade'] .board-row__total {
+  font-family: var(--font-label);
+  font-size: 13px;
+}
+
+:root[data-theme='arcade'] .board__unranked-heading,
+:root[data-theme='arcade'] .board__empty-title {
+  font-family: var(--font-label);
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+/* ---------- 70s rec room: lines on the cream card ---------- */
+:root[data-theme='rec-room'] .board__facts {
+  color: var(--color-text-on-surface);
+}
+
+:root[data-theme='rec-room'] .board-row {
+  background: none;
+  color: var(--color-text-on-surface);
+  border-bottom: 1px solid currentColor;
+}
+
+:root[data-theme='rec-room'] .board-row[data-me] .board-row__name {
+  color: var(--color-primary);
+}
+
+:root[data-theme='rec-room'] .board-row__rank {
+  background: none;
+  color: inherit;
+}
+
+:root[data-theme='rec-room'] .board-row__name {
+  font-family: var(--font-body);
+}
+
+:root[data-theme='rec-room'] .board__empty {
+  background: none;
+}

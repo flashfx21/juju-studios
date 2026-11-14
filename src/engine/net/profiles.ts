@@ -1,5 +1,5 @@
 // ABOUTME: Saved player profiles (username, color, symbol, initials, lobby style) at profiles/{uid} in the Realtime Database.
-// ABOUTME: Each player reads and writes only their own; the email stays in sign-in, never in the profile.
+// ABOUTME: Any verified player reads them all (for the leaderboard); each writes only their own. The email stays in sign-in.
 
 import { onValue, ref, set, update } from 'firebase/database'
 import { PLAYER_COLOR_IDS, type PlayerColorId } from '../../ui/playerColors'
@@ -41,6 +41,23 @@ export function watchProfile(
   onError: (error: Error) => void,
 ): () => void {
   return onValue(profileRef(uid), (snapshot) => onChange(asProfile(snapshot.val())), onError)
+}
+
+/** Every saved profile by uid, kept up to date. Returns a stop function. */
+export function watchProfiles(onChange: (profiles: Record<string, Profile>) => void, onError: (error: Error) => void): () => void {
+  return onValue(
+    ref(firebaseBackend().database, 'profiles'),
+    (snapshot) => {
+      // Anything under profiles that is not shaped like a profile (say, a hand-made console entry) is left out.
+      const profiles: Record<string, Profile> = {}
+      for (const [uid, value] of Object.entries(snapshot.val() ?? {})) {
+        const profile = asProfile(value)
+        if (profile) profiles[uid] = profile
+      }
+      onChange(profiles)
+    },
+    onError,
+  )
 }
 
 /** Saves the given fields; any left out (such as the style) keep their saved value. */

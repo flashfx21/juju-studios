@@ -16,6 +16,7 @@ export type Screen =
   | 'admin'
   | 'room'
   | 'how-to-play'
+  | 'leaderboard'
 
 export interface Route {
   screen: Screen
@@ -23,7 +24,7 @@ export interface Route {
   step: string
 }
 
-const SCREENS: Screen[] = ['home', 'host', 'sign-in', 'sign-up', 'join', 'lobby', 'picker', 'settings', 'profile', 'playtest', 'admin', 'room', 'how-to-play']
+const SCREENS: Screen[] = ['home', 'host', 'sign-in', 'sign-up', 'join', 'lobby', 'picker', 'settings', 'profile', 'playtest', 'admin', 'room', 'how-to-play', 'leaderboard']
 
 function routeFromHash(hash: string): Route {
   const [name = '', step = ''] = hash.replace(/^#\/?/, '').split('/')
@@ -39,6 +40,12 @@ export function href(screen: Screen, step?: string): string {
 
 export function goTo(screen: Screen, step?: string) {
   window.location.hash = href(screen, step)
+}
+
+/** Back to wherever the player came from; opened straight from a link, back goes home. */
+export function goBack() {
+  if (window.history.length > 1) window.history.back()
+  else goTo('home')
 }
 
 export function useHashRoute(): Route {

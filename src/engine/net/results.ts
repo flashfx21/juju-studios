@@ -1,7 +1,7 @@
 // ABOUTME: Saved game results at results/{resultId}: the game, the room, when, and each person's place and points.
 // ABOUTME: The room's host saves a result once per game; a lobby room also adds it to the night's session.
 
-import { get, onValue, ref, set } from 'firebase/database'
+import { get, ref, set } from 'firebase/database'
 import { firebaseBackend } from './firebase'
 import { addSessionGame, type Room } from './rooms'
 
@@ -56,23 +56,9 @@ export async function saveResult(room: Room, game: string, players: Record<strin
   }
 }
 
-function asResults(value: unknown): GameResult[] {
+export function asResults(value: unknown): GameResult[] {
   if (!value || typeof value !== 'object') return []
   return Object.entries(value as Record<string, Omit<GameResult, 'id'>>)
     .filter(([, result]) => result && typeof result.game === 'string' && result.players)
     .map(([id, result]) => ({ ...result, id }))
-}
-
-/** Every saved result this player is in, newest first, kept up to date. Returns a stop function. */
-export function watchMyResults(uid: string, onChange: (results: GameResult[]) => void, onError: (error: Error) => void): () => void {
-  return onValue(
-    resultRef(),
-    (snapshot) =>
-      onChange(
-        asResults(snapshot.val())
-          .filter((result) => uid in result.players)
-          .sort((a, b) => b.at - a.at),
-      ),
-    onError,
-  )
 }

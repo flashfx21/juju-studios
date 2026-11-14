@@ -115,6 +115,9 @@ function Recap({ room, onLeave }: { room: Room; onLeave: () => void }) {
         </>
       )}
       <p className="cue-card__text">Want to keep playing? Start a new lobby from the home screen.</p>
+      <a className="phone-link phone-link--quiet" href={href('leaderboard')} data-testid="lobby-leaderboard">
+        Leaderboard
+      </a>
       <a className="phone-link phone-link--quiet" href={href('home')} data-testid="lobby-home">
         Home
       </a>
@@ -279,6 +282,9 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
           {confirmingEnd ? 'Tap again to end the night' : 'End the night'}
         </button>
       )}
+      <a className="phone-link phone-link--quiet" href={href('leaderboard')} data-testid="lobby-leaderboard">
+        Leaderboard
+      </a>
       <a className="phone-link phone-link--quiet" href={href('home')} data-testid="lobby-home">
         Home
       </a>

@@ -9,6 +9,7 @@ import { HostSettings } from './app/HostSettings'
 import { HostSignInTv } from './app/HostSignInTv'
 import { HowToPlay } from './app/HowToPlay'
 import { Join } from './app/Join'
+import { Leaderboard } from './app/Leaderboard'
 import { LobbyPlaceholder } from './app/LobbyPlaceholder'
 import { LobbyRoom } from './app/LobbyRoom'
 import { PlaytestPage } from './app/PlaytestPage'
@@ -80,6 +81,8 @@ function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle:
       return <Admin style={style} onStyleChange={setStyle} />
     case 'room':
       return <LobbyRoom />
+    case 'leaderboard':
+      return <Leaderboard />
     case 'how-to-play':
       return <HowToPlay gameId={route.step} />
     default:

@@ -3,7 +3,7 @@
 
 import { onValue, ref, remove, set } from 'firebase/database'
 import { firebaseBackend } from './firebase'
-import { asProfile, type Profile } from './profiles'
+import { watchProfiles, type Profile } from './profiles'
 
 function flagRef(list: 'admins' | 'playtesters', uid: string) {
   return ref(firebaseBackend().database, `${list}/${uid}`)
@@ -26,19 +26,10 @@ export function watchPlayers(
   let profiles: Record<string, Profile> = {}
   let playtesters: Record<string, boolean> = {}
   const { database } = firebaseBackend()
-  const stopProfiles = onValue(
-    ref(database, 'profiles'),
-    (snapshot) => {
-      // Anything under profiles that is not shaped like a profile (say, a hand-made console entry) is left out.
-      profiles = {}
-      for (const [uid, value] of Object.entries(snapshot.val() ?? {})) {
-        const profile = asProfile(value)
-        if (profile) profiles[uid] = profile
-      }
-      onChange(profiles, playtesters)
-    },
-    onError,
-  )
+  const stopProfiles = watchProfiles((all) => {
+    profiles = all
+    onChange(profiles, playtesters)
+  }, onError)
   const stopPlaytesters = onValue(
     ref(database, 'playtesters'),
     (snapshot) => {

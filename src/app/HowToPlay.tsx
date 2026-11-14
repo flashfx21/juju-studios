@@ -5,7 +5,7 @@ import { PhoneFrame } from '../ui/PhoneFrame'
 import '../ui/PhoneForm.css'
 import { gameFacts, HOW_TO_PLAY_GAMES, howToPlayFor, type HowToPlayPage } from './howToPlayPages'
 import { PlayerBadge } from './PlayerBadge'
-import { goTo, href } from './useHashRoute'
+import { goBack, href } from './useHashRoute'
 import './HowToPlay.css'
 
 const SECTIONS: { key: 'needs' | 'steps' | 'scoring' | 'goodToKnow' | 'hostPicks'; heading: string }[] = [
@@ -39,12 +39,6 @@ function HowToPlayWords({ page, gameId, Heading }: { page: HowToPlayPage; gameId
       })}
     </>
   )
-}
-
-/** Back to wherever the player came from; opened straight from a link, back goes home. */
-function goBack() {
-  if (window.history.length > 1) window.history.back()
-  else goTo('home')
 }
 
 function GameList() {
