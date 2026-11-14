@@ -298,6 +298,17 @@ describe('credits', () => {
   it('holds back credits that name the place or country', () => {
     const tableMountain = PHOTOS.find((photo) => photo.wikidataId === 'Q213360')
     expect(tableMountain?.creditSpoiler).toBe(true)
-    expect(PHOTOS.filter((photo) => photo.creditSpoiler)).toHaveLength(1)
+    const lasVegas = PHOTOS.find((photo) => photo.place.startsWith('Las Vegas Strip'))
+    expect(lasVegas?.creditSpoiler).toBe(true)
+  })
+
+  it('marks a credit a spoiler only when the author contains the place, city or country', () => {
+    const squash = (text: string) => text.normalize('NFD').replace(/[^a-z]/gi, '').toLowerCase()
+    for (const photo of PHOTOS.filter((p) => p.creditSpoiler)) {
+      const author = squash(photo.author)
+      const names = [...photo.place.split(','), ...photo.country.split(/,| and /)].map(squash).filter((name) => name.length > 2)
+      const words = photo.place.split(/[ ,]+/).map(squash).filter((word) => word.length > 3)
+      expect([...names, ...words].some((name) => author.includes(name)), photo.id).toBe(true)
+    }
   })
 })

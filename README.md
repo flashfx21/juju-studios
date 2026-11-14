@@ -31,7 +31,7 @@ Screens are built from the lobby design (`docs/design/`) in all three styles: re
 - Chainword has its rules, tests and a phone playtest (see Playtests below). No TV screen yet.
 - Dial It In has its rules, tests, a phone screen and a single-player interface playtest (see Playtests below). No TV screen yet. Spectrum cards live in `packs/dial-it-in/spectrums.json`, and the clues bots give in solo play in `packs/dial-it-in/bot-clues.json`.
 - Don't Jinx It (branch `game/dont-jinx-it`) has its individual-mode rules, tests, phone and TV screens with instructions and host settings (game-show style), and a single-player interface playtest (see Playtests below). Rooms on phones work too (see Playtests below). Mystery words, irregular word forms and the clues room bots write live in `packs/dont-jinx-it/`.
-- Pin Drop (branch `game/pin-drop`) has its rules, tests, a phone screen with a world map (Leaflet, OpenStreetMap tiles) and a solo playtest (see Playtests below). No TV screen yet. The 23-photo starter pack lives in `packs/pin-drop/`.
+- Pin Drop (branch `game/pin-drop`) has its rules, tests, a phone screen with a world map (Leaflet, OpenStreetMap tiles) and a solo playtest (see Playtests below). No TV screen yet. The 93-photo playtest pack lives in `packs/pin-drop/`.
 - Sketch Showdown (branch `game/sketch-showdown`) has its rules (teams, clue pick, race, sudden death), lenient guess matching, tests, a drawing canvas, the drawer's and guesser's phone screens, a drawer playtest and rooms on phones (see Playtests below). The TV screen is not built yet. Clues live in `packs/sketch-showdown/`; word forms shared with Don't Jinx It live in `packs/shared/`.
 
 ## Run it locally
