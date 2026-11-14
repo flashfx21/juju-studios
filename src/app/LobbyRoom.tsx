@@ -1,5 +1,5 @@
 // ABOUTME: Tonight's lobby on a phone (#/room): the room code, who's in, how many games the night has, and a vote on the next one.
-// ABOUTME: The host starts their pick (or the leading game); every phone follows into it, and back here after. The last game ends in a recap.
+// ABOUTME: The host starts the game with the most votes (a tie is a random pick); every phone follows into it, and back here after. The last game ends in a recap.
 import { useState, type CSSProperties } from 'react'
 import {
   castVote,
@@ -20,6 +20,7 @@ import { GAME_TILE_COLORS } from '../ui/gameTileColors'
 import { OptionRow } from '../ui/OptionRow'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
 import { HowToPlayButton } from './HowToPlay'
+import { lobbyPick } from './lobbyPick'
 import { pickerState } from './pickerGames'
 import { PlayerBadge } from './PlayerBadge'
 import { goTo, href } from './useHashRoute'
@@ -50,15 +51,6 @@ export function LobbyRoom() {
       {(props) => <LobbyScreen {...props} />}
     </RoomPage>
   )
-}
-
-/** The game the host would start: the host's own vote, or else the game with the most votes. */
-function nextGame(room: Room, games: string[]): string | null {
-  const hostVote = room.votes[room.host]
-  if (hostVote && games.includes(hostVote)) return hostVote
-  const counts = games.map((id) => ({ id, votes: Object.values(room.votes).filter((v) => v === id).length }))
-  const best = counts.reduce((a, b) => (b.votes > a.votes ? b : a), { id: '', votes: 0 })
-  return best.votes > 0 ? best.id : null
 }
 
 /** Games a host can plan for the night. */
@@ -140,11 +132,13 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
   const looks = usePlayerLooks(room)
   const games = LINEUP.filter((game) => roomPageFor(game.id) && pickerState(game, canPlaytest) === 'ready')
   const myVote = room.votes[self.uid]
-  const pick = nextGame(
-    room,
+  const voted = lobbyPick(
+    room.votes,
     games.map((game) => game.id),
   )
-  const pickTitle = LINEUP.find((game) => game.id === pick)?.title
+  const pick = voted?.game ?? null
+  const titleOf = (id: string) => LINEUP.find((game) => game.id === id)?.title ?? id
+  const pickTitle = pick ? titleOf(pick) : undefined
   const running = room.game !== LOBBY ? LINEUP.find((game) => game.id === room.game) : undefined
   const [nightLength, setNightLength] = useState<NightLength>(3)
   const planned = room.session.planned
@@ -236,27 +230,35 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
                       </span>
                       {myVote === game.id && <span className="game-vote__mark">My vote</span>}
                     </button>
+                    {isHost && pick === game.id && (
+                      <button
+                        type="button"
+                        className="lobby-room__start"
+                        aria-label={`Start ${game.title}`}
+                        data-testid="lobby-start"
+                        onClick={() => void start(game.id)}
+                      >
+                        Start
+                      </button>
+                    )}
                     <HowToPlayButton gameId={game.id} />
                   </li>
                 )
               })}
             </ul>
           )}
-          {isHost ? (
-            <button
-              type="button"
-              className="phone-button"
-              aria-disabled={pick ? undefined : 'true'}
-              data-testid="lobby-start"
-              onClick={() => pick && void start(pick)}
-            >
-              {pickTitle ? `Start ${pickTitle}` : 'Vote to pick a game'}
-            </button>
-          ) : (
-            <p className="room-status" role="status">
-              {pickTitle ? `The host will start ${pickTitle} or their own pick` : 'Vote, then the host starts a game'}
+          {voted && voted.tiedWith.length > 0 && (
+            <p className="lobby-room__tie" data-testid="lobby-tie">
+              It's a tie between {voted.tiedWith.map(titleOf).join(' and ')}! {pickTitle} it is.
             </p>
           )}
+          <p className="room-status" role="status" data-testid="lobby-status">
+            {pickTitle
+              ? isHost
+                ? `Tap Start on ${pickTitle} when everyone's ready`
+                : `The host will start ${pickTitle}`
+              : 'Vote, then the host starts the game with the most votes'}
+          </p>
         </>
       )}
 

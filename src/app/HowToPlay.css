@@ -92,6 +92,13 @@
   align-items: stretch;
 }
 
+/* The row shrinks to make room for its buttons, so they never get pushed off the screen. */
+.how-to-play__row > .game-vote__row {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
 /* ---------- The panel over the lobby ---------- */
 .how-to-play__panel {
   width: min(430px, calc(100vw - 32px));
