@@ -493,8 +493,9 @@
   letter-spacing: 0.18em;
 }
 
-/* Join and Host sit side by side as two compact cards. */
+/* Join and Host sit side by side as two cards. The home screen fills the phone: the cards take the most room (flex 3), the menu buttons share the rest (flex 2). */
 .entry-phone__choices {
+  flex: 3 1 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
@@ -564,8 +565,10 @@
 
 /* Everything else on the home screen: styled buttons, two to a row; an odd last one takes the full row. */
 .entry-phone__menu {
+  flex: 2 1 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr;
   gap: 8px;
 }
 

@@ -1,7 +1,7 @@
 // ABOUTME: The room around any phones-only game: start a room or join one by code, the waiting room, and what each player looks like.
 // ABOUTME: A game supplies its title, setup choices and game screen; bots can fill seats; a lobby room moves every phone between games.
 import { useEffect, useRef, useState, type ComponentType, type CSSProperties, type ReactNode } from 'react'
-import { goTo } from '../../app/useHashRoute'
+import { goTo, href } from '../../app/useHashRoute'
 import { useMe } from '../../app/useMe'
 import { createRoom, joinRoom, LOBBY, playerIds, switchGame, watchRoom, type Room } from '../../engine/net/rooms'
 import { rememberedRoom, rememberRoom } from '../../engine/rememberedRoom'
@@ -58,7 +58,21 @@ export function RoomPage({ gameId, gameName, Title, intro, children, cardTag = '
     setCode(next)
   }
 
-  if (me.kind !== 'signed-in' || !me.profile) return <PhoneFrame label={gameName} cardTag={cardTag} />
+  if (me.kind === 'checking' || (me.kind === 'signed-in' && !me.profile)) return <PhoneFrame label={gameName} cardTag={cardTag} />
+  if (me.kind !== 'signed-in' || !me.profile) {
+    return (
+      <PhoneFrame label={gameName} cardTag={cardTag}>
+        <Title />
+        <p className="cue-card__text">Sign in to start or join a room.</p>
+        <a className="phone-button" href={href('sign-in')} data-testid="room-sign-in">
+          Sign in
+        </a>
+        <a className="phone-link phone-link--quiet" href={href('home')} data-testid="room-home">
+          Home
+        </a>
+      </PhoneFrame>
+    )
+  }
   const self: RoomSelf = { uid: me.player.uid, ...me.profile }
 
   return (
@@ -149,6 +163,11 @@ function StartOrJoin({ gameId, gameName, Title, intro, self, onEnter }: StartOrJ
           Join
         </button>
       </div>
+      {gameId === LOBBY && (
+        <a className="phone-link phone-link--quiet" href={href('home')} data-testid="room-home">
+          Home
+        </a>
+      )}
     </>
   )
 }

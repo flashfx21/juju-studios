@@ -19,6 +19,7 @@ import { usePlayerLooks } from '../games/room/usePlayerLooks'
 import { GAME_TILE_COLORS } from '../ui/gameTileColors'
 import { OptionRow } from '../ui/OptionRow'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
+import { WaffleMenu } from '../ui/WaffleMenu'
 import { HowToPlayButton } from './HowToPlay'
 import { lobbyPick } from './lobbyPick'
 import { pickerState } from './pickerGames'
@@ -27,6 +28,26 @@ import { goTo, href } from './useHashRoute'
 import { useMe } from './useMe'
 import './GameVote.css'
 import './LobbyRoom.css'
+
+/** The top-left menu on tonight's lobby: places to go, and leaving the room. */
+function LobbyMenu({ onLeave }: { onLeave: () => void }) {
+  return (
+    <WaffleMenu>
+      <a href={href('home')} data-testid="lobby-home">
+        Home
+      </a>
+      <a href={href('leaderboard')} data-testid="lobby-leaderboard">
+        Leaderboard
+      </a>
+      <a href={href('how-to-play')} data-testid="lobby-how-to-play">
+        How to play
+      </a>
+      <button type="button" data-testid="lobby-menu-leave" onClick={onLeave}>
+        Leave room
+      </button>
+    </WaffleMenu>
+  )
+}
 
 function LobbyTitle() {
   return (
@@ -115,12 +136,6 @@ function Recap({ room, onLeave }: { room: Room; onLeave: () => void }) {
         </>
       )}
       <p className="cue-card__text">Want to keep playing? Start a new lobby from the home screen.</p>
-      <a className="phone-link phone-link--quiet" href={href('leaderboard')} data-testid="lobby-leaderboard">
-        Leaderboard
-      </a>
-      <a className="phone-link phone-link--quiet" href={href('home')} data-testid="lobby-home">
-        Home
-      </a>
       <button type="button" className="phone-button" data-testid="room-leave" onClick={onLeave}>
         Leave room
       </button>
@@ -151,7 +166,10 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
   if (!running && sessionOver(room.session)) {
     return (
       <div className="room-waiting lobby-room">
-        <PlayerBadge />
+        <div className="waffle-bar">
+          <LobbyMenu onLeave={onLeave} />
+          <PlayerBadge />
+        </div>
         <LobbyTitle />
         <Recap room={room} onLeave={onLeave} />
       </div>
@@ -165,7 +183,10 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
 
   return (
     <div className="room-waiting lobby-room">
-      <PlayerBadge />
+      <div className="waffle-bar">
+        <LobbyMenu onLeave={onLeave} />
+        <PlayerBadge />
+      </div>
       <LobbyTitle />
       <RoomHeader room={room} looks={looks} />
 
@@ -221,17 +242,16 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
                       style={colors ? ({ '--row-bg': colors.bg, '--row-ink': colors.ink } as CSSProperties) : undefined}
                       onClick={() => void castVote(room.code, self.uid, game.id)}
                     >
-                      <span className="game-vote__number">{game.number}</span>
                       <span className="game-vote__row-text">
                         <span className="game-vote__row-title">{game.title}</span>
                         <span className="lobby-room__voters" data-testid={`lobby-voters-${game.id}`}>
-                          {voters.map((uid) => looks[uid] && <PlayerDot key={uid} look={looks[uid]} />)}
+                          {myVote === game.id && <span className="lobby-room__mine">My vote</span>}
                           <span className="lobby-room__count">
                             {voters.length} {voters.length === 1 ? 'vote' : 'votes'}
                           </span>
+                          {voters.map((uid) => looks[uid] && <PlayerDot key={uid} look={looks[uid]} />)}
                         </span>
                       </span>
-                      {myVote === game.id && <span className="game-vote__mark">My vote</span>}
                     </button>
                     {isHost && pick === game.id && (
                       <button
@@ -282,15 +302,6 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
           {confirmingEnd ? 'Tap again to end the night' : 'End the night'}
         </button>
       )}
-      <a className="phone-link phone-link--quiet" href={href('leaderboard')} data-testid="lobby-leaderboard">
-        Leaderboard
-      </a>
-      <a className="phone-link phone-link--quiet" href={href('home')} data-testid="lobby-home">
-        Home
-      </a>
-      <button type="button" className="phone-link phone-link--quiet" data-testid="room-leave" onClick={onLeave}>
-        Leave room
-      </button>
     </div>
   )
 }

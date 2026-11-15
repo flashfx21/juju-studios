@@ -1,0 +1,90 @@
+/* ABOUTME: The top-left menu: a square grid-of-dots button and the list of places it opens, in every style. */
+/* ABOUTME: The list floats over the screen, so opening it never moves anything else. */
+
+.waffle {
+  position: relative;
+  z-index: 20;
+}
+
+/* The top row of a screen: the menu on the left, the player's badge on the right. */
+.waffle-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: -4px;
+}
+
+.waffle-bar .player-badge-row {
+  margin-bottom: 0;
+}
+
+.waffle__button {
+  width: var(--space-hit-target-min);
+  height: var(--space-hit-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid currentColor;
+  background: var(--color-background);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.waffle__button[aria-expanded='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+}
+
+.waffle__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 220px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  box-shadow: var(--shadow-card);
+  --focus-ring: var(--color-secondary-ink);
+}
+
+.waffle__panel a,
+.waffle__panel button {
+  min-height: var(--space-hit-target-min);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.waffle__panel a:hover,
+.waffle__panel button:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+:root[data-theme='arcade'] .waffle__panel a,
+:root[data-theme='arcade'] .waffle__panel button {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='rec-room'] .waffle__button {
+  background: var(--color-surface);
+  color: var(--color-text-on-surface);
+}
+
+/* Rec room's menu is cream like its card, so it gets an ink edge. */
+:root[data-theme='rec-room'] .waffle__panel {
+  border: 2px solid var(--color-text-on-surface);
+}

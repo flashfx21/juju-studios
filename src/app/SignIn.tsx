@@ -312,6 +312,9 @@ function FinishLink() {
         <p className="preview-note" role="alert" data-testid="finish-problem">
           {problem}
         </p>
+        <a className="phone-link phone-link--quiet" href={href('home')} data-testid="finish-home">
+          Home
+        </a>
       </div>
     </form>
   )

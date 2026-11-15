@@ -7,7 +7,6 @@ import { TvStage } from '../ui/TvStage'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
 import '../ui/TvChrome.css'
-import { PlayerBadge } from './PlayerBadge'
 import { siteAddress } from './siteAddress'
 import { href } from './useHashRoute'
 import { useMe } from './useMe'
@@ -238,7 +237,6 @@ export function HostOrJoinPhone() {
 
   return (
     <PhoneFrame label="Host or join" cardTag="Game night">
-      <PlayerBadge />
       <div className="entry-phone__header">
         <h1 className="entry-phone__heading">{copy.heading}</h1>
         {copy.tagline && <p className="entry-phone__tagline">{copy.tagline}</p>}
@@ -262,6 +260,7 @@ export function HostOrJoinPhone() {
         </a>
       )}
       <nav className="entry-phone__menu" aria-label="More">
+        {signedIn && <MenuButton to={href('profile')} testId="profile-link" label="My profile" />}
         <MenuButton to={href('leaderboard')} testId="leaderboard-link" label="Leaderboard" />
         <MenuButton to={href('how-to-play')} testId="how-to-play-link" label="How to play" />
         {canPlaytest && <MenuButton to={href('playtest')} testId="solo-play-link" label="Solo play" />}
