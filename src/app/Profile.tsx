@@ -1,6 +1,6 @@
 // ABOUTME: The phone Profile screen: your symbol in your color, then two tabs: Profile (name, color, symbol, style) and Stats.
 // ABOUTME: A signed-in player with no profile yet sees it as setup; "Your style" is saved to the profile too.
-import { useRef, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from 'react'
+import { useState, type CSSProperties, type FormEvent } from 'react'
 import { signOutOfThisDevice } from '../engine/net/auth'
 import { saveProfile, type Profile as SavedProfile } from '../engine/net/profiles'
 import { CodeBoxes } from '../ui/CodeBoxes'
@@ -10,6 +10,7 @@ import { inkOn, PLAYER_COLORS } from '../ui/playerColors'
 import { PlayerSymbol } from '../ui/PlayerSymbol'
 import { StyleCards } from '../ui/StyleCards'
 import { SymbolPicker } from '../ui/SymbolPicker'
+import { TabPanel, Tabs } from '../ui/Tabs'
 import { Field, TextField } from '../ui/TextField'
 import type { LobbyStyleId } from '../ui/themes/lobbyStyles'
 import '../ui/PhoneForm.css'
@@ -187,12 +188,12 @@ function ProfileForm({ uid, email, saved, style, onStyleChange }: ProfileFormPro
         </div>
       </div>
 
-      {!settingUp && <ProfileTabs tab={tab} onChange={setTab} />}
+      {!settingUp && <Tabs tabs={TABS} current={tab} idPrefix="profile" label="Profile sections" onChange={setTab} />}
 
       {tab === 'stats' ? (
-        <div className="profile__panel" role="tabpanel" id="profile-panel-stats" aria-labelledby="profile-tab-stats">
+        <TabPanel idPrefix="profile" id="stats">
           <ProfileStats uid={uid} style={style} />
-        </div>
+        </TabPanel>
       ) : (
         <form
           className="phone-form"
@@ -273,46 +274,3 @@ const TABS: { id: ProfileTab; label: string }[] = [
   { id: 'stats', label: 'Stats' },
 ]
 
-/** Profile and Stats tabs. Arrow keys, Home and End move between them, as screen reader users expect. */
-function ProfileTabs({ tab, onChange }: { tab: ProfileTab; onChange: (tab: ProfileTab) => void }) {
-  const buttons = useRef<Partial<Record<ProfileTab, HTMLButtonElement | null>>>({})
-
-  function onKeyDown(event: KeyboardEvent) {
-    const index = TABS.findIndex((t) => t.id === tab)
-    const moves: Record<string, number> = {
-      ArrowRight: (index + 1) % TABS.length,
-      ArrowLeft: (index - 1 + TABS.length) % TABS.length,
-      Home: 0,
-      End: TABS.length - 1,
-    }
-    const next = moves[event.key]
-    if (next === undefined) return
-    event.preventDefault()
-    onChange(TABS[next].id)
-    buttons.current[TABS[next].id]?.focus()
-  }
-
-  return (
-    <div className="profile__tabs" role="tablist" aria-label="Profile sections" onKeyDown={onKeyDown}>
-      {TABS.map(({ id, label }) => (
-        <button
-          key={id}
-          ref={(element) => {
-            buttons.current[id] = element
-          }}
-          type="button"
-          role="tab"
-          id={`profile-tab-${id}`}
-          className="profile__tab"
-          aria-selected={tab === id}
-          aria-controls={`profile-panel-${id}`}
-          tabIndex={tab === id ? 0 : -1}
-          data-testid={`profile-tab-${id}`}
-          onClick={() => onChange(id)}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  )
-}

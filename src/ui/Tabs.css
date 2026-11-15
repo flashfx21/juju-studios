@@ -1,0 +1,45 @@
+/* ABOUTME: Tab row and panel, shared by Profile and Admin, in every style. */
+/* ABOUTME: The selected tab is filled, so the choice doesn't rely on color contrast alone. */
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 3px solid var(--color-primary);
+}
+
+.tabs__tab {
+  flex: 1;
+  min-height: var(--space-hit-target-min);
+  padding: 0 4px;
+  border: 2px solid var(--color-primary);
+  border-bottom: 0;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tabs__tab[aria-selected='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+}
+
+/* Three or more tabs share the row, so their labels shrink to fit a phone. */
+.tabs:has(> :nth-child(3)) .tabs__tab {
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+
+:root[data-theme='arcade'] .tabs:has(> :nth-child(3)) .tabs__tab {
+  font-size: 9px;
+  letter-spacing: 0;
+}
+
+.tabs__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

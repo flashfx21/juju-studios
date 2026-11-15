@@ -1,4 +1,4 @@
-/* ABOUTME: The admin page's player list: a color dot and name, then Solo play, Rename and Reset buttons. */
+/* ABOUTME: The admin page: player rows (dot, name, points, then toggles and panels), and the score, game and room lists. */
 /* ABOUTME: Colors and fonts come from the lobby style's tokens. */
 
 .admin-players {
@@ -57,7 +57,8 @@
 }
 
 /* Solo play on: filled, so it doesn't rely on the word alone. */
-.admin-player__button[aria-pressed='true'] {
+.admin-player__button[aria-pressed='true'],
+.admin-player__button--on {
   background: var(--color-primary);
   color: var(--color-primary-ink);
   border-color: var(--color-primary);
@@ -76,4 +77,51 @@
 
 .admin-section__heading {
   color: var(--color-text);
+}
+
+.admin-player__total {
+  margin-left: auto;
+  font-family: var(--font-label);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}
+
+/* Edit profile and Points open as a card under the player's buttons. */
+.admin-player__panel {
+  transform: none;
+}
+
+/* Links on the card take the card's ink; the page's link color can match the card. */
+.admin-player__panel .phone-link {
+  color: inherit;
+}
+
+/* Score changes, saved games and open rooms. */
+.admin-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-list__row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--color-line);
+}
+
+.admin-list__main {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.admin-list__detail {
+  font-size: 15px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
