@@ -1,7 +1,7 @@
 # Dibs
 
 **Game ID:** `dibs` (working name was "Category race")  
-**Status:** Development (Nov 16, 2026). Built: rules and tests, 40-category starter pack, phone screens in all three styles, solo playtest (`#/playtest/dibs`, stand-in players typed from a Dev box), rooms (`#/playtest/dibs-together`) with Deal again and End game, How to play. Not built: TV screens (the TV shows "playing on your phones"), Instructions screen, a visual design handoff. Numbers marked placeholder get set at the first playtest. Launch phase not set  
+**Status:** Development (Nov 16, 2026). Built: rules and tests, 40-category starter pack, phone screens in all three styles (the race types on an on-screen keyboard like Chainword's, Julian's call), TV screens T1 to T9 in all three styles, solo playtest (`#/playtest/dibs`, stand-in players typed from a Dev box), rooms (`#/playtest/dibs-together`) with Deal again and End game, How to play. Not built: Instructions screen, a visual design handoff. Numbers marked placeholder get set at the first playtest. Launch phase not set  
 **Players:** 2 to 10. No bots: there are no answer lists for a bot to draw from (rule 8). 2 players is a practice game (not saved) where the author votes too  
 **Length:** about 9 to 12 min for 7 rounds (estimate, not measured)  
 **Modes:** Individual

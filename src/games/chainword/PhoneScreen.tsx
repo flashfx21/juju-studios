@@ -1,6 +1,6 @@
 // ABOUTME: Chainword on a player's phone: chain progress, the guess grid filled from an on-screen keyboard, and results.
 // ABOUTME: Shows how each finished word went (and, in a room, everyone's guesses on it); tap the chain to look back at a word.
-import { useEffect, useState, type CSSProperties, type PointerEvent, type ReactNode } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import type { PlayerId } from '../types'
 import {
   checkGuess,
@@ -15,6 +15,7 @@ import {
   type PlayerRun,
   type WordAttempt,
 } from './rules'
+import { LetterKeyboard } from '../../ui/LetterKeyboard'
 import '../../ui/PhoneForm.css'
 import './PhoneScreen.css'
 
@@ -49,8 +50,6 @@ const MARK_WORDS: Record<Mark, string> = {
 }
 
 const MARK_RANK: Record<Mark, number> = { gray: 1, yellow: 2, green: 3 }
-
-const KEY_ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm']
 
 function describeProblem(problem: GuessProblem, wordLength: number): string {
   switch (problem.kind) {
@@ -153,66 +152,6 @@ function Grid({ attempt, typing, wordLength }: GridProps) {
         </li>
       ))}
     </ol>
-  )
-}
-
-interface KeyboardProps {
-  marks: Map<string, Mark>
-  onLetter: (letter: string) => void
-  onDelete: () => void
-  onEnter: () => void
-}
-
-function Keyboard({ marks, onLetter, onDelete, onEnter }: KeyboardProps) {
-  // Pointer taps shouldn't move focus onto a key, so a physical Enter still means "guess".
-  const keepFocus = (event: PointerEvent) => event.preventDefault()
-  return (
-    <div className="cw-keys" role="group" aria-label="Keyboard" data-testid="cw-keyboard">
-      {KEY_ROWS.map((row, r) => (
-        <div key={row} className="cw-keys__row" data-row={r}>
-          {r === 2 && (
-            <button
-              type="button"
-              className="cw-key cw-key--wide"
-              data-testid="cw-key-enter"
-              onPointerDown={keepFocus}
-              onClick={onEnter}
-            >
-              Enter
-            </button>
-          )}
-          {[...row].map((letter) => {
-            const mark = marks.get(letter)
-            return (
-              <button
-                key={letter}
-                type="button"
-                className="cw-key"
-                data-mark={mark}
-                data-testid={`cw-key-${letter}`}
-                aria-label={mark ? `${letter.toUpperCase()}, ${MARK_WORDS[mark]}` : letter.toUpperCase()}
-                onPointerDown={keepFocus}
-                onClick={() => onLetter(letter)}
-              >
-                {letter.toUpperCase()}
-              </button>
-            )
-          })}
-          {r === 2 && (
-            <button
-              type="button"
-              className="cw-key cw-key--wide"
-              aria-label="Delete letter"
-              data-testid="cw-key-delete"
-              onPointerDown={keepFocus}
-              onClick={onDelete}
-            >
-              ⌫
-            </button>
-          )}
-        </div>
-      ))}
-    </div>
   )
 }
 
@@ -513,7 +452,17 @@ export function PhoneScreen({ state, player, onGuess, topAction, infoLine, other
               </button>
             </section>
           ) : (
-            <Keyboard marks={letterMarks(shown)} onLetter={addLetter} onDelete={deleteLetter} onEnter={submit} />
+            <LetterKeyboard
+              testIdPrefix="cw"
+              markOf={(letter) => letterMarks(shown).get(letter)}
+              labelOf={(letter) => {
+                const mark = letterMarks(shown).get(letter)
+                return mark ? `${letter.toUpperCase()}, ${MARK_WORDS[mark]}` : letter.toUpperCase()
+              }}
+              onLetter={addLetter}
+              onDelete={deleteLetter}
+              onEnter={submit}
+            />
           )}
         </>
       )}

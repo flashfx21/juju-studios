@@ -1,6 +1,6 @@
 // ABOUTME: Dibs on a player's phone: the category, the letter drop and the race (Taken and wrong-letter bounces), the review
 // ABOUTME: with challenges, the votes and verdicts, the round's points with the host's Next, and the final standings.
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { PlayerId } from '../types'
 import {
   canDealAgain,
@@ -19,8 +19,10 @@ import {
   type DibsState,
   type Round,
 } from './rules'
+import { MenuItems } from '../../ui/FrameMenu'
+import { Key, LetterKeyboard } from '../../ui/LetterKeyboard'
 import '../../ui/PhoneForm.css'
-import { reasonText, secondsAt } from './format'
+import { bounceText, reasonText, secondsAt } from './format'
 import './PhoneScreen.css'
 
 interface PhoneScreenProps {
@@ -79,13 +81,19 @@ function waitingText(count: number): string {
   return count === 0 ? 'Everyone is in' : `Waiting for ${count} ${count === 1 ? 'player' : 'players'}`
 }
 
+/** Characters a physical keyboard may type into an answer; the on-screen keyboard types letters and spaces. */
+const TYPABLE = /^[a-z0-9 '&.-]$/i
+
 interface AnswerEntryProps {
   round: Round
   player: PlayerId
   onInput: (input: DibsInput) => void
 }
 
-/** The answer box with Submit and I'm out. Wrong letters are caught here; Taken comes back from the host. */
+/**
+ * The answer as typed, the message line, and the on-screen keyboard with I'm out, Space and Submit. A physical keyboard
+ * types too. Wrong letters are caught here; Taken comes back from the host.
+ */
 function AnswerEntry({ round, player, onInput }: AnswerEntryProps) {
   const [typed, setTyped] = useState('')
   const [sent, setSent] = useState('')
@@ -94,8 +102,23 @@ function AnswerEntry({ round, player, onInput }: AnswerEntryProps) {
   const noteShown = note && note.text === sent && sent === typed.trim() ? note : undefined
   const checking = sent !== '' && sent === typed.trim() && !noteShown
 
-  function submit(event: FormEvent) {
-    event.preventDefault()
+  function add(text: string) {
+    setError('')
+    setTyped((current) => (current + text).slice(0, MAX_ANSWER_LENGTH))
+  }
+
+  /** On-screen letters start each word with a capital, as a phone keyboard would. */
+  function addLetter(letter: string) {
+    setError('')
+    setTyped((current) => (current + (current === '' || current.endsWith(' ') ? letter.toUpperCase() : letter)).slice(0, MAX_ANSWER_LENGTH))
+  }
+
+  function remove() {
+    setError('')
+    setTyped((current) => current.slice(0, -1))
+  }
+
+  function submit() {
     const answer = typed.trim()
     if (!answer) {
       setError('Type an answer.')
@@ -110,51 +133,44 @@ function AnswerEntry({ round, player, onInput }: AnswerEntryProps) {
     onInput({ type: 'answer', text: answer })
   }
 
+  // A physical keyboard types too (laptops, tablets with keyboards). Space and Enter on a focused button press the button.
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.ctrlKey || event.metaKey || event.altKey) return
+      const onButton = event.target instanceof HTMLButtonElement
+      if (event.target instanceof HTMLInputElement || (onButton && (event.key === ' ' || event.key === 'Enter'))) return
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        submit()
+      } else if (event.key === 'Backspace') {
+        event.preventDefault()
+        remove()
+      } else if (TYPABLE.test(event.key)) {
+        event.preventDefault()
+        add(event.key)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
   const message = error || (noteShown?.kind === 'taken' ? 'TAKEN, try another' : noteShown ? `Must start with ${round.letter}` : '')
   return (
-    <form className="db-entry" noValidate onSubmit={submit}>
-      <div className="cue-card">
-        <label className="visually-hidden" htmlFor="db-answer">
-          Your answer
-        </label>
-        <div className="field__box">
-          <input
-            id="db-answer"
-            className="field__input db-entry__input"
-            type="text"
-            autoComplete="off"
-            autoCapitalize="words"
-            enterKeyHint="send"
-            maxLength={MAX_ANSWER_LENGTH}
-            value={typed}
-            aria-invalid={message ? true : undefined}
-            aria-describedby="db-answer-message"
-            data-testid="db-answer-input"
-            onChange={(event) => {
-              setTyped(event.target.value)
-              setError('')
-            }}
-          />
-        </div>
-        <p
-          className="db-entry__message"
-          id="db-answer-message"
-          role="status"
-          data-kind={noteShown?.kind ?? (error ? 'error' : undefined)}
-          data-testid="db-answer-message"
-        >
-          {message || (checking ? 'Checking' : '')}
-        </p>
-      </div>
-      <div className="db-entry__buttons">
-        <button type="submit" className="phone-button" data-testid="db-submit">
-          Submit
-        </button>
-        <button type="button" className="phone-button phone-button--secondary" data-testid="db-out" onClick={() => onInput({ type: 'out' })}>
-          I'm out
-        </button>
-      </div>
-    </form>
+    <div className="db-entry">
+      <p className="db-typed" data-empty={typed === '' || undefined} data-testid="db-answer">
+        <span className="visually-hidden">Your answer: </span>
+        {typed || 'Type your answer'}
+        <span className="db-typed__caret" aria-hidden="true" />
+      </p>
+      <p className="db-entry__message" role="status" data-kind={noteShown?.kind ?? (error ? 'error' : undefined)} data-testid="db-answer-message">
+        {message || (checking ? 'Checking' : '')}
+      </p>
+      <LetterKeyboard testIdPrefix="db" onLetter={addLetter} onDelete={remove}>
+        <Key label="I'm out" kind="wide" testId="db-out" onPress={() => onInput({ type: 'out' })} />
+        <Key label="Space" kind="space" testId="db-key-space" onPress={() => add(' ')} />
+        <Key label="Submit" kind="primary" testId="db-submit" onPress={submit} />
+      </LetterKeyboard>
+    </div>
   )
 }
 
@@ -163,8 +179,16 @@ function Race({ state, player, isHost, onInput, onDealAgain }: PhoneScreenProps)
   const claim = round.claims.find((c) => c.player === player)
   const out = round.out.includes(player)
   return (
-    <>
-      <CategoryCard round={round} />
+    <div className="db-race">
+      <div className="cue-card db-race__card" data-testid="db-category">
+        <p className="db-race__letter" data-testid="db-letter" aria-label={`Letter ${round.letter}`}>
+          {round.letter}
+        </p>
+        <div className="db-race__category">
+          <p className="db-category__label">Category</p>
+          <p className="db-race__name">{round.category.name}</p>
+        </div>
+      </div>
       {round.dealtAgain > 0 && (
         <p className="db-status" data-testid="db-dealt-again">
           New letter. This round still counts once.
@@ -183,19 +207,14 @@ function Race({ state, player, isHost, onInput, onDealAgain }: PhoneScreenProps)
         <AnswerEntry key={`${state.roundIndex}-${round.dealtAgain}`} round={round} player={player} onInput={onInput} />
       )}
       {isHost && canDealAgain(state) && (
-        <button type="button" className="phone-button phone-button--secondary" data-testid="db-deal-again" onClick={onDealAgain}>
-          Deal again (new letter)
-        </button>
+        <MenuItems>
+          <button type="button" data-testid="db-deal-again" onClick={onDealAgain}>
+            Deal again (new letter)
+          </button>
+        </MenuItems>
       )}
-    </>
+    </div>
   )
-}
-
-/** The claim's "Taken" callouts: everyone who tried the same answer after it. */
-function bounceText(round: Round, claim: Claim, names: Record<PlayerId, string>): string[] {
-  return round.bounces
-    .filter((bounce) => bounce.owner === claim.player)
-    .map((bounce) => `${secondsAt(bounce.at - claim.at)} before ${names[bounce.player]}`)
 }
 
 interface AnswerRowProps {

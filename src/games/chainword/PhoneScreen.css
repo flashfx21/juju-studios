@@ -177,25 +177,25 @@ button.cw-chain__step:focus-visible {
 
 /* ---------- Mark colors, shared by tiles and keys ---------- */
 .cw-tile[data-mark],
-.cw-key[data-mark] {
+.cw-phone .letter-key[data-mark] {
   border-color: transparent;
   color: var(--cw-light-ink);
 }
 
 .cw-tile[data-mark='green'],
-.cw-key[data-mark='green'] {
+.cw-phone .letter-key[data-mark='green'] {
   background: var(--cw-green);
 }
 
 .cw-tile[data-mark='yellow'],
-.cw-key[data-mark='yellow'] {
+.cw-phone .letter-key[data-mark='yellow'] {
   background: var(--cw-yellow);
   color: var(--cw-dark-ink);
 }
 
 /* A dot on yellow, so "wrong spot" doesn't rely on color alone. */
 .cw-tile[data-mark='yellow']::after,
-.cw-key[data-mark='yellow']::after {
+.cw-phone .letter-key[data-mark='yellow']::after {
   content: '';
   position: absolute;
   right: 5px;
@@ -211,7 +211,7 @@ button.cw-chain__step:focus-visible {
 }
 
 /* Ruled-out keys sink below the unused ones: near-black with a dimmed letter (about 6:1), in every style. */
-.cw-key[data-mark='gray'] {
+.cw-phone .letter-key[data-mark='gray'] {
   background: var(--cw-key-gray);
   color: var(--cw-key-gray-ink);
 }
@@ -226,46 +226,6 @@ button.cw-chain__step:focus-visible {
   line-height: 1.3;
   text-align: center;
   color: var(--color-accent);
-}
-
-/* ---------- Keyboard ---------- */
-.cw-keys {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.cw-keys__row {
-  display: flex;
-  gap: 5px;
-}
-
-/* The middle row has one key fewer; inset it like a real keyboard. */
-.cw-keys__row[data-row='1'] {
-  padding: 0 4.5%;
-}
-
-.cw-key {
-  position: relative;
-  flex: 1 1 0;
-  min-width: 0;
-  height: clamp(42px, 6.8dvh, 58px);
-  padding: 0;
-  border: 0;
-  border-radius: 4px;
-  background: color-mix(in srgb, currentColor 18%, transparent);
-  color: inherit;
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 19px;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-.cw-key--wide {
-  flex-grow: 1.6;
-  font-size: 14px;
 }
 
 /* ---------- After a word's last guess ---------- */
@@ -370,7 +330,7 @@ button.cw-chain__step:focus-visible {
 }
 
 /* Arcade's unused keys are already near-black, so a darker fill can't set ruled-out keys apart: they empty out instead. */
-:root[data-theme='arcade'] .cw-key[data-mark='gray'] {
+:root[data-theme='arcade'] .cw-phone .letter-key[data-mark='gray'] {
   background: transparent;
   box-shadow: inset 0 0 0 1px #3d4047;
 }

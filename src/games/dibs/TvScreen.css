@@ -1,0 +1,448 @@
+/* ABOUTME: Dibs TV styles inside the shared game panel (1200x458): the category alone, the big letter and who's in, answers */
+/* ABOUTME: filling in by claim order, the challenged answer with its verdict stamp, round scores and the final standings. */
+
+.db-tv-body {
+  height: 100%;
+}
+
+.db-tv-split {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 32px;
+}
+
+.db-tv-main,
+.db-tv-race,
+.db-tv-review {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.db-tv-main,
+.db-tv-race {
+  justify-content: center;
+}
+
+.db-tv-side {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.db-tv-note,
+.db-tv-effect {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.db-tv-effect {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.db-tv-clock {
+  align-self: flex-start;
+  min-width: 110px;
+  font-size: 64px;
+}
+
+/* The last seconds: a heavier frame as well as the number, so it never relies on color. */
+.db-tv-clock[data-low] {
+  box-shadow: 0 0 0 5px currentColor;
+}
+
+/* ---------- Category alone ---------- */
+.db-tv-category {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.db-tv-category__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 84px;
+  line-height: 1.05;
+}
+
+.db-tv-category__coming {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 30px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.db-tv-strip {
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 24px;
+  font-size: 22px;
+}
+
+.db-tv-strip__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.db-tv-strip__points {
+  font-weight: 700;
+}
+
+/* ---------- The letter and who's in ---------- */
+.db-tv-letter {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 230px;
+  line-height: 0.95;
+  animation: db-tv-drop 0.45s ease-out;
+}
+
+@keyframes db-tv-drop {
+  from {
+    transform: translateY(-80px);
+    opacity: 0;
+  }
+}
+
+.db-tv-people {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.db-tv-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  opacity: 0.55;
+}
+
+.db-tv-person[data-in] {
+  opacity: 1;
+  font-weight: 700;
+}
+
+.db-tv-person__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.db-tv-person__state {
+  font-family: var(--font-label);
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Answers by claim order ---------- */
+.db-tv-answers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-rows: repeat(5, auto);
+  grid-auto-flow: column;
+  gap: 8px 24px;
+}
+
+.db-tv-answers[data-columns='2'] {
+  grid-template-columns: 1fr 1fr;
+}
+
+.db-tv-answer {
+  display: grid;
+  grid-template-columns: 4em auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid currentColor;
+  animation: db-tv-fill 0.3s ease-out;
+}
+
+@keyframes db-tv-fill {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+.db-tv-answer__time {
+  font-family: var(--font-label);
+  font-size: 18px;
+}
+
+.db-tv-answer__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.db-tv-answer__text {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.db-tv-answer__near {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.db-tv-answer__who {
+  font-size: 17px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A challenged answer carries a heavy rule as well as its "Challenged by" words. */
+.db-tv-answer[data-challenged] {
+  border-bottom-width: 4px;
+}
+
+/* ---------- Challenge, vote and verdict ---------- */
+.db-tv-challenge {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.db-tv-challenge__answer {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 80px;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.db-tv-challenge__who {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 26px;
+}
+
+.db-tv-side--verdict {
+  justify-content: center;
+}
+
+.db-tv-stamp {
+  margin: 0 0 12px;
+  align-self: center;
+  padding: 6px 22px 0;
+  border: 6px solid currentColor;
+  font-family: var(--font-display);
+  font-size: 54px;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+  animation: db-tv-stamp 0.35s ease-out;
+}
+
+@keyframes db-tv-stamp {
+  from {
+    transform: rotate(-4deg) scale(1.6);
+    opacity: 0;
+  }
+}
+
+.db-tv-voters {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+
+/* ---------- Round scores ---------- */
+.db-tv-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 22px;
+}
+
+.db-tv-table th,
+.db-tv-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid currentColor;
+  text-align: left;
+  font-weight: 400;
+  vertical-align: middle;
+}
+
+.db-tv-table thead th {
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom-width: 3px;
+}
+
+.db-tv-table th:first-child {
+  width: 260px;
+}
+
+.db-tv-table__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.db-tv-table__name,
+.db-tv-table__answer,
+.db-tv-table__how {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.db-tv-table__answer,
+.db-tv-table__how {
+  display: block;
+}
+
+.db-tv-table__answer {
+  font-weight: 700;
+}
+
+.db-tv-table__answer[data-out] {
+  text-decoration: line-through;
+}
+
+.db-tv-table__how {
+  font-size: 16px;
+}
+
+.db-tv-table .db-tv-table__num {
+  width: 92px;
+  text-align: right;
+}
+
+.db-tv-table .db-tv-table__total {
+  border-left: 3px solid currentColor;
+  font-weight: 700;
+}
+
+/* ---------- Final standings ---------- */
+.db-tv-final {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.db-tv-tie {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.db-tv-standings {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 28px;
+}
+
+.db-tv-standings__row {
+  display: grid;
+  grid-template-columns: 150px 44px 1fr 120px;
+  align-items: center;
+  gap: 16px;
+}
+
+.db-tv-standings__row[data-top] {
+  font-family: var(--font-display);
+  font-size: 36px;
+}
+
+.db-tv-standings__points {
+  text-align: right;
+}
+
+/* ---------- Before the game ---------- */
+.db-tv-waiting {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.db-tv-steps {
+  margin: 0;
+  padding-left: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 23px;
+}
+
+/* ---------- 90s arcade: pixel fonts run wide ---------- */
+:root[data-theme='arcade'] .db-tv-category__name,
+:root[data-theme='arcade'] .db-tv-challenge__answer {
+  font-size: 44px;
+}
+
+:root[data-theme='arcade'] .db-tv-letter {
+  font-size: 150px;
+}
+
+:root[data-theme='arcade'] .db-tv-answer__text,
+:root[data-theme='arcade'] .db-tv-stamp {
+  font-size: 18px;
+}
+
+:root[data-theme='arcade'] .db-tv-table,
+:root[data-theme='arcade'] .db-tv-steps,
+:root[data-theme='arcade'] .db-tv-note,
+:root[data-theme='arcade'] .db-tv-effect {
+  font-size: 15px;
+}
+
+:root[data-theme='arcade'] .db-tv-table thead th,
+:root[data-theme='arcade'] .db-tv-category__coming,
+:root[data-theme='arcade'] .db-tv-person__state,
+:root[data-theme='arcade'] .db-tv-answer__time {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='arcade'] .db-tv-standings__row[data-top] {
+  font-size: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .db-tv-letter,
+  .db-tv-answer,
+  .db-tv-stamp {
+    animation: none;
+  }
+}

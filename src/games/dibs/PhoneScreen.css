@@ -104,19 +104,97 @@
   }
 }
 
-/* ---------- The answer box ---------- */
-.db-entry {
+/* ---------- The race: letter and category, the answer as typed, the keyboard at the bottom ---------- */
+.db-race {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.db-entry__input {
+.db-race__card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.db-race__letter {
+  flex: none;
+  margin: 0;
+  min-width: 1em;
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 1;
+  text-align: center;
+  animation: db-drop 0.35s ease-out;
+}
+
+.db-race__category {
+  min-width: 0;
+}
+
+.db-race__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.db-entry {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* The answer box: shows what's typed on the on-screen keyboard, so the phone's own keyboard never opens. */
+.db-typed {
+  margin: 0;
+  min-height: 52px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  border: 3px solid currentColor;
+  background: var(--color-surface);
+  color: var(--color-text-on-surface);
   font-size: 24px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.db-typed[data-empty] {
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.db-typed__caret {
+  width: 2px;
+  height: 1.1em;
+  margin-left: 2px;
+  background: currentColor;
+  animation: db-blink 1s steps(1) infinite;
+}
+
+.db-typed[data-empty] .db-typed__caret {
+  order: -1;
+  margin: 0 4px 0 0;
+}
+
+@keyframes db-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* The keyboard sits at the bottom of the screen, under the answer and message. */
+.db-entry .letter-keys {
+  margin-top: auto;
 }
 
 .db-entry__message {
-  margin: 6px 0 0;
+  margin: 0;
   min-height: 1.4em;
   font-size: 16px;
 }
@@ -127,12 +205,6 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-}
-
-.db-entry__buttons {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 10px;
 }
 
 /* ---------- Answers at review ---------- */
@@ -354,8 +426,24 @@
 }
 
 :root[data-theme='arcade'] .db-category__name,
-:root[data-theme='arcade'] .db-challenge__answer {
+:root[data-theme='arcade'] .db-challenge__answer,
+:root[data-theme='arcade'] .db-typed {
   font-size: 18px;
+}
+
+:root[data-theme='arcade'] .db-race__name {
+  font-size: 14px;
+}
+
+:root[data-theme='arcade'] .db-race__letter {
+  font-size: 48px;
+}
+
+/* Arcade's pixel font runs wide: smaller words on I'm out, Space and Submit so they fit their keys. */
+:root[data-theme='arcade'] .db-entry .letter-key--wide,
+:root[data-theme='arcade'] .db-entry .letter-key--space,
+:root[data-theme='arcade'] .db-entry .letter-key--primary {
+  font-size: 11px;
 }
 
 :root[data-theme='arcade'] .db-headline,
@@ -369,7 +457,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .db-letter {
+  .db-letter,
+  .db-race__letter,
+  .db-typed__caret {
     animation: none;
   }
 }

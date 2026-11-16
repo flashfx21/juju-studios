@@ -1,6 +1,7 @@
 // ABOUTME: Dibs words and numbers for screens: claim times as "4.2 s" and why a player scored what they did in a round.
 // ABOUTME: Kept apart from the screens so any screen can use them.
-import type { PlayerResult } from './rules'
+import type { PlayerId } from '../types'
+import type { Claim, PlayerResult, Round } from './rules'
 
 const ORDINALS = ['1st', '2nd', '3rd']
 
@@ -26,4 +27,11 @@ export function reasonText(result: PlayerResult): string {
     text = `${ordinal(result.speedRank)} good answer: ${pointsText(result.points)}`
   else text = `Good answer: ${pointsText(result.points)}`
   return result.penalty > 0 ? `${text}. Failed challenge: -${result.penalty}` : text
+}
+
+/** The claim's "Taken" callouts, one per player who tried the same answer after it: "0.3 s before Wife". */
+export function bounceText(round: Round, claim: Claim, names: Record<PlayerId, string>): string[] {
+  return round.bounces
+    .filter((bounce) => bounce.owner === claim.player)
+    .map((bounce) => `${secondsAt(bounce.at - claim.at)} before ${names[bounce.player]}`)
 }

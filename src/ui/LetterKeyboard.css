@@ -1,0 +1,53 @@
+/* ABOUTME: The on-screen keyboard's rows and keys: keys share a row evenly, the middle row is inset like a real keyboard, */
+/* ABOUTME: and key height follows the screen height so the keyboard fits short phones. Games color marked keys themselves. */
+
+.letter-keys {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.letter-keys__row {
+  display: flex;
+  gap: 5px;
+}
+
+/* The middle row has one key fewer; inset it like a real keyboard. */
+.letter-keys__row[data-row='1'] {
+  padding: 0 4.5%;
+}
+
+.letter-key {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(42px, 6.8dvh, 58px);
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: color-mix(in srgb, currentColor 18%, transparent);
+  color: inherit;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 19px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.letter-key--wide {
+  flex-grow: 1.6;
+  font-size: 14px;
+}
+
+.letter-key--space {
+  flex-grow: 3;
+  font-size: 14px;
+}
+
+.letter-key--primary {
+  flex-grow: 1.6;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-size: 15px;
+}
