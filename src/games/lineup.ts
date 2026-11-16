@@ -133,7 +133,7 @@ export const LINEUP: LineupGame[] = [
   {
     id: 'dibs',
     number: '13',
-    phase: 'design',
+    phase: 'development',
     title: 'Dibs',
     tag: 'Words',
     pitch: 'A category, then a letter. Race to claim an answer that fits. First claim keeps it.',

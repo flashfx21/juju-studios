@@ -17,6 +17,7 @@ Ideas and features deliberately left out for now. Each line says why it waits.
 - **Real QR codes** on the Host or join, Host sign-in and lobby screens. Screens show the address as text for now; scannable codes need a QR library (a new dependency).
 - **"New" badge** on Pin Drop's picker tile. Only shown on playable games, and every game is coming soon for now.
 - **Lobby vote timer, "Lock in", ties (spin), "In the lead", remote focus.** Tonight's lobby votes on phones and shows on a TV at `#/tv` (Nov 16, display only).
+- **Dibs TV screens.** Next after the phones (Julian, Nov 16): the reveal with Taken callouts, challenges, votes with named results, round scores (spec screens T1 to T9).
 - **TV screens for the other room games.** Only Zero In has one; the TV shows "playing on your phones" for the rest. Don't Jinx It has TV screens from its solo playtest that could move to rooms, and its TV styles should move to the shared `src/ui/TvGame.css` (it has its own copies of the panel, host bar, label and tote, and no arcade or rec room look yet).
 - **Pause on the TV.** Zero In's spec has a paused overlay; there's no pause in rooms yet.
 - **Phone lobby, waiting room, TV lobby, instructions, pause, game over, leaderboard, loading states, error screens, create account / password reset, picker spin and remote focus.** Designed in all three styles (Nov 11 design update), not built yet.

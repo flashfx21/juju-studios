@@ -85,6 +85,7 @@
 - 2026-11-16: Bots by name in every room game (Julian): the waiting room lists every bot, Casual and Sharp, and the host taps names to add up to 3 in any mix (`src/games/room/BotPicker.tsx`; `BOT_COUNTS` and the Bot skill row are gone). Each game plays each bot at its own skill; a Sketch Showdown bot team plays at its first bot's skill. Sketch Showdown's automatic 2-bot team still draws Casual names at random.
 
 - 2026-11-16: TV in rooms (Julian: display only; first test is the lobby plus Zero In). `#/tv`: sign in on the computer, type the room code; the TV watches the room and never joins or runs a game, so it can use the host's account. Follows the room from the lobby into games and back; remembers the room (`juju.room.tv`). The TV home's "Host on this screen" now opens `#/tv`; the host's phone lobby shows the address and code. Zero In TV screens read the room's public state (no answers or guesses until the reveal). Games without a TV screen show "playing on your phones". Pause overlay not built (no pause in rooms).
+- 2026-11-16: 13 Dibs built second (Julian). No bots in Dibs (no answer lists to draw from, rule 8); 2 players allowed, the author votes too, and 2-player games are practice (Julian chose both). Phones first; TV screens are next (Julian). Choices I took: race timer is the shared Pace (Quick 20, Normal 30, Relaxed 45 s); round scores wait for the host's Next like Zero In (spec had 5 s); a verdict shows 4 s after each vote; a challenge can be taken back during review; the pack is JSON (spec said CSV). Answer cleanup moved to `src/engine/textMatch.ts` (`cleanAnswer`, `firstLetter`, `oneLetterOff`): Sketch Showdown now reads "&" as "and" and folds accents. `WaitingRoom` takes `bots={false}`. The Dibs host writes only changed player views, all at once, so Taken comes back fast (167 ms on the emulators; not measured on live Firebase yet).
 
 ## Preferences
 - Julian wants each step explained briefly as we go (relearning mode).
@@ -92,6 +93,7 @@
 - Email Julian (Gmail connector, to his own address) when a long run of work is done, and when work is blocked on a question only he can answer (2026-11-13). Keep it short: what's done or the question, and the version. Only possible when the Gmail connector is attached to the session.
 
 ## Lessons Learned
+- This repo has no formatter config. Running `npx prettier` with defaults rewrites files to double quotes and semicolons; the repo style is single quotes, no semicolons, long lines. Format only new files, with `--single-quote --no-semi --print-width 150` (2026-11-16).
 - Headless Edge pauses timers and CSS animations in pages it treats as background, so a TV page's step-by-step reveal can freeze mid-way in tests. Start test browsers with `--disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows`. A page reload over CDP can also hang outright; put a time limit around reload steps (2026-11-16).
 - A table cell with `display: flex` stops being a table cell and breaks the columns; put a flex wrapper inside the cell instead (2026-11-16).
 - The rec room style hides every `.cue-card__label` (it shows field labels instead). Never put content a player needs in a cue-card label (2026-11-16).
@@ -170,3 +172,4 @@
 - Next: Julian's next test run; answers on the two defaults I took (End game scope, Sketch auto bot team).
 - Done: Zero In and Dibs specs added (03 renamed, 13 new), lineup updated. Julian picked Zero In.
 - Done: Pace cleanup; 03 Zero In in Development (rules, pack, phone screens, solo playtest, rooms), checked in headless Edge against the emulators. Next: Julian checks the 32 answers and plays it; then TV screens.
+- Done: TV in rooms (lobby and Zero In); Julian confirmed sign-in, lobby, vote and the Zero In reveal on his desktop. 13 Dibs in Development (rules, pack, phones, solo playtest, rooms, How to play), checked with three phones against the emulators. Next: Dibs TV screens; Julian plays Dibs on real phones.

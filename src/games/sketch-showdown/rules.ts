@@ -6,7 +6,8 @@ import { DEFAULT_PACE, PACES, type Pace } from '../../engine/pace'
 import { freshFirst } from '../../engine/recentlyDealt'
 import type { FinishingOrder, GameRules, PlayerId, RulesContext } from '../types'
 import { manifest } from './manifest'
-import { cleanGuess, guessMatches, type Clue } from './matching'
+import { cleanAnswer } from '../../engine/textMatch'
+import { guessMatches, type Clue } from './matching'
 
 export type { Clue }
 
@@ -168,10 +169,10 @@ export function guessProblem(state: SketchShowdownState, player: PlayerId, text:
   if (state.phase !== 'race' || team === null || round.drawers[team] === player || round.winner !== null) {
     return 'not-guessing'
   }
-  const cleaned = cleanGuess(text)
+  const cleaned = cleanAnswer(text)
   if (!cleaned) return 'empty'
   if (now < (round.lockedUntil[player] ?? 0)) return 'locked-out'
-  if (round.guesses[team].some((guess) => cleanGuess(guess.text) === cleaned)) return 'already-guessed'
+  if (round.guesses[team].some((guess) => cleanAnswer(guess.text) === cleaned)) return 'already-guessed'
   return null
 }
 

@@ -1,0 +1,204 @@
+{
+  "categories": [
+    {
+      "id": "DB-001",
+      "name": "Cartoons",
+      "tag": "family"
+    },
+    {
+      "id": "DB-002",
+      "name": "Things in a kitchen",
+      "tag": "family"
+    },
+    {
+      "id": "DB-003",
+      "name": "Animals",
+      "tag": "family"
+    },
+    {
+      "id": "DB-004",
+      "name": "Snacks",
+      "tag": "family"
+    },
+    {
+      "id": "DB-005",
+      "name": "Board games and card games",
+      "tag": "family"
+    },
+    {
+      "id": "DB-006",
+      "name": "Things at a birthday party",
+      "tag": "family"
+    },
+    {
+      "id": "DB-007",
+      "name": "Breakfast foods",
+      "tag": "family"
+    },
+    {
+      "id": "DB-008",
+      "name": "Things that are cold",
+      "tag": "family"
+    },
+    {
+      "id": "DB-009",
+      "name": "Toys",
+      "tag": "family"
+    },
+    {
+      "id": "DB-010",
+      "name": "Sports",
+      "tag": "family"
+    },
+    {
+      "id": "DB-011",
+      "name": "Cities",
+      "tag": "family"
+    },
+    {
+      "id": "DB-012",
+      "name": "Things with wheels",
+      "tag": "family"
+    },
+    {
+      "id": "DB-013",
+      "name": "Things at the beach",
+      "tag": "family"
+    },
+    {
+      "id": "DB-014",
+      "name": "Superpowers",
+      "tag": "family"
+    },
+    {
+      "id": "DB-015",
+      "name": "Movies",
+      "tag": "family"
+    },
+    {
+      "id": "DB-016",
+      "name": "Things that make noise",
+      "tag": "family"
+    },
+    {
+      "id": "DB-017",
+      "name": "Jobs",
+      "tag": "family"
+    },
+    {
+      "id": "DB-018",
+      "name": "Things in a backyard",
+      "tag": "family"
+    },
+    {
+      "id": "DB-019",
+      "name": "Things you pack for a trip",
+      "tag": "family"
+    },
+    {
+      "id": "DB-020",
+      "name": "First names",
+      "tag": "family"
+    },
+    {
+      "id": "DB-021",
+      "name": "Things that are green",
+      "tag": "family"
+    },
+    {
+      "id": "DB-022",
+      "name": "Sweet treats",
+      "tag": "family"
+    },
+    {
+      "id": "DB-023",
+      "name": "Countries",
+      "tag": "family"
+    },
+    {
+      "id": "DB-024",
+      "name": "TV shows",
+      "tag": "family"
+    },
+    {
+      "id": "DB-025",
+      "name": "Things in a classroom",
+      "tag": "family"
+    },
+    {
+      "id": "DB-026",
+      "name": "Things you do on a snow day",
+      "tag": "family"
+    },
+    {
+      "id": "DB-027",
+      "name": "Famous people",
+      "tag": "family"
+    },
+    {
+      "id": "DB-028",
+      "name": "Things at a wedding",
+      "tag": "family"
+    },
+    {
+      "id": "DB-029",
+      "name": "Drinks at a bar",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-030",
+      "name": "Bad first-date moves",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-031",
+      "name": "Things that cost too much",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-032",
+      "name": "Bills you pay",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-033",
+      "name": "Things in a medicine cabinet",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-034",
+      "name": "Signs you're getting old",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-035",
+      "name": "Things said in a work meeting",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-036",
+      "name": "Reasons to leave a party early",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-037",
+      "name": "Things at a hardware store",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-038",
+      "name": "Shows to binge",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-039",
+      "name": "Excuses to skip the gym",
+      "tag": "adult"
+    },
+    {
+      "id": "DB-040",
+      "name": "Things in a group chat",
+      "tag": "adult"
+    }
+  ]
+}

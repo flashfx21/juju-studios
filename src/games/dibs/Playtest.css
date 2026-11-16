@@ -1,0 +1,34 @@
+/* ABOUTME: Dibs playtest dev box: a row per stand-in player with an answer box, Answer and Out, above the shared dev buttons. */
+/* ABOUTME: Sits inside the dashed dev box from PlaytestDev.css. */
+
+.db-dev {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.db-dev__row {
+  display: grid;
+  grid-template-columns: 4.5em 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.db-dev__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.db-dev__input {
+  min-width: 0;
+  min-height: var(--space-hit-target-min);
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0 6px;
+}

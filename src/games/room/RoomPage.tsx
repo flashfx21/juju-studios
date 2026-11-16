@@ -329,6 +329,8 @@ interface WaitingRoomProps {
   Title: ComponentType
   /** The fewest players (bots count) the game needs. */
   minPlayers: number
+  /** Games whose bots can't play (they'd have no answers to give) leave the bot picker out. */
+  bots?: boolean
   /** The game's own setup choices, shown to the host above the bot choices. */
   settings?: ReactNode
   /** Starts the game with these players: everyone in the room, then the chosen bots. */
@@ -336,7 +338,7 @@ interface WaitingRoomProps {
 }
 
 /** The room code, who has joined, and (for the host) the game's choices, bots and Start game. */
-export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart }: WaitingRoomProps) {
+export function WaitingRoom({ room, isHost, Title, minPlayers, bots: botsPlay = true, settings, onStart }: WaitingRoomProps) {
   const [chosenBots, setChosenBots] = useState<PlayerId[]>([])
   const ids = playerIds(room)
   const bots = isHost ? chosenBots : []
@@ -350,7 +352,7 @@ export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart
       {isHost ? (
         <>
           {settings}
-          <BotPicker chosen={chosenBots} looks={looks} onChange={setChosenBots} />
+          {botsPlay && <BotPicker chosen={chosenBots} looks={looks} onChange={setChosenBots} />}
           <button
             type="button"
             className="phone-button"
@@ -360,7 +362,11 @@ export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart
           >
             Start game
           </button>
-          {!enough && <p className="room-status">Waiting for at least {minPlayers} players. Bots count.</p>}
+          {!enough && (
+            <p className="room-status">
+              Waiting for at least {minPlayers} players.{botsPlay ? ' Bots count.' : ''}
+            </p>
+          )}
         </>
       ) : (
         <p className="room-status" role="status">

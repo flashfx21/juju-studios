@@ -5,7 +5,8 @@ import { describe, expect, it } from 'vitest'
 import { seededRandom } from '../../engine/seededRandom'
 import type { RulesContext } from '../types'
 import { manifest } from './manifest'
-import { cleanGuess, guessMatches } from './matching'
+import { cleanAnswer } from '../../engine/textMatch'
+import { guessMatches } from './matching'
 import {
   CLUES,
   currentRound,
@@ -83,7 +84,7 @@ describe('manifest', () => {
 describe('clue pack', () => {
   it('has about 243 clues with unique answers, enough for the longest game', () => {
     expect(CLUES.length).toBeGreaterThanOrEqual(240)
-    expect(new Set(CLUES.map((clue) => cleanGuess(clue.answer))).size).toBe(CLUES.length)
+    expect(new Set(CLUES.map((clue) => cleanAnswer(clue.answer))).size).toBe(CLUES.length)
     expect(CLUES.length).toBeGreaterThanOrEqual((regularRoundCount([RED, [...BLUE, 'gus', 'hal']], 'twice') + 1) * 3)
   })
 

@@ -4,6 +4,8 @@ import { howToPlay as chainword } from '../games/chainword/howToPlay'
 import { manifest as chainwordManifest } from '../games/chainword/manifest'
 import { howToPlay as dialItIn } from '../games/dial-it-in/howToPlay'
 import { manifest as dialItInManifest } from '../games/dial-it-in/manifest'
+import { howToPlay as dibs } from '../games/dibs/howToPlay'
+import { manifest as dibsManifest } from '../games/dibs/manifest'
 import { howToPlay as dontJinxIt } from '../games/dont-jinx-it/howToPlay'
 import { manifest as dontJinxItManifest } from '../games/dont-jinx-it/manifest'
 import { LINEUP } from '../games/lineup'
@@ -23,6 +25,7 @@ export interface HowToPlayPage {
 const PAGES: Record<string, HowToPlayPage> = {
   'dial-it-in': { manifest: dialItInManifest, words: dialItIn },
   'zero-in': { manifest: zeroInManifest, words: zeroIn },
+  dibs: { manifest: dibsManifest, words: dibs },
   chainword: { manifest: chainwordManifest, words: chainword },
   'sketch-showdown': { manifest: sketchShowdownManifest, words: sketchShowdown },
   'pin-drop': { manifest: pinDropManifest, words: pinDrop },

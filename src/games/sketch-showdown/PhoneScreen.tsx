@@ -2,7 +2,7 @@
 // ABOUTME: and guess box, the team guess strip, the reveal of both drawings, the sudden-death vote and the result. Takes only playerView().
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import type { PlayerId } from '../types'
-import { cleanGuess } from './matching'
+import { cleanAnswer } from '../../engine/textMatch'
 import { SketchCanvas } from './SketchCanvas'
 import { BRUSH_SIZES, SWATCHES, TEAM_INDEXES, TOOLS, type BrushSize, type PlayerView, type Stroke, type TeamGuess, type TeamIndex, type Tool } from './rules'
 import { TEAM_LOOKS } from './teams'
@@ -220,11 +220,11 @@ function GuessRace({ view, names, onGuess }: PhoneScreenProps) {
 
   function submit(event: FormEvent) {
     event.preventDefault()
-    const cleaned = cleanGuess(typed)
+    const cleaned = cleanAnswer(typed)
     setTyped('')
     if (!cleaned) setNote('Type a guess')
     else if (lockedOut) setNote('Wait: locked out for 2 seconds after a wrong guess')
-    else if (guesses.some((guess) => cleanGuess(guess.text) === cleaned)) setNote('Already guessed')
+    else if (guesses.some((guess) => cleanAnswer(guess.text) === cleaned)) setNote('Already guessed')
     else {
       setNote('')
       onGuess(typed)

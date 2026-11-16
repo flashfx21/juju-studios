@@ -35,7 +35,7 @@ Every game is in exactly one phase. It moves on when it meets that phase's exit 
 | 10 | Maze chase (name open) | `10-maze-chase.md` | Not Started | 3 |
 | 11 | Snake arena (name open) | `11-snake-arena.md` | Not Started | 3, last |
 | 12 | Don't Jinx It | `12-dont-jinx-it.md` | Development | 1 (individual mode; team mode follows teams in phase 2) |
-| 13 | Dibs | `13-dibs.md` | Design (rules final) | Not set |
+| 13 | Dibs | `13-dibs.md` | Development | Not set |
 
 Each spec's Status line carries the detail: what is done and what is left.
 

@@ -1,0 +1,375 @@
+/* ABOUTME: Dibs phone styles: the category card and big letter, the answer box and its Taken message, the answer list with */
+/* ABOUTME: challenges, the vote and verdict stamp, the round table and final standings. Colors and fonts come from the style's tokens. */
+
+.db-phone {
+  flex: 1 1 auto;
+  min-height: 0;
+  /* Fits one screen on most phones; a long answer list scrolls rather than hide Done. */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.db-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.db-top .phone-top {
+  padding: 0;
+}
+
+.db-top__round,
+.db-info {
+  font-family: var(--font-label);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.db-info {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  text-transform: uppercase;
+}
+
+.db-info [data-low] {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.db-headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.db-status {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+/* ---------- Category and letter ---------- */
+.db-category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.db-category__label {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.db-category__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1.15;
+}
+
+.db-letter {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 88px;
+  line-height: 1;
+  animation: db-drop 0.35s ease-out;
+}
+
+.db-letter--coming {
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: none;
+}
+
+@keyframes db-drop {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+}
+
+/* ---------- The answer box ---------- */
+.db-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-entry__input {
+  font-size: 24px;
+}
+
+.db-entry__message {
+  margin: 6px 0 0;
+  min-height: 1.4em;
+  font-size: 16px;
+}
+
+/* Taken and wrong-letter bounces read as a stamp: words, caps and weight, not only color. */
+.db-entry__message[data-kind] {
+  font-family: var(--font-label);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.db-entry__buttons {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+}
+
+/* ---------- Answers at review ---------- */
+.db-answers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.db-answers__row {
+  display: grid;
+  grid-template-columns: 3.4em 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid currentColor;
+}
+
+.db-answers__time {
+  font-family: var(--font-label);
+  font-size: 13px;
+}
+
+.db-answers__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.db-answers__text {
+  font-weight: 700;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+.db-answers__near {
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.db-answers__who,
+.db-answers__taken,
+.db-answers__challenged {
+  font-size: 14px;
+}
+
+.db-answers__challenged {
+  font-style: italic;
+}
+
+.db-answers__yours {
+  font-family: var(--font-label);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.db-answers__challenge {
+  min-height: var(--space-hit-target-min);
+  padding: 0 10px;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.db-answers__challenge[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+}
+
+.db-answers__challenge[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---------- Votes ---------- */
+.db-challenge {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.db-challenge__answer {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.db-challenge__who,
+.db-challenge__category {
+  margin: 0;
+  font-size: 15px;
+}
+
+.db-vote {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-stamp {
+  margin: 0;
+  align-self: center;
+  padding: 4px 18px 0;
+  border: 4px solid currentColor;
+  font-family: var(--font-display);
+  font-size: 36px;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+}
+
+.db-votes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 16px;
+}
+
+/* ---------- Round table ---------- */
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 17px;
+}
+
+.db-table th,
+.db-table td {
+  padding: 6px 4px;
+  border-bottom: 1px solid currentColor;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: 400;
+}
+
+.db-table thead th {
+  padding-top: 0;
+  font-family: var(--font-label);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom-width: 2px;
+}
+
+.db-table tr[data-me] th,
+.db-table tr[data-me] td {
+  font-weight: 700;
+}
+
+.db-table__name {
+  max-width: 6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.db-table__answer,
+.db-table__how {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.db-table__answer[data-out] {
+  text-decoration: line-through;
+}
+
+.db-table__how {
+  font-size: 13px;
+}
+
+.db-table .db-table__num {
+  width: 3.4em;
+  text-align: right;
+}
+
+.db-table .db-table__total {
+  border-left: 2px solid currentColor;
+  font-weight: 700;
+}
+
+/* ---------- Final standings ---------- */
+.db-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.db-list__row {
+  display: grid;
+  grid-template-columns: 2.4em 1fr auto;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid currentColor;
+  font-size: 18px;
+}
+
+.db-list__row[data-me] {
+  font-weight: 700;
+}
+
+.db-list__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- 90s arcade: pixel fonts run wide ---------- */
+:root[data-theme='arcade'] .db-letter {
+  font-size: 64px;
+}
+
+:root[data-theme='arcade'] .db-category__name,
+:root[data-theme='arcade'] .db-challenge__answer {
+  font-size: 18px;
+}
+
+:root[data-theme='arcade'] .db-headline,
+:root[data-theme='arcade'] .db-stamp {
+  font-size: 16px;
+}
+
+:root[data-theme='arcade'] .db-table,
+:root[data-theme='arcade'] .db-answers__text {
+  font-size: 13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .db-letter {
+    animation: none;
+  }
+}

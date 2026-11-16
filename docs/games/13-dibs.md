@@ -1,8 +1,8 @@
 # Dibs
 
 **Game ID:** `dibs` (working name was "Category race")  
-**Status:** Design (rules final Nov 16, 2026; numbers marked placeholder get set at the first playtest). Launch phase not set. Next: Visual design  
-**Players:** 3 to 10 (proposed; see Open questions for 2 players)  
+**Status:** Development (Nov 16, 2026). Built: rules and tests, 40-category starter pack, phone screens in all three styles, solo playtest (`#/playtest/dibs`, stand-in players typed from a Dev box), rooms (`#/playtest/dibs-together`) with Deal again and End game, How to play. Not built: TV screens (the TV shows "playing on your phones"), Instructions screen, a visual design handoff. Numbers marked placeholder get set at the first playtest. Launch phase not set  
+**Players:** 2 to 10. No bots: there are no answer lists for a bot to draw from (rule 8). 2 players is a practice game (not saved) where the author votes too  
 **Length:** about 9 to 12 min for 7 rounds (estimate, not measured)  
 **Modes:** Individual
 
@@ -68,7 +68,7 @@ The TV shows a category, then a letter, and the race starts. Everyone types one 
 | Setting | Options | Default |
 |---|---|---|
 | Rounds | 5, 7, 9 | 7 |
-| Race timer | 20, 30, 45 seconds | 30 |
+| Pace (race timer) | Quick 20 s, Normal 30 s, Relaxed 45 s | Normal |
 | Categories | Family only, Everything | Family only |
 
 That's the whole list. Anything else waits for playtest evidence.
@@ -131,7 +131,7 @@ Reports a finishing order only: by points, then round wins, then shared places. 
 - **Risk to test:** the round trip from phone to host and back must feel instant. If Taken takes a second to arrive, the race feels broken
 
 ## Content pack
-- **Format:** CSV with id, category, tag (same shape as the No Filler deck).
+- **Format:** `packs/dibs/categories.json`, each category with id, name and tag (JSON like the other packs in this repo).
 - **Tags:** Family or Adult. Adult means grown-up topics, never explicit. The suite is played with ages 8 and up.
 - **Writing rule:** a category needs answers for at least 15 of the 20 letters. The starter list below hasn't been checked against this yet.
 - **Launch:** 40 categories for playtests. Don't mark the game Playable until there are about 100, since a night shouldn't repeat a category.
@@ -245,7 +245,7 @@ Don't Jinx It is cooperative clue-giving where matching words destroy each other
 
 ## Open questions
 1. **Hard letters in tiebreakers:** add a one-round sudden-death race on a hard letter between "round wins" and "shared"? Only the tied players race; the rest vote on challenges. Leaning yes, pending playtest.
-2. **2 players:** with one voter, the challenger alone decides. Options: set the minimum at 3, or let the author vote at 2 players (a tie keeps the answer, so challenges only work by agreement).
+2. **2 players (decided Nov 16):** the author votes at 2 players, so a challenge only wins by agreement (a tie keeps the answer). Minimum is 2; a 2-player game is practice and isn't saved.
 3. **Playtest numbers:** race timer, challenge window, vote time, challenge limit (1) and failed-challenge cost (1 point), point values.
 4. **Taken speed:** does the phone-to-host-to-phone round trip feel instant on the free Firebase plan?
 5. **Pack size:** grow from 40 to about 100 before Playable; check every category against the 15-of-20-letters rule.

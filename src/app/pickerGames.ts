@@ -39,6 +39,10 @@ const ACTIONS: Record<string, PickAction[]> = {
     { label: 'Play solo with bots', page: 'zero-in' },
     { label: 'Start a room', page: 'zero-in-together' },
   ],
+  dibs: [
+    { label: 'Try it solo', page: 'dibs' },
+    { label: 'Start a room', page: 'dibs-together' },
+  ],
   chainword: [
     { label: 'Play solo', page: 'chainword' },
     { label: 'Start a room', page: 'chainword-together' },
