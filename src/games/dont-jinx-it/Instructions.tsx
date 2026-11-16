@@ -2,6 +2,7 @@
 // ABOUTME: Individual mode only until teams exist; the length estimate is the handoff's placeholder math.
 import { TvHeader } from '../../ui/TvHeader'
 import { howToPlay } from './howToPlay'
+import { PACE_NAMES } from '../../engine/pace'
 import { PACE_SECONDS, PACES, type DontJinxItSettings, type Pace } from './rules'
 import './TvScreen.css'
 import './Instructions.css'
@@ -13,7 +14,6 @@ interface InstructionsProps {
   onStart: () => void
 }
 
-const PACE_NAMES: Record<Pace, string> = { quick: 'Quick', normal: 'Normal', relaxed: 'Relaxed' }
 
 /** Rough minutes per turn by pace, from the design handoff. A placeholder until real games are timed. */
 const MINUTES_PER_TURN: Record<Pace, number> = { quick: 2, normal: 2.5, relaxed: 3.5 }

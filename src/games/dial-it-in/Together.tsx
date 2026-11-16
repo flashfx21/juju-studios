@@ -14,6 +14,7 @@ import {
   type Room,
 } from '../../engine/net/rooms'
 import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
+import { DEFAULT_PACE, PACES, paceLabels, type Pace } from '../../engine/pace'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
@@ -40,10 +41,9 @@ import {
 } from './rules'
 import './Together.css'
 
-/** Seconds to guess before the round reveals anyway. */
-const PACES = [60, 90, 120] as const
-type Pace = (typeof PACES)[number]
-const PACE_NAMES: Record<Pace, string> = { 60: '60 s', 90: '90 s', 120: '2 min' }
+/** Seconds to guess at each pace before the round reveals anyway. */
+const PACE_SECONDS: Record<Pace, number> = { quick: 60, normal: 90, relaxed: 120 }
+const PACE_NAMES = paceLabels(PACE_SECONDS)
 const RANGE_NAMES = { 50: '1 to 50', 100: '1 to 100' }
 const TURN_NAMES: Record<TurnsEach, string> = { 1: '1', 2: '2', 3: '3' }
 
@@ -84,7 +84,7 @@ export function Together() {
 function DialWaitingRoom({ room, isHost }: RoomScreenProps) {
   const [settings, setSettings] = useState<DialItInSettings>(DEFAULT_SETTINGS)
   const [turnsEach, setTurnsEach] = useState<TurnsEach>(2)
-  const [pace, setPace] = useState<Pace>(90)
+  const [pace, setPace] = useState<Pace>(DEFAULT_PACE)
 
   return (
     <WaitingRoom
@@ -100,13 +100,13 @@ function DialWaitingRoom({ room, isHost }: RoomScreenProps) {
           manifest.id,
           state.rounds.map((round) => round.card.id),
         )
-        void publish(room, { state, pace }, Date.now() + pace * 1000, true)
+        void publish(room, { state, pace }, Date.now() + PACE_SECONDS[pace] * 1000, true)
       }}
       settings={
         <>
           <OptionRow label="Range" options={DIAL_RANGES} names={RANGE_NAMES} value={settings.range} onChoose={(range) => setSettings({ ...settings, range })} />
           <OptionRow label="Turns each" options={TURNS_EACH} names={TURN_NAMES} value={turnsEach} onChoose={setTurnsEach} />
-          <OptionRow label="Seconds" options={PACES} names={PACE_NAMES} value={pace} onChoose={setPace} />
+          <OptionRow label="Pace" options={PACES} names={PACE_NAMES} value={pace} onChoose={setPace} />
           <PracticeNote room={room} />
         </>
       }
@@ -199,12 +199,13 @@ function botsGuess(code: string, game: RoomGame, deadline: number | null): DialI
   const waiting = guessersFor(state, round).filter((id) => botFor(id) && !(id in round.guesses))
   if (waiting.length === 0 || deadline === null) return state
   const peopleDone = guessersFor(state, round).every((id) => botFor(id) || id in round.guesses)
-  const startedAt = deadline - pace * 1000
+  const seconds = PACE_SECONDS[pace]
+  const startedAt = deadline - seconds * 1000
   let next = state
   for (const id of waiting) {
     const random = seededRandom(`${code}-${state.roundIndex}-${id}`)
     const [earliest, latest] = BOT_GUESS_SHARE
-    const guessAt = startedAt + pace * 1000 * (earliest + (latest - earliest) * random())
+    const guessAt = startedAt + seconds * 1000 * (earliest + (latest - earliest) * random())
     if (!peopleDone && Date.now() < guessAt) continue
     const value = botDialGuess(round.target, state.range, botFor(id)!.skill, random)
     next = rules.onInput(next, id, { type: 'guess', value }, context())
@@ -236,7 +237,7 @@ function HostRunner({ room }: { room: Room }) {
       const current = latest.current
       if (!current || state === current.game.state) return
       const samePhase = state.phase === current.game.state.phase && state.roundIndex === current.game.state.roundIndex
-      const deadline = state.phase !== 'guessing' ? null : samePhase ? current.deadline : Date.now() + current.game.pace * 1000
+      const deadline = state.phase !== 'guessing' ? null : samePhase ? current.deadline : Date.now() + PACE_SECONDS[current.game.pace] * 1000
       latest.current = { game: { ...current.game, state }, deadline }
       void publish(seen.current, latest.current.game, deadline)
     }

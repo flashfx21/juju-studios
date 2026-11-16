@@ -12,7 +12,7 @@ A photo appears on the TV. Everyone drops a pin on a map on their phone. Closest
 ## Decided
 ### Setup (pre-game settings)
 - Scoring mode: Match play (default) or Stroke play
-- Pace: 45 / 60 (default) / 90 seconds per round
+- Pace: Quick 45 s / Normal 60 s (default) / Relaxed 90 s per round
 - Rounds: 5 / 7 (default) / 9
 - Units: miles (default) or kilometers
 - Map labels: on (default) or off. Off hides names but keeps borders

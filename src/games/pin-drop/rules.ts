@@ -2,6 +2,7 @@
 // ABOUTME: Pure logic, no screens: dealing the easy-to-hard ramp, pins and lock-ins, distances, match and stroke play.
 
 import photoPack from '../../../packs/pin-drop/around-the-world.json'
+import { DEFAULT_PACE, PACES, type Pace } from '../../engine/pace'
 import { freshFirst } from '../../engine/recentlyDealt'
 import type { FinishingOrder, GameRules, PlayerId } from '../types'
 import { manifest } from './manifest'
@@ -33,18 +34,20 @@ export interface Photo {
 export const PHOTOS: Photo[] = photoPack.photos as Photo[]
 
 export type Scoring = 'match' | 'stroke'
-export type Pace = 45 | 60 | 90
 export type RoundCount = 5 | 7 | 9
 export type Units = 'mi' | 'km'
 
 export const SCORINGS: readonly Scoring[] = ['match', 'stroke']
-export const PACES: readonly Pace[] = [45, 60, 90]
 export const ROUND_COUNTS: readonly RoundCount[] = [5, 7, 9]
 export const UNITS: readonly Units[] = ['mi', 'km']
+export { PACES, type Pace }
+
+/** Seconds per round at each pace. */
+export const PACE_SECONDS: Record<Pace, number> = { quick: 45, normal: 60, relaxed: 90 }
 
 export interface PinDropSettings {
   scoring: Scoring
-  /** Seconds per round. */
+  /** How long each round lasts (PACE_SECONDS). */
   pace: Pace
   rounds: RoundCount
   units: Units
@@ -52,7 +55,7 @@ export interface PinDropSettings {
   labels: boolean
 }
 
-export const DEFAULT_SETTINGS: PinDropSettings = { scoring: 'match', pace: 60, rounds: 7, units: 'mi', labels: true }
+export const DEFAULT_SETTINGS: PinDropSettings = { scoring: 'match', pace: DEFAULT_PACE, rounds: 7, units: 'mi', labels: true }
 
 /** Every game ramps from easy to hard. */
 export const DIFFICULTY_RAMP: Record<RoundCount, Difficulty[]> = {

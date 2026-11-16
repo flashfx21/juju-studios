@@ -28,5 +28,5 @@ export const howToPlay: HowToPlay = {
     'Only 2 or 3 of you? Two bots join as the other team. A game with 2 people is practice and is not saved to the leaderboard.',
     'Drawing tools: a brush in 4 sizes, 16 colors, eraser, straight line, undo, and press and hold to clear.',
   ],
-  hostPicks: ['Turns: draw once or draw twice', 'Pace: 90 s, 2 min or 3 min a round'],
+  hostPicks: ['Turns: draw once or draw twice', 'Pace: Quick, Normal or Relaxed (90 s, 2 min or 3 min a round)'],
 }

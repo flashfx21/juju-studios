@@ -13,7 +13,7 @@ export const manifest: GameManifest = {
   status: 'coming-soon',
   settings: [
     { id: 'scoring', label: 'Scoring', options: ['match', 'stroke'], default: 'match' },
-    { id: 'pace', label: 'Seconds per round', options: [45, 60, 90], default: 60 },
+    { id: 'pace', label: 'Pace', options: ['quick', 'normal', 'relaxed'], default: 'normal' },
     { id: 'rounds', label: 'Rounds', options: [5, 7, 9], default: 7 },
     { id: 'units', label: 'Units', options: ['mi', 'km'], default: 'mi' },
     { id: 'labels', label: 'Map labels', options: ['on', 'off'], default: 'on' },

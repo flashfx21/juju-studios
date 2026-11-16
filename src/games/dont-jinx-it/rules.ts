@@ -2,6 +2,7 @@
 // ABOUTME: clue written twice (or nearly twice) is jinxed before the guesser sees what survived. Pure logic, no screens.
 
 import wordPack from '../../../packs/dont-jinx-it/words.json'
+import { DEFAULT_PACE, PACES, type Pace } from '../../engine/pace'
 import { freshFirst } from '../../engine/recentlyDealt'
 import { sameWordForm } from '../../engine/wordForms'
 import type { FinishingOrder, GameRules, PlayerId } from '../types'
@@ -9,9 +10,7 @@ import { manifest } from './manifest'
 
 export const MYSTERY_WORDS: readonly string[] = wordPack.words
 
-export type Pace = 'quick' | 'normal' | 'relaxed'
-
-export const PACES: readonly Pace[] = ['quick', 'normal', 'relaxed']
+export { PACES, type Pace }
 
 /** Seconds to write clues and to guess, by pace. */
 export const PACE_SECONDS: Record<Pace, { write: number; guess: number }> = {
@@ -37,7 +36,7 @@ export interface DontJinxItSettings {
   longGame: boolean
 }
 
-export const DEFAULT_SETTINGS: DontJinxItSettings = { pace: 'normal', longGame: false }
+export const DEFAULT_SETTINGS: DontJinxItSettings = { pace: DEFAULT_PACE, longGame: false }
 
 export type GuessResult = 'correct' | 'miss' | 'pass'
 

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { clearPlay, sendInput, startPlay, takeInputs, writePlay, type Room } from '../../engine/net/rooms'
 import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
+import { paceLabels } from '../../engine/pace'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
@@ -19,6 +20,7 @@ import { PhoneScreen, PinDropTitle } from './PhoneScreen'
 import {
   currentRound,
   DEFAULT_SETTINGS,
+  PACE_SECONDS,
   PACES,
   ROUND_COUNTS,
   rules,
@@ -34,7 +36,7 @@ type RoomInput = PinDropInput | { type: 'next' } | { type: 'end-game' }
 
 const SCORING_NAMES = { match: 'Match play', stroke: 'Stroke play' }
 const UNIT_NAMES = { mi: 'Miles', km: 'Kilometers' }
-const PACE_NAMES = { 45: '45 s', 60: '60 s', 90: '90 s' }
+const PACE_NAMES = paceLabels(PACE_SECONDS)
 const ROUND_NAMES = { 5: '5', 7: '7', 9: '9' }
 
 function context(): RulesContext {
@@ -43,7 +45,7 @@ function context(): RulesContext {
 
 /** When the timer for this phase runs out: guessing uses the pace; the reveal and standings wait for the host's Next. */
 function deadlineFor(state: PinDropState, now: number): number | null {
-  return state.phase === 'guessing' ? now + state.settings.pace * 1000 : null
+  return state.phase === 'guessing' ? now + PACE_SECONDS[state.settings.pace] * 1000 : null
 }
 
 export function Together() {
@@ -88,7 +90,7 @@ function PinDropWaitingRoom({ room, isHost }: RoomScreenProps) {
         <>
           <OptionRow label="Scoring" options={SCORINGS} names={SCORING_NAMES} value={settings.scoring} onChoose={(v) => choose('scoring', v)} />
           <OptionRow label="Rounds" options={ROUND_COUNTS} names={ROUND_NAMES} value={settings.rounds} onChoose={(v) => choose('rounds', v)} />
-          <OptionRow label="Seconds" options={PACES} names={PACE_NAMES} value={settings.pace} onChoose={(v) => choose('pace', v)} />
+          <OptionRow label="Pace" options={PACES} names={PACE_NAMES} value={settings.pace} onChoose={(v) => choose('pace', v)} />
           <OptionRow label="Units" options={UNITS} names={UNIT_NAMES} value={settings.units} onChoose={(v) => choose('units', v)} />
         </>
       }
@@ -156,7 +158,7 @@ function botsMove(code: string, state: PinDropState, deadline: number | null): P
   const waiting = state.players.filter((id) => botFor(id) && !round.locked.includes(id))
   if (waiting.length === 0 || deadline === null) return state
   const peopleDone = state.players.every((id) => botFor(id) || round.locked.includes(id))
-  const roundMs = state.settings.pace * 1000
+  const roundMs = PACE_SECONDS[state.settings.pace] * 1000
   const startedAt = deadline - roundMs
   let next = state
   for (const id of waiting) {

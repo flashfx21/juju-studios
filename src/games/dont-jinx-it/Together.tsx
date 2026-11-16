@@ -15,6 +15,7 @@ import {
   type Room,
 } from '../../engine/net/rooms'
 import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
+import { PACE_NAMES } from '../../engine/pace'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { PLAYER_COLOR_IDS, type PlayerColorId } from '../../ui/playerColors'
@@ -44,12 +45,10 @@ import {
   type DontJinxItInput,
   type DontJinxItSettings,
   type DontJinxItState,
-  type Pace,
   type Phase,
   type PlayerView,
 } from './rules'
 
-const PACE_NAMES: Record<Pace, string> = { quick: 'Quick', normal: 'Normal', relaxed: 'Relaxed' }
 const LONG_GAME = ['off', 'on'] as const
 const LONG_GAME_NAMES = { off: 'Once', on: 'Twice' }
 

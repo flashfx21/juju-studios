@@ -15,6 +15,7 @@ import {
   type Room,
 } from '../../engine/net/rooms'
 import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
+import { paceLabels } from '../../engine/pace'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
@@ -43,7 +44,6 @@ import {
   TEAM_INDEXES,
   TURNS,
   tvView,
-  type Pace,
   type Phase,
   type PlayerView,
   type SketchShowdownInput,
@@ -55,7 +55,7 @@ import {
 } from './rules'
 
 const TURN_NAMES: Record<Turns, string> = { once: 'Draw once', twice: 'Draw twice' }
-const PACE_NAMES: Record<Pace, string> = { quick: '90 s', normal: '2 min', relaxed: '3 min' }
+const PACE_NAMES = paceLabels(RACE_SECONDS)
 
 /** Setting up and ranking a finished game check no guesses, so they need no word list. */
 const DEALER = sketchShowdownRules(() => false)

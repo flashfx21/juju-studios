@@ -104,7 +104,9 @@ Rules for writing:
 No repeats within a game; the least-played questions are drawn first.
 Pack plan: start with the 32-question test pack below; grow to about 90 (30 per lane) before the first real game night (estimate).
 
-## Engine note: Pace sweep
+## Engine note: Pace sweep (done Nov 16)
+Done: `src/engine/pace.ts` holds the names and labels; Pin Drop, Dial It In, Sketch Showdown and Don't Jinx It use it, each with its own seconds. Chainword's clock isn't a host setting, so it has no Pace. The original note:
+
 "Pace" is the suite-wide name for any game's timer setting. Labels: Quick / Normal (default) / Relaxed, with seconds set per game. Sweep every game that uses a timer so the setting is called Pace with these labels:
 - Already Pace with labels: Sketch Showdown, Don't Jinx It
 - Pace without labels: Pin Drop (45 / 60 / 90 s); add Quick / Normal / Relaxed

@@ -2,6 +2,7 @@
 // ABOUTME: to guess it first. Pure logic, no screens: turn order, the clue pick, the race, sudden death and views per screen.
 
 import cluePack from '../../../packs/sketch-showdown/clues.json'
+import { DEFAULT_PACE, PACES, type Pace } from '../../engine/pace'
 import { freshFirst } from '../../engine/recentlyDealt'
 import type { FinishingOrder, GameRules, PlayerId, RulesContext } from '../types'
 import { manifest } from './manifest'
@@ -12,10 +13,9 @@ export type { Clue }
 export const CLUES: readonly Clue[] = cluePack.clues
 
 export type Turns = 'once' | 'twice'
-export type Pace = 'quick' | 'normal' | 'relaxed'
 
 export const TURNS: readonly Turns[] = ['once', 'twice']
-export const PACES: readonly Pace[] = ['quick', 'normal', 'relaxed']
+export { PACES, type Pace }
 
 export interface SketchShowdownSettings {
   /** Everyone draws once, or twice. */
@@ -23,7 +23,7 @@ export interface SketchShowdownSettings {
   pace: Pace
 }
 
-export const DEFAULT_SETTINGS: SketchShowdownSettings = { turns: 'once', pace: 'normal' }
+export const DEFAULT_SETTINGS: SketchShowdownSettings = { turns: 'once', pace: DEFAULT_PACE }
 
 /** Seconds a race lasts at each pace. */
 export const RACE_SECONDS: Record<Pace, number> = { quick: 90, normal: 120, relaxed: 180 }

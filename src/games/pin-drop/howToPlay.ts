@@ -1,6 +1,8 @@
 // ABOUTME: The words on Pin Drop's How to play page: what you need, the steps, scoring and the host's settings.
 // ABOUTME: Keep in step with docs/games/06-pin-drop.md and the room's settings in Together.tsx.
+import { paceHowToPlay } from '../../engine/pace'
 import type { HowToPlay } from '../types'
+import { PACE_SECONDS } from './rules'
 
 export const howToPlay: HowToPlay = {
   intro: 'A photo of a real place appears. Drop your pin where you think it is. Closest wins.',
@@ -30,7 +32,7 @@ export const howToPlay: HowToPlay = {
   hostPicks: [
     'Scoring: Match or Stroke',
     'Rounds: 5, 7 or 9',
-    'Seconds per round: 45, 60 or 90',
+    paceHowToPlay(PACE_SECONDS, 'a round'),
     'Units: miles or km',
     'Map labels: on or off',
   ],
