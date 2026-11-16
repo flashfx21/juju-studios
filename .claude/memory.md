@@ -79,12 +79,15 @@
 
 - 2026-11-16: Two new specs from Julian: 03 Closest Without Going Over is now **Zero In** (id `zero-in`, spec `docs/games/03-zero-in.md`; closest wins over or under, final round don't go over) and **13 Dibs** (id `dibs`, `docs/games/13-dibs.md`; category and letter race, first claim keeps it, challenges and group vote). Both Design with rules final, in the lineup as coming soon; Dibs has no launch phase and no tile colors yet. Two spec claims corrected against the repo: No Filler has not decided its tie rule or named vote reveal, and the cleanup Dibs needs is Sketch Showdown's `cleanGuess` (Don't Jinx It only lowercases), which still lacks "&" = "and" and accent folding. Which to build first: pending Julian (I recommended Zero In).
 
+- 2026-11-16: 03 Zero In built first (Julian), with the Pace cleanup. Pace: `src/engine/pace.ts` (Quick / Normal / Relaxed, labels "Quick 45 s"); Pin Drop (45/60/90) and Dial It In (60/90/120 s) moved from raw seconds to Pace; Sketch Showdown and Don't Jinx It use the shared type and names; Chainword has no timer setting. Zero In: rules and tests, 32-question pack (unverified answers), phone screens (no design handoff; extrapolated from the shared pieces), solo playtest, rooms with private views (Dial It In pattern: answers and guesses masked until the reveal), bots, End game, How to play, picker and lobby. Choices the spec left open: the final-round warning sits on the standings before it plus a banner on the question (no extra host tap); a pack too small for the rounds plays fewer rounds; drafts go to the host 400 ms after typing stops; 2 people need a bot (min 3, bots count). TV screens (ring and climb reveals) and Instructions not built.
+
 ## Preferences
 - Julian wants each step explained briefly as we go (relearning mode).
 - Julian prefers getting to visible UI early rather than waiting on backend decisions.
 - Email Julian (Gmail connector, to his own address) when a long run of work is done, and when work is blocked on a question only he can answer (2026-11-13). Keep it short: what's done or the question, and the version. Only possible when the Gmail connector is attached to the session.
 
 ## Lessons Learned
+- The rec room style hides every `.cue-card__label` (it shows field labels instead). Never put content a player needs in a cue-card label (2026-11-16).
 - Size limits in database rules must be checked against realistic content: `roomSecrets/{code}/views` was capped at 4,000 characters, a Sketch Showdown view passes that within a few strokes, and the host's publish then failed on every change with the error swallowed. The drawer saw their own strokes (kept locally), so it looked like the guesser's input was lost (2026-11-16). `viewSize.test.ts` reads the limit from the rules file; publish failures are logged now.
 - No-scroll game screens (`PhoneFrame fit`) hide overflow silently. Check the main button at short heights (390x664 for an iPhone in Safari, 375x548 for an SE), not only 390x844 (2026-11-16).
 - Headless Edge: canvas drawing with `Input.dispatchMouseEvent` works after `Page.bringToFront`; wrap each send in a timeout so a stall shows as an error instead of hanging the run (2026-11-16).
@@ -158,4 +161,5 @@
 ### Week of 2026-11-16
 - Done: third feedback round (2-person practice for Dial It In and Sketch Showdown, Sketch Showdown guesses fixed, Dial It In Lock in on short phones, top-left menu everywhere, no repeats across games, lobby Random, End game early), rules deployed.
 - Next: Julian's next test run; answers on the two defaults I took (End game scope, Sketch auto bot team).
-- Done: Zero In and Dibs specs added (03 renamed, 13 new), lineup updated. Next: Julian picks which to build first.
+- Done: Zero In and Dibs specs added (03 renamed, 13 new), lineup updated. Julian picked Zero In.
+- Done: Pace cleanup; 03 Zero In in Development (rules, pack, phone screens, solo playtest, rooms), checked in headless Edge against the emulators. Next: Julian checks the 32 answers and plays it; then TV screens.

@@ -25,7 +25,7 @@ Every game is in exactly one phase. It moves on when it meets that phase's exit 
 |---|---|---|---|---|
 | 01 | No Filler | `01-no-filler.md` | Design | 2 |
 | 02 | Dial It In | `02-dial-it-in.md` | Development | 1 |
-| 03 | Zero In | `03-zero-in.md` | Design (rules final) | 3 |
+| 03 | Zero In | `03-zero-in.md` | Development | 3 |
 | 04 | Chainword (working name) | `04-chainword.md` | Development | 1 (first cartridge) |
 | 05 | Sketch Showdown | `05-sketch-showdown.md` | Development | 2 (the idea log says 3) |
 | 06 | Pin Drop (working title) | `06-pin-drop.md` | Development | 1 |

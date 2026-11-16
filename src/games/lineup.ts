@@ -42,7 +42,7 @@ export const LINEUP: LineupGame[] = [
   {
     id: 'zero-in',
     number: '03',
-    phase: 'design',
+    phase: 'development',
     title: 'Zero In',
     tag: 'Game show',
     pitch: "Guess a price, year or number. Closest wins. The final round: don't go over.",

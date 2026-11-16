@@ -8,6 +8,7 @@ const ROOM_PAGES: Record<string, string> = {
   'dial-it-in': 'dial-it-in-together',
   'dont-jinx-it': 'dont-jinx-it-together',
   'sketch-showdown': 'sketch-showdown-together',
+  'zero-in': 'zero-in-together',
 }
 
 export function roomPageFor(game: string): string | undefined {

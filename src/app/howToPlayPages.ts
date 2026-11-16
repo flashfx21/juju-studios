@@ -12,6 +12,8 @@ import { manifest as pinDropManifest } from '../games/pin-drop/manifest'
 import { howToPlay as sketchShowdown } from '../games/sketch-showdown/howToPlay'
 import { manifest as sketchShowdownManifest } from '../games/sketch-showdown/manifest'
 import type { GameManifest, HowToPlay } from '../games/types'
+import { howToPlay as zeroIn } from '../games/zero-in/howToPlay'
+import { manifest as zeroInManifest } from '../games/zero-in/manifest'
 
 export interface HowToPlayPage {
   manifest: GameManifest
@@ -20,6 +22,7 @@ export interface HowToPlayPage {
 
 const PAGES: Record<string, HowToPlayPage> = {
   'dial-it-in': { manifest: dialItInManifest, words: dialItIn },
+  'zero-in': { manifest: zeroInManifest, words: zeroIn },
   chainword: { manifest: chainwordManifest, words: chainword },
   'sketch-showdown': { manifest: sketchShowdownManifest, words: sketchShowdown },
   'pin-drop': { manifest: pinDropManifest, words: pinDrop },
