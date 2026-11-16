@@ -1,4 +1,4 @@
-/* ABOUTME: Zero In phone styles: the question card, the number box with its unit, the answer, and the round and standings lists. */
+/* ABOUTME: Zero In phone styles: the question card, the number box with its unit, the answer, the round table and final standings. */
 /* ABOUTME: Colors and fonts come from the lobby style's tokens; busts and your own row are marked by words and weight, not only color. */
 
 .zi-phone {
@@ -133,7 +133,75 @@
   line-height: 1.1;
 }
 
-/* ---------- Round and standings lists ---------- */
+/* ---------- Round table: guesses, round points and (from round 2) totals ---------- */
+.zi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 17px;
+}
+
+.zi-table th,
+.zi-table td {
+  padding: 6px 4px;
+  border-bottom: 1px solid currentColor;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: 400;
+}
+
+.zi-table thead th {
+  padding-top: 0;
+  font-family: var(--font-label);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom-width: 2px;
+}
+
+.zi-table tr[data-me] th,
+.zi-table tr[data-me] td {
+  font-weight: 700;
+}
+
+.zi-table__place {
+  width: 2.6em;
+}
+
+.zi-table__name {
+  max-width: 7em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zi-table__guess,
+.zi-table__how {
+  display: block;
+}
+
+.zi-table__how {
+  font-size: 13px;
+}
+
+.zi-table__how[data-bust] {
+  font-family: var(--font-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.zi-table .zi-table__num {
+  width: 3.4em;
+  text-align: right;
+}
+
+/* The total is the running score, set apart from this round by a rule and weight. */
+.zi-table .zi-table__total {
+  border-left: 2px solid currentColor;
+  font-weight: 700;
+}
+
+/* ---------- Final standings ---------- */
 .zi-list {
   flex: 0 1 auto;
   min-height: 0;
@@ -145,16 +213,12 @@
 
 .zi-list__row {
   display: grid;
-  grid-template-columns: 2.6em 1fr auto auto 2.2em;
+  grid-template-columns: 2.6em 1fr 3em;
   align-items: baseline;
   gap: 10px;
   padding: 7px 4px;
   border-bottom: 1px solid currentColor;
   font-size: 17px;
-}
-
-.zi-list__row--standing {
-  grid-template-columns: 2.6em 1fr auto 2.6em;
 }
 
 .zi-list__row[data-me] {
@@ -166,17 +230,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.zi-list__how {
-  font-size: 14px;
-}
-
-.zi-list__how[data-bust] {
-  font-family: var(--font-label);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 700;
 }
 
 .zi-list__points {
@@ -211,6 +264,7 @@
   font-size: 30px;
 }
 
-:root[data-theme='arcade'] .zi-list__row {
+:root[data-theme='arcade'] .zi-list__row,
+:root[data-theme='arcade'] .zi-table {
   font-size: 13px;
 }

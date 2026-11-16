@@ -1,5 +1,5 @@
 {
-  "about": "Room bot names by skill. Sharp bots sound clever, casual bots sound like they'd rather be napping. A room draws its bots at random from the chosen skill's list. Names are 2 to 25 characters; initials are 1 to 3 capital letters (the arcade style shows them).",
+  "about": "Room bot names by skill. Sharp bots sound clever, casual bots sound like they'd rather be napping. The host picks bots by name from both lists, so a game can mix skills; Sketch Showdown's automatic bot team draws Casual names at random. Names are 2 to 25 characters; initials are 1 to 3 capital letters (the arcade style shows them).",
   "sharp": [
     { "name": "Big Brain Bot", "initials": "BBB", "color": "silver", "symbol": "rocket" },
     { "name": "Professor Smarty", "initials": "PS", "color": "purple", "symbol": "owl" },

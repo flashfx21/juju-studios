@@ -1,5 +1,5 @@
 // ABOUTME: Zero In on a player's phone: the question with a number box and Lock it in, the reveal with everyone's guesses,
-// ABOUTME: the standings with the host's Next, the final round's don't-go-over warning, and the final standings.
+// ABOUTME: round points and totals under the host's one Next button, the final round's don't-go-over warning, and the final standings.
 import { useState, type FormEvent, type ReactNode } from 'react'
 import type { PlayerId } from '../types'
 import { amountText, distanceText, placeText, readGuess, tidyTyped } from './format'
@@ -12,7 +12,7 @@ interface PhoneScreenProps {
   player: PlayerId
   /** Display names by player id. */
   names: Record<PlayerId, string>
-  /** The host's phone gets Standings on the reveal and Next round on the standings. */
+  /** The host's phone gets the one button that moves on from the reveal: Next question, Final round or Final standings. */
   isHost: boolean
   /** Seconds left to guess. Null or missing when nothing is timed. */
   secondsLeft?: number | null
@@ -168,31 +168,67 @@ function resultText(result: RoundResult, question: Question): string {
   return distanceText(result.distance!, question)
 }
 
-/** Everyone's guess for the round: places first, then busts, then no guess. */
-function RoundList({ state, names, player }: Pick<PhoneScreenProps, 'state' | 'names' | 'player'>) {
+/**
+ * Everyone's guess for the round, places first, then busts, then no guess, with this round's points.
+ * From round 2 on, a Total column sits beside the round's points, so one screen is both the reveal and the standings.
+ */
+function RoundTable({ state, names, player }: Pick<PhoneScreenProps, 'state' | 'names' | 'player'>) {
   const round = currentRound(state)
   const results = round.results!
+  const scores = totals(state)
+  const showTotal = state.roundIndex > 0
   const order = [...state.players].sort((a, b) => {
     const rank = (r: RoundResult) => (r.place ?? (r.bust ? 1000 : 2000))
     return rank(results[a]) - rank(results[b]) || (results[a].distance ?? 0) - (results[b].distance ?? 0)
   })
   return (
-    <ol className="zi-list" aria-label="This round">
-      {order.map((id) => {
-        const result = results[id]
-        return (
-          <li key={id} className="zi-list__row" data-me={id === player ? 'true' : undefined} data-testid={`zi-round-${id}`}>
-            <span className="zi-list__place">{result.place === null ? '-' : placeText(result.place)}</span>
-            <span className="zi-list__name">{names[id]}</span>
-            <span className="zi-list__guess">{result.guess === null ? '' : amountText(result.guess, round.question)}</span>
-            <span className="zi-list__how" data-bust={result.bust ? 'true' : undefined}>
-              {resultText(result, round.question)}
-            </span>
-            <span className="zi-list__points">{result.points}</span>
-          </li>
-        )
-      })}
-    </ol>
+    <table className="zi-table" data-testid="zi-table">
+      <caption className="visually-hidden">Round {state.roundIndex + 1} results{showTotal ? ' and totals' : ''}</caption>
+      <thead>
+        <tr>
+          <th scope="col">
+            <span className="visually-hidden">Place</span>
+          </th>
+          <th scope="col">
+            <span className="visually-hidden">Player</span>
+          </th>
+          <th scope="col">Guess</th>
+          <th scope="col" className="zi-table__num">
+            {showTotal ? 'Round' : 'Points'}
+          </th>
+          {showTotal && (
+            <th scope="col" className="zi-table__num zi-table__total">
+              Total
+            </th>
+          )}
+        </tr>
+      </thead>
+      <tbody>
+        {order.map((id) => {
+          const result = results[id]
+          return (
+            <tr key={id} data-me={id === player ? 'true' : undefined} data-testid={`zi-round-${id}`}>
+              <td className="zi-table__place">{result.place === null ? '-' : placeText(result.place)}</td>
+              <th scope="row" className="zi-table__name">
+                {names[id]}
+              </th>
+              <td>
+                <span className="zi-table__guess">{result.guess === null ? '' : amountText(result.guess, round.question)}</span>
+                <span className="zi-table__how" data-bust={result.bust ? 'true' : undefined}>
+                  {resultText(result, round.question)}
+                </span>
+              </td>
+              <td className="zi-table__num">{showTotal ? `+${result.points}` : result.points}</td>
+              {showTotal && (
+                <td className="zi-table__num zi-table__total" data-testid={`zi-total-${id}`}>
+                  {scores[id].points}
+                </td>
+              )}
+            </tr>
+          )
+        })}
+      </tbody>
+    </table>
   )
 }
 
@@ -223,8 +259,14 @@ function Reveal(props: PhoneScreenProps) {
           Everybody busted! Nobody scores this round.
         </p>
       )}
-      <RoundList {...props} />
-      <HostNext isHost={isHost} onNext={onNext} label="Standings" />
+      <RoundTable {...props} />
+      {finalIsNext(state) && (
+        <p className="zi-final" data-testid="zi-final-next">
+          <strong>Next: the final round</strong>
+          <span>Don't go over. Double points.</span>
+        </p>
+      )}
+      <HostNext isHost={isHost} onNext={onNext} label={round.final ? 'Final standings' : finalIsNext(state) ? 'Final round' : 'Next question'} />
     </>
   )
 }
@@ -234,18 +276,16 @@ function rankOf(places: PlayerId[][], index: number): number {
   return 1 + places.slice(0, index).reduce((sum, place) => sum + place.length, 0)
 }
 
-function StandingsList({ state, names, player, final }: Pick<PhoneScreenProps, 'state' | 'names' | 'player'> & { final: boolean }) {
+function StandingsList({ state, names, player }: Pick<PhoneScreenProps, 'state' | 'names' | 'player'>) {
   const scores = totals(state)
   const places = rules.finishingOrder(state)
-  const results = currentRound(state).results
   return (
-    <ol className="zi-list" aria-label={final ? 'Final standings' : 'Standings'}>
+    <ol className="zi-list" aria-label="Final standings">
       {places.map((place, i) =>
         place.map((id) => (
-          <li key={id} className="zi-list__row zi-list__row--standing" data-me={id === player ? 'true' : undefined} data-testid={`zi-standing-${id}`}>
+          <li key={id} className="zi-list__row" data-me={id === player ? 'true' : undefined} data-testid={`zi-standing-${id}`}>
             <span className="zi-list__place">{place.length > 1 ? `=${rankOf(places, i)}` : rankOf(places, i)}</span>
             <span className="zi-list__name">{names[id]}</span>
-            {!final && results && <span className="zi-list__how">+{results[id].points}</span>}
             <span className="zi-list__points">{scores[id].points}</span>
           </li>
         )),
@@ -254,30 +294,11 @@ function StandingsList({ state, names, player, final }: Pick<PhoneScreenProps, '
   )
 }
 
-function Standings(props: PhoneScreenProps) {
-  const { state, isHost, onNext } = props
-  const lastRound = state.roundIndex === state.rounds.length - 1
-  return (
-    <>
-      <p className="zi-headline">Standings after round {state.roundIndex + 1}</p>
-      <p className="zi-status">This round, then total</p>
-      <StandingsList {...props} final={false} />
-      {finalIsNext(state) && (
-        <p className="zi-final" data-testid="zi-final-next">
-          <strong>Next: the final round</strong>
-          <span>Don't go over. Double points.</span>
-        </p>
-      )}
-      <HostNext isHost={isHost} onNext={onNext} label={lastRound ? 'Final standings' : finalIsNext(state) ? 'Final round' : 'Next round'} />
-    </>
-  )
-}
-
 function Final(props: PhoneScreenProps) {
   return (
     <>
       <p className="zi-headline">Final standings</p>
-      <StandingsList {...props} final />
+      <StandingsList {...props} />
       {props.summaryAction}
     </>
   )
@@ -314,7 +335,6 @@ export function PhoneScreen(props: PhoneScreenProps) {
       {state.phase === 'guessing' && <GuessingInfo state={state} secondsLeft={props.secondsLeft} />}
       {state.phase === 'guessing' && <Guessing {...props} />}
       {state.phase === 'reveal' && <Reveal {...props} />}
-      {state.phase === 'standings' && <Standings {...props} />}
       {state.phase === 'over' && <Final {...props} />}
     </div>
   )

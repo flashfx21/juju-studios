@@ -81,6 +81,9 @@
 
 - 2026-11-16: 03 Zero In built first (Julian), with the Pace cleanup. Pace: `src/engine/pace.ts` (Quick / Normal / Relaxed, labels "Quick 45 s"); Pin Drop (45/60/90) and Dial It In (60/90/120 s) moved from raw seconds to Pace; Sketch Showdown and Don't Jinx It use the shared type and names; Chainword has no timer setting. Zero In: rules and tests, 32-question pack (unverified answers), phone screens (no design handoff; extrapolated from the shared pieces), solo playtest, rooms with private views (Dial It In pattern: answers and guesses masked until the reveal), bots, End game, How to play, picker and lobby. Choices the spec left open: the final-round warning sits on the standings before it plus a banner on the question (no extra host tap); a pack too small for the rounds plays fewer rounds; drafts go to the host 400 ms after typing stops; 2 people need a bot (min 3, bots count). TV screens (ring and climb reveals) and Instructions not built.
 
+- 2026-11-16: Zero In reveal and standings are one screen (Julian): the reveal table has Guess and Points in round 1, then Round and Total columns from round 2; the host has one button (Next question / Final round / Final standings). The standings phase is gone from the rules.
+- 2026-11-16: Bots by name in every room game (Julian): the waiting room lists every bot, Casual and Sharp, and the host taps names to add up to 3 in any mix (`src/games/room/BotPicker.tsx`; `BOT_COUNTS` and the Bot skill row are gone). Each game plays each bot at its own skill; a Sketch Showdown bot team plays at its first bot's skill. Sketch Showdown's automatic 2-bot team still draws Casual names at random.
+
 ## Preferences
 - Julian wants each step explained briefly as we go (relearning mode).
 - Julian prefers getting to visible UI early rather than waiting on backend decisions.

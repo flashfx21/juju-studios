@@ -83,8 +83,8 @@ export interface Round {
   results: Record<PlayerId, RoundResult> | null
 }
 
-/** guessing: phones take guesses. reveal: the answer and places. standings: totals, waiting for Next. over: done. */
-export type Phase = 'guessing' | 'reveal' | 'standings' | 'over'
+/** guessing: phones take guesses. reveal: the answer, places, round points and totals, waiting for Next. over: done. */
+export type Phase = 'guessing' | 'reveal' | 'over'
 
 export interface ZeroInState {
   players: readonly PlayerId[]
@@ -222,7 +222,7 @@ function reveal(state: ZeroInState): ZeroInState {
   return { ...withCurrentRound(state, { results: scoreRound(state.players, currentRound(state)) }), phase: 'reveal' }
 }
 
-/** Is this the round before the final? Standings then warn that the final round is next. */
+/** Is this the round before the final? Its reveal then warns that the final round is next. */
 export function finalIsNext(state: ZeroInState): boolean {
   return state.rounds[state.roundIndex + 1]?.final === true
 }
@@ -257,11 +257,10 @@ export const rules: GameRules<ZeroInState, ZeroInSettings, ZeroInInput> = {
     return locked.length === state.players.length ? reveal(next) : next
   },
 
-  /** guessing: time's up, typed guesses count. reveal: the host's Next shows standings. standings: Next starts the next round. */
+  /** guessing: time's up, typed guesses count. reveal: the host's Next starts the next question (or ends the game). */
   onTimer(state) {
     if (state.phase === 'guessing') return reveal(state)
-    if (state.phase === 'reveal') return { ...state, phase: 'standings' }
-    if (state.phase === 'standings') {
+    if (state.phase === 'reveal') {
       const nextIndex = state.roundIndex + 1
       if (nextIndex >= state.rounds.length) return { ...state, phase: 'over' }
       return { ...state, roundIndex: nextIndex, phase: 'guessing' }

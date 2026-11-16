@@ -1,0 +1,67 @@
+/* ABOUTME: The bot picker: a short heading per skill over a two-column grid of bot names with their color and symbol. */
+/* ABOUTME: A picked bot is filled with a check mark, like the option rows; a full roster dims the rest. */
+
+.bot-picker__skill {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bot-picker__skill-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.bot-picker__names {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.bot-picker__bot {
+  min-height: var(--space-hit-target-min);
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.bot-picker__bot .room-players__dot {
+  width: 26px;
+  height: 26px;
+}
+
+.bot-picker__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Picked: filled, and a check mark so it doesn't depend on color alone. */
+.bot-picker__bot[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+}
+
+.bot-picker__bot[aria-pressed='true'] .bot-picker__name::before {
+  content: '✓ ';
+}
+
+.bot-picker__bot[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+:root[data-theme='arcade'] .bot-picker__bot {
+  font-size: 11px;
+}

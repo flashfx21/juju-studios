@@ -9,10 +9,8 @@ export type BotSkill = 'casual' | 'sharp'
 export const BOT_SKILLS: readonly BotSkill[] = ['casual', 'sharp']
 export const BOT_SKILL_NAMES: Record<BotSkill, string> = { casual: 'Casual', sharp: 'Sharp' }
 
-/** How many bots a host can add. */
-export const BOT_COUNTS = [0, 1, 2, 3] as const
-export type BotCount = (typeof BOT_COUNTS)[number]
-export const BOT_COUNT_NAMES: Record<BotCount, string> = { 0: 'None', 1: '1', 2: '2', 3: '3' }
+/** The most bots a host can add to one game, of any skills. */
+export const MAX_BOTS = 3
 
 export interface BotLook {
   name: string
@@ -40,6 +38,11 @@ export function shuffledBotOrder(skill: BotSkill, random: () => number): number[
  */
 export function botIds(count: number, skill: BotSkill, order: readonly number[] = BOT_NAMES[skill].map((_, i) => i)): PlayerId[] {
   return order.slice(0, count).map((index) => `bot-${skill}-${index + 1}`)
+}
+
+/** Every bot of a skill, in list order, as player ids: the host picks from these by name. */
+export function allBotIds(skill: BotSkill): PlayerId[] {
+  return botIds(BOT_NAMES[skill].length, skill)
 }
 
 /** The bot behind a player id, or null for a real player. */

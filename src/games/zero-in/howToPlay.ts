@@ -14,7 +14,7 @@ export const howToPlay: HowToPlay = {
     'A question appears: an old price, the year something happened, or a number like how many keys are on a piano.',
     'Type your guess on your phone. Whole numbers only. You can change it until you tap Lock it in.',
     'When everyone has locked in, or time runs out, the answer is revealed. A typed guess you never locked still counts.',
-    'See how far off everyone was, then the standings. The host taps Next to move on.',
+    "See how far off everyone was, with this round's points and the running totals. The host taps Next for the next question.",
     "The last round is Don't Go Over: the closest guess without going over wins. Go over and you bust.",
   ],
   scoring: [

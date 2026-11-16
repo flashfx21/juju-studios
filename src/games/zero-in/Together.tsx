@@ -58,7 +58,7 @@ function context(): RulesContext {
   return { now: Date.now(), random: Math.random }
 }
 
-/** Guessing has the pace's clock; the reveal and standings wait for the host's Next. */
+/** Guessing has the pace's clock; the reveal waits for the host's Next. */
 function deadlineFor(state: ZeroInState, now: number): number | null {
   return state.phase === 'guessing' ? now + PACE_SECONDS[state.settings.pace] * 1000 : null
 }
@@ -252,7 +252,7 @@ function HostRunner({ room }: { room: Room }) {
         }
         if (move.type === 'next') {
           const phase = current.state.phase
-          if (by === host && (phase === 'reveal' || phase === 'standings')) save(rules.onTimer(current.state, context()))
+          if (by === host && phase === 'reveal') save(rules.onTimer(current.state, context()))
           return
         }
         save(rules.onInput(current.state, by, move, context()))

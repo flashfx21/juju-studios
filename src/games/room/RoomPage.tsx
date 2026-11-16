@@ -7,13 +7,13 @@ import { createRoom, joinRoom, LOBBY, playerIds, switchGame, watchRoom, type Roo
 import { rememberedRoom, rememberRoom } from '../../engine/rememberedRoom'
 import { CodeBoxes } from '../../ui/CodeBoxes'
 import { MenuItems } from '../../ui/FrameMenu'
-import { OptionRow } from '../../ui/OptionRow'
 import { PhoneFrame } from '../../ui/PhoneFrame'
 import { inkOn, type PlayerColorId } from '../../ui/playerColors'
 import { PlayerSymbol } from '../../ui/PlayerSymbol'
 import { Field } from '../../ui/TextField'
 import type { PlayerId } from '../types'
-import { BOT_COUNT_NAMES, BOT_COUNTS, BOT_SKILL_NAMES, BOT_SKILLS, botIds, shuffledBotOrder, type BotCount, type BotSkill } from './bots'
+import { allBotIds, BOT_SKILLS } from './bots'
+import { BotPicker } from './BotPicker'
 import { roomPageFor } from './roomPages'
 import { usePlayerLooks, type PlayerLook } from './usePlayerLooks'
 import '../../ui/PhoneForm.css'
@@ -336,13 +336,10 @@ interface WaitingRoomProps {
 
 /** The room code, who has joined, and (for the host) the game's choices, bots and Start game. */
 export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart }: WaitingRoomProps) {
-  const [botCount, setBotCount] = useState<BotCount>(0)
-  const [botSkill, setBotSkill] = useState<BotSkill>('casual')
+  const [chosenBots, setChosenBots] = useState<PlayerId[]>([])
   const ids = playerIds(room)
-  // Each waiting room draws its own bots from the skill's names.
-  const [botOrder] = useState(() => ({ casual: shuffledBotOrder('casual', Math.random), sharp: shuffledBotOrder('sharp', Math.random) }))
-  const bots = isHost ? botIds(botCount, botSkill, botOrder[botSkill]) : []
-  const looks = usePlayerLooks(room, bots)
+  const bots = isHost ? chosenBots : []
+  const looks = usePlayerLooks(room, BOT_SKILLS.flatMap(allBotIds))
   const enough = ids.length + bots.length >= minPlayers
 
   return (
@@ -352,10 +349,7 @@ export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart
       {isHost ? (
         <>
           {settings}
-          <OptionRow label="Bots" options={BOT_COUNTS} names={BOT_COUNT_NAMES} value={botCount} onChoose={setBotCount} />
-          {botCount > 0 && (
-            <OptionRow label="Bot skill" options={BOT_SKILLS} names={BOT_SKILL_NAMES} value={botSkill} onChoose={setBotSkill} />
-          )}
+          <BotPicker chosen={chosenBots} looks={looks} onChange={setChosenBots} />
           <button
             type="button"
             className="phone-button"

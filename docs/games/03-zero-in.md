@@ -44,8 +44,8 @@ History, Science & Nature, Space, Animals, Human Body, Food & Drink, Sports, Mus
 2. The unit sits in the entry box ($ before; cents, years, feet and so on after). Phones add commas as you type
 3. A player can change their guess until they tap Lock It In. A locked guess is final
 4. The round ends when everyone has locked in or the Pace timer runs out. A typed but unlocked guess is submitted automatically; an empty box is "No guess"
-5. Reveal, then round points and running totals
-6. The host taps Next to start the next round. The host can pause at any point, including during the reveal
+5. Reveal, with round points and running totals on the same screen (Julian, Nov 16): from round 2, a Total column sits beside the round's points
+6. The host taps Next once to start the next question. The host can pause at any point, including during the reveal
 
 ## Regular rounds
 **Reveal (ring reveal)**
@@ -141,7 +141,7 @@ Style note: break from Claude Design's defaults (no colored accent borders, no p
 2. Pre-game settings: Pace, Rounds, Lanes
 3. Question and guessing: lane, topic, question, unit, timer, lock lights
 4. Ring reveal: guesses on the number line, answer drops in, ring grows, places light up (with ties), "way off" edge, "On the Mark!" celebration, fact line
-5. Round standings: points this round, running totals
+5. Round standings: points this round, running totals (on phones these share the reveal screen; the TV may still show them as a step after the ring reveal)
 6. Final round intro card: "Don't Go Over", double points
 7. Climb reveal: SAFE, BUST, winner, exact hit, "Everybody busted"
 8. Final results: finishing order, then hand off to the engine's game-over and leaderboard screens

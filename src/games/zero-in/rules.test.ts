@@ -186,7 +186,7 @@ describe('the final round', () => {
 })
 
 describe('phases', () => {
-  it('goes reveal, standings, next round, and ends after the final', () => {
+  it('goes from the reveal straight to the next question, and ends after the final', () => {
     let state = newGame({ rounds: 5 })
     for (let i = 0; i < 5; i++) {
       expect(state.phase).toBe('guessing')
@@ -194,8 +194,7 @@ describe('phases', () => {
       state = rules.onTimer(state, ctx())
       expect(state.phase).toBe('reveal')
       state = rules.onTimer(state, ctx())
-      expect(state.phase).toBe('standings')
-      state = rules.onTimer(state, ctx())
+      if (i < 4) expect([state.phase, state.roundIndex]).toEqual(['guessing', i + 1])
     }
     expect(rules.isOver(state)).toBe(true)
   })

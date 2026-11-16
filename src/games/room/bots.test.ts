@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest'
 import { PLAYER_COLOR_IDS } from '../../ui/playerColors'
 import { PLAYER_SYMBOL_IDS } from '../../ui/playerSymbols'
-import { BOT_NAMES, BOT_SKILLS, botFor, botIds, shuffledBotOrder } from './bots'
+import { allBotIds, BOT_NAMES, BOT_SKILLS, botFor, botIds, shuffledBotOrder } from './bots'
 
 describe('bot ids', () => {
   it('carry the skill and name, so a reloaded host knows each bot', () => {
@@ -24,6 +24,17 @@ describe('bot ids', () => {
     expect(botFor('bot-sharp-99')).toBeNull()
     expect(botFor('bot-wild-1')).toBeNull()
     expect(botIds(0, 'casual')).toEqual([])
+  })
+})
+
+describe('allBotIds', () => {
+  it('lists every bot of a skill by its id, so a host can pick any of them by name', () => {
+    for (const skill of BOT_SKILLS) {
+      const ids = allBotIds(skill)
+      expect(ids).toHaveLength(BOT_NAMES[skill].length)
+      expect(ids.map((id) => botFor(id)?.look.name)).toEqual(BOT_NAMES[skill].map((look) => look.name))
+      expect(ids.every((id) => botFor(id)?.skill === skill)).toBe(true)
+    }
   })
 })
 
