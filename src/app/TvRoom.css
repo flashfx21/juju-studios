@@ -1,0 +1,46 @@
+/* ABOUTME: The TV page's own screens inside the game panel: connecting by room code, signing in, and "playing on phones". */
+/* ABOUTME: Colors and fonts come from the lobby style's tokens. */
+
+.tv-connect {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  gap: 40px;
+  align-items: center;
+}
+
+.tv-connect__steps {
+  margin: 0;
+  padding-left: 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 28px;
+  line-height: 1.3;
+}
+
+div.tv-connect__steps {
+  padding-left: 0;
+}
+
+.tv-connect__lead {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.3;
+}
+
+.tv-connect__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* The code boxes are sized for phones; on the TV they grow. */
+.tv-connect__form .code-boxes__box {
+  font-size: 48px;
+}
+
+:root[data-theme='arcade'] .tv-connect__steps,
+:root[data-theme='arcade'] .tv-connect__lead {
+  font-size: 18px;
+}

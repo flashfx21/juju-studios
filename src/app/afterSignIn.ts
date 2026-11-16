@@ -3,7 +3,7 @@
 import type { Screen } from './useHashRoute'
 
 const KEY = 'juju.afterSignIn'
-const PLACES: Screen[] = ['join', 'lobby']
+const PLACES: Screen[] = ['join', 'lobby', 'tv']
 
 export function saveAfterSignIn(screen: Screen) {
   try {

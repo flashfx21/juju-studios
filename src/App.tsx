@@ -12,6 +12,7 @@ import { Join } from './app/Join'
 import { Leaderboard } from './app/Leaderboard'
 import { LobbyPlaceholder } from './app/LobbyPlaceholder'
 import { LobbyRoom } from './app/LobbyRoom'
+import { TvRoom } from './app/TvRoom'
 import { PlaytestPage } from './app/PlaytestPage'
 import { Profile } from './app/Profile'
 import { SignIn } from './app/SignIn'
@@ -83,6 +84,8 @@ function CurrentScreen({ route, kind, settings, updateSettings, style, setStyle:
       return <LobbyRoom />
     case 'leaderboard':
       return <Leaderboard />
+    case 'tv':
+      return <TvRoom />
     case 'how-to-play':
       return <HowToPlay gameId={route.step} />
     default:

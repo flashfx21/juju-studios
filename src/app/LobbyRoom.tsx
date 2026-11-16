@@ -7,6 +7,7 @@ import {
   LOBBY,
   planSession,
   sessionGames,
+  sessionTotals,
   sessionOver,
   switchGame,
   type Room,
@@ -25,6 +26,7 @@ import { mostVoted, randomPick } from './lobbyPick'
 import { pickerState } from './pickerGames'
 import { PlayerBadge } from './PlayerBadge'
 import { goTo, href } from './useHashRoute'
+import { siteAddress } from './siteAddress'
 import { useMe } from './useMe'
 import './GameVote.css'
 import './LobbyRoom.css'
@@ -85,11 +87,7 @@ function pointsText(points: number): string {
 function Recap({ room }: { room: Room }) {
   const looks = usePlayerLooks(room)
   const games = sessionGames(room.session)
-  const totals = new Map<string, number>()
-  for (const game of games) {
-    for (const [uid, points] of Object.entries(game.points)) totals.set(uid, (totals.get(uid) ?? 0) + points)
-  }
-  const table = [...totals.entries()].sort((a, b) => b[1] - a[1])
+  const table = sessionTotals(room.session)
   const placeOf = (index: number) => 1 + table.findIndex(([, points]) => Math.round(points) === Math.round(table[index][1]))
   const nameOf = (uid: string) => looks[uid]?.name ?? 'A player who left'
 
@@ -190,6 +188,11 @@ function LobbyScreen({ room, self, isHost }: RoomScreenProps) {
       <PlayerBadge />
       <LobbyTitle />
       <RoomHeader room={room} looks={looks} />
+      {isHost && !running && (
+        <p className="room-status" data-testid="lobby-tv-hint">
+          Got a TV or computer? Open {siteAddress()}, tap Host on this screen and type {room.code}.
+        </p>
+      )}
 
       {running ? (
         <div className="cue-card">

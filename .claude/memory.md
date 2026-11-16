@@ -84,12 +84,16 @@
 - 2026-11-16: Zero In reveal and standings are one screen (Julian): the reveal table has Guess and Points in round 1, then Round and Total columns from round 2; the host has one button (Next question / Final round / Final standings). The standings phase is gone from the rules.
 - 2026-11-16: Bots by name in every room game (Julian): the waiting room lists every bot, Casual and Sharp, and the host taps names to add up to 3 in any mix (`src/games/room/BotPicker.tsx`; `BOT_COUNTS` and the Bot skill row are gone). Each game plays each bot at its own skill; a Sketch Showdown bot team plays at its first bot's skill. Sketch Showdown's automatic 2-bot team still draws Casual names at random.
 
+- 2026-11-16: TV in rooms (Julian: display only; first test is the lobby plus Zero In). `#/tv`: sign in on the computer, type the room code; the TV watches the room and never joins or runs a game, so it can use the host's account. Follows the room from the lobby into games and back; remembers the room (`juju.room.tv`). The TV home's "Host on this screen" now opens `#/tv`; the host's phone lobby shows the address and code. Zero In TV screens read the room's public state (no answers or guesses until the reveal). Games without a TV screen show "playing on your phones". Pause overlay not built (no pause in rooms).
+
 ## Preferences
 - Julian wants each step explained briefly as we go (relearning mode).
 - Julian prefers getting to visible UI early rather than waiting on backend decisions.
 - Email Julian (Gmail connector, to his own address) when a long run of work is done, and when work is blocked on a question only he can answer (2026-11-13). Keep it short: what's done or the question, and the version. Only possible when the Gmail connector is attached to the session.
 
 ## Lessons Learned
+- Headless Edge pauses timers and CSS animations in pages it treats as background, so a TV page's step-by-step reveal can freeze mid-way in tests. Start test browsers with `--disable-background-timer-throttling --disable-renderer-backgrounding --disable-backgrounding-occluded-windows`. A page reload over CDP can also hang outright; put a time limit around reload steps (2026-11-16).
+- A table cell with `display: flex` stops being a table cell and breaks the columns; put a flex wrapper inside the cell instead (2026-11-16).
 - The rec room style hides every `.cue-card__label` (it shows field labels instead). Never put content a player needs in a cue-card label (2026-11-16).
 - Size limits in database rules must be checked against realistic content: `roomSecrets/{code}/views` was capped at 4,000 characters, a Sketch Showdown view passes that within a few strokes, and the host's publish then failed on every change with the error swallowed. The drawer saw their own strokes (kept locally), so it looked like the guesser's input was lost (2026-11-16). `viewSize.test.ts` reads the limit from the rules file; publish failures are logged now.
 - No-scroll game screens (`PhoneFrame fit`) hide overflow silently. Check the main button at short heights (390x664 for an iPhone in Safari, 375x548 for an SE), not only 390x844 (2026-11-16).

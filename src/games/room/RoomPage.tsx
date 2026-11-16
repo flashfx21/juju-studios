@@ -309,15 +309,16 @@ export function RoomHeader({ room, looks, extra = [] }: { room: Room; looks: Rec
   )
 }
 
-/** A player's color circle with their symbol in it. */
-export function PlayerDot({ look }: { look: PlayerLook }) {
+/** A player's color circle with their symbol in it (initials when there's no symbol, as in arcade). Size is in pixels, for the TV. */
+export function PlayerDot({ look, size }: { look: PlayerLook; size?: number }) {
+  const sized: CSSProperties = size ? { width: size, height: size, fontSize: Math.round(size * 0.36) } : {}
   return (
     <span
       className="room-players__dot"
-      style={{ background: look.color, '--player': look.color, color: inkOn(look.color) } as CSSProperties}
+      style={{ background: look.color, '--player': look.color, color: inkOn(look.color), ...sized } as CSSProperties}
       aria-hidden="true"
     >
-      {look.symbol && <PlayerSymbol symbol={look.symbol} />}
+      {look.symbol ? <PlayerSymbol symbol={look.symbol} /> : <span className="room-players__initials">{look.initials}</span>}
     </span>
   )
 }

@@ -1,0 +1,144 @@
+/* ABOUTME: Tonight's lobby on the TV: join details and players on the left, the vote on the right; and the night's totals. */
+/* ABOUTME: Colors come from the lobby style's tokens; the leading game is marked by a filled bar, not only color. */
+
+.lobby-tv {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 40px;
+}
+
+.lobby-tv__join {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+}
+
+.lobby-tv__site {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.lobby-tv__code {
+  font-family: var(--font-display);
+  font-size: 96px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+
+.lobby-tv__players {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+  overflow: hidden;
+}
+
+.lobby-tv__player {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  min-width: 0;
+}
+
+.lobby-tv__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lobby-tv__votes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.lobby-tv__games {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lobby-tv__game {
+  display: grid;
+  grid-template-columns: 1fr auto 60px;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  padding: 4px 16px;
+  border: 3px solid currentColor;
+  font-size: 28px;
+}
+
+.lobby-tv__game[data-leading] {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  border-color: var(--color-primary);
+}
+
+.lobby-tv__game-title {
+  font-family: var(--font-display);
+}
+
+.lobby-tv__voters {
+  display: flex;
+  gap: 6px;
+}
+
+.lobby-tv__count {
+  font-family: var(--font-label);
+  font-size: 34px;
+  text-align: right;
+}
+
+/* ---------- The night's totals ---------- */
+.lobby-tv__totals {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.lobby-tv__total {
+  display: grid;
+  grid-template-columns: 44px 1fr 220px;
+  align-items: center;
+  gap: 18px;
+  font-size: 30px;
+}
+
+.lobby-tv__total[data-top] {
+  font-family: var(--font-display);
+  font-size: 40px;
+}
+
+.lobby-tv__points {
+  text-align: right;
+}
+
+/* ---------- 90s arcade: pixel fonts run wide ---------- */
+:root[data-theme='arcade'] .lobby-tv__code {
+  font-size: 64px;
+}
+
+:root[data-theme='arcade'] .lobby-tv__game,
+:root[data-theme='arcade'] .lobby-tv__total {
+  font-size: 18px;
+}
+
+:root[data-theme='arcade'] .lobby-tv__site {
+  font-size: 16px;
+}

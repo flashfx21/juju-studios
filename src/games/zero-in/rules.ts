@@ -191,6 +191,12 @@ export function scoreRound(players: readonly PlayerId[], round: Round): Record<P
   return results
 }
 
+/** Players for a round's reveal: places first (closest first), then busts, then no guess. */
+export function roundOrder(players: readonly PlayerId[], results: Record<PlayerId, RoundResult>): PlayerId[] {
+  const rank = (r: RoundResult) => r.place ?? (r.bust ? 1000 : 2000)
+  return [...players].sort((a, b) => rank(results[a]) - rank(results[b]) || (results[a].distance ?? 0) - (results[b].distance ?? 0))
+}
+
 export interface Totals {
   points: number
   /** Rounds with the closest guess, shared places included. */

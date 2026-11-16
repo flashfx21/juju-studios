@@ -105,7 +105,7 @@ export function HostOrJoinTv() {
         </div>
 
         <div className="entry-tv__choices">
-          <a className="entry-choice entry-choice--host" href={href('host')} data-testid="host-on-this-screen">
+          <a className="entry-choice entry-choice--host" href={href('tv')} data-testid="host-on-this-screen">
             <ChoiceContent copy={copy.host} number="1" />
             <span className="entry-choice__cta">{copy.host.action}</span>
           </a>

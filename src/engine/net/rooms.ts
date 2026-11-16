@@ -67,6 +67,15 @@ export function sessionGames(session: Session): SessionGame[] {
   return Object.values(session.games).sort((a, b) => a.at - b.at)
 }
 
+/** Each person's points for the night so far, most first. */
+export function sessionTotals(session: Session): [string, number][] {
+  const totals = new Map<string, number>()
+  for (const game of sessionGames(session)) {
+    for (const [uid, points] of Object.entries(game.points)) totals.set(uid, (totals.get(uid) ?? 0) + points)
+  }
+  return [...totals.entries()].sort((a, b) => b[1] - a[1])
+}
+
 /** The night is over once the planned games are played or the host ends it. */
 export function sessionOver(session: Session): boolean {
   return session.ended || (session.planned !== null && Object.keys(session.games).length >= session.planned)

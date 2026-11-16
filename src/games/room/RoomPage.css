@@ -63,3 +63,9 @@
   font-size: 16px;
   line-height: 1.35;
 }
+
+.room-players__initials {
+  font-family: var(--font-label);
+  font-size: 0.8em;
+  line-height: 1;
+}

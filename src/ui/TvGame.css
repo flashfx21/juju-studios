@@ -1,0 +1,146 @@
+/* ABOUTME: Pieces every in-room TV screen shares at 1280x720: the framed game panel, the host bar along the bottom, */
+/* ABOUTME: small uppercase labels and the number "tote" for timers and scores. Every style reads them from its tokens. */
+
+.tv-panel {
+  position: absolute;
+  left: 40px;
+  top: 128px;
+  width: 1200px;
+  height: 458px;
+  padding: 22px 40px;
+  background: var(--color-surface);
+  color: var(--color-text-on-surface);
+  box-shadow:
+    0 0 0 4px var(--color-frame),
+    0 0 0 10px var(--color-surface);
+}
+
+.tv-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 106px;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: var(--color-footer);
+  border-top: 5px solid var(--color-accent);
+}
+
+.tv-bar__status {
+  margin-right: auto;
+  font-family: var(--font-label);
+  font-size: 30px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.tv-bar__aside {
+  font-family: var(--font-label);
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  color: var(--color-text);
+}
+
+.tv-button {
+  min-height: 56px;
+  padding: 6px 28px 2px;
+  border: 0;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-family: var(--font-label);
+  font-size: 26px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tv-button--quiet {
+  background: transparent;
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 3px currentColor;
+}
+
+.tv-label {
+  display: block;
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: 24px;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.tv-tote {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 14px 0;
+  background: var(--color-secondary);
+  color: var(--color-secondary-ink);
+  font-family: var(--font-label);
+  font-size: 48px;
+  line-height: 1.1;
+  box-shadow: var(--shadow-tile);
+}
+
+/* ---------- 90s arcade: pixel labels run wide ---------- */
+:root[data-theme='arcade'] .tv-bar {
+  border-top: 0;
+  background-image: var(--texture-carpet);
+  background-size: 132px 84px;
+}
+
+:root[data-theme='arcade'] .tv-bar__status,
+:root[data-theme='arcade'] .tv-bar__aside {
+  padding: 10px 14px;
+  background: var(--color-background);
+  font-size: 16px;
+}
+
+:root[data-theme='arcade'] .tv-label {
+  font-size: 15px;
+  color: var(--color-text-strong);
+}
+
+:root[data-theme='arcade'] .tv-button {
+  font-size: 16px;
+}
+
+:root[data-theme='arcade'] .tv-tote {
+  font-size: 30px;
+}
+
+/* ---------- 70s rec room: the panel is cream, so labels take the dark ink ---------- */
+:root[data-theme='rec-room'] .tv-bar {
+  border-top: 0;
+  background-image: var(--texture-rug);
+}
+
+:root[data-theme='rec-room'] .tv-panel .tv-label {
+  color: var(--color-text-on-surface);
+}
+
+:root[data-theme='rec-room'] .tv-bar__status,
+:root[data-theme='rec-room'] .tv-bar__aside {
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-shadow: 2px 2px 0 var(--color-frame);
+}
+
+/* The label at the right of a room's TV header, such as "Round 3 of 10". */
+.tv-frame__aside {
+  font-family: var(--font-label);
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+:root[data-theme='arcade'] .tv-frame__aside {
+  font-size: 16px;
+}

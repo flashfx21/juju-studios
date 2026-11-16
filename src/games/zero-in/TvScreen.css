@@ -1,0 +1,433 @@
+/* ABOUTME: Zero In TV styles inside the shared game panel (1200x458): the question and lock lights, the final intro card, */
+/* ABOUTME: the number line with its ring and climb, the points and totals table, and the final standings. */
+
+.zi-tv-body {
+  height: 100%;
+}
+
+/* ---------- Question and guessing ---------- */
+.zi-tv-guessing {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: 36px;
+}
+
+.zi-tv-guessing__main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
+.zi-tv-question {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 50px;
+  line-height: 1.15;
+}
+
+.zi-tv-hint {
+  font-size: 24px;
+}
+
+.zi-tv-final-strip {
+  margin: 0;
+  align-self: flex-start;
+  padding: 6px 16px 2px;
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+  font-family: var(--font-label);
+  font-size: 24px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.zi-tv-guessing__side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.zi-tv-clock {
+  align-self: flex-start;
+  min-width: 110px;
+  font-size: 64px;
+}
+
+.zi-tv-locks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.zi-tv-lock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  opacity: 0.55;
+}
+
+.zi-tv-lock[data-locked] {
+  opacity: 1;
+  font-weight: 700;
+}
+
+.zi-tv-lock__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zi-tv-lock__state {
+  font-family: var(--font-label);
+  letter-spacing: 0.06em;
+}
+
+/* ---------- The final round's intro card ---------- */
+.zi-tv-intro {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.zi-tv-intro__kicker {
+  font-family: var(--font-label);
+  font-size: 36px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.zi-tv-intro__title {
+  font-family: var(--font-display);
+  font-size: 110px;
+  line-height: 1;
+  color: var(--color-primary);
+}
+
+.zi-tv-intro__rule {
+  max-width: 820px;
+  font-size: 30px;
+}
+
+/* ---------- Reveal: number line on the left, points and totals on the right ---------- */
+.zi-tv-reveal {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: 30px;
+}
+
+.zi-tv-reveal__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.zi-tv-answer,
+.zi-tv-climb__count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.zi-tv-answer__value {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 1.05;
+}
+
+.zi-tv-answer:not([data-shown]) .zi-tv-answer__value {
+  opacity: 0.35;
+}
+
+.zi-tv-answer[data-shown] .zi-tv-answer__value {
+  animation: zi-tv-drop 0.5s ease-out;
+}
+
+@keyframes zi-tv-drop {
+  from {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+}
+
+/* The line: chips stand above it in rows; --x places each one from 0 (left) to 1 (right). */
+.zi-tv-line {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0 40px 34px;
+  border-bottom: 5px solid currentColor;
+}
+
+.zi-tv-line__answer {
+  position: absolute;
+  left: calc(var(--answer) * 100%);
+  bottom: -18px;
+  width: 8px;
+  height: calc(100% + 18px);
+  transform: translateX(-50%);
+  background: var(--color-primary);
+}
+
+/* The ring: a band along the line that grows out from the answer, both ways, to the farthest guess lit so far. */
+.zi-tv-line__ring {
+  position: absolute;
+  left: max(-12px, calc((var(--answer) - var(--reach)) * 100% - 12px));
+  right: max(-12px, calc((1 - var(--answer) - var(--reach)) * 100% - 12px));
+  bottom: -16px;
+  height: 27px;
+  border: 4px solid var(--color-primary);
+  border-radius: 999px;
+  transition:
+    left 0.7s ease-out,
+    right 0.7s ease-out;
+  pointer-events: none;
+}
+
+.zi-tv-line__climb {
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: calc(var(--count) * 100%);
+  height: 5px;
+  background: var(--color-primary);
+}
+
+.zi-tv-line__end {
+  position: absolute;
+  bottom: -32px;
+  font-size: 18px;
+}
+
+.zi-tv-line__end--low {
+  left: 0;
+}
+
+.zi-tv-line__end--high {
+  right: 0;
+}
+
+.zi-tv-chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zi-tv-chip {
+  position: absolute;
+  left: calc(var(--x) * 100%);
+  bottom: calc(12px + var(--row) * 62px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+
+.zi-tv-chip[data-lit],
+.zi-tv-chip[data-bust] {
+  opacity: 1;
+}
+
+.zi-tv-chip__value {
+  padding: 1px 6px;
+  background: var(--color-surface);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.zi-tv-chip[data-lit] .zi-tv-chip__value {
+  background: var(--color-primary);
+  color: var(--color-primary-ink);
+}
+
+.zi-tv-chip[data-bust] .zi-tv-chip__value {
+  text-decoration: line-through;
+}
+
+.zi-tv-chip[data-winner] .room-players__dot {
+  animation: zi-tv-flash 0.5s ease-in-out 4 alternate;
+}
+
+@keyframes zi-tv-flash {
+  to {
+    transform: scale(1.3);
+  }
+}
+
+.zi-tv-chip__way-off {
+  font-size: 14px;
+  font-family: var(--font-label);
+  letter-spacing: 0.06em;
+}
+
+.zi-tv-mark,
+.zi-tv-fact {
+  margin: 0;
+  font-size: 26px;
+}
+
+.zi-tv-mark {
+  font-family: var(--font-display);
+}
+
+/* ---------- Points and totals ---------- */
+.zi-tv-reveal__side {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.zi-tv-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 22px;
+}
+
+.zi-tv-table th,
+.zi-tv-table td {
+  padding: 5px 6px;
+  border-bottom: 1px solid currentColor;
+  text-align: left;
+  font-weight: 400;
+}
+
+.zi-tv-table thead th {
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom-width: 3px;
+}
+
+.zi-tv-table__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.zi-tv-table__name {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zi-tv-table .zi-tv-table__num {
+  width: 76px;
+  text-align: right;
+}
+
+/* The running total, set apart from this round by a rule and weight. */
+.zi-tv-table .zi-tv-table__total {
+  border-left: 3px solid currentColor;
+  font-weight: 700;
+}
+
+/* ---------- Final standings ---------- */
+.zi-tv-standings {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  font-size: 28px;
+}
+
+.zi-tv-standings__row {
+  display: grid;
+  grid-template-columns: 150px 44px 1fr 120px;
+  align-items: center;
+  gap: 16px;
+}
+
+.zi-tv-standings__row[data-top] {
+  font-family: var(--font-display);
+  font-size: 36px;
+}
+
+.zi-tv-standings__points {
+  text-align: right;
+}
+
+/* ---------- Before the game ---------- */
+.zi-tv-waiting {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.zi-tv-steps {
+  margin: 0;
+  padding-left: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 24px;
+}
+
+/* ---------- 90s arcade: pixel fonts run wide ---------- */
+:root[data-theme='arcade'] .zi-tv-question {
+  font-size: 34px;
+}
+
+:root[data-theme='arcade'] .zi-tv-intro__title {
+  font-size: 64px;
+}
+
+:root[data-theme='arcade'] .zi-tv-answer__value {
+  font-size: 40px;
+}
+
+:root[data-theme='arcade'] .zi-tv-table {
+  font-size: 14px;
+}
+
+:root[data-theme='arcade'] .zi-tv-final-strip,
+:root[data-theme='arcade'] .zi-tv-intro__kicker,
+:root[data-theme='arcade'] .zi-tv-lock__state {
+  font-size: 14px;
+}
+
+:root[data-theme='arcade'] .zi-tv-table thead th {
+  font-size: 10px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='arcade'] .zi-tv-standings__row[data-top] {
+  font-size: 26px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zi-tv-answer[data-shown] .zi-tv-answer__value,
+  .zi-tv-chip[data-winner] .room-players__dot {
+    animation: none;
+  }
+
+  .zi-tv-line__ring {
+    transition: none;
+  }
+}

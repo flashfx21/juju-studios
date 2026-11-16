@@ -3,7 +3,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react'
 import type { PlayerId } from '../types'
 import { amountText, distanceText, placeText, readGuess, tidyTyped } from './format'
-import { currentRound, finalIsNext, rules, totals, type Question, type RoundResult, type ZeroInState } from './rules'
+import { currentRound, finalIsNext, roundOrder, rules, totals, type Question, type RoundResult, type ZeroInState } from './rules'
 import '../../ui/PhoneForm.css'
 import './PhoneScreen.css'
 
@@ -177,10 +177,7 @@ function RoundTable({ state, names, player }: Pick<PhoneScreenProps, 'state' | '
   const results = round.results!
   const scores = totals(state)
   const showTotal = state.roundIndex > 0
-  const order = [...state.players].sort((a, b) => {
-    const rank = (r: RoundResult) => (r.place ?? (r.bust ? 1000 : 2000))
-    return rank(results[a]) - rank(results[b]) || (results[a].distance ?? 0) - (results[b].distance ?? 0)
-  })
+  const order = roundOrder(state.players, results)
   return (
     <table className="zi-table" data-testid="zi-table">
       <caption className="visually-hidden">Round {state.roundIndex + 1} results{showTotal ? ' and totals' : ''}</caption>
