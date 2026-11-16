@@ -4,6 +4,7 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import type { PlayerId } from '../types'
 import { amountText, distanceText, placeText, readGuess, tidyTyped } from './format'
 import { currentRound, finalIsNext, roundOrder, rules, totals, type Question, type RoundResult, type ZeroInState } from './rules'
+import { HIDDEN_GUESS } from './roomViews'
 import '../../ui/PhoneForm.css'
 import './PhoneScreen.css'
 
@@ -17,7 +18,7 @@ interface PhoneScreenProps {
   /** Seconds left to guess. Null or missing when nothing is timed. */
   secondsLeft?: number | null
   /** The guess as typed so far, so it still counts if time runs out before Lock it in. */
-  onDraft: (value: number) => void
+  onDraft: (value: number | null) => void
   onLock: (value: number) => void
   onNext: () => void
   /** Shown under the final standings, such as Play again. */
@@ -65,7 +66,8 @@ interface GuessEntryProps {
   question: Question
   /** The guess this phone already sent, after a refresh. */
   start: number | undefined
-  onDraft: (value: number) => void
+  /** Null when the box was cleared. */
+  onDraft: (value: number | null) => void
   onLock: (value: number) => void
 }
 
@@ -110,7 +112,7 @@ function GuessEntry({ question, start, onDraft, onLock }: GuessEntryProps) {
               setTyped(tidy)
               setError('')
               const value = readGuess(tidy)
-              if (value !== null) onDraft(value)
+              if (value !== null || tidy === '') onDraft(value)
             }}
           />
           {question.unitPosition === 'after' && unit}
@@ -136,7 +138,11 @@ function Guessing({ state, player, onDraft, onLock }: PhoneScreenProps) {
     <>
       {round.final && <FinalBanner />}
       <QuestionCard question={round.question} />
-      {locked && mine !== undefined ? (
+      {mine === HIDDEN_GUESS ? (
+        <p className="zi-headline" role="status" data-testid="zi-guess-loading">
+          Getting your guess
+        </p>
+      ) : locked && mine !== undefined ? (
         <p className="zi-headline" data-testid="zi-locked">
           Locked in: {amountText(mine, round.question)}
         </p>

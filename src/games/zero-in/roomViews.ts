@@ -46,12 +46,21 @@ export function privateView(state: ZeroInState, player: PlayerId): PrivateView {
   return view
 }
 
-/** What this phone shows: the public state with its own guess put back in. */
-export function stateForPhone(shared: ZeroInState, mine: PrivateView | null, player: PlayerId): ZeroInState {
-  if (!mine || mine.guess === undefined || mine.roundIndex !== shared.roundIndex || shared.phase !== 'guessing') return shared
+/**
+ * What this phone shows: the public state with its own guess put back in. Until the private view has loaded
+ * (`undefined`) the placeholder stays, so the screen can wait for the real number; a view with no guess for
+ * this round means there is none, and the placeholder goes.
+ */
+export function stateForPhone(shared: ZeroInState, mine: PrivateView | null | undefined, player: PlayerId): ZeroInState {
+  if (shared.phase !== 'guessing' || mine === undefined || !(player in currentRound(shared).guesses)) return shared
+  const guess = mine && mine.roundIndex === shared.roundIndex ? mine.guess : undefined
   return {
     ...shared,
-    rounds: shared.rounds.map((round, i) => (i === shared.roundIndex ? { ...round, guesses: { ...round.guesses, [player]: mine.guess! } } : round)),
+    rounds: shared.rounds.map((round, i) => {
+      if (i !== shared.roundIndex) return round
+      const others = Object.fromEntries(Object.entries(round.guesses).filter(([id]) => id !== player))
+      return { ...round, guesses: guess === undefined ? others : { ...others, [player]: guess } }
+    }),
   }
 }
 

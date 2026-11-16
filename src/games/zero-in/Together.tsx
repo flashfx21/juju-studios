@@ -50,6 +50,8 @@ const LANE_NAMES: Record<LaneChoice, string> = { mix: 'Mix', price: 'Prices', ye
 const BOT_LOCK_SHARE: [number, number] = [0.3, 0.85]
 /** A typed guess waits this long for the next keypress before it goes to the host as a draft. */
 const DRAFT_DELAY_MS = 400
+/** This close to the end of the round a typed guess goes at once, so the last digits count. */
+const DRAFT_RUSH_MS = 2000
 
 /** Moves sent to the host: a guess from anyone, or Next and End game from the host. */
 type RoomInput = ZeroInInput | { type: 'next' } | { type: 'end-game' }
@@ -124,14 +126,19 @@ async function publish(room: Room, state: ZeroInState, deadline: number | null, 
   if (rules.isOver(state) && !isPractice(state.players)) saveFinishedGame(room, manifest.id, rules.finishingOrder(state))
 }
 
-/** Sends the typed guess as a draft once typing pauses, so a burst of keypresses is one write. */
-function useDraftSender(send: (input: RoomInput) => void) {
+/**
+ * Sends the typed guess as a draft once typing pauses, so a burst of keypresses is one write; near the end of the
+ * round it goes at once. A cleared box takes the guess back.
+ */
+function useDraftSender(send: (input: RoomInput) => void, deadline: number | null) {
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   useEffect(() => () => clearTimeout(timer.current), [])
   return {
-    draft(value: number) {
+    draft(value: number | null) {
       clearTimeout(timer.current)
-      timer.current = setTimeout(() => send({ type: 'draft', value }), DRAFT_DELAY_MS)
+      const input: RoomInput = value === null ? { type: 'clear' } : { type: 'draft', value }
+      const rush = deadline !== null && deadline - Date.now() < DRAFT_RUSH_MS
+      timer.current = setTimeout(() => send(input), rush ? 0 : DRAFT_DELAY_MS)
     },
     lock(value: number) {
       clearTimeout(timer.current)
@@ -142,14 +149,15 @@ function useDraftSender(send: (input: RoomInput) => void) {
 
 function Game({ room, self, isHost }: RoomScreenProps) {
   const shared = JSON.parse(room.play!.state) as ZeroInState
-  const [mine, setMine] = useState<PrivateView | null>(null)
+  // Undefined until this phone's own view has loaded.
+  const [mine, setMine] = useState<PrivateView | null | undefined>(undefined)
   useEffect(() => watchPlayerView(room.code, self.uid, (view) => setMine(view as PrivateView | null)), [room.code, self.uid])
   const state = stateForPhone(shared, mine, self.uid)
   const looks = usePlayerLooks(room, state.players)
   const names = Object.fromEntries(state.players.map((id) => [id, looks[id]?.name ?? 'Player']))
   const secondsLeft = useSecondsLeft(state.phase === 'guessing' ? room.play!.deadline : null)
   const send = (input: RoomInput) => void sendInput(room.code, self.uid, input)
-  const guesses = useDraftSender(send)
+  const guesses = useDraftSender(send, state.phase === 'guessing' ? room.play!.deadline : null)
 
   if (!state.players.includes(self.uid)) {
     return (

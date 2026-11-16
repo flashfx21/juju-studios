@@ -17,6 +17,10 @@ describe('word forms', () => {
     ['bake', 'baking'],
     ['run', 'running'],
     ['car', 'cars'],
+    ['bake', 'baked'],
+    ['baking', 'bakes'],
+    ['jump', 'jumped'],
+    ['dress', 'dresses'],
   ])('matches regular forms: %s / %s', (a, b) => {
     expect(sameWordForm(a, b)).toBe(true)
   })
@@ -29,5 +33,14 @@ describe('word forms', () => {
   it('keeps different words apart', () => {
     expect(sameWordForm('house', 'horse')).toBe(false)
     expect(sameWordForm('car', 'carpet')).toBe(false)
+  })
+
+  it.each([
+    ['car', 'care'],
+    ['plan', 'plane'],
+    ['star', 'stare'],
+    ['pin', 'pine'],
+  ])('a final e makes a different word: %s / %s', (a, b) => {
+    expect(sameWordForm(a, b)).toBe(false)
   })
 })

@@ -94,8 +94,8 @@ export interface ZeroInState {
   phase: Phase
 }
 
-/** A draft can still change; a lock is final and carries the guess with it. */
-export type ZeroInInput = { type: 'draft'; value: number } | { type: 'lock'; value: number }
+/** A draft can still change, and clearing the box takes it back; a lock is final and carries the guess with it. */
+export type ZeroInInput = { type: 'draft'; value: number } | { type: 'clear' } | { type: 'lock'; value: number }
 
 export function currentRound(state: ZeroInState): Round {
   return state.rounds[state.roundIndex]
@@ -250,10 +250,14 @@ export const rules: GameRules<ZeroInState, ZeroInSettings, ZeroInInput> = {
     return { players, settings, rounds, roundIndex: 0, phase: 'guessing' }
   },
 
-  /** Drafts change until the player locks in; a lock is final. The round reveals once everyone has locked in. */
+  /** Drafts change (or are cleared) until the player locks in; a lock is final. The round reveals once everyone has locked in. */
   onInput(state, player, input) {
     const round = currentRound(state)
     if (state.phase !== 'guessing' || !state.players.includes(player) || round.locked.includes(player)) return state
+    if (input.type === 'clear') {
+      if (!(player in round.guesses)) return state
+      return withCurrentRound(state, { guesses: Object.fromEntries(Object.entries(round.guesses).filter(([id]) => id !== player)) })
+    }
     if (!isValidGuess(input.value)) return state
     const guesses = { ...round.guesses, [player]: input.value }
     if (input.type === 'draft') return withCurrentRound(state, { guesses })

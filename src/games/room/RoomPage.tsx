@@ -14,6 +14,7 @@ import { Field } from '../../ui/TextField'
 import type { PlayerId } from '../types'
 import { allBotIds, BOT_SKILLS } from './bots'
 import { BotPicker } from './BotPicker'
+import { LeaveRoom } from './LeaveRoom'
 import { roomPageFor } from './roomPages'
 import { usePlayerLooks, type PlayerLook } from './usePlayerLooks'
 import '../../ui/PhoneForm.css'
@@ -199,11 +200,23 @@ function InRoom({ code, gameId, self, Title, onLeave, children }: InRoomProps) {
     [code],
   )
 
-  // Back in after a refresh, or the room forgot this player: join again.
+  // Back in after a refresh, or the room forgot this player: join again, unless they are on their way out.
+  const leaving = useRef(false)
   const inRoom = room ? self.uid in room.players : true
   useEffect(() => {
-    if (room && !inRoom) void joinRoom(code, self.uid, gameId, self)
+    if (room && !inRoom && !leaving.current) {
+      joinRoom(code, self.uid, gameId, self).catch((error) => {
+        console.error('Joining the room again failed', error)
+        setProblem("Couldn't get back into the room. Check you're online.")
+      })
+    }
   }, [room, inRoom, code, gameId, self])
+
+  /** Forgets the room on this phone: this page's code and, for a room for the night, the lobby's too. */
+  function left() {
+    if (room?.lobby) rememberRoom(LOBBY, '')
+    onLeave()
+  }
 
   // A lobby room moves every phone along with it: game pages follow it back to the lobby or on to another game;
   // the lobby screen follows it into a game the host starts while the phone is watching.
@@ -242,11 +255,17 @@ function InRoom({ code, gameId, self, Title, onLeave, children }: InRoomProps) {
   return (
     <>
       {children({ room, self, isHost: room.host === self.uid, onLeave })}
-      <MenuItems>
-        <button type="button" data-menu-last="true" data-testid="room-leave" onClick={onLeave}>
-          Leave room
-        </button>
-      </MenuItems>
+      <LeaveRoom
+        room={room}
+        uid={self.uid}
+        onLeaving={() => {
+          leaving.current = true
+        }}
+        onStayed={() => {
+          leaving.current = false
+        }}
+        onLeft={left}
+      />
       {problem && (
         <p className="preview-note" role="alert">
           {problem}

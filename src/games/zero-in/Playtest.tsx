@@ -46,7 +46,7 @@ export function Playtest() {
             player={YOU}
             names={NAMES}
             isHost
-            onDraft={(value) => setState(rules.onInput(state, YOU, { type: 'draft', value }, context()))}
+            onDraft={(value) => setState(rules.onInput(state, YOU, value === null ? { type: 'clear' } : { type: 'draft', value }, context()))}
             onLock={(value) => setState(rules.onInput(state, YOU, { type: 'lock', value }, context()))}
             onNext={() => setState(rules.onTimer(state, context()))}
             summaryAction={

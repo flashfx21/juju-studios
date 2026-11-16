@@ -94,12 +94,7 @@ export function watchOpenRooms(onChange: (rooms: OpenRoom[]) => void, onError: (
   )
 }
 
-/** Admin only: closes a stuck room, with its hidden game data. Phones in it see the room is gone. */
-export async function closeRoom(code: string): Promise<void> {
-  const { database } = firebaseBackend()
-  await remove(ref(database, `roomSecrets/${code}`))
-  await remove(ref(database, `rooms/${code}`))
-}
+export { closeRoom } from './rooms'
 
 /** Admin only: deletes a bad or test game, so it stops counting on the leaderboard and in Stats. */
 export function deleteResult(id: string): Promise<void> {

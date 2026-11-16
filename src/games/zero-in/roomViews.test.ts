@@ -44,6 +44,15 @@ describe('private views', () => {
     expect(currentRound(forAna).guesses.bo).not.toBe(5678)
     expect(privateView(state, 'cy').guess).toBeUndefined()
   })
+
+  it('keeps the placeholder until the view loads, and drops it when the view has no guess', () => {
+    const state = game()
+    const shared = publicState(state)
+    expect(stateForPhone(shared, undefined, 'bo')).toBe(shared)
+    expect('bo' in currentRound(stateForPhone(shared, null, 'bo')).guesses).toBe(false)
+    expect('bo' in currentRound(stateForPhone(shared, { roundIndex: 3, guess: 9 }, 'bo')).guesses).toBe(false)
+    expect(currentRound(stateForPhone(shared, privateView(state, 'bo'), 'bo')).guesses.bo).toBe(5678)
+  })
 })
 
 describe('bots', () => {

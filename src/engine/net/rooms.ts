@@ -138,6 +138,22 @@ export async function joinRoom(code: string, uid: string, game: string, player: 
   return 'joined'
 }
 
+/** Leaves a room: this player's entry and vote go, so later games don't deal them in. */
+export function leaveRoom(code: string, uid: string): Promise<void> {
+  return update(ref(firebaseBackend().database), { [`rooms/${code}/players/${uid}`]: null, [`rooms/${code}/votes/${uid}`]: null })
+}
+
+/** Host only: hands the room to another player in it (their phone runs the games from here), then leaves. */
+export async function passHost(code: string, uid: string, to: string): Promise<void> {
+  await set(roomRef(code, 'host'), to)
+  await leaveRoom(code, uid)
+}
+
+/** The host or an admin: closes the room for everyone, with its hidden game data. Phones in it see the room is gone. */
+export function closeRoom(code: string): Promise<void> {
+  return update(ref(firebaseBackend().database), { [`roomSecrets/${code}`]: null, [`rooms/${code}`]: null })
+}
+
 /** Calls back with the room (null if it doesn't exist) and again on every change. Returns a stop function. */
 export function watchRoom(code: string, onChange: (room: Room | null) => void, onError: (error: Error) => void): () => void {
   return onValue(

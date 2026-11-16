@@ -31,12 +31,14 @@ export function resultIdFor(room: Room): string | null {
   return room.play?.startedAt ? `${room.code}-${room.play.startedAt}` : null
 }
 
-/** Ids this device has already saved, so a host that keeps publishing a finished game saves it once. */
+/** Ids this device has already saved (or is saving), so a finished game that is published again saves once. */
 const saved = new Set<string>()
 
 /**
  * Host only: saves a finished game's places and points for the people in it. Saving the same game again does
  * nothing (the rules refuse to change a saved result). In a lobby room the game joins the night's session.
+ * The write is sent without reading first, so a phone that is offline when the game ends keeps it queued and
+ * saves once it's back online.
  */
 export async function saveResult(room: Room, game: string, players: Record<string, PlayerResult>, size: number): Promise<void> {
   const id = resultIdFor(room)
@@ -44,9 +46,13 @@ export async function saveResult(room: Room, game: string, players: Record<strin
   saved.add(id)
   const at = Date.now()
   try {
-    const existing = await get(resultRef(id))
-    // The server stamps the time, so a result can't be dated past a later leaderboard reset.
-    if (!existing.exists()) await set(resultRef(id), { game, room: room.code, at: serverTimestamp(), size, players })
+    try {
+      // The server stamps the time, so a result can't be dated past a later leaderboard reset.
+      await set(resultRef(id), { game, room: room.code, at: serverTimestamp(), size, players })
+    } catch (refused) {
+      // Refused is fine when the result is already there (this host reloaded after saving it); anything else is a real failure.
+      if (!(await get(resultRef(id))).exists()) throw refused
+    }
     if (room.lobby) {
       const points = Object.fromEntries(Object.entries(players).map(([uid, result]) => [uid, result.points]))
       await addSessionGame(room.code, id, { game, at, points })

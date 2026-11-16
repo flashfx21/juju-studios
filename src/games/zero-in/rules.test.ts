@@ -35,6 +35,18 @@ function round(guesses: Record<string, number>, final = false, answer = 14): Rou
   return { question: { ...QUESTION, answer }, final, guesses, locked: [], results: null }
 }
 
+describe('clearing a draft', () => {
+  it('takes the guess back until the player locks in', () => {
+    const ctx = { now: 0, random: Math.random }
+    let state = rules.setup(['ana', 'bo', 'cy'], DEFAULT_SETTINGS, ctx)
+    state = rules.onInput(state, 'ana', { type: 'draft', value: 500 }, ctx)
+    state = rules.onInput(state, 'ana', { type: 'clear' }, ctx)
+    expect('ana' in currentRound(state).guesses).toBe(false)
+    state = rules.onInput(state, 'bo', { type: 'lock', value: 7 }, ctx)
+    expect(rules.onInput(state, 'bo', { type: 'clear' }, ctx)).toBe(state)
+  })
+})
+
 describe('manifest', () => {
   it('offers the settings the rules use', () => {
     const setting = (id: string) => manifest.settings.find((s) => s.id === id)
