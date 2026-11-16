@@ -1,6 +1,6 @@
 # Games
 
-One spec per game. Source of truth for ideas and history: `../game-night-suite-ideas-2233.md`. Updated Nov 12, 2026.
+One spec per game. Source of truth for ideas and history: `../game-night-suite-ideas-2233.md`. Updated Nov 16, 2026.
 
 Games are named with their number in this repo's docs and notes ("06 Pin Drop"). Ids, folders and on-screen titles have no number.
 
@@ -25,7 +25,7 @@ Every game is in exactly one phase. It moves on when it meets that phase's exit 
 |---|---|---|---|---|
 | 01 | No Filler | `01-no-filler.md` | Design | 2 |
 | 02 | Dial It In | `02-dial-it-in.md` | Development | 1 |
-| 03 | Closest Without Going Over (working title) | `03-closest-without-going-over.md` | Not Started | 3 |
+| 03 | Zero In | `03-zero-in.md` | Design (rules final) | 3 |
 | 04 | Chainword (working name) | `04-chainword.md` | Development | 1 (first cartridge) |
 | 05 | Sketch Showdown | `05-sketch-showdown.md` | Development | 2 (the idea log says 3) |
 | 06 | Pin Drop (working title) | `06-pin-drop.md` | Development | 1 |
@@ -35,6 +35,7 @@ Every game is in exactly one phase. It moves on when it meets that phase's exit 
 | 10 | Maze chase (name open) | `10-maze-chase.md` | Not Started | 3 |
 | 11 | Snake arena (name open) | `11-snake-arena.md` | Not Started | 3, last |
 | 12 | Don't Jinx It | `12-dont-jinx-it.md` | Development | 1 (individual mode; team mode follows teams in phase 2) |
+| 13 | Dibs | `13-dibs.md` | Design (rules final) | Not set |
 
 Each spec's Status line carries the detail: what is done and what is left.
 

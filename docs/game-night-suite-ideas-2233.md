@@ -21,11 +21,12 @@ The point of phasing: each phase should add as few new engine pieces as possible
 |---|---|---|---|---|
 | No Filler | Keep | Lobby, turns, timer, voting, packs, leaderboard | Prompt deck (exists) | M (builds the engine) |
 | Dial It In | Approved | Private number entry, optional dial | Spectrum card pack | S |
-| Closest Without Going Over | Liked | Private number entry | Question pack (prices, years, numbers) | S |
+| Zero In (was Closest Without Going Over) | Rules final (Nov 16) | Private number entry | Question pack (prices, years, numbers) | S |
 | Chainword (working name) | Active | Private text entry, per-player progress on TV | Word list | M |
 | Sketch Showdown | Active | Teams, live drawing sent phone to TV | Clue list | M to L |
 | Pin Drop | To test | Map on phone, photo packs | Photo packs with locations | M |
 | Don't Jinx It (one-word clue game) | New, phase 1 | Private text entry, duplicate matching, teams (for team mode) | Mystery word list | S to M |
+| Dibs (#13, was "Category race") | Rules final (Nov 16), launch phase not set | Private text entry, fast claim check by the host, group voting with named reveal (shared with No Filler) | Category list | M |
 | Hidden traitor (working title) | Marquee candidate | Secret roles, multi-step rounds, missions borrowed from other games | Mission set | L |
 | Word Agents | Deep dive later | Teams, secret key on some phones, grid on TV | Word list | M |
 | Curated board game | Deep dive later | Board on TV, spinner, choices, longer saves | Board, events, careers | L to XL |
@@ -45,7 +46,7 @@ No Filler brings turns and Clean / Filler voting. Sketch Showdown brings teams a
 
 **Phase 3: Everything else, in suggested build order**
 Each game reuses what an earlier one built.
-1. Closest Without Going Over: private number entry from Dial It In; the smallest game left
+1. Zero In (was Closest Without Going Over): private number entry from Dial It In; the smallest game left
 2. Word Agents: teams from phase 2, plus a secret key on some phones
 3. Hidden traitor marquee game: secret roles and multi-step rounds; its missions borrow from other games, so it comes after several exist
 4. Curated board game: the biggest scope item
@@ -71,7 +72,8 @@ Full specs per game live in `games/`. Summary:
 
 - **No Filler (keep):** name 3 before time runs out, no filler words. Easy 1 / Medium 2 / Hard 3; first to 15; others vote Clean or Filler. Also a prompt test bench.
 - **Dial It In (approved):** private guesses on a spectrum; number entry 1 to 50 or 1 to 100; experiment with a dial. Open: individual or team-average scoring.
-- **Closest Without Going Over (liked):** guess a price, year or number; closest without going over. Open: content and penalty.
+- **Zero In (was Closest Without Going Over; rules final Nov 16):** guess a price, year or number; closest wins, over or under; the final round is don't go over. Spec: `games/03-zero-in.md`.
+- **Dibs (#13, added Nov 16):** a category, then a letter; race to claim an answer; first claim keeps it; the group challenges and votes. Spec: `games/13-dibs.md`.
 - **Chainword (working name):** chain of 3 or 5 words, fewest guesses wins; hard mode is an option, off by default (Nov 11). Open: name, hard mode scope, caps and tiebreakers.
 - **Sketch Showdown:** two teams, two drawers, same clue; first team to guess wins; both sketches shown after. Open: can teams see each other's sketch.
 - **Pin Drop:** photos only; Wikimedia Commons and Mapillary to explore; OpenStreetMap on the phone.
@@ -109,7 +111,6 @@ Wavelength, Codenames, Wordle, Just One, The Traitors, Pac-Man, Candy Land, Chut
 - Chainword: name; guess cap, miss penalty, tiebreaker
 - Sketch Showdown: can teams see each other's sketch; drawer rotation; scoring
 - Dial It In: individual scoring or team average?
-- Closest Without Going Over: what gets guessed; going-over penalty
 - Pin Drop: Wikimedia or Mapillary first
 - Hidden traitor: name, rounds, mission types
 - Lobby game choice: default to group vote or leader pick?

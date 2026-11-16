@@ -40,12 +40,12 @@ export const LINEUP: LineupGame[] = [
     status: 'coming-soon',
   },
   {
-    id: 'closest-without-going-over',
+    id: 'zero-in',
     number: '03',
-    phase: 'not-started',
-    title: 'Closest Without Going Over',
+    phase: 'design',
+    title: 'Zero In',
     tag: 'Game show',
-    pitch: 'Guess the price, year or number. Closest without going over.',
+    pitch: "Guess a price, year or number. Closest wins. The final round: don't go over.",
     status: 'coming-soon',
   },
   {
@@ -128,6 +128,15 @@ export const LINEUP: LineupGame[] = [
     title: "Don't Jinx It",
     tag: 'Words',
     pitch: 'Give one-word clues to the guesser. Matching clues cancel out.',
+    status: 'coming-soon',
+  },
+  {
+    id: 'dibs',
+    number: '13',
+    phase: 'design',
+    title: 'Dibs',
+    tag: 'Words',
+    pitch: 'A category, then a letter. Race to claim an answer that fits. First claim keeps it.',
     status: 'coming-soon',
   },
 ]

@@ -16,7 +16,7 @@ export const GAME_TILE_COLORS: Record<LobbyStyleId, Record<string, TileColors>> 
   'game-show': {
     'no-filler': { bg: '#F0592A', ink: '#12204A' },
     'dial-it-in': { bg: '#F2B630', ink: '#12204A' },
-    'closest-without-going-over': { bg: '#F6E7C8', ink: '#12204A' },
+    'zero-in': { bg: '#F6E7C8', ink: '#12204A' },
     chainword: { bg: '#177A74', ink: '#FFF6D6' },
     'sketch-showdown': { bg: '#C2302B', ink: '#FFF6D6' },
     'pin-drop': { bg: '#3563C7', ink: '#FFF6D6' },
@@ -26,7 +26,7 @@ export const GAME_TILE_COLORS: Record<LobbyStyleId, Record<string, TileColors>> 
   arcade: {
     'no-filler': { bg: '#141414', ink: '#FFFFFF', accent: '#39FF6A' },
     'dial-it-in': { bg: '#FF6A13', ink: '#FFFFFF', accent: '#FF8A3D' },
-    'closest-without-going-over': { bg: '#22E4FF', ink: '#FFFFFF', accent: '#FFE600' },
+    'zero-in': { bg: '#22E4FF', ink: '#FFFFFF', accent: '#FFE600' },
     chainword: { bg: '#FFE600', ink: '#FFFFFF', accent: '#FFE600' },
     'sketch-showdown': { bg: '#FF2EA6', ink: '#FFFFFF', accent: '#22E4FF' },
     'pin-drop': { bg: '#2E2A3A', ink: '#FFFFFF', accent: '#39FF6A' },
@@ -36,7 +36,7 @@ export const GAME_TILE_COLORS: Record<LobbyStyleId, Record<string, TileColors>> 
   'rec-room': {
     'no-filler': { bg: '#0B0B0B', ink: '#F5D000', stripe: ['#2DBE4E', '#F5D000', '#E5322B'] },
     'dial-it-in': { bg: '#B0461A', ink: '#F3EBD3', stripe: ['#D9A21B', '#F3EBD3'] },
-    'closest-without-going-over': {
+    'zero-in': {
       bg: '#F3EBD3',
       ink: '#A23F15',
       stripe: ['#D9A21B', '#C8551F', '#7A8B3A', '#5A3A22'],

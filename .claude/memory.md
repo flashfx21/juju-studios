@@ -77,6 +77,8 @@
 
 - 2026-11-16: Third feedback round (Julian). Answers: 2-person games don't count (practice: Dial It In and Sketch Showdown only; Pin Drop and Chainword with 2 still count). Two questions went unanswered, so I took my recommended defaults: "end early" means End game for the current game (host menu: Save results so far / End without saving / Keep playing), not changes to End the night; Sketch Showdown with 2 or 3 people and no bots adds a 2-bot Casual team. Built: Sketch Showdown player views up to 1,000,000 characters (was 4,000, the cause of guesses not showing); Dial It In Lock in beside the typed box with the dial filling the spare height in rooms; every phone screen's Back/Home/Leave room/Exit game in the top-left menu (`src/ui/FrameMenu.tsx`: `MenuItems` and `FrameCorner` portal into the frame's top row, badge on the right; Exit game is one tap now that the menu is the first tap); host's phone remembers dealt pack items per game (`juju.recentlyDealt.<game>`, `RulesContext.recent`, `freshFirst`) and Chainword re-rolls chain codes to avoid recent words; lobby ties get the host's Random (picks one tied game and starts it), the seeded tie pick is gone.
 
+- 2026-11-16: Two new specs from Julian: 03 Closest Without Going Over is now **Zero In** (id `zero-in`, spec `docs/games/03-zero-in.md`; closest wins over or under, final round don't go over) and **13 Dibs** (id `dibs`, `docs/games/13-dibs.md`; category and letter race, first claim keeps it, challenges and group vote). Both Design with rules final, in the lineup as coming soon; Dibs has no launch phase and no tile colors yet. Two spec claims corrected against the repo: No Filler has not decided its tie rule or named vote reveal, and the cleanup Dibs needs is Sketch Showdown's `cleanGuess` (Don't Jinx It only lowercases), which still lacks "&" = "and" and accent folding. Which to build first: pending Julian (I recommended Zero In).
+
 ## Preferences
 - Julian wants each step explained briefly as we go (relearning mode).
 - Julian prefers getting to visible UI early rather than waiting on backend decisions.
@@ -156,3 +158,4 @@
 ### Week of 2026-11-16
 - Done: third feedback round (2-person practice for Dial It In and Sketch Showdown, Sketch Showdown guesses fixed, Dial It In Lock in on short phones, top-left menu everywhere, no repeats across games, lobby Random, End game early), rules deployed.
 - Next: Julian's next test run; answers on the two defaults I took (End game scope, Sketch auto bot team).
+- Done: Zero In and Dibs specs added (03 renamed, 13 new), lineup updated. Next: Julian picks which to build first.
