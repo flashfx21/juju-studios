@@ -133,7 +133,7 @@ Reports a finishing order only: by points, then round wins, then shared places. 
 ## Content pack
 - **Format:** `packs/dibs/categories.json`, each category with id, name and tag (JSON like the other packs in this repo).
 - **Tags:** Family or Adult. Adult means grown-up topics, never explicit. The suite is played with ages 8 and up.
-- **Writing rule:** a category needs answers for at least 15 of the 20 letters. The starter list below hasn't been checked against this yet.
+- **Writing rule:** a category needs answers for at least 15 of the 20 letters. All 40 starters pass (checked Nov 16, 2026: `packs/dibs/letter-check.md`); the lowest is Bills you pay at 18.
 - **Launch:** 40 categories for playtests. Don't mark the game Playable until there are about 100, since a night shouldn't repeat a category.
 - No category repeats within a night, across games.
 
@@ -248,7 +248,7 @@ Don't Jinx It is cooperative clue-giving where matching words destroy each other
 2. **2 players (decided Nov 16):** the author votes at 2 players, so a challenge only wins by agreement (a tie keeps the answer). Minimum is 2; a 2-player game is practice and isn't saved.
 3. **Playtest numbers:** race timer, challenge window, vote time, challenge limit (1) and failed-challenge cost (1 point), point values.
 4. **Taken speed:** does the phone-to-host-to-phone round trip feel instant on the free Firebase plan?
-5. **Pack size:** grow from 40 to about 100 before Playable; check every category against the 15-of-20-letters rule.
+5. **Pack size:** grow from 40 to about 100 before Playable; check each new category against the 15-of-20-letters rule. Open from the check: six phrase categories (snow day, first dates, getting old, work meetings, leaving parties, skipping the gym) let any letter through by rewording, and Shows to binge overlaps TV shows.
 6. **Look and brand:** palette, type and the letter-drop moment are open for Visual design.
 
 ## Naming and IP
