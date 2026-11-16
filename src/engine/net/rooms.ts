@@ -13,6 +13,7 @@ import {
   update,
   type DatabaseReference,
 } from 'firebase/database'
+import { fromSharedTime, onClockChange, toSharedTime } from './clock'
 import { firebaseBackend } from './firebase'
 
 /** What other players see of someone in a room. */
@@ -38,7 +39,10 @@ export interface Room {
   votes: Record<string, string>
   /** By player id (the sign-in uid), in the order they joined. */
   players: Record<string, RoomPlayer & { joinedAt: number }>
-  /** The game's state, written by the host. Null before the game starts. `startedAt` names this game for its saved result. */
+  /**
+   * The game's state, written by the host. Null before the game starts. `startedAt` names this game for its saved result.
+   * `deadline` is on this device's clock (the room keeps it in server time), so it compares with Date.now() on every phone.
+   */
   play: { state: string; deadline: number | null; startedAt: number | null } | null
   /** What each player (or bot) shares about their own game, as JSON, for games where every phone plays its own copy. */
   progress: Record<string, string>
@@ -156,15 +160,16 @@ export function closeRoom(code: string): Promise<void> {
 
 /** Calls back with the room (null if it doesn't exist) and again on every change. Returns a stop function. */
 export function watchRoom(code: string, onChange: (room: Room | null) => void, onError: (error: Error) => void): () => void {
-  return onValue(
-    roomRef(code),
-    (snapshot) => {
-      const value = snapshot.val()
-      if (!value) {
-        onChange(null)
-        return
-      }
-      onChange({
+  let latest: { value: unknown } | undefined
+  function tell() {
+    if (!latest) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const value = latest.value as any
+    if (!value) {
+      onChange(null)
+      return
+    }
+    onChange({
         code,
         host: value.host,
         game: value.game,
@@ -172,7 +177,11 @@ export function watchRoom(code: string, onChange: (room: Room | null) => void, o
         votes: value.votes ?? {},
         players: value.players ?? {},
         play: value.play
-          ? { state: value.play.state, deadline: value.play.deadline ?? null, startedAt: value.play.startedAt ?? null }
+          ? {
+              state: value.play.state,
+              deadline: typeof value.play.deadline === 'number' ? fromSharedTime(value.play.deadline) : null,
+              startedAt: value.play.startedAt ?? null,
+            }
           : null,
         progress: value.progress ?? {},
         session: {
@@ -181,9 +190,21 @@ export function watchRoom(code: string, onChange: (room: Room | null) => void, o
           ended: value.session?.ended === true,
         },
       })
+  }
+  const stopRoom = onValue(
+    roomRef(code),
+    (snapshot) => {
+      latest = { value: snapshot.val() }
+      tell()
     },
     onError,
   )
+  // A deadline read before this device knew how far its clock is off is told again once it does.
+  const stopClock = onClockChange(tell)
+  return () => {
+    stopRoom()
+    stopClock()
+  }
 }
 
 /** Players in the order they joined. */
@@ -193,14 +214,19 @@ export function playerIds(room: Room): string[] {
     .map(([uid]) => uid)
 }
 
+/** A deadline on the host's clock, in the server time the room keeps it in. */
+function sharedDeadline(deadline: number | null): number | null {
+  return deadline === null ? null : Math.round(toSharedTime(deadline))
+}
+
 /** Host only: starts a game with its first state, stamped with the start time that names its saved result. */
 export function startPlay(code: string, state: unknown, deadline: number | null): Promise<void> {
-  return set(roomRef(code, 'play'), { state: JSON.stringify(state), deadline, startedAt: Date.now() })
+  return set(roomRef(code, 'play'), { state: JSON.stringify(state), deadline: sharedDeadline(deadline), startedAt: Date.now() })
 }
 
 /** Host only: saves the game state (as JSON, so empty lists survive) and when the current timer runs out. */
 export function writePlay(code: string, state: unknown, deadline: number | null): Promise<void> {
-  return update(roomRef(code, 'play'), { state: JSON.stringify(state), deadline })
+  return update(roomRef(code, 'play'), { state: JSON.stringify(state), deadline: sharedDeadline(deadline) })
 }
 
 /** The paths that hold a room's game: clearing them all in one write leaves no half-cleared room. */

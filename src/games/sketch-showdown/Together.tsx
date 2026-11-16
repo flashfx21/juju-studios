@@ -14,6 +14,7 @@ import {
   writePlayerView,
   type Room,
 } from '../../engine/net/rooms'
+import { fromSharedTime, toSharedTime } from '../../engine/net/clock'
 import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { paceLabels } from '../../engine/pace'
 import { seededRandom } from '../../engine/seededRandom'
@@ -156,7 +157,10 @@ function SketchWaitingRoom({ room, isHost }: RoomScreenProps) {
 async function publish(room: Room, state: SketchShowdownState, deadline: number | null, starting = false): Promise<void> {
   await writeHostGame(room.code, state)
   for (const player of [...state.teams[0], ...state.teams[1]]) {
-    if (!botFor(player)) await writePlayerView(room.code, player, playerView(state, player))
+    if (botFor(player)) continue
+    const view = playerView(state, player)
+    // The lockout's end goes out in server time; each phone reads it back on its own clock.
+    await writePlayerView(room.code, player, { ...view, lockedUntil: toSharedTime(view.lockedUntil) })
   }
   const shared: SharedPlay = {
     teams: state.teams,
@@ -210,7 +214,14 @@ function useOwnDrawing(view: PlayerView | null) {
 function Game({ room, self, isHost }: RoomScreenProps) {
   const shared = JSON.parse(room.play!.state) as SharedPlay
   const [view, setView] = useState<PlayerView | null>(null)
-  useEffect(() => watchPlayerView(room.code, self.uid, (mine) => setView(mine as PlayerView | null)), [room.code, self.uid])
+  useEffect(
+    () =>
+      watchPlayerView(room.code, self.uid, (mine) => {
+        const sent = mine as PlayerView | null
+        setView(sent && { ...sent, lockedUntil: fromSharedTime(sent.lockedUntil) })
+      }),
+    [room.code, self.uid],
+  )
   const players = [...shared.teams[0], ...shared.teams[1]]
   const looks = usePlayerLooks(room, players)
   const names = Object.fromEntries(players.map((id) => [id, looks[id]?.name ?? 'Player']))

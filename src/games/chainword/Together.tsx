@@ -2,6 +2,7 @@
 // ABOUTME: Only a chain code goes through the room; each phone shares word results, and its guesses once a word is done.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { clearPlay, startPlay, writePlay, writeProgress, type Room } from '../../engine/net/rooms'
+import { sharedNow } from '../../engine/net/clock'
 import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
@@ -59,11 +60,11 @@ function gameOver(play: ChainPlay, shared: Record<PlayerId, Progress>, now: numb
   return everyoneFinished(play.players, shared) || (stopped !== null && now >= stopped + REPORT_GRACE_MS)
 }
 
-/** Ticks once a second, so the clock and anything waiting on it stay current. */
+/** The shared clock, ticking once a second: every phone sees the same time left, and finish times compare fairly. */
 function useNow(): number {
-  const [now, setNow] = useState(() => Date.now())
+  const [now, setNow] = useState(() => sharedNow())
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000)
+    const timer = setInterval(() => setNow(sharedNow()), 1000)
     return () => clearInterval(timer)
   }, [])
   return now
@@ -127,7 +128,7 @@ function ChainwordWaitingRoom({ room, isHost }: RoomScreenProps) {
       onStart={(players) => {
         const chainCode = freshChainCode(settings, Math.random, recentlyDealt(manifest.id))
         rememberDealt(manifest.id, chainFor(chainCode))
-        const play: ChainPlay = { chainCode, players, startedAt: Date.now(), endedAt: null }
+        const play: ChainPlay = { chainCode, players, startedAt: sharedNow(), endedAt: null }
         void startPlay(room.code, play, null)
       }}
       settings={
@@ -238,12 +239,12 @@ function Game({ room, self, isHost }: RoomScreenProps) {
   return (
     <>
       {isHost && play.endedAt === null && !over && (
-        <EndGameEarly room={room} onSave={() => void writePlay(room.code, { ...play, endedAt: Date.now() }, null)} />
+        <EndGameEarly room={room} onSave={() => void writePlay(room.code, { ...play, endedAt: sharedNow() }, null)} />
       )}
       <PhoneScreen
         state={shown}
         player={self.uid}
-        onGuess={(word) => update(rules.onInput(state, self.uid, { type: 'guess', word }, { now: Date.now(), random: Math.random }))}
+        onGuess={(word) => update(rules.onInput(state, self.uid, { type: 'guess', word }, { now: sharedNow(), random: Math.random }))}
         infoLine={<InfoLine room={room} play={play} />}
         others={over ? others : undefined}
         summaryAction={<Results room={room} play={play} isHost={isHost} />}
@@ -357,7 +358,7 @@ function BotRunner({ room }: { room: Room }) {
     function tick() {
       for (const id of bots) {
         const stopped = play.endedAt ?? deadlineOf(play)
-        const progress = botProgress(`${room.code}-${play.chainCode}-${id}`, botFor(id)!.skill, chainLength, Date.now() - play.startedAt, stopped - play.startedAt)
+        const progress = botProgress(`${room.code}-${play.chainCode}-${id}`, botFor(id)!.skill, chainLength, sharedNow() - play.startedAt, stopped - play.startedAt)
         const json = JSON.stringify(progress)
         if (written.current[id] === json) continue
         written.current[id] = json
