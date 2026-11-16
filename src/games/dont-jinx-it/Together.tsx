@@ -21,8 +21,8 @@ import { OptionRow } from '../../ui/OptionRow'
 import { PLAYER_COLOR_IDS, type PlayerColorId } from '../../ui/playerColors'
 import { botFor } from '../room/bots'
 import { EndGameEarly } from '../room/EndGameEarly'
-import { saveFinishedGame } from '../room/saveFinishedGame'
-import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { isPractice, saveFinishedGame } from '../room/saveFinishedGame'
+import { BackToLobby, PracticeNote, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { FinishingOrder, PlayerId, RulesContext } from '../types'
 import { manifest } from './manifest'
@@ -122,6 +122,7 @@ function JinxWaitingRoom({ room, isHost }: RoomScreenProps) {
             value={settings.longGame ? 'on' : 'off'}
             onChoose={(choice) => setSettings({ ...settings, longGame: choice === 'on' })}
           />
+          <PracticeNote room={room} />
         </>
       }
     />
@@ -145,7 +146,7 @@ async function publish(room: Room, state: DontJinxItState, deadline: number | nu
     standings: rules.isOver(state) ? rules.finishingOrder(state) : null,
   }
   await (starting ? startPlay : writePlay)(room.code, shared, deadline)
-  if (rules.isOver(state)) saveFinishedGame(room, manifest.id, rules.finishingOrder(state))
+  if (rules.isOver(state) && !isPractice(state.players)) saveFinishedGame(room, manifest.id, rules.finishingOrder(state))
 }
 
 /** How each player appears: people as their room entry, bots as their own look. */
@@ -223,6 +224,7 @@ function Game({ room, self, isHost }: RoomScreenProps) {
         }
         summaryAction={
           <>
+            {isPractice(shared.players) && <PracticeNote room={room} over />}
             {isHost && (
               <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
                 Play again

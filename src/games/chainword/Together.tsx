@@ -5,9 +5,9 @@ import { clearPlay, startPlay, writePlay, writeProgress, type Room } from '../..
 import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
-import { BackToLobby, PlayerDot, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { BackToLobby, PlayerDot, PracticeNote, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { EndGameEarly } from '../room/EndGameEarly'
-import { saveFinishedGame } from '../room/saveFinishedGame'
+import { isPractice, saveFinishedGame } from '../room/saveFinishedGame'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { PlayerId } from '../types'
@@ -156,6 +156,7 @@ function ChainwordWaitingRoom({ room, isHost }: RoomScreenProps) {
             value={settings.hardMode ? 'on' : 'off'}
             onChoose={(choice) => setSettings({ ...settings, hardMode: choice === 'on' })}
           />
+          <PracticeNote room={room} />
         </>
       }
     />
@@ -318,6 +319,7 @@ function Results({ room, play, isHost }: { room: Room; play: ChainPlay; isHost: 
         ))}
       </ol>
       {!over && <p className="cwt-results__note">Waiting for everyone to finish{isHost ? ', or end the game from the menu' : ''}.</p>}
+      {over && isPractice(play.players) && <PracticeNote room={room} over />}
       {isHost && over && (
         <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
           Play again
@@ -335,7 +337,7 @@ function ResultSaver({ room }: { room: Room }) {
   const now = useNow()
   const over = gameOver(play, shared, now)
   useEffect(() => {
-    if (over) saveFinishedGame(room, manifest.id, finishingOrderOf(standings(play.players, shared)))
+    if (over && !isPractice(play.players)) saveFinishedGame(room, manifest.id, finishingOrderOf(standings(play.players, shared)))
   })
   return null
 }

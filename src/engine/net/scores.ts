@@ -1,7 +1,7 @@
 // ABOUTME: Everything the leaderboard counts: saved results, admin score changes (scoreAdjustments) and resets (scoreResets).
 // ABOUTME: Any verified player reads them; only admins write changes and resets. Saved results are never edited, only deleted by an admin.
 
-import { onValue, push, ref, set } from 'firebase/database'
+import { onValue, push, ref, serverTimestamp, set } from 'firebase/database'
 import type { ScoreAdjustment, ScoreResets } from '../leaderboard'
 import { firebaseBackend } from './firebase'
 import { asResults, type GameResult } from './results'
@@ -50,15 +50,15 @@ export function watchScores(onChange: (scores: Scores) => void, onError: (error:
 
 /** Admin only: adds or takes away points for a player, with a reason. */
 export async function addScoreAdjustment(uid: string, points: number, reason: string, by: string): Promise<void> {
-  await set(push(ref(firebaseBackend().database, 'scoreAdjustments')), { uid, points, reason, by, at: Date.now() })
+  await set(push(ref(firebaseBackend().database, 'scoreAdjustments')), { uid, points, reason, by, at: serverTimestamp() })
 }
 
 /** Admin only: this player's leaderboard starts again from 0 now. Their saved games stay in the database. */
 export function resetPlayerScores(uid: string): Promise<void> {
-  return set(ref(firebaseBackend().database, `scoreResets/players/${uid}`), Date.now())
+  return set(ref(firebaseBackend().database, `scoreResets/players/${uid}`), serverTimestamp())
 }
 
 /** Admin only: a new season. Everyone's leaderboard starts again from 0 now. */
 export function resetEveryonesScores(): Promise<void> {
-  return set(ref(firebaseBackend().database, 'scoreResets/everyone'), Date.now())
+  return set(ref(firebaseBackend().database, 'scoreResets/everyone'), serverTimestamp())
 }

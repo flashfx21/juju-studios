@@ -52,11 +52,10 @@ export function PinDropTitle() {
   )
 }
 
+/** The players as the map draws them. The list only changes when a look does, so the map keeps its pins (and a drag in progress). */
 function useMapPlayers(state: PinDropState, looks: Record<PlayerId, PlayerLook>): MapPlayer[] {
-  return useMemo(
-    () => state.players.map((id) => ({ id, initials: looks[id].initials, color: looks[id].color, symbol: looks[id].symbol })),
-    [state.players, looks],
-  )
+  const drawn = JSON.stringify(state.players.map((id) => ({ id, initials: looks[id].initials, color: looks[id].color, symbol: looks[id].symbol })))
+  return useMemo(() => JSON.parse(drawn) as MapPlayer[], [drawn])
 }
 
 /** The round clock and how many have locked in, in one line above the photo. */

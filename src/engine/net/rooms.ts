@@ -1,4 +1,4 @@
-// ABOUTME: Game rooms in the Realtime Database at rooms/{code}: who hosts, who joined, the game state, inputs, and progress.
+// ABOUTME: Game rooms in the Realtime Database at rooms/{code}: who hosts, who joined, the game state and progress; secrets and inputs at roomSecrets/{code}.
 // ABOUTME: The host's device runs the game. A lobby room lasts the night: it votes, then switches from game to game.
 
 import {
@@ -93,8 +93,13 @@ function newCode(): string {
   return Array.from({ length: CODE_LENGTH }, () => CODE_LETTERS[Math.floor(Math.random() * CODE_LETTERS.length)]).join('')
 }
 
+/** Only what a room shows of a player: whatever else the caller's object carries stays out of the room. */
+function shownPlayer({ username, initials, color, symbol }: RoomPlayer): RoomPlayer {
+  return symbol ? { username, initials, color, symbol } : { username, initials, color }
+}
+
 function joinAs(code: string, uid: string, player: RoomPlayer): Promise<void> {
-  return set(roomRef(code, `players/${uid}`), { ...player, joinedAt: serverTimestamp() })
+  return set(roomRef(code, `players/${uid}`), { ...shownPlayer(player), joinedAt: serverTimestamp() })
 }
 
 /** Opens a new room hosted by this player and joins it. Tries new codes if one is taken. Pass LOBBY for a room for the night. */
@@ -127,7 +132,9 @@ export async function joinRoom(code: string, uid: string, game: string, player: 
   if (!snapshot.exists()) return 'no-room'
   // A lobby room can be joined from any of its games; other rooms only for their own game.
   if (snapshot.child('game').val() !== game && !snapshot.child('lobby').val()) return 'other-game'
-  await joinAs(code, uid, player)
+  // Someone already in the room keeps their place in the joining order.
+  if (snapshot.child(`players/${uid}`).exists()) await update(roomRef(code, `players/${uid}`), { ...shownPlayer(player), symbol: player.symbol ?? null })
+  else await joinAs(code, uid, player)
   return 'joined'
 }
 
@@ -180,16 +187,20 @@ export function writePlay(code: string, state: unknown, deadline: number | null)
   return update(roomRef(code, 'play'), { state: JSON.stringify(state), deadline })
 }
 
-/** Host only: clears the game (everyone's progress and the game's secrets too) so the room is back in its waiting state. */
-export async function clearPlay(code: string): Promise<void> {
-  await remove(roomRef(code, 'progress'))
-  await remove(secretRef(code))
-  await remove(roomRef(code, 'play'))
+/** The paths that hold a room's game: clearing them all in one write leaves no half-cleared room. */
+function playPaths(code: string): Record<string, null> {
+  return { [`rooms/${code}/progress`]: null, [`roomSecrets/${code}`]: null, [`rooms/${code}/play`]: null }
+}
+
+/** Host only: clears the game (everyone's progress, the game's secrets and waiting inputs too) so the room is back in its waiting state. */
+export function clearPlay(code: string): Promise<void> {
+  return update(ref(firebaseBackend().database), playPaths(code))
 }
 
 /**
  * Secrets live outside the room, at roomSecrets/{code}, because anyone who can read a room can read all of it.
- * There the host keeps the full game, and each player has a view only they can read (a target, their own guess).
+ * There the host keeps the full game, each player has a view only they can read (a target, their own guess),
+ * and players' inputs wait where only the host can read them.
  */
 function secretRef(code: string, path = ''): DatabaseReference {
   return ref(firebaseBackend().database, `roomSecrets/${code}${path ? `/${path}` : ''}`)
@@ -221,10 +232,8 @@ export function watchPlayerView(code: string, uid: string, onChange: (view: unkn
 }
 
 /** Host only: moves a lobby room to another game (or back to LOBBY), clearing the last game and the votes. */
-export async function switchGame(code: string, game: string): Promise<void> {
-  await clearPlay(code)
-  await remove(roomRef(code, 'votes'))
-  await set(roomRef(code, 'game'), game)
+export function switchGame(code: string, game: string): Promise<void> {
+  return update(ref(firebaseBackend().database), { ...playPaths(code), [`rooms/${code}/votes`]: null, [`rooms/${code}/game`]: game })
 }
 
 /** Host only, in a lobby room: how many games the night will have. */
@@ -252,16 +261,16 @@ export function writeProgress(code: string, id: string, progress: unknown): Prom
   return set(roomRef(code, `progress/${id}`), JSON.stringify(progress))
 }
 
-/** A player sends one input to the host. */
+/** A player sends one input to the host. Only the host can read it. */
 export function sendInput(code: string, uid: string, input: unknown): Promise<void> {
-  return set(push(roomRef(code, 'inputs')), { by: uid, input: JSON.stringify(input) })
+  return set(push(secretRef(code, 'inputs')), { by: uid, input: JSON.stringify(input) })
 }
 
 /** Host only: calls back once for every input, oldest first, then removes it. Returns a stop function. */
 export function takeInputs(code: string, onInput: (by: string, input: unknown) => void): () => void {
-  return onChildAdded(roomRef(code, 'inputs'), (snapshot) => {
+  return onChildAdded(secretRef(code, 'inputs'), (snapshot) => {
     const value = snapshot.val()
-    void remove(snapshot.ref)
+    remove(snapshot.ref).catch((error) => console.error('Removing a handled input failed', error))
     if (!value || typeof value.by !== 'string' || typeof value.input !== 'string') return
     try {
       onInput(value.by, JSON.parse(value.input))

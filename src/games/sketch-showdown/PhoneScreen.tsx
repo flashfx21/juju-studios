@@ -203,8 +203,9 @@ function Menu({ label, kind, onDone, children }: { label: string; kind: MenuKind
 function useLockedOut(lockedUntil: number): boolean {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
-    if (lockedUntil <= Date.now()) return
-    const timer = window.setTimeout(() => setNow(Date.now()), lockedUntil - Date.now() + 50)
+    if (now >= lockedUntil) return
+    // A lockout that reaches this phone after it has already run out still gets its re-check, at once.
+    const timer = window.setTimeout(() => setNow(Date.now()), Math.max(0, lockedUntil - Date.now()) + 50)
     return () => window.clearTimeout(timer)
   }, [lockedUntil, now])
   return now < lockedUntil

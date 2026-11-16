@@ -1,15 +1,26 @@
 // ABOUTME: Pin Drop on phones, no TV: one player starts a room and shares its code, others join, bots can fill in.
-// ABOUTME: The host's phone runs the rules and the round timer; every phone shows the photo above its own map.
-import { useEffect, useRef, useState } from 'react'
-import { clearPlay, sendInput, startPlay, takeInputs, writePlay, type Room } from '../../engine/net/rooms'
+// ABOUTME: The host's phone runs the rules and the round timer; the room shows a masked game, and each phone gets back only its own pin.
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  clearPlay,
+  readHostGame,
+  sendInput,
+  startPlay,
+  takeInputs,
+  watchPlayerView,
+  writeHostGame,
+  writePlay,
+  writePlayerView,
+  type Room,
+} from '../../engine/net/rooms'
 import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { paceLabels } from '../../engine/pace'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
-import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { BackToLobby, PracticeNote, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { EndGameEarly } from '../room/EndGameEarly'
-import { saveFinishedGame } from '../room/saveFinishedGame'
+import { isPractice, saveFinishedGame } from '../room/saveFinishedGame'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { RulesContext } from '../types'
@@ -17,6 +28,7 @@ import { botGuess } from './bots'
 import { manifest } from './manifest'
 import { RoundPhoto } from './Pieces'
 import { PhoneScreen, PinDropTitle } from './PhoneScreen'
+import { privateView, publicState, stateForPhone, type PrivateView } from './roomViews'
 import {
   currentRound,
   DEFAULT_SETTINGS,
@@ -29,10 +41,14 @@ import {
   type PinDropInput,
   type PinDropSettings,
   type PinDropState,
+  type Phase,
 } from './rules'
 
-/** Moves sent to the host: the game's own, or the host's Next on the reveal and the standings, or End game. */
-type RoomInput = PinDropInput | { type: 'next' } | { type: 'end-game' }
+/**
+ * Moves sent to the host: the game's own, or the host's Next on the reveal and the standings, or End game.
+ * Each names the round (and Next the screen) it was made on, so one that arrives late changes nothing.
+ */
+type RoomInput = (PinDropInput & { round: number }) | { type: 'next'; round: number; phase: Phase } | { type: 'end-game' }
 
 const SCORING_NAMES = { match: 'Match play', stroke: 'Stroke play' }
 const UNIT_NAMES = { mi: 'Miles', km: 'Kilometers' }
@@ -58,7 +74,7 @@ export function Together() {
     >
       {(props) => (
         <>
-          {props.isHost && <HostRunner room={props.room} />}
+          {props.isHost && props.room.play && <HostRunner room={props.room} />}
           {props.room.play ? <Game {...props} /> : <PinDropWaitingRoom {...props} />}
         </>
       )}
@@ -84,7 +100,7 @@ function PinDropWaitingRoom({ room, isHost }: RoomScreenProps) {
           manifest.id,
           state.rounds.map((round) => round.photo.id),
         )
-        void startPlay(room.code, state, deadlineFor(state, ctx.now))
+        void publish(room, state, deadlineFor(state, ctx.now), new Map(), true)
       }}
       settings={
         <>
@@ -92,19 +108,50 @@ function PinDropWaitingRoom({ room, isHost }: RoomScreenProps) {
           <OptionRow label="Rounds" options={ROUND_COUNTS} names={ROUND_NAMES} value={settings.rounds} onChoose={(v) => choose('rounds', v)} />
           <OptionRow label="Pace" options={PACES} names={PACE_NAMES} value={settings.pace} onChoose={(v) => choose('pace', v)} />
           <OptionRow label="Units" options={UNITS} names={UNIT_NAMES} value={settings.units} onChoose={(v) => choose('units', v)} />
+          <PracticeNote room={room} />
         </>
       }
     />
   )
 }
 
+/** What the room last got: each player's view and the public game, so only what changed is written again. */
+type Sent = Map<string, string>
+const PUBLIC = 'public game'
+
+/**
+ * Host only: saves the full game where only the host can read it, gives each person their own pin back, and puts the
+ * masked game in the room for every phone. Only what changed is written. A finished game is saved unless it's practice.
+ */
+async function publish(room: Room, state: PinDropState, deadline: number | null, sent: Sent, starting = false): Promise<void> {
+  const views = state.players.flatMap((player) => {
+    if (botFor(player)) return []
+    const view = JSON.stringify(privateView(state, player))
+    if (sent.get(player) === view) return []
+    sent.set(player, view)
+    return [writePlayerView(room.code, player, JSON.parse(view))]
+  })
+  await Promise.all([writeHostGame(room.code, state), ...views])
+  const shown = publicState(state)
+  const shownKey = `${deadline} ${JSON.stringify(shown)}`
+  if (starting || sent.get(PUBLIC) !== shownKey) {
+    sent.set(PUBLIC, shownKey)
+    await (starting ? startPlay : writePlay)(room.code, shown, deadline)
+  }
+  if (rules.isOver(state) && !isPractice(state.players)) saveFinishedGame(room, manifest.id, rules.finishingOrder(state))
+}
+
 function Game({ room, self, isHost }: RoomScreenProps) {
   const play = room.play!
-  const state = JSON.parse(play.state) as PinDropState
+  const shared = useMemo(() => JSON.parse(play.state) as PinDropState, [play.state])
+  const [mine, setMine] = useState<PrivateView | null>(null)
+  useEffect(() => watchPlayerView(room.code, self.uid, (view) => setMine(view as PrivateView | null)), [room.code, self.uid])
+  const state = useMemo(() => stateForPhone(shared, mine, self.uid), [shared, mine, self.uid])
   const looks = usePlayerLooks(room, state.players)
   const secondsLeft = useSecondsLeft(state.phase === 'guessing' ? play.deadline : null)
   const send = (input: RoomInput) => void sendInput(room.code, self.uid, input)
-  const round = currentRound(state)
+  const round = state.roundIndex
+  const photo = currentRound(state).photo
   const playing = state.players.includes(self.uid)
 
   if (!playing) {
@@ -125,13 +172,14 @@ function Game({ room, self, isHost }: RoomScreenProps) {
         looks={looks}
         isHost={isHost}
         secondsLeft={secondsLeft}
-        onPin={(pin) => send({ type: 'pin', ...pin })}
-        onLock={(pin) => send({ type: 'lock', ...pin })}
-        onFlag={() => send({ type: 'flag' })}
-        onNext={() => send({ type: 'next' })}
-        above={<RoundPhoto key={round.photo.id} photo={round.photo} />}
+        onPin={(pin) => send({ type: 'pin', round, ...pin })}
+        onLock={(pin) => send({ type: 'lock', round, ...pin })}
+        onFlag={() => send({ type: 'flag', round })}
+        onNext={() => send({ type: 'next', round, phase: state.phase })}
+        above={<RoundPhoto key={photo.id} photo={photo} />}
         summaryAction={
           <>
+            {isPractice(state.players) && <PracticeNote room={room} over />}
             {isHost && (
               <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
                 Play again
@@ -175,13 +223,13 @@ function botsMove(code: string, state: PinDropState, deadline: number | null): P
 
 /**
  * Runs on the host's phone only: applies every player's input to the state, moves the game on when a
- * timer runs out, and writes each new state back to the room for every phone to show. It reads the game
- * from the room once when the game starts (or the host reloads) and keeps its own copy after that, so an
- * input is never applied to a state the room hasn't caught up on yet.
+ * timer runs out, and publishes each new state. It reads the full game from the host's save once when the
+ * game starts (or the host reloads) and keeps its own copy after that, so an input is never applied to a
+ * state the room hasn't caught up on yet.
  */
 function HostRunner({ room }: { room: Room }) {
   const latest = useRef<{ state: PinDropState; deadline: number | null } | null>(null)
-  // The room as last seen: where the runner picks the game up, and what a saved result is filed under.
+  // The room as last seen: where the runner picks the deadline up, and what a saved result is filed under.
   const seen = useRef(room)
   useEffect(() => {
     seen.current = room
@@ -191,8 +239,10 @@ function HostRunner({ room }: { room: Room }) {
 
   useEffect(() => {
     if (!hasPlay) return
-    const play = seen.current.play
-    latest.current = play ? { state: JSON.parse(play.state) as PinDropState, deadline: play.deadline } : null
+    let stopped = false
+    let stopInputs = () => {}
+    let timer: ReturnType<typeof setInterval> | undefined
+    const sent: Sent = new Map()
 
     function save(next: PinDropState, keepDeadline: boolean) {
       const current = latest.current
@@ -200,43 +250,49 @@ function HostRunner({ room }: { room: Room }) {
       const samePhase = next.phase === current.state.phase && next.roundIndex === current.state.roundIndex
       const deadline = keepDeadline && samePhase ? current.deadline : deadlineFor(next, Date.now())
       latest.current = { state: next, deadline }
-      void writePlay(code, next, deadline)
-      if (rules.isOver(next)) saveFinishedGame(seen.current, manifest.id, rules.finishingOrder(next))
+      publish(seen.current, next, deadline, sent).catch((error) => console.error('Publishing the game failed', error))
     }
 
-    const stopInputs = takeInputs(code, (by, input) => {
-      const current = latest.current
-      if (!current) return
-      const move = input as RoomInput
-      if (move.type === 'end-game') {
-        if (by === host && !rules.isOver(current.state)) save({ ...current.state, phase: 'over' }, false)
-        return
-      }
-      if (move.type === 'next') {
-        const phase = current.state.phase
-        if (by === host && (phase === 'reveal' || phase === 'standings')) save(rules.onTimer(current.state, context()), false)
-        return
-      }
-      save(rules.onInput(current.state, by, move, context()), true)
-    })
+    void readHostGame(code).then((saved) => {
+      if (stopped || !saved) return
+      latest.current = { state: saved as PinDropState, deadline: seen.current.play?.deadline ?? null }
 
-    const timer = setInterval(() => {
-      const current = latest.current
-      if (!current) return
-      if (current.state.phase === 'guessing') {
-        const moved = botsMove(code, current.state, current.deadline)
-        if (moved !== current.state) {
-          save(moved, true)
+      stopInputs = takeInputs(code, (by, input) => {
+        const current = latest.current
+        if (!current) return
+        const move = input as RoomInput
+        if (move.type === 'end-game') {
+          if (by === host && !rules.isOver(current.state)) save({ ...current.state, phase: 'over' }, false)
           return
         }
-      }
-      if (current.deadline === null || Date.now() < current.deadline) return
-      save(rules.onTimer(current.state, context()), false)
-    }, 500)
+        if (move.round !== current.state.roundIndex) return
+        if (move.type === 'next') {
+          const phase = current.state.phase
+          if (by === host && move.phase === phase && (phase === 'reveal' || phase === 'standings')) save(rules.onTimer(current.state, context()), false)
+          return
+        }
+        save(rules.onInput(current.state, by, move, context()), true)
+      })
+
+      timer = setInterval(() => {
+        const current = latest.current
+        if (!current) return
+        if (current.state.phase === 'guessing') {
+          const moved = botsMove(code, current.state, current.deadline)
+          if (moved !== current.state) {
+            save(moved, true)
+            return
+          }
+        }
+        if (current.deadline === null || Date.now() < current.deadline) return
+        save(rules.onTimer(current.state, context()), false)
+      }, 500)
+    })
 
     return () => {
+      stopped = true
       stopInputs()
-      clearInterval(timer)
+      if (timer) clearInterval(timer)
     }
   }, [hasPlay, code, host])
 

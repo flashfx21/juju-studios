@@ -269,14 +269,14 @@ export function BackToLobby({ room, isHost }: { room: Room; isHost: boolean }) {
 }
 
 /**
- * For games where 2 people make a practice game: in the waiting room it shows while only 2 are in the room;
+ * Fewer than 3 people make a practice game: in the waiting room it shows while 2 or fewer are in the room;
  * `over` says so at the end of a practice game.
  */
 export function PracticeNote({ room, over = false }: { room: Room; over?: boolean }) {
   if (!over && playerIds(room).length > 2) return null
   return (
     <p className="room-status" data-testid="room-practice-note">
-      {over ? 'Practice game: not saved to the leaderboard.' : 'With 2 people this is a practice game: not saved to the leaderboard.'}
+      {over ? 'Practice game: not saved to the leaderboard.' : 'With fewer than 3 people this is a practice game: not saved to the leaderboard.'}
     </p>
   )
 }

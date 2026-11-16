@@ -19,8 +19,8 @@ import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
 import { EndGameEarly } from '../room/EndGameEarly'
-import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
-import { saveFinishedGame } from '../room/saveFinishedGame'
+import { BackToLobby, PracticeNote, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { isPractice, saveFinishedGame } from '../room/saveFinishedGame'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { RulesContext } from '../types'
@@ -104,6 +104,7 @@ function ZeroInWaitingRoom({ room, isHost }: RoomScreenProps) {
           <OptionRow label="Pace" options={PACES} names={PACE_NAMES} value={settings.pace} onChoose={(v) => choose('pace', v)} />
           <OptionRow label="Rounds" options={ROUND_COUNTS} names={ROUND_NAMES} value={settings.rounds} onChoose={(v) => choose('rounds', v)} />
           <OptionRow label="Lanes" options={LANE_CHOICES} names={LANE_NAMES} value={settings.lanes} onChoose={(v) => choose('lanes', v)} />
+          <PracticeNote room={room} />
         </>
       }
     />
@@ -120,7 +121,7 @@ async function publish(room: Room, state: ZeroInState, deadline: number | null, 
     if (!botFor(player)) await writePlayerView(room.code, player, privateView(state, player))
   }
   await (starting ? startPlay : writePlay)(room.code, publicState(state), deadline)
-  if (rules.isOver(state)) saveFinishedGame(room, manifest.id, rules.finishingOrder(state))
+  if (rules.isOver(state) && !isPractice(state.players)) saveFinishedGame(room, manifest.id, rules.finishingOrder(state))
 }
 
 /** Sends the typed guess as a draft once typing pauses, so a burst of keypresses is one write. */
@@ -173,6 +174,7 @@ function Game({ room, self, isHost }: RoomScreenProps) {
         onNext={() => send({ type: 'next' })}
         summaryAction={
           <>
+            {isPractice(state.players) && <PracticeNote room={room} over />}
             {isHost && (
               <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
                 Play again

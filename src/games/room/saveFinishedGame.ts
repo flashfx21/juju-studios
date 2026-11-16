@@ -1,12 +1,12 @@
 // ABOUTME: Host only: turns a finished room game's finishing order into places and points, and saves them for the people in it.
-// ABOUTME: Bots take their place in the scoring but aren't saved. Games may treat a game with only 2 people as practice and skip saving.
+// ABOUTME: Bots take their place in the scoring but aren't saved. A game with fewer than 3 people is practice: games skip saving it.
 import { saveResult } from '../../engine/net/results'
 import type { Room } from '../../engine/net/rooms'
 import { placesAndPoints } from '../../engine/scoring'
 import type { FinishingOrder, PlayerId, Teams } from '../types'
 import { botFor } from './bots'
 
-/** Fewer people than this (bots don't count) makes a practice game, for games that offer one: it isn't saved. */
+/** Fewer people than this (bots don't count) makes a practice game: it isn't saved. */
 const PRACTICE_BELOW = 3
 
 export function isPractice(players: readonly PlayerId[]): boolean {

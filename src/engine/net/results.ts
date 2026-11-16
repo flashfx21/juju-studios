@@ -1,7 +1,7 @@
 // ABOUTME: Saved game results at results/{resultId}: the game, the room, when, and each person's place and points.
 // ABOUTME: The room's host saves a result once per game; a lobby room also adds it to the night's session.
 
-import { get, ref, set } from 'firebase/database'
+import { get, ref, serverTimestamp, set } from 'firebase/database'
 import { firebaseBackend } from './firebase'
 import { addSessionGame, type Room } from './rooms'
 
@@ -45,7 +45,8 @@ export async function saveResult(room: Room, game: string, players: Record<strin
   const at = Date.now()
   try {
     const existing = await get(resultRef(id))
-    if (!existing.exists()) await set(resultRef(id), { game, room: room.code, at, size, players })
+    // The server stamps the time, so a result can't be dated past a later leaderboard reset.
+    if (!existing.exists()) await set(resultRef(id), { game, room: room.code, at: serverTimestamp(), size, players })
     if (room.lobby) {
       const points = Object.fromEntries(Object.entries(players).map(([uid, result]) => [uid, result.points]))
       await addSessionGame(room.code, id, { game, at, points })

@@ -13,6 +13,8 @@ Ideas and features deliberately left out for now. Each line says why it waits.
 - **Sketch Showdown: team swap, mid-stroke sync, drawing bots.** Rooms pick teams at random; the spec's host swap and lock waits for the engine's teams. Teammates see each stroke when the drawer lifts their finger, not while it's drawn. Bots don't draw, so a bot team's canvas stays blank.
 - **One host account open twice.** If the host's account has the same room game open in two tabs or on two devices, both run the game and fight over it (seen in testing with a leftover tab). The TV view's display-only mode will need the same guard: only one runner per room.
 - **Admin room controls** (close a stuck room, remove a player). Wanted (Julian, Nov 13); waits for rooms.
+- **Answers that can still be looked up** (audit, Nov 16). The packs ship with the site, so a player who opens dev tools can match Pin Drop's photo address (its file name often names the place) or a Zero In question to its answer. Hiding them needs the answers kept off the phones, which the free plan has no server for.
+- **Who may host** (audit, Nov 16). Any Google account that finds the site can open a room and save results for accounts that join it. An allow-list (only approved accounts create rooms and save results) is the real fix; waiting on Julian.
 - **Admin score fixes** (fix or remove a game result). Wanted (Julian, Nov 13); waits for saved results.
 - **Real QR codes** on the Host or join, Host sign-in and lobby screens. Screens show the address as text for now; scannable codes need a QR library (a new dependency).
 - **"New" badge** on Pin Drop's picker tile. Only shown on playable games, and every game is coming soon for now.
