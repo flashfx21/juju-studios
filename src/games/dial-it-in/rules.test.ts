@@ -120,7 +120,13 @@ describe('setup', () => {
   })
 
   it('refuses fewer than the minimum players', () => {
-    expect(() => rules.setup(['ana', 'bo'], { range: 100 }, CTX)).toThrow(/at least 3/)
+    expect(() => rules.setup(['ana'], { range: 100 }, CTX)).toThrow(/at least 2/)
+  })
+
+  it('plays with two: each gives the clue in turn and the other guesses', () => {
+    const state = rules.setup(['ana', 'bo'], { range: 100 }, CTX)
+    expect(state.rounds.map((round) => round.clueGiver)).toEqual(['ana', 'bo'])
+    expect(guessersFor(state, state.rounds[0])).toEqual(['bo'])
   })
 })
 

@@ -142,3 +142,24 @@
 :root[data-theme='rec-room'] .phone-frame[data-fit] .phone-frame__card-body {
   padding: 10px 14px 12px;
 }
+
+/* ---------- Top row: the menu on the left, the player's badge on the right ---------- */
+.frame-top {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.frame-top[hidden] {
+  display: none;
+}
+
+.frame-top__corner {
+  margin-left: auto;
+  display: flex;
+}
+
+.frame-top__corner .player-badge-row {
+  margin-bottom: 0;
+}

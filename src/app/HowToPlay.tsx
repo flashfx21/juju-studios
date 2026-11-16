@@ -1,6 +1,7 @@
 // ABOUTME: How to play: the list of games at #/how-to-play, each game's page at #/how-to-play/<game-id>,
 // ABOUTME: and a button that opens a game's page as a panel, so the lobby can show it without leaving the room.
 import { useRef } from 'react'
+import { MenuItems } from '../ui/FrameMenu'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import '../ui/PhoneForm.css'
 import { gameFacts, HOW_TO_PLAY_GAMES, howToPlayFor, type HowToPlayPage } from './howToPlayPages'
@@ -54,11 +55,11 @@ function GameList() {
           {game.title}
         </a>
       ))}
-      <div className="phone-actions">
-        <a className="phone-link phone-link--quiet" href={href('home')} data-testid="how-to-play-home">
+      <MenuItems>
+        <a href={href('home')} data-testid="how-to-play-home">
           Home
         </a>
-      </div>
+      </MenuItems>
     </PhoneFrame>
   )
 }
@@ -74,14 +75,14 @@ function GamePage({ gameId, page }: { gameId: string; page: HowToPlayPage }) {
         <p className="how-to-play__facts">{gameFacts(page)}</p>
       </div>
       <HowToPlayWords page={page} gameId={gameId} Heading="h2" />
-      <div className="phone-actions">
-        <button type="button" className="phone-link" data-testid="how-to-play-back" onClick={goBack}>
+      <MenuItems>
+        <button type="button" data-testid="how-to-play-back" onClick={goBack}>
           Back
         </button>
-        <a className="phone-link phone-link--quiet" href={href('how-to-play')} data-testid="how-to-play-all">
+        <a href={href('how-to-play')} data-testid="how-to-play-all">
           All games
         </a>
-      </div>
+      </MenuItems>
     </PhoneFrame>
   )
 }
@@ -90,9 +91,11 @@ function UnknownGame() {
   return (
     <PhoneFrame label="No such game" cardTag="How to play">
       <p className="cue-card__text">There's no How to play page for that game yet.</p>
-      <a className="phone-link" href={href('how-to-play')}>
-        See every game
-      </a>
+      <MenuItems>
+        <a href={href('how-to-play')} data-testid="how-to-play-all">
+          All games
+        </a>
+      </MenuItems>
     </PhoneFrame>
   )
 }

@@ -52,10 +52,12 @@ export type Teams = readonly (readonly PlayerId[])[]
 /**
  * Everything impure a rule needs, passed in by the engine so rules stay pure.
  * `now` is milliseconds since the epoch; `random` returns a number in [0, 1).
+ * `recent` lists pack items (by id) this device dealt in recent games, oldest first; setup deals them last.
  */
 export interface RulesContext {
   now: number
   random: () => number
+  recent?: readonly string[]
 }
 
 /**

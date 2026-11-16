@@ -1,7 +1,9 @@
 // ABOUTME: The page around every phone screen: portrait layout, the style's background, and spacing from the design.
-// ABOUTME: With cardTag, the rec room wraps the screen in its cream card; with fit, it never scrolls; in a game it shows Exit game.
-import type { ReactNode } from 'react'
-import { GameExitButton } from './GameExitButton'
+// ABOUTME: With cardTag, the rec room wraps the screen in its cream card; with fit, it never scrolls; the top row holds the menu and badge.
+import { useContext, type ReactNode } from 'react'
+import { ExitGameItem } from './ExitGameItem'
+import { FrameTop } from './FrameMenu'
+import { GameExitContext } from './gameExit'
 import './PhoneFrame.css'
 
 interface PhoneFrameProps {
@@ -14,6 +16,8 @@ interface PhoneFrameProps {
 }
 
 export function PhoneFrame({ label, cardTag, fit, children }: PhoneFrameProps) {
+  const inGame = useContext(GameExitContext) !== null
+  const screen = <FrameTop fixedItems={inGame ? <ExitGameItem /> : undefined}>{children}</FrameTop>
   return (
     <main
       className="phone-frame"
@@ -31,16 +35,10 @@ export function PhoneFrame({ label, cardTag, fit, children }: PhoneFrameProps) {
               </div>
               <div className="phone-frame__tri-stripe" aria-hidden="true" />
             </div>
-            <div className="phone-frame__card-body">
-              <GameExitButton />
-              {children}
-            </div>
+            <div className="phone-frame__card-body">{screen}</div>
           </div>
         ) : (
-          <>
-            <GameExitButton />
-            {children}
-          </>
+          screen
         )}
       </div>
     </main>

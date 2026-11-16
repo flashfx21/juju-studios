@@ -3,6 +3,7 @@
 import { Suspense } from 'react'
 import { LOBBY } from '../engine/net/rooms'
 import { rememberedRoom } from '../engine/rememberedRoom'
+import { MenuItems } from '../ui/FrameMenu'
 import { GameExitContext } from '../ui/gameExit'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { PlayerBadge } from './PlayerBadge'
@@ -34,9 +35,11 @@ function PlaytestList() {
           {playtest.title}
         </a>
       ))}
-      <a className="phone-link phone-link--quiet" href={href('home')}>
-        Back
-      </a>
+      <MenuItems>
+        <a href={href('home')} data-testid="menu-home">
+          Home
+        </a>
+      </MenuItems>
     </PhoneFrame>
   )
 }
@@ -45,9 +48,11 @@ function UnknownPlaytest() {
   return (
     <PhoneFrame label="No such game" cardTag="Solo play">
       <p className="cue-card__text">There's no solo play for that game.</p>
-      <a className="phone-link" href={href('playtest')}>
-        See Solo play
-      </a>
+      <MenuItems>
+        <a href={href('playtest')}>
+          Solo play
+        </a>
+      </MenuItems>
     </PhoneFrame>
   )
 }
@@ -63,9 +68,11 @@ function SignInFirst() {
       <a className="phone-button" href={href('sign-in')} data-testid="solo-play-sign-in">
         Sign in
       </a>
-      <a className="phone-link phone-link--quiet" href={href('home')}>
-        Back
-      </a>
+      <MenuItems>
+        <a href={href('home')} data-testid="menu-home">
+          Home
+        </a>
+      </MenuItems>
     </PhoneFrame>
   )
 }
@@ -80,9 +87,11 @@ function NotAPlaytester() {
       <p className="cue-card__text" data-testid="solo-play-not-yet">
         Solo play is for playtesters. Ask an admin to add you, then open this page again.
       </p>
-      <a className="phone-link phone-link--quiet" href={href('home')}>
-        Back
-      </a>
+      <MenuItems>
+        <a href={href('home')} data-testid="menu-home">
+          Home
+        </a>
+      </MenuItems>
     </PhoneFrame>
   )
 }

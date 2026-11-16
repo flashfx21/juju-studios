@@ -2,6 +2,7 @@
 // ABOUTME: to guess it first. Pure logic, no screens: turn order, the clue pick, the race, sudden death and views per screen.
 
 import cluePack from '../../../packs/sketch-showdown/clues.json'
+import { freshFirst } from '../../engine/recentlyDealt'
 import type { FinishingOrder, GameRules, PlayerId, RulesContext } from '../types'
 import { manifest } from './manifest'
 import { cleanGuess, guessMatches, type Clue } from './matching'
@@ -188,15 +189,6 @@ export function inkUsed(strokes: readonly Stroke[]): number {
   return total
 }
 
-function shuffled<T>(items: readonly T[], random: () => number): T[] {
-  const copy = [...items]
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1))
-    ;[copy[i], copy[j]] = [copy[j], copy[i]]
-  }
-  return copy
-}
-
 /** Each team cycles from a random first drawer, so the smaller team's extra turns fall to different players. */
 function makeDrawOrder(team: readonly PlayerId[], rounds: number, random: () => number): PlayerId[] {
   const start = Math.floor(random() * team.length)
@@ -328,7 +320,7 @@ export function sketchShowdownRules(
         teams: [[...teams[0]], [...teams[1]]],
         settings,
         drawOrder: [makeDrawOrder(teams[0], rounds, ctx.random), makeDrawOrder(teams[1], rounds, ctx.random)],
-        deck: shuffled(CLUES, ctx.random),
+        deck: freshFirst(CLUES, (clue) => clue.answer, ctx.recent ?? [], ctx.random),
         dealt: 0,
         rounds: [],
         phase: 'pick',

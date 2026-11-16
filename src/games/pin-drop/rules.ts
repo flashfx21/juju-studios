@@ -2,6 +2,7 @@
 // ABOUTME: Pure logic, no screens: dealing the easy-to-hard ramp, pins and lock-ins, distances, match and stroke play.
 
 import photoPack from '../../../packs/pin-drop/around-the-world.json'
+import { freshFirst } from '../../engine/recentlyDealt'
 import type { FinishingOrder, GameRules, PlayerId } from '../types'
 import { manifest } from './manifest'
 
@@ -148,28 +149,22 @@ export function totals(state: PinDropState): Record<PlayerId, Totals> {
   return byPlayer
 }
 
-/** One photo per round, following the ramp, never repeating. */
-function dealPhotos(roundCount: RoundCount, random: () => number): Photo[] {
+/** One photo per round, following the ramp, never repeating, and photos not shown lately first. */
+function dealPhotos(roundCount: RoundCount, random: () => number, recent: readonly string[]): Photo[] {
   const ramp = DIFFICULTY_RAMP[roundCount]
-  const piles: Record<Difficulty, Photo[]> = {
-    easy: shuffled(PHOTOS.filter((photo) => photo.difficulty === 'easy'), random),
-    medium: shuffled(PHOTOS.filter((photo) => photo.difficulty === 'medium'), random),
-    hard: shuffled(PHOTOS.filter((photo) => photo.difficulty === 'hard'), random),
-  }
+  const pile = (difficulty: Difficulty) =>
+    freshFirst(
+      PHOTOS.filter((photo) => photo.difficulty === difficulty),
+      (photo) => photo.id,
+      recent,
+      random,
+    )
+  const piles: Record<Difficulty, Photo[]> = { easy: pile('easy'), medium: pile('medium'), hard: pile('hard') }
   return ramp.map((difficulty) => {
-    const photo = piles[difficulty].pop()
+    const photo = piles[difficulty].shift()
     if (!photo) throw new Error(`The photo pack has too few ${difficulty} photos for ${roundCount} rounds.`)
     return photo
   })
-}
-
-function shuffled<T>(items: T[], random: () => number): T[] {
-  const copy = [...items]
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1))
-    ;[copy[i], copy[j]] = [copy[j], copy[i]]
-  }
-  return copy
 }
 
 function isValidPin(input: { lat?: unknown; lng?: unknown }): boolean {
@@ -233,7 +228,7 @@ export const rules: GameRules<PinDropState, PinDropSettings, PinDropInput> = {
     if (players.length < manifest.players.min) {
       throw new Error(`Pin Drop needs at least ${manifest.players.min} players.`)
     }
-    const rounds = dealPhotos(settings.rounds, ctx.random).map((photo) => ({
+    const rounds = dealPhotos(settings.rounds, ctx.random, ctx.recent ?? []).map((photo) => ({
       photo,
       pins: {},
       locked: [],

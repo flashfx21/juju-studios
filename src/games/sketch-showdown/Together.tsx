@@ -14,21 +14,24 @@ import {
   writePlayerView,
   type Room,
 } from '../../engine/net/rooms'
+import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
-import { saveFinishedGame } from '../room/saveFinishedGame'
-import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { EndGameEarly } from '../room/EndGameEarly'
+import { isPractice, saveFinishedGame } from '../room/saveFinishedGame'
+import { BackToLobby, PracticeNote, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { PlayerId, RulesContext } from '../types'
 import { Gallery } from './Gallery'
 import { manifest } from './manifest'
 import { PhoneScreen, SketchShowdownTitle } from './PhoneScreen'
-import { botRacePlan, splitTeams } from './roomTeams'
+import { botRacePlan, splitTeams, withBotTeam } from './roomTeams'
 import {
   currentRound,
   DEFAULT_SETTINGS,
+  MIN_TEAM_SIZE,
   OPTIONS_PER_PICK,
   PACES,
   PICK_SECONDS,
@@ -60,8 +63,8 @@ const DEALER = sketchShowdownRules(() => false)
 /** Earliest and latest a bot drawer picks its clue, as a share of the pick time. */
 const BOT_PICK_SHARE: [number, number] = [0.15, 0.5]
 
-/** Moves sent to the host: the game's own, Next from the host at the reveal, or End round from the host during the race. */
-type RoomInput = SketchShowdownInput | { type: 'next' } | { type: 'end' }
+/** Moves sent to the host: the game's own, Next from the host at the reveal, End round during the race, or End game. */
+type RoomInput = SketchShowdownInput | { type: 'next' } | { type: 'end' } | { type: 'end-game' }
 
 type Rules = ReturnType<typeof sketchShowdownRules>
 
@@ -100,7 +103,7 @@ export function Together() {
   )
 }
 
-function SketchWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
+function SketchWaitingRoom({ room, isHost }: RoomScreenProps) {
   const [settings, setSettings] = useState<SketchShowdownSettings>(DEFAULT_SETTINGS)
   const [problem, setProblem] = useState('')
   return (
@@ -108,23 +111,32 @@ function SketchWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
       room={room}
       isHost={isHost}
       Title={SketchShowdownTitle}
-      minPlayers={manifest.players.min}
-      onLeave={onLeave}
-      onStart={(players) => {
+      minPlayers={MIN_TEAM_SIZE}
+      onStart={(chosen) => {
+        const players = withBotTeam(chosen, Math.random)
         const split = splitTeams(players, Math.random)
         if ('problem' in split) {
           setProblem(split.problem)
           return
         }
         setProblem('')
-        const state = DEALER.setup(players, settings, context(), split.teams)
+        const state = DEALER.setup(players, settings, { ...context(), recent: recentlyDealt(manifest.id) }, split.teams)
+        // The clues offered over the regular rounds: three a round, from the top of the deck.
+        rememberDealt(
+          manifest.id,
+          state.deck.slice(0, state.drawOrder[0].length * OPTIONS_PER_PICK).map((clue) => clue.answer),
+        )
         void publish(room, state, deadlineFor(state), true)
       }}
       settings={
         <>
           <OptionRow label="Turns" options={TURNS} names={TURN_NAMES} value={settings.turns} onChoose={(turns) => setSettings({ ...settings, turns })} />
           <OptionRow label="Pace" options={PACES} names={PACE_NAMES} value={settings.pace} onChoose={(pace) => setSettings({ ...settings, pace })} />
-          <p className="room-status">Teams are picked at random when the game starts. Bots can't draw, so they play as their own team.</p>
+          <p className="room-status">
+            Teams are picked at random when the game starts. Bots can't draw, so they play as their own team. With 2 or 3 people and no bots, 2 bots
+            join as the other team.
+          </p>
+          <PracticeNote room={room} />
           {problem && (
             <p className="room-status" role="alert" data-testid="sst-team-problem">
               {problem}
@@ -153,7 +165,9 @@ async function publish(room: Room, state: SketchShowdownState, deadline: number 
     gallery: state.phase === 'over' ? tvView(state).gallery : null,
   }
   await (starting ? startPlay : writePlay)(room.code, shared, deadline)
-  if (DEALER.isOver(state)) saveFinishedGame(room, manifest.id, DEALER.finishingOrder(state), state.teams)
+  if (DEALER.isOver(state) && !isPractice([...state.teams[0], ...state.teams[1]])) {
+    saveFinishedGame(room, manifest.id, DEALER.finishingOrder(state), state.teams)
+  }
 }
 
 /**
@@ -173,8 +187,9 @@ function latestPublisher(room: () => Room) {
         next = null
         try {
           await publish(room(), job.state, job.deadline)
-        } catch {
+        } catch (error) {
           // A failed write is retried by the next change.
+          console.error('Publishing the game failed', error)
         }
       }
       running = false
@@ -192,7 +207,7 @@ function useOwnDrawing(view: PlayerView | null) {
   return { strokes: current, change }
 }
 
-function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
+function Game({ room, self, isHost }: RoomScreenProps) {
   const shared = JSON.parse(room.play!.state) as SharedPlay
   const [view, setView] = useState<PlayerView | null>(null)
   useEffect(() => watchPlayerView(room.code, self.uid, (mine) => setView(mine as PlayerView | null)), [room.code, self.uid])
@@ -208,9 +223,6 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
       <>
         <SketchShowdownTitle />
         <p className="cue-card__text">This game started before you joined. You'll be in the next one.</p>
-        <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-          Leave room
-        </button>
       </>
     )
   }
@@ -228,45 +240,46 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
 
   const shown: PlayerView = own.strokes ? { ...view, drawings: view.team === 0 ? [own.strokes, null] : [null, own.strokes] } : view
   return (
-    <PhoneScreen
-      view={shown}
-      player={self.uid}
-      names={names}
-      teammates={shared.teams[view.team]}
-      isHost={isHost}
-      secondsLeft={view.phase === 'reveal' || view.phase === 'over' ? null : secondsLeft}
-      onPick={(option) => send({ type: 'pick', option })}
-      onStroke={(stroke) => {
-        own.change((strokes) => [...strokes, stroke])
-        send({ type: 'stroke', stroke })
-      }}
-      onUndo={() => {
-        own.change((strokes) => strokes.slice(0, -1))
-        send({ type: 'undo' })
-      }}
-      onClear={() => {
-        own.change(() => [])
-        send({ type: 'clear' })
-      }}
-      onGuess={(text) => send({ type: 'guess', text })}
-      onVote={(nominee) => send({ type: 'vote', nominee })}
-      onNext={() => send({ type: 'next' })}
-      raceAction={isHost && <EndRound onEnd={() => send({ type: 'end' })} />}
-      summaryAction={
-        <>
-          {shared.gallery && <Gallery items={shared.gallery} />}
-          {isHost && (
-            <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
-              Play again
-            </button>
-          )}
-          <BackToLobby room={room} isHost={isHost} />
-          <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-            Leave room
-          </button>
-        </>
-      }
-    />
+    <>
+      {isHost && shared.phase !== 'over' && <EndGameEarly room={room} onSave={() => send({ type: 'end-game' })} />}
+      <PhoneScreen
+        view={shown}
+        player={self.uid}
+        names={names}
+        teammates={shared.teams[view.team]}
+        isHost={isHost}
+        secondsLeft={view.phase === 'reveal' || view.phase === 'over' ? null : secondsLeft}
+        onPick={(option) => send({ type: 'pick', option })}
+        onStroke={(stroke) => {
+          own.change((strokes) => [...strokes, stroke])
+          send({ type: 'stroke', stroke })
+        }}
+        onUndo={() => {
+          own.change((strokes) => strokes.slice(0, -1))
+          send({ type: 'undo' })
+        }}
+        onClear={() => {
+          own.change(() => [])
+          send({ type: 'clear' })
+        }}
+        onGuess={(text) => send({ type: 'guess', text })}
+        onVote={(nominee) => send({ type: 'vote', nominee })}
+        onNext={() => send({ type: 'next' })}
+        raceAction={isHost && <EndRound onEnd={() => send({ type: 'end' })} />}
+        summaryAction={
+          <>
+            {shared.gallery && <Gallery items={shared.gallery} />}
+            {isPractice(players) && <PracticeNote room={room} over />}
+            {isHost && (
+              <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
+                Play again
+              </button>
+            )}
+            <BackToLobby room={room} isHost={isHost} />
+          </>
+        }
+      />
+    </>
   )
 }
 
@@ -363,6 +376,10 @@ function HostRunner({ room }: { room: Room }) {
         const current = latest.current
         if (!current) return
         const move = input as RoomInput
+        if (move.type === 'end-game') {
+          if (by === host && !rules.isOver(current.state)) save({ ...current.state, phase: 'over' })
+          return
+        }
         if (move.type === 'next' || move.type === 'end') {
           const phase = move.type === 'next' ? 'reveal' : 'race'
           if (by === host && current.state.phase === phase) save(rules.onTimer(current.state, context()))

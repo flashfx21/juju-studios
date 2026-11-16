@@ -6,6 +6,7 @@ import { useMe } from '../../app/useMe'
 import { createRoom, joinRoom, LOBBY, playerIds, switchGame, watchRoom, type Room } from '../../engine/net/rooms'
 import { rememberedRoom, rememberRoom } from '../../engine/rememberedRoom'
 import { CodeBoxes } from '../../ui/CodeBoxes'
+import { MenuItems } from '../../ui/FrameMenu'
 import { OptionRow } from '../../ui/OptionRow'
 import { PhoneFrame } from '../../ui/PhoneFrame'
 import { inkOn, type PlayerColorId } from '../../ui/playerColors'
@@ -67,9 +68,11 @@ export function RoomPage({ gameId, gameName, Title, intro, children, cardTag = '
         <a className="phone-button" href={href('sign-in')} data-testid="room-sign-in">
           Sign in
         </a>
-        <a className="phone-link phone-link--quiet" href={href('home')} data-testid="room-home">
-          Home
-        </a>
+        <MenuItems>
+          <a href={href('home')} data-testid="room-home">
+            Home
+          </a>
+        </MenuItems>
       </PhoneFrame>
     )
   }
@@ -164,9 +167,11 @@ function StartOrJoin({ gameId, gameName, Title, intro, self, onEnter }: StartOrJ
         </button>
       </div>
       {gameId === LOBBY && (
-        <a className="phone-link phone-link--quiet" href={href('home')} data-testid="room-home">
-          Home
-        </a>
+        <MenuItems>
+          <a href={href('home')} data-testid="room-home">
+            Home
+          </a>
+        </MenuItems>
       )}
     </>
   )
@@ -237,6 +242,11 @@ function InRoom({ code, gameId, self, Title, onLeave, children }: InRoomProps) {
   return (
     <>
       {children({ room, self, isHost: room.host === self.uid, onLeave })}
+      <MenuItems>
+        <button type="button" data-menu-last="true" data-testid="room-leave" onClick={onLeave}>
+          Leave room
+        </button>
+      </MenuItems>
       {problem && (
         <p className="preview-note" role="alert">
           {problem}
@@ -246,18 +256,28 @@ function InRoom({ code, gameId, self, Title, onLeave, children }: InRoomProps) {
   )
 }
 
-/** In a lobby room, the host's way back to the lobby for the next vote; every phone follows. */
+/** In a lobby room, the host's way back to the lobby for the next vote, in the top-left menu; every phone follows. */
 export function BackToLobby({ room, isHost }: { room: Room; isHost: boolean }) {
   if (!room.lobby || !isHost) return null
   return (
-    <button
-      type="button"
-      className="phone-button phone-button--secondary"
-      data-testid="room-back-to-lobby"
-      onClick={() => void switchGame(room.code, LOBBY)}
-    >
-      Back to lobby
-    </button>
+    <MenuItems>
+      <button type="button" data-testid="room-back-to-lobby" onClick={() => void switchGame(room.code, LOBBY)}>
+        Everyone back to lobby
+      </button>
+    </MenuItems>
+  )
+}
+
+/**
+ * For games where 2 people make a practice game: in the waiting room it shows while only 2 are in the room;
+ * `over` says so at the end of a practice game.
+ */
+export function PracticeNote({ room, over = false }: { room: Room; over?: boolean }) {
+  if (!over && playerIds(room).length > 2) return null
+  return (
+    <p className="room-status" data-testid="room-practice-note">
+      {over ? 'Practice game: not saved to the leaderboard.' : 'With 2 people this is a practice game: not saved to the leaderboard.'}
+    </p>
   )
 }
 
@@ -312,11 +332,10 @@ interface WaitingRoomProps {
   settings?: ReactNode
   /** Starts the game with these players: everyone in the room, then the chosen bots. */
   onStart: (players: PlayerId[]) => void
-  onLeave: () => void
 }
 
 /** The room code, who has joined, and (for the host) the game's choices, bots and Start game. */
-export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart, onLeave }: WaitingRoomProps) {
+export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart }: WaitingRoomProps) {
   const [botCount, setBotCount] = useState<BotCount>(0)
   const [botSkill, setBotSkill] = useState<BotSkill>('casual')
   const ids = playerIds(room)
@@ -354,9 +373,6 @@ export function WaitingRoom({ room, isHost, Title, minPlayers, settings, onStart
         </p>
       )}
       <BackToLobby room={room} isHost={isHost} />
-      <button type="button" className="phone-link phone-link--quiet" data-testid="room-leave" onClick={onLeave}>
-        Leave room
-      </button>
     </div>
   )
 }

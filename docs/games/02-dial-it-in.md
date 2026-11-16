@@ -2,7 +2,7 @@
 
 **Game ID:** `dial-it-in`  
 **Status:** Development. Launch phase 1. Rules, phone screen and guess dial (stops at both ends) done; solo playtest live; rooms on phones live (Nov 14): people take turns giving clues, bots only guess, private targets and guesses, host Next round. TV screen and Instructions to do  
-**Players:** 3 to 10 (placeholder)  
+**Players:** 2 to 10 (placeholder; 2 people is a practice game, not saved to the leaderboard)  
 **Length:** 20 min (placeholder)  
 **Modes:** Individual (team average is an open option)
 

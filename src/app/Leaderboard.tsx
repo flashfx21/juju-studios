@@ -6,6 +6,7 @@ import { watchProfiles, type Profile } from '../engine/net/profiles'
 import { watchScores, type Scores } from '../engine/net/scores'
 import { LINEUP } from '../games/lineup'
 import { ROOM_GAMES } from '../games/room/roomPages'
+import { MenuItems } from '../ui/FrameMenu'
 import { OptionRow } from '../ui/OptionRow'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { inkOn, PLAYER_COLORS } from '../ui/playerColors'
@@ -162,14 +163,14 @@ export function Leaderboard() {
           </a>
         </>
       )}
-      <div className="phone-actions">
-        <button type="button" className="phone-link" data-testid="board-back" onClick={goBack}>
+      <MenuItems>
+        <button type="button" data-testid="board-back" onClick={goBack}>
           Back
         </button>
-        <a className="phone-link phone-link--quiet" href={href('home')} data-testid="board-home">
+        <a href={href('home')} data-testid="board-home">
           Home
         </a>
-      </div>
+      </MenuItems>
     </PhoneFrame>
   )
 }

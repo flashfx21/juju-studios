@@ -1,5 +1,5 @@
 // ABOUTME: Tonight's lobby on a phone (#/room): the room code, who's in, how many games the night has, and a vote on the next one.
-// ABOUTME: The host starts the game with the most votes (a tie is a random pick); every phone follows into it, and back here after. The last game ends in a recap.
+// ABOUTME: The host starts the game with the most votes (a tie: Random starts one of them); every phone follows into it, and back here after. The last game ends in a recap.
 import { useState, type CSSProperties } from 'react'
 import {
   castVote,
@@ -17,11 +17,11 @@ import { PlayerDot, RoomHeader, RoomPage, type RoomScreenProps } from '../games/
 import { roomPageFor } from '../games/room/roomPages'
 import { usePlayerLooks } from '../games/room/usePlayerLooks'
 import { GAME_TILE_COLORS } from '../ui/gameTileColors'
+import { MenuItems } from '../ui/FrameMenu'
 import { OptionRow } from '../ui/OptionRow'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
-import { WaffleMenu } from '../ui/WaffleMenu'
 import { HowToPlayButton } from './HowToPlay'
-import { lobbyPick } from './lobbyPick'
+import { mostVoted, randomPick } from './lobbyPick'
 import { pickerState } from './pickerGames'
 import { PlayerBadge } from './PlayerBadge'
 import { goTo, href } from './useHashRoute'
@@ -29,10 +29,10 @@ import { useMe } from './useMe'
 import './GameVote.css'
 import './LobbyRoom.css'
 
-/** The top-left menu on tonight's lobby: places to go, and leaving the room. */
-function LobbyMenu({ onLeave }: { onLeave: () => void }) {
+/** Tonight's lobby's places to go, in the top-left menu (the room adds Leave room). */
+function LobbyMenu() {
   return (
-    <WaffleMenu>
+    <MenuItems>
       <a href={href('home')} data-testid="lobby-home">
         Home
       </a>
@@ -42,10 +42,7 @@ function LobbyMenu({ onLeave }: { onLeave: () => void }) {
       <a href={href('how-to-play')} data-testid="lobby-how-to-play">
         How to play
       </a>
-      <button type="button" data-testid="lobby-menu-leave" onClick={onLeave}>
-        Leave room
-      </button>
-    </WaffleMenu>
+    </MenuItems>
   )
 }
 
@@ -85,7 +82,7 @@ function pointsText(points: number): string {
 }
 
 /** The night's totals, best first, and each game's winners. */
-function Recap({ room, onLeave }: { room: Room; onLeave: () => void }) {
+function Recap({ room }: { room: Room }) {
   const looks = usePlayerLooks(room)
   const games = sessionGames(room.session)
   const totals = new Map<string, number>()
@@ -136,25 +133,24 @@ function Recap({ room, onLeave }: { room: Room; onLeave: () => void }) {
         </>
       )}
       <p className="cue-card__text">Want to keep playing? Start a new lobby from the home screen.</p>
-      <button type="button" className="phone-button" data-testid="room-leave" onClick={onLeave}>
-        Leave room
-      </button>
     </section>
   )
 }
 
-function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
+function LobbyScreen({ room, self, isHost }: RoomScreenProps) {
   const me = useMe()
   const style = useLobbyStyle()
   const canPlaytest = me.kind === 'signed-in' && me.canPlaytest
   const looks = usePlayerLooks(room)
   const games = LINEUP.filter((game) => roomPageFor(game.id) && pickerState(game, canPlaytest) === 'ready')
   const myVote = room.votes[self.uid]
-  const voted = lobbyPick(
+  const leaders = mostVoted(
     room.votes,
     games.map((game) => game.id),
   )
-  const pick = voted?.game ?? null
+  // One clear winner gets a Start button; a tie gets the host's Random button instead.
+  const pick = leaders.length === 1 ? leaders[0] : null
+  const tied = leaders.length > 1 ? leaders : []
   const titleOf = (id: string) => LINEUP.find((game) => game.id === id)?.title ?? id
   const pickTitle = pick ? titleOf(pick) : undefined
   const running = room.game !== LOBBY ? LINEUP.find((game) => game.id === room.game) : undefined
@@ -162,31 +158,36 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
   const planned = room.session.planned
   const played = Object.keys(room.session.games).length
   const [confirmingEnd, setConfirmingEnd] = useState(false)
+  // Start and Random switch the whole room, so a second tap while the first is on its way is ignored.
+  const [starting, setStarting] = useState(false)
 
   if (!running && sessionOver(room.session)) {
     return (
       <div className="room-waiting lobby-room">
-        <div className="waffle-bar">
-          <LobbyMenu onLeave={onLeave} />
-          <PlayerBadge />
-        </div>
+        <LobbyMenu />
+        <PlayerBadge />
         <LobbyTitle />
-        <Recap room={room} onLeave={onLeave} />
+        <Recap room={room} />
       </div>
     )
   }
 
   async function start(game: string) {
-    if (planned === null) await planSession(room.code, nightLength)
-    await switchGame(room.code, game)
+    if (starting) return
+    setStarting(true)
+    try {
+      if (planned === null) await planSession(room.code, nightLength)
+      await switchGame(room.code, game)
+    } catch (problem) {
+      console.error('Starting the game failed', problem)
+      setStarting(false)
+    }
   }
 
   return (
     <div className="room-waiting lobby-room">
-      <div className="waffle-bar">
-        <LobbyMenu onLeave={onLeave} />
-        <PlayerBadge />
-      </div>
+      <LobbyMenu />
+      <PlayerBadge />
       <LobbyTitle />
       <RoomHeader room={room} looks={looks} />
 
@@ -270,17 +271,32 @@ function LobbyScreen({ room, self, isHost, onLeave }: RoomScreenProps) {
               })}
             </ul>
           )}
-          {voted && voted.tiedWith.length > 0 && (
-            <p className="lobby-room__tie" data-testid="lobby-tie">
-              It's a tie between {voted.tiedWith.map(titleOf).join(' and ')}! {pickTitle} it is.
-            </p>
+          {tied.length > 0 && (
+            <div className="lobby-room__tie" data-testid="lobby-tie">
+              <p className="lobby-room__tie-text">It's a tie between {tied.map(titleOf).join(' and ')}!</p>
+              {isHost && (
+                <button
+                  type="button"
+                  className="phone-button"
+                  aria-disabled={starting || undefined}
+                  data-testid="lobby-random"
+                  onClick={() => void start(randomPick(tied, Math.random))}
+                >
+                  Random
+                </button>
+              )}
+            </div>
           )}
           <p className="room-status" role="status" data-testid="lobby-status">
             {pickTitle
               ? isHost
                 ? `Tap Start on ${pickTitle} when everyone's ready`
                 : `The host will start ${pickTitle}`
-              : 'Vote, then the host starts the game with the most votes'}
+              : tied.length > 0
+                ? isHost
+                  ? 'Tap Random to start one of them'
+                  : 'The host will start one of them at random'
+                : 'Vote, then the host starts the game with the most votes'}
           </p>
         </>
       )}

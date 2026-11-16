@@ -11,44 +11,9 @@
   color: var(--color-accent);
 }
 
-/* Top row: Back on the left, the title in the middle, your badge on the right; Back again at the bottom. */
-/* Equal side columns keep the title centered whether or not the badge is there. */
-.game-vote__top {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 8px;
-}
-
-.game-vote__top .game-vote__title {
+/* The screen's title, centered under the menu and badge row. */
+.game-vote__title--top {
   text-align: center;
-}
-
-.game-vote__top .game-vote__back {
-  justify-self: start;
-  white-space: nowrap;
-}
-
-:root[data-theme='arcade'] .game-vote__back {
-  font-size: 11px;
-}
-
-.game-vote__top .player-badge-row {
-  justify-self: end;
-  margin-bottom: 0;
-}
-
-.game-vote__back {
-  min-height: var(--space-hit-target-min);
-  display: inline-flex;
-  align-items: center;
-  color: var(--color-text);
-  font-family: var(--font-label);
-  font-size: 16px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 
 .game-vote__empty {

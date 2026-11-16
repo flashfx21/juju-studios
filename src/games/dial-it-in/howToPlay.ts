@@ -25,6 +25,7 @@ export const howToPlay: HowToPlay = {
   goodToKnow: [
     'Turn the dial clockwise to go up and counterclockwise to go down. It stops at 1 and at the top number.',
     'The 1 to 50 dial is easier: every guess is closer to the target.',
+    'Two people can play as practice: you take turns giving the clue. Practice games are not saved to the leaderboard.',
   ],
   hostPicks: ['Range: 1 to 100 or 1 to 50', 'Turns each: 1, 2 or 3', 'Seconds to guess: 60, 90 or 2 min'],
 }

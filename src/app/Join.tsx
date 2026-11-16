@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react'
 import { LOBBY, roomGame } from '../engine/net/rooms'
 import { rememberRoom } from '../engine/rememberedRoom'
 import { roomPageFor } from '../games/room/roomPages'
+import { MenuItems } from '../ui/FrameMenu'
 import { CodeBoxes } from '../ui/CodeBoxes'
 import { PhoneFrame } from '../ui/PhoneFrame'
 import { Field } from '../ui/TextField'
@@ -72,9 +73,11 @@ function SignUpFirst() {
         <button type="button" className="phone-link" data-testid="join-sign-in" onClick={() => goSign('sign-in')}>
           Already signed up? Sign in
         </button>
-        <a className="phone-link phone-link--quiet" href={href('home')}>
-          Back
-        </a>
+        <MenuItems>
+          <a href={href('home')} data-testid="menu-home">
+            Home
+          </a>
+        </MenuItems>
       </div>
     </PhoneFrame>
   )
@@ -149,9 +152,11 @@ function CodeScreen() {
           <p className="join-caption" aria-hidden="true">
             Hit the buzzer
           </p>
-          <a className="phone-link phone-link--quiet" href={href('home')}>
-            Back
-          </a>
+          <MenuItems>
+            <a href={href('home')} data-testid="menu-home">
+              Home
+            </a>
+          </MenuItems>
         </div>
       </form>
     </PhoneFrame>

@@ -3,6 +3,7 @@
 import { useState, type CSSProperties, type FormEvent } from 'react'
 import { signOutOfThisDevice } from '../engine/net/auth'
 import { saveProfile, type Profile as SavedProfile } from '../engine/net/profiles'
+import { MenuItems } from '../ui/FrameMenu'
 import { CodeBoxes } from '../ui/CodeBoxes'
 import { ColorSwatches } from '../ui/ColorSwatches'
 import { PhoneFrame } from '../ui/PhoneFrame'
@@ -92,11 +93,11 @@ function SignedOutProfile({ style, onStyleChange }: ProfileProps) {
         </a>
       </div>
       <StyleGroup style={style} onStyleChange={onStyleChange} />
-      <div className="phone-actions">
-        <a className="phone-link" href={href('home')} data-testid="profile-back">
-          Back
+      <MenuItems>
+        <a href={href('home')} data-testid="profile-back">
+          Home
         </a>
-      </div>
+      </MenuItems>
     </PhoneFrame>
   )
 }

@@ -102,6 +102,17 @@ describe('setup', () => {
     }
   })
 
+  it('deals photos this device showed lately only once the fresh ones run out', () => {
+    const random = seededRandom('recent')
+    const first = rules.setup(PLAYERS, { ...DEFAULT_SETTINGS, rounds: 5 }, { now: 0, random })
+    const recent = first.rounds.map((round) => round.photo.id)
+    for (let game = 0; game < 4; game++) {
+      const next = rules.setup(PLAYERS, { ...DEFAULT_SETTINGS, rounds: 5 }, { now: 0, random, recent })
+      expect(next.rounds.some((round) => recent.includes(round.photo.id))).toBe(false)
+      recent.push(...next.rounds.map((round) => round.photo.id))
+    }
+  })
+
   it('needs at least two players', () => {
     expect(() => newGame({}, ['ana'])).toThrow()
   })

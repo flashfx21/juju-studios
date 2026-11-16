@@ -2,6 +2,7 @@
 // ABOUTME: Picking a game offers its Solo play pages; no lobby is needed. Votes and Lock in wait for rooms.
 import { useState, type CSSProperties } from 'react'
 import { LINEUP } from '../games/lineup'
+import { MenuItems } from '../ui/FrameMenu'
 import { GAME_TILE_COLORS } from '../ui/gameTileColors'
 import { PICKER_STATE_LABELS } from '../ui/gameTileStates'
 import { PhoneFrame } from '../ui/PhoneFrame'
@@ -38,13 +39,8 @@ export function GameVote({ gameChoice }: { gameChoice: GameChoice }) {
 
   return (
     <PhoneFrame label="Pick a game">
-      <div className="game-vote__top">
-        <a className="game-vote__back" href={href('lobby')} data-testid="vote-back-top">
-          ‹ Back
-        </a>
-        <h1 className="game-vote__title">{TITLES[style][gameChoice]}</h1>
-        <PlayerBadge />
-      </div>
+      <PlayerBadge />
+      <h1 className="game-vote__title game-vote__title--top">{TITLES[style][gameChoice]}</h1>
       {ready.length === 0 ? (
         <p className="game-vote__empty" data-testid="vote-empty">
           No games are ready to pick yet. Games in testing open for playtesters.
@@ -116,11 +112,11 @@ export function GameVote({ gameChoice }: { gameChoice: GameChoice }) {
           )
         })}
       </ul>
-      <div className="phone-actions">
-        <a className="phone-link" href={href('lobby')} data-testid="vote-back">
+      <MenuItems>
+        <a href={href('lobby')} data-testid="vote-back">
           Back
         </a>
-      </div>
+      </MenuItems>
     </PhoneFrame>
   )
 }

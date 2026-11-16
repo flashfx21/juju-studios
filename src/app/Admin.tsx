@@ -17,6 +17,7 @@ import { saveProfile, type Profile } from '../engine/net/profiles'
 import { LOBBY } from '../engine/net/rooms'
 import { addScoreAdjustment, resetEveryonesScores, resetPlayerScores, watchScores, type Scores } from '../engine/net/scores'
 import { LINEUP } from '../games/lineup'
+import { MenuItems } from '../ui/FrameMenu'
 import { CodeBoxes } from '../ui/CodeBoxes'
 import { ColorSwatches } from '../ui/ColorSwatches'
 import { ConfirmButton } from '../ui/ConfirmButton'
@@ -53,9 +54,11 @@ export function Admin({ style, onStyleChange }: AdminProps) {
         <p className="cue-card__text" data-testid="admin-only">
           This page is for admins.
         </p>
-        <a className="phone-link" href={href('home')}>
-          Back
-        </a>
+        <MenuItems>
+          <a href={href('home')} data-testid="menu-home">
+            Home
+          </a>
+        </MenuItems>
       </PhoneFrame>
     )
   }
@@ -150,11 +153,11 @@ function AdminPage({ selfUid, style, onStyleChange }: { selfUid: string } & Admi
         {loaded && tab === 'games' && <GamesPanel data={data} run={run} />}
         {loaded && tab === 'rooms' && <RoomsPanel data={data} run={run} />}
       </TabPanel>
-      <div className="phone-actions">
-        <a className="phone-link" href={href('home')} data-testid="admin-back">
+      <MenuItems>
+        <a href={href('home')} data-testid="admin-back">
           Home
         </a>
-      </div>
+      </MenuItems>
     </PhoneFrame>
   )
 }

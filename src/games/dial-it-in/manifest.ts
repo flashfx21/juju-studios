@@ -7,7 +7,7 @@ export const manifest: GameManifest = {
   title: 'Dial It In',
   pitch: 'Guess where the clue lands between two opposites, 1 to 100.',
   tag: 'Brainy',
-  players: { min: 3, max: 10 },
+  players: { min: 2, max: 10 },
   minutes: 20,
   modes: ['individual'],
   status: 'coming-soon',

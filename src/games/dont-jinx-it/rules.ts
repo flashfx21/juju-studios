@@ -2,6 +2,7 @@
 // ABOUTME: clue written twice (or nearly twice) is jinxed before the guesser sees what survived. Pure logic, no screens.
 
 import wordPack from '../../../packs/dont-jinx-it/words.json'
+import { freshFirst } from '../../engine/recentlyDealt'
 import { sameWordForm } from '../../engine/wordForms'
 import type { FinishingOrder, GameRules, PlayerId } from '../types'
 import { manifest } from './manifest'
@@ -194,15 +195,6 @@ export function totalScores(state: DontJinxItState): Record<PlayerId, number> {
   return totals
 }
 
-function shuffled<T>(items: readonly T[], random: () => number): T[] {
-  const copy = [...items]
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1))
-    ;[copy[i], copy[j]] = [copy[j], copy[i]]
-  }
-  return copy
-}
-
 function withTurn(state: DontJinxItState, changes: Partial<Turn>): DontJinxItState {
   const turns = state.turns.map((turn, i) => (i === state.turnIndex ? { ...turn, ...changes } : turn))
   return { ...state, turns }
@@ -254,7 +246,7 @@ export const rules: GameRules<DontJinxItState, DontJinxItSettings, DontJinxItInp
     if (turnCount * 2 > MYSTERY_WORDS.length) {
       throw new Error(`The word pack has only ${MYSTERY_WORDS.length} words for ${turnCount} turns and their skips.`)
     }
-    const deck = shuffled(MYSTERY_WORDS, ctx.random)
+    const deck = freshFirst(MYSTERY_WORDS, (word) => word, ctx.recent ?? [], ctx.random)
     const turns: Turn[] = deck.slice(0, turnCount).map((word, i) => ({
       guesser: players[i % players.length],
       word,

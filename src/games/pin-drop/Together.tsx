@@ -2,10 +2,12 @@
 // ABOUTME: The host's phone runs the rules and the round timer; every phone shows the photo above its own map.
 import { useEffect, useRef, useState } from 'react'
 import { clearPlay, sendInput, startPlay, takeInputs, writePlay, type Room } from '../../engine/net/rooms'
+import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
 import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { EndGameEarly } from '../room/EndGameEarly'
 import { saveFinishedGame } from '../room/saveFinishedGame'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import { useSecondsLeft } from '../room/useSecondsLeft'
@@ -27,8 +29,8 @@ import {
   type PinDropState,
 } from './rules'
 
-/** Moves sent to the host: the game's own, or the host's Next on the reveal and the standings. */
-type RoomInput = PinDropInput | { type: 'next' }
+/** Moves sent to the host: the game's own, or the host's Next on the reveal and the standings, or End game. */
+type RoomInput = PinDropInput | { type: 'next' } | { type: 'end-game' }
 
 const SCORING_NAMES = { match: 'Match play', stroke: 'Stroke play' }
 const UNIT_NAMES = { mi: 'Miles', km: 'Kilometers' }
@@ -62,7 +64,7 @@ export function Together() {
   )
 }
 
-function PinDropWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
+function PinDropWaitingRoom({ room, isHost }: RoomScreenProps) {
   const [settings, setSettings] = useState<PinDropSettings>(DEFAULT_SETTINGS)
   const choose = <K extends keyof PinDropSettings>(key: K, value: PinDropSettings[K]) =>
     setSettings((current) => ({ ...current, [key]: value }))
@@ -73,10 +75,13 @@ function PinDropWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
       isHost={isHost}
       Title={PinDropTitle}
       minPlayers={manifest.players.min}
-      onLeave={onLeave}
       onStart={(players) => {
         const ctx = context()
-        const state = rules.setup(players, settings, ctx)
+        const state = rules.setup(players, settings, { ...ctx, recent: recentlyDealt(manifest.id) })
+        rememberDealt(
+          manifest.id,
+          state.rounds.map((round) => round.photo.id),
+        )
         void startPlay(room.code, state, deadlineFor(state, ctx.now))
       }}
       settings={
@@ -91,7 +96,7 @@ function PinDropWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
   )
 }
 
-function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
+function Game({ room, self, isHost }: RoomScreenProps) {
   const play = room.play!
   const state = JSON.parse(play.state) as PinDropState
   const looks = usePlayerLooks(room, state.players)
@@ -105,39 +110,36 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
       <>
         <PinDropTitle />
         <p className="cue-card__text">This game started before you joined. You'll be in the next one.</p>
-        <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-          Leave room
-        </button>
       </>
     )
   }
 
   return (
-    <PhoneScreen
-      state={state}
-      player={self.uid}
-      looks={looks}
-      isHost={isHost}
-      secondsLeft={secondsLeft}
-      onPin={(pin) => send({ type: 'pin', ...pin })}
-      onLock={(pin) => send({ type: 'lock', ...pin })}
-      onFlag={() => send({ type: 'flag' })}
-      onNext={() => send({ type: 'next' })}
-      above={<RoundPhoto key={round.photo.id} photo={round.photo} />}
-      summaryAction={
-        <>
-          {isHost && (
-            <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
-              Play again
-            </button>
-          )}
-          <BackToLobby room={room} isHost={isHost} />
-          <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-            Leave room
-          </button>
-        </>
-      }
-    />
+    <>
+      {isHost && state.phase !== 'over' && <EndGameEarly room={room} onSave={() => send({ type: 'end-game' })} />}
+      <PhoneScreen
+        state={state}
+        player={self.uid}
+        looks={looks}
+        isHost={isHost}
+        secondsLeft={secondsLeft}
+        onPin={(pin) => send({ type: 'pin', ...pin })}
+        onLock={(pin) => send({ type: 'lock', ...pin })}
+        onFlag={() => send({ type: 'flag' })}
+        onNext={() => send({ type: 'next' })}
+        above={<RoundPhoto key={round.photo.id} photo={round.photo} />}
+        summaryAction={
+          <>
+            {isHost && (
+              <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
+                Play again
+              </button>
+            )}
+            <BackToLobby room={room} isHost={isHost} />
+          </>
+        }
+      />
+    </>
   )
 }
 
@@ -204,6 +206,10 @@ function HostRunner({ room }: { room: Room }) {
       const current = latest.current
       if (!current) return
       const move = input as RoomInput
+      if (move.type === 'end-game') {
+        if (by === host && !rules.isOver(current.state)) save({ ...current.state, phase: 'over' }, false)
+        return
+      }
       if (move.type === 'next') {
         const phase = current.state.phase
         if (by === host && (phase === 'reveal' || phase === 'standings')) save(rules.onTimer(current.state, context()), false)

@@ -2,9 +2,10 @@
 // ABOUTME: On a phone it shows your phone; in a TV-shaped window it shows the TV, your phone and the dev box side by side.
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { loadDictionary, type Dictionary } from '../../engine/dictionary'
-import { GameExitButton } from '../../ui/GameExitButton'
+import { ExitGameItem } from '../../ui/ExitGameItem'
 import { PhoneFrame } from '../../ui/PhoneFrame'
 import { useScreenKind } from '../../ui/useScreenKind'
+import { WaffleMenu } from '../../ui/WaffleMenu'
 import type { PlayerId, RulesContext } from '../types'
 import { Instructions } from './Instructions'
 import { DontJinxItTitle, PhoneScreen } from './PhoneScreen'
@@ -143,7 +144,9 @@ export function Playtest() {
           />
         </TvPreview>
         <div className="dji-desk__side">
-          <GameExitButton />
+          <WaffleMenu>
+            <ExitGameItem />
+          </WaffleMenu>
           <div className="dji-desk__phone">
             <DontJinxItTitle />
             <p className="cue-card__text">Interface test: you plus bots. Set the game up on the TV, then Start game.</p>

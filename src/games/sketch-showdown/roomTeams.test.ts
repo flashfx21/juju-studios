@@ -1,8 +1,9 @@
 // ABOUTME: Tests for Sketch Showdown room teams: bots always form their own team, people split evenly at random otherwise,
-// ABOUTME: sizes the game can't play are refused with a reason, and bot teams solve more often and sooner when sharp.
+// ABOUTME: sizes the game can't play are refused with a reason, 2 or 3 people get a bot team, and bot teams solve more often and sooner when sharp.
 import { describe, expect, it } from 'vitest'
 import { seededRandom } from '../../engine/seededRandom'
-import { botRacePlan, splitTeams } from './roomTeams'
+import { botFor } from '../room/bots'
+import { botRacePlan, splitTeams, withBotTeam } from './roomTeams'
 
 const people = (n: number) => Array.from({ length: n }, (_, i) => `p${i + 1}`)
 
@@ -28,6 +29,19 @@ describe('Sketch Showdown room teams', () => {
   it('refuses fewer than 4 or more than 10 people without bots', () => {
     expect('problem' in splitTeams(people(3), Math.random)).toBe(true)
     expect('problem' in splitTeams(people(11), Math.random)).toBe(true)
+  })
+
+  it('gives 2 or 3 people with no bots a team of 2 casual bots, and leaves other line-ups alone', () => {
+    for (const count of [2, 3]) {
+      const players = withBotTeam(people(count), seededRandom('c'))
+      const bots = players.filter((id) => botFor(id))
+      expect(bots).toHaveLength(2)
+      expect(bots.every((id) => botFor(id)!.skill === 'casual')).toBe(true)
+      expect('teams' in splitTeams(players, seededRandom('d'))).toBe(true)
+    }
+    expect(withBotTeam(people(1), Math.random)).toEqual(people(1))
+    expect(withBotTeam(people(4), Math.random)).toEqual(people(4))
+    expect(withBotTeam(['p1', 'p2', 'bot-sharp-1'], Math.random)).toEqual(['p1', 'p2', 'bot-sharp-1'])
   })
 
   it('sharp bot teams solve more often and sooner than casual ones', () => {

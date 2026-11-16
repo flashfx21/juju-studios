@@ -53,7 +53,10 @@ interface SpectrumProps {
   marks: { value: number; kind: 'target' | 'guess'; label: string }[]
 }
 
-/** The card's two opposites with the dial between them, 1 on the left and the range on the right. */
+/**
+ * The card's two opposites with the dial between them, 1 on the left and the range on the right. With nothing to mark yet
+ * (a guesser before locking in) only the opposites show: the guess dial below has the numbers, and short phones need the room.
+ */
 function Spectrum({ round, range, marks }: SpectrumProps) {
   return (
     <div className="dii-spectrum" data-testid="dii-spectrum">
@@ -61,21 +64,23 @@ function Spectrum({ round, range, marks }: SpectrumProps) {
         <span data-testid="dii-left">{round.card.left}</span>
         <span data-testid="dii-right">{round.card.right}</span>
       </div>
-      <div className="dii-spectrum__dial" aria-hidden="true">
-        {marks.map((mark) => (
-          <span
-            key={mark.kind}
-            className={`dii-spectrum__mark dii-spectrum__mark--${mark.kind}`}
-            style={{ left: `${((mark.value - 1) / (range - 1)) * 100}%` }}
-          />
-        ))}
-      </div>
-      <div className="dii-spectrum__scale" aria-hidden="true">
-        <span>1</span>
-        <span>{range}</span>
-      </div>
       {marks.length > 0 && (
-        <p className="visually-hidden">{marks.map((mark) => `${mark.label}: ${mark.value}`).join('. ')}</p>
+        <>
+          <div className="dii-spectrum__dial" aria-hidden="true">
+            {marks.map((mark) => (
+              <span
+                key={mark.kind}
+                className={`dii-spectrum__mark dii-spectrum__mark--${mark.kind}`}
+                style={{ left: `${((mark.value - 1) / (range - 1)) * 100}%` }}
+              />
+            ))}
+          </div>
+          <div className="dii-spectrum__scale" aria-hidden="true">
+            <span>1</span>
+            <span>{range}</span>
+          </div>
+          <p className="visually-hidden">{marks.map((mark) => `${mark.label}: ${mark.value}`).join('. ')}</p>
+        </>
       )}
     </div>
   )
@@ -120,34 +125,36 @@ function GuessForm({ range, onGuess }: GuessFormProps) {
           setError('')
         }}
       />
-      {/* Inside a cue card, like every shared field: the field takes its text color from the card. */}
-      <div className="cue-card">
-        <Field id="dii-guess" label={`Or type your guess, 1 to ${range}`} error={error}>
-          <div className="field__box">
-            <input
-              id="dii-guess"
-              className="field__input dii-guess__input"
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              autoComplete="off"
-              value={typed}
-              aria-invalid={error ? true : undefined}
-              aria-describedby={error ? 'dii-guess-error' : undefined}
-              data-testid="dii-guess-input"
-              onChange={(event) => {
-                setTyped(event.target.value)
-                setError('')
-                const value = readGuess(event.target.value, range)
-                if (value !== null) setDialed(value)
-              }}
-            />
-          </div>
-        </Field>
+      <div className="dii-guess__row">
+        {/* Inside a cue card, like every shared field: the field takes its text color from the card. */}
+        <div className="cue-card dii-guess__typed">
+          <Field id="dii-guess" label={`Or type 1 to ${range}`} error={error}>
+            <div className="field__box">
+              <input
+                id="dii-guess"
+                className="field__input dii-guess__input"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                autoComplete="off"
+                value={typed}
+                aria-invalid={error ? true : undefined}
+                aria-describedby={error ? 'dii-guess-error' : undefined}
+                data-testid="dii-guess-input"
+                onChange={(event) => {
+                  setTyped(event.target.value)
+                  setError('')
+                  const value = readGuess(event.target.value, range)
+                  if (value !== null) setDialed(value)
+                }}
+              />
+            </div>
+          </Field>
+        </div>
+        <button type="submit" className="phone-button dii-guess__lock" data-testid="dii-lock-in">
+          Lock in
+        </button>
       </div>
-      <button type="submit" className="phone-button" data-testid="dii-lock-in">
-        Lock in
-      </button>
     </form>
   )
 }

@@ -2,6 +2,7 @@
 // ABOUTME: everyone else guesses a number privately and scores by closeness. Pure logic, no screens.
 
 import spectrumPack from '../../../packs/dial-it-in/spectrums.json'
+import { freshFirst } from '../../engine/recentlyDealt'
 import type { FinishingOrder, GameRules, PlayerId } from '../types'
 import { manifest } from './manifest'
 
@@ -92,15 +93,6 @@ export function totalScores(state: DialItInState): Record<string, number> {
   return totals
 }
 
-function shuffled<T>(items: T[], random: () => number): T[] {
-  const copy = [...items]
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1))
-    ;[copy[i], copy[j]] = [copy[j], copy[i]]
-  }
-  return copy
-}
-
 function isValidGuess(value: unknown, range: DialRange): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= range
 }
@@ -134,7 +126,7 @@ export const rules: GameRules<DialItInState, DialItInSettings, DialItInInput> = 
     if (order.length > SPECTRUM_CARDS.length) {
       throw new Error(`The spectrum pack has only ${SPECTRUM_CARDS.length} cards for ${order.length} rounds.`)
     }
-    const cards = shuffled(SPECTRUM_CARDS, ctx.random)
+    const cards = freshFirst(SPECTRUM_CARDS, (card) => card.id, ctx.recent ?? [], ctx.random)
     const rounds = order.map((player, i) => ({
       clueGiver: player,
       card: cards[i],

@@ -25,6 +25,7 @@ export const howToPlay: HowToPlay = {
     'A wrong guess makes you wait 2 seconds before your next one.',
     'Near misses in spelling count, and so do plurals. Part of the answer does not: "house" is not lighthouse.',
     'Drawers never guess.',
+    'Only 2 or 3 of you? Two bots join as the other team. A game with 2 people is practice and is not saved to the leaderboard.',
     'Drawing tools: a brush in 4 sizes, 16 colors, eraser, straight line, undo, and press and hold to clear.',
   ],
   hostPicks: ['Turns: draw once or draw twice', 'Pace: 90 s, 2 min or 3 min a round'],

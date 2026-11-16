@@ -1,6 +1,7 @@
 // ABOUTME: The signed-in player's symbol (arcade: initials) in their color, in the top corner of phone menu screens.
-// ABOUTME: Tapping it opens Profile. Shows nothing while signed out or before the profile loads.
+// ABOUTME: Tapping it opens Profile; it sits at the right of the screen's top row. Shows nothing while signed out or before the profile loads.
 import type { CSSProperties } from 'react'
+import { FrameCorner } from '../ui/FrameMenu'
 import { inkOn, PLAYER_COLORS } from '../ui/playerColors'
 import { PlayerSymbol } from '../ui/PlayerSymbol'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
@@ -16,20 +17,22 @@ export function PlayerBadge() {
   const hex = PLAYER_COLORS[style][color]
 
   return (
-    <div className="player-badge-row">
-      <a
-        className="player-badge"
-        href={href('profile')}
-        style={{ '--player': hex, '--player-ink': inkOn(hex) } as CSSProperties}
-        aria-label={`Your profile: ${username}`}
-        data-testid="player-badge"
-      >
-        {symbol && style !== 'arcade' ? (
-          <PlayerSymbol symbol={symbol} />
-        ) : (
-          <span aria-hidden="true">{initials.slice(0, style === 'arcade' ? 3 : 2)}</span>
-        )}
-      </a>
-    </div>
+    <FrameCorner>
+      <div className="player-badge-row">
+        <a
+          className="player-badge"
+          href={href('profile')}
+          style={{ '--player': hex, '--player-ink': inkOn(hex) } as CSSProperties}
+          aria-label={`Your profile: ${username}`}
+          data-testid="player-badge"
+        >
+          {symbol && style !== 'arcade' ? (
+            <PlayerSymbol symbol={symbol} />
+          ) : (
+            <span aria-hidden="true">{initials.slice(0, style === 'arcade' ? 3 : 2)}</span>
+          )}
+        </a>
+      </div>
+    </FrameCorner>
   )
 }

@@ -14,10 +14,12 @@ import {
   writePlayerView,
   type Room,
 } from '../../engine/net/rooms'
+import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { PLAYER_COLOR_IDS, type PlayerColorId } from '../../ui/playerColors'
 import { botFor } from '../room/bots'
+import { EndGameEarly } from '../room/EndGameEarly'
 import { saveFinishedGame } from '../room/saveFinishedGame'
 import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { useSecondsLeft } from '../room/useSecondsLeft'
@@ -57,7 +59,7 @@ const BOT_WRITE_SHARE: [number, number] = [0.2, 0.6]
 const BOT_GUESS_SHARE: [number, number] = [0.3, 0.6]
 
 /** Moves sent to the host: clues, skips and guesses from players, or Next turn from the host. */
-type RoomInput = DontJinxItInput | { type: 'next' }
+type RoomInput = DontJinxItInput | { type: 'next' } | { type: 'end-game' }
 
 /** What every phone may read from the room: who is playing and where the game is, never a word or a clue. */
 interface SharedPlay {
@@ -95,7 +97,7 @@ export function Together() {
   )
 }
 
-function JinxWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
+function JinxWaitingRoom({ room, isHost }: RoomScreenProps) {
   const [settings, setSettings] = useState<DontJinxItSettings>(DEFAULT_SETTINGS)
   return (
     <WaitingRoom
@@ -103,9 +105,12 @@ function JinxWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
       isHost={isHost}
       Title={DontJinxItTitle}
       minPlayers={manifest.players.min}
-      onLeave={onLeave}
       onStart={(players) => {
-        const state = rules.setup(players, settings, context())
+        const state = rules.setup(players, settings, { ...context(), recent: recentlyDealt(manifest.id) })
+        rememberDealt(
+          manifest.id,
+          state.turns.map((turn) => turn.word),
+        )
         void publish(room, state, deadlineFor(state), true)
       }}
       settings={
@@ -159,7 +164,7 @@ function useSeats(room: Room, players: readonly PlayerId[]): Record<PlayerId, Se
   return seats
 }
 
-function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
+function Game({ room, self, isHost }: RoomScreenProps) {
   const shared = JSON.parse(room.play!.state) as SharedPlay
   const [view, setView] = useState<PlayerView | null>(null)
   const [dictionary, setDictionary] = useState<Dictionary | null>(null)
@@ -176,9 +181,6 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
       <>
         <DontJinxItTitle />
         <p className="cue-card__text">This game started before you joined. You'll be in the next one.</p>
-        <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-          Leave room
-        </button>
       </>
     )
   }
@@ -196,42 +198,42 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
 
   const lastTurn = view.turnIndex === view.turnCount - 1
   return (
-    <PhoneScreen
-      view={view}
-      player={self.uid}
-      seats={seats}
-      secondsLeft={secondsLeft}
-      isKnownWord={dictionary ? (word) => dictionary.has(word) : null}
-      standings={shared.standings}
-      onClues={(words) => send({ type: 'clues', words })}
-      onSkip={() => send({ type: 'skip' })}
-      onGuess={(word) => send({ type: 'guess', word })}
-      onPass={() => send({ type: 'pass' })}
-      revealAction={
-        isHost ? (
-          <button type="button" className="phone-button" data-testid="djit-next" onClick={() => send({ type: 'next' })}>
-            {lastTurn ? 'Final standings' : 'Next turn'}
-          </button>
-        ) : (
-          <p className="room-status" role="status">
-            Waiting for the host
-          </p>
-        )
-      }
-      summaryAction={
-        <>
-          {isHost && (
-            <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
-              Play again
+    <>
+      {isHost && shared.phase !== 'over' && <EndGameEarly room={room} onSave={() => send({ type: 'end-game' })} />}
+      <PhoneScreen
+        view={view}
+        player={self.uid}
+        seats={seats}
+        secondsLeft={secondsLeft}
+        isKnownWord={dictionary ? (word) => dictionary.has(word) : null}
+        standings={shared.standings}
+        onClues={(words) => send({ type: 'clues', words })}
+        onSkip={() => send({ type: 'skip' })}
+        onGuess={(word) => send({ type: 'guess', word })}
+        onPass={() => send({ type: 'pass' })}
+        revealAction={
+          isHost ? (
+            <button type="button" className="phone-button" data-testid="djit-next" onClick={() => send({ type: 'next' })}>
+              {lastTurn ? 'Final standings' : 'Next turn'}
             </button>
-          )}
-          <BackToLobby room={room} isHost={isHost} />
-          <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-            Leave room
-          </button>
-        </>
-      }
-    />
+          ) : (
+            <p className="room-status" role="status">
+              Waiting for the host
+            </p>
+          )
+        }
+        summaryAction={
+          <>
+            {isHost && (
+              <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
+                Play again
+              </button>
+            )}
+            <BackToLobby room={room} isHost={isHost} />
+          </>
+        }
+      />
+    </>
   )
 }
 
@@ -319,6 +321,10 @@ function HostRunner({ room }: { room: Room }) {
         const current = latest.current
         if (!current) return
         const move = input as RoomInput
+        if (move.type === 'end-game') {
+          if (by === host && !rules.isOver(current.state)) save({ ...current.state, phase: 'over' })
+          return
+        }
         if (move.type === 'next') {
           if (by === host && current.state.phase === 'reveal') save(rules.onTimer(current.state, context()))
           return

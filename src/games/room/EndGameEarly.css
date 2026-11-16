@@ -1,0 +1,33 @@
+/* ABOUTME: The host's End game question: a small dialog over the game with its three choices stacked. */
+/* ABOUTME: Colors come from the lobby style's tokens; the rec room matches its cream card. */
+
+.room-end {
+  width: min(360px, calc(100vw - 32px));
+  padding: 20px;
+  border: 3px solid currentColor;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+.room-end[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.room-end::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.room-end__question {
+  margin: 0 0 6px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+:root[data-theme='rec-room'] .room-end {
+  background: var(--color-surface);
+  color: var(--color-text-on-surface);
+  --focus-ring: var(--color-text-on-surface);
+}

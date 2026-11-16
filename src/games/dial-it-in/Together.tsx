@@ -13,11 +13,13 @@ import {
   writePlayerView,
   type Room,
 } from '../../engine/net/rooms'
+import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
-import { saveFinishedGame } from '../room/saveFinishedGame'
-import { BackToLobby, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { EndGameEarly } from '../room/EndGameEarly'
+import { isPractice, saveFinishedGame } from '../room/saveFinishedGame'
+import { BackToLobby, PracticeNote, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { RulesContext } from '../types'
@@ -48,8 +50,8 @@ const TURN_NAMES: Record<TurnsEach, string> = { 1: '1', 2: '2', 3: '3' }
 /** Earliest and latest a bot locks in its guess, as a share of the guessing time. */
 const BOT_GUESS_SHARE: [number, number] = [0.25, 0.7]
 
-/** Moves sent to the host: a guess from anyone, or Next round from the host. */
-type RoomInput = DialItInInput | { type: 'next' }
+/** Moves sent to the host: a guess from anyone, or Next round or End game from the host. */
+type RoomInput = DialItInInput | { type: 'next' } | { type: 'end-game' }
 
 /** What the host writes to the room besides the masked game: how long guessing lasts. */
 interface RoomGame {
@@ -79,7 +81,7 @@ export function Together() {
   )
 }
 
-function DialWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
+function DialWaitingRoom({ room, isHost }: RoomScreenProps) {
   const [settings, setSettings] = useState<DialItInSettings>(DEFAULT_SETTINGS)
   const [turnsEach, setTurnsEach] = useState<TurnsEach>(2)
   const [pace, setPace] = useState<Pace>(90)
@@ -90,11 +92,14 @@ function DialWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
       isHost={isHost}
       Title={DialItInTitle}
       minPlayers={manifest.players.min}
-      onLeave={onLeave}
       onStart={(players) => {
         // People give the clues; bots only guess.
         const clueGivers = players.filter((id) => !botFor(id))
-        const state = rules.setup(players, { ...settings, clueGivers, turnsEach }, context())
+        const state = rules.setup(players, { ...settings, clueGivers, turnsEach }, { ...context(), recent: recentlyDealt(manifest.id) })
+        rememberDealt(
+          manifest.id,
+          state.rounds.map((round) => round.card.id),
+        )
         void publish(room, { state, pace }, Date.now() + pace * 1000, true)
       }}
       settings={
@@ -102,6 +107,7 @@ function DialWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
           <OptionRow label="Range" options={DIAL_RANGES} names={RANGE_NAMES} value={settings.range} onChoose={(range) => setSettings({ ...settings, range })} />
           <OptionRow label="Turns each" options={TURNS_EACH} names={TURN_NAMES} value={turnsEach} onChoose={setTurnsEach} />
           <OptionRow label="Seconds" options={PACES} names={PACE_NAMES} value={pace} onChoose={setPace} />
+          <PracticeNote room={room} />
         </>
       }
     />
@@ -118,10 +124,10 @@ async function publish(room: Room, game: RoomGame, deadline: number | null, star
     if (!botFor(player)) await writePlayerView(room.code, player, privateView(game.state, player))
   }
   await (starting ? startPlay : writePlay)(room.code, { state: publicState(game.state), pace: game.pace }, deadline)
-  if (rules.isOver(game.state)) saveFinishedGame(room, manifest.id, rules.finishingOrder(game.state))
+  if (rules.isOver(game.state) && !isPractice(game.state.players)) saveFinishedGame(room, manifest.id, rules.finishingOrder(game.state))
 }
 
-function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
+function Game({ room, self, isHost }: RoomScreenProps) {
   const shared = (JSON.parse(room.play!.state) as RoomGame).state
   const [mine, setMine] = useState<PrivateView | null>(null)
   useEffect(() => watchPlayerView(room.code, self.uid, (view) => setMine(view as PrivateView | null)), [room.code, self.uid])
@@ -136,52 +142,50 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
       <>
         <DialItInTitle />
         <p className="cue-card__text">This game started before you joined. You'll be in the next one.</p>
-        <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-          Leave room
-        </button>
       </>
     )
   }
 
   const lastRound = state.roundIndex === state.rounds.length - 1
   return (
-    <PhoneScreen
-      state={state}
-      player={self.uid}
-      names={names}
-      onGuess={(value) => send({ type: 'guess', value })}
-      guessingNote={
-        secondsLeft !== null && (
-          <p className="diit-clock" role="timer" aria-live={secondsLeft <= 10 ? 'polite' : 'off'} data-testid="diit-clock">
-            {secondsLeft} s left
-          </p>
-        )
-      }
-      revealAction={
-        isHost ? (
-          <button type="button" className="phone-button" data-testid="diit-next" onClick={() => send({ type: 'next' })}>
-            {lastRound ? 'Final standings' : 'Next round'}
-          </button>
-        ) : (
-          <p className="diit-wait" role="status">
-            Waiting for the host
-          </p>
-        )
-      }
-      summaryAction={
-        <>
-          {isHost && (
-            <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
-              Play again
+    <>
+      {isHost && state.phase !== 'over' && <EndGameEarly room={room} onSave={() => send({ type: 'end-game' })} />}
+      <PhoneScreen
+        state={state}
+        player={self.uid}
+        names={names}
+        onGuess={(value) => send({ type: 'guess', value })}
+        guessingNote={
+          secondsLeft !== null && (
+            <p className="diit-clock" role="timer" aria-live={secondsLeft <= 10 ? 'polite' : 'off'} data-testid="diit-clock">
+              {secondsLeft} s left
+            </p>
+          )
+        }
+        revealAction={
+          isHost ? (
+            <button type="button" className="phone-button" data-testid="diit-next" onClick={() => send({ type: 'next' })}>
+              {lastRound ? 'Final standings' : 'Next round'}
             </button>
-          )}
-          <BackToLobby room={room} isHost={isHost} />
-          <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-            Leave room
-          </button>
-        </>
-      }
-    />
+          ) : (
+            <p className="diit-wait" role="status">
+              Waiting for the host
+            </p>
+          )
+        }
+        summaryAction={
+          <>
+            {isPractice(state.players) && <PracticeNote room={room} over />}
+            {isHost && (
+              <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
+                Play again
+              </button>
+            )}
+            <BackToLobby room={room} isHost={isHost} />
+          </>
+        }
+      />
+    </>
   )
 }
 
@@ -245,6 +249,10 @@ function HostRunner({ room }: { room: Room }) {
         const current = latest.current
         if (!current) return
         const move = input as RoomInput
+        if (move.type === 'end-game') {
+          if (by === host && !rules.isOver(current.game.state)) save({ ...current.game.state, phase: 'over' })
+          return
+        }
         if (move.type === 'next') {
           if (by === host && current.game.state.phase === 'reveal') save(rules.onTimer(current.game.state, context()))
           return

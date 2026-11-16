@@ -2,14 +2,16 @@
 // ABOUTME: Only a chain code goes through the room; each phone shares word results, and its guesses once a word is done.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { clearPlay, startPlay, writePlay, writeProgress, type Room } from '../../engine/net/rooms'
+import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { OptionRow } from '../../ui/OptionRow'
 import { botFor } from '../room/bots'
 import { BackToLobby, PlayerDot, RoomPage, WaitingRoom, type RoomScreenProps } from '../room/RoomPage'
+import { EndGameEarly } from '../room/EndGameEarly'
 import { saveFinishedGame } from '../room/saveFinishedGame'
 import { usePlayerLooks } from '../room/usePlayerLooks'
 import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { PlayerId } from '../types'
-import { makeChainCode, readChainCode } from './chainCode'
+import { chainFor, freshChainCode, readChainCode } from './chainCode'
 import { manifest } from './manifest'
 import { ChainwordTitle, PhoneScreen, type OtherPlayer } from './PhoneScreen'
 import {
@@ -113,7 +115,7 @@ export function Together() {
   )
 }
 
-function ChainwordWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
+function ChainwordWaitingRoom({ room, isHost }: RoomScreenProps) {
   const [settings, setSettings] = useState<ChainwordSettings>(DEFAULT_SETTINGS)
 
   return (
@@ -122,9 +124,10 @@ function ChainwordWaitingRoom({ room, isHost, onLeave }: RoomScreenProps) {
       isHost={isHost}
       Title={ChainwordTitle}
       minPlayers={manifest.players.min}
-      onLeave={onLeave}
       onStart={(players) => {
-        const play: ChainPlay = { chainCode: makeChainCode(settings, Math.random), players, startedAt: Date.now(), endedAt: null }
+        const chainCode = freshChainCode(settings, Math.random, recentlyDealt(manifest.id))
+        rememberDealt(manifest.id, chainFor(chainCode))
+        const play: ChainPlay = { chainCode, players, startedAt: Date.now(), endedAt: null }
         void startPlay(room.code, play, null)
       }}
       settings={
@@ -181,7 +184,7 @@ function saveOwnGame(key: string, state: ChainwordState) {
   }
 }
 
-function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
+function Game({ room, self, isHost }: RoomScreenProps) {
   const play = JSON.parse(room.play!.state) as ChainPlay
   const key = storageKey(room.code, play.chainCode)
   const playing = play.players.includes(self.uid)
@@ -227,23 +230,24 @@ function Game({ room, self, isHost, onLeave }: RoomScreenProps) {
       <>
         <ChainwordTitle />
         <p className="cue-card__text">This game started before you joined. You'll be in the next one.</p>
-        <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-          Leave room
-        </button>
       </>
     )
   }
 
   return (
-    <PhoneScreen
-      state={shown}
-      player={self.uid}
-      onGuess={(word) => update(rules.onInput(state, self.uid, { type: 'guess', word }, { now: Date.now(), random: Math.random }))}
-      topAction={<EndGameButton room={room} play={play} isHost={isHost} />}
-      infoLine={<InfoLine room={room} play={play} />}
-      others={over ? others : undefined}
-      summaryAction={<Results room={room} play={play} isHost={isHost} onLeave={onLeave} />}
-    />
+    <>
+      {isHost && play.endedAt === null && !over && (
+        <EndGameEarly room={room} onSave={() => void writePlay(room.code, { ...play, endedAt: Date.now() }, null)} />
+      )}
+      <PhoneScreen
+        state={shown}
+        player={self.uid}
+        onGuess={(word) => update(rules.onInput(state, self.uid, { type: 'guess', word }, { now: Date.now(), random: Math.random }))}
+        infoLine={<InfoLine room={room} play={play} />}
+        others={over ? others : undefined}
+        summaryAction={<Results room={room} play={play} isHost={isHost} />}
+      />
+    </>
   )
 }
 
@@ -281,35 +285,8 @@ function useOthers(room: Room, play: ChainPlay, self: PlayerId): OtherPlayer[] {
     }))
 }
 
-/** While playing, for the host: End game (a second tap confirms). */
-function EndGameButton({ room, play, isHost }: { room: Room; play: ChainPlay; isHost: boolean }) {
-  const [confirming, setConfirming] = useState(false)
-
-  return (
-    <>
-      {isHost && play.endedAt === null && (
-        <button
-          type="button"
-          className="cw-playing__end"
-          data-testid="cwt-end"
-          onClick={() => {
-            if (!confirming) {
-              setConfirming(true)
-              return
-            }
-            void writePlay(room.code, { ...play, endedAt: Date.now() }, null)
-          }}
-          onBlur={() => setConfirming(false)}
-        >
-          {confirming ? 'Tap again to end' : 'End game'}
-        </button>
-      )}
-    </>
-  )
-}
-
 /** After your chain: who has finished while the game runs, then the final standings and the host's Play again. */
-function Results({ room, play, isHost, onLeave }: { room: Room; play: ChainPlay; isHost: boolean; onLeave: () => void }) {
+function Results({ room, play, isHost }: { room: Room; play: ChainPlay; isHost: boolean }) {
   const shared = sharedProgress(room)
   // While the game runs the list keeps the room's order, so it gives nothing away about who is ahead.
   const ranked = standings(play.players, shared)
@@ -340,16 +317,13 @@ function Results({ room, play, isHost, onLeave }: { room: Room; play: ChainPlay;
           </li>
         ))}
       </ol>
-      {!over && <p className="cwt-results__note">Waiting for everyone to finish{isHost ? ', or end the game from the top bar' : ''}.</p>}
+      {!over && <p className="cwt-results__note">Waiting for everyone to finish{isHost ? ', or end the game from the menu' : ''}.</p>}
       {isHost && over && (
         <button type="button" className="phone-button" data-testid="room-play-again" onClick={() => void clearPlay(room.code)}>
           Play again
         </button>
       )}
       {over && <BackToLobby room={room} isHost={isHost} />}
-      <button type="button" className="phone-link" data-testid="room-leave" onClick={onLeave}>
-        Leave room
-      </button>
     </div>
   )
 }

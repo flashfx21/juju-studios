@@ -1,14 +1,9 @@
-// ABOUTME: Tests for chain codes: reading typed codes, carrying settings, and dealing the same chain on every device.
+// ABOUTME: Tests for chain codes: reading typed codes, carrying settings, dealing the same chain on every device, and fresh codes.
 // ABOUTME: Also checks that seeded random numbers repeat for the same seed.
 import { describe, expect, it } from 'vitest'
 import { seededRandom } from '../../engine/seededRandom'
-import { makeChainCode, readChainCode } from './chainCode'
-import { rules } from './rules'
-
-function chainFor(code: string): string[] {
-  const shared = readChainCode(code)!
-  return rules.setup(['ann'], shared.settings, { now: 0, random: shared.random }).chain
-}
+import { answersFor, DEFAULT_SETTINGS } from './rules'
+import { chainFor, freshChainCode, makeChainCode, readChainCode } from './chainCode'
 
 describe('seededRandom', () => {
   it('repeats the same numbers for the same seed, within 0 to 1', () => {
@@ -49,5 +44,21 @@ describe('chain codes', () => {
   it('deals the same chain for the same code, however it is typed', () => {
     expect(chainFor('kpdt 53')).toEqual(chainFor('KPDT53'))
     expect(chainFor('KPDT53')).not.toEqual(chainFor('BCDF53'))
+  })
+})
+
+describe('freshChainCode', () => {
+  it('finds a chain with none of the words dealt lately', () => {
+    const random = seededRandom('fresh')
+    const recent = answersFor(5).slice(0, 300)
+    for (let game = 0; game < 10; game++) {
+      const chain = chainFor(freshChainCode(DEFAULT_SETTINGS, random, recent))
+      expect(chain.some((word) => recent.includes(word))).toBe(false)
+    }
+  })
+
+  it('still gives a code when every word was dealt lately', () => {
+    const code = freshChainCode(DEFAULT_SETTINGS, seededRandom('all'), answersFor(5))
+    expect(readChainCode(code)?.settings).toEqual(DEFAULT_SETTINGS)
   })
 })

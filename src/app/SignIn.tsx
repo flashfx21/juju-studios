@@ -2,6 +2,7 @@
 // ABOUTME: A phone stays signed in, so a signed-in visitor sees who they are and can carry on or sign out.
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { emailSignInLink, finishEmailSignIn, signInWithGoogle, signOutOfThisDevice } from '../engine/net/auth'
+import { MenuItems } from '../ui/FrameMenu'
 import { GoogleButton } from '../ui/GoogleButton'
 import '../ui/PhoneForm.css'
 import { PhoneFrame } from '../ui/PhoneFrame'
@@ -163,9 +164,11 @@ function SignInForm({ signingUp }: { signingUp: boolean }) {
         <p className="preview-note" role="alert" data-testid="sign-in-problem">
           {problem}
         </p>
-        <a className="phone-link phone-link--quiet" href={href('home')}>
-          Back
-        </a>
+        <MenuItems>
+          <a href={href('home')} data-testid="menu-home">
+            Home
+          </a>
+        </MenuItems>
       </div>
     </form>
   )
@@ -312,9 +315,11 @@ function FinishLink() {
         <p className="preview-note" role="alert" data-testid="finish-problem">
           {problem}
         </p>
-        <a className="phone-link phone-link--quiet" href={href('home')} data-testid="finish-home">
-          Home
-        </a>
+        <MenuItems>
+          <a href={href('home')} data-testid="finish-home">
+            Home
+          </a>
+        </MenuItems>
       </div>
     </form>
   )
@@ -364,9 +369,11 @@ function LinkExpired() {
         <p className="preview-note" role="alert" data-testid="expired-problem">
           {problem}
         </p>
-        <a className="phone-link" href={href('home')}>
-          Back to start
-        </a>
+        <MenuItems>
+          <a href={href('home')} data-testid="menu-home">
+            Home
+          </a>
+        </MenuItems>
       </div>
     </>
   )

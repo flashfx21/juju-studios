@@ -144,6 +144,53 @@
   text-align: center;
 }
 
+/* The typed box and Lock in share a row, so Lock in sits right under the dial. */
+.dii-guess__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.dii-guess__typed {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.dii-guess__lock {
+  flex: none;
+  padding: 6px 18px;
+}
+
+/*
+ * In a game screen that never scrolls, the dial takes whatever height is left and shrinks to fit it,
+ * so Lock in stays on screen on short phones. The hint goes when there's no room for it.
+ */
+.phone-frame[data-fit] .dii-guess {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.phone-frame[data-fit] .dii-guess .dii-dial {
+  flex: 1 1 0;
+  min-height: 0;
+  container-type: size;
+  justify-content: center;
+}
+
+.phone-frame[data-fit] .dii-guess .dii-dial__control {
+  width: min(220px, 58vw, calc(100cqh - 70px));
+}
+
+@container (max-height: 240px) {
+  .dii-dial__hint {
+    display: none;
+  }
+
+  .phone-frame[data-fit] .dii-guess .dii-dial__control {
+    width: min(220px, 58vw, calc(100cqh - 24px));
+  }
+}
+
 /* ---------- Round results and final standings ---------- */
 .dii-list {
   margin: 0;

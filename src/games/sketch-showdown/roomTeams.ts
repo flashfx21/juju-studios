@@ -1,7 +1,7 @@
 // ABOUTME: Sketch Showdown teams in a room, and how a bot team plays: bots can't draw, so they always make a team of their own,
-// ABOUTME: and with no bots the people are split at random. A bot team solves the clue (or not) at a moment set by its skill.
+// ABOUTME: and with no bots the people are split at random (2 or 3 people get a bot team). A bot team solves at a moment set by its skill.
 import type { BotSkill } from '../room/bots'
-import { botFor } from '../room/bots'
+import { botFor, botIds, shuffledBotOrder } from '../room/bots'
 import type { PlayerId } from '../types'
 import { MAX_TEAM_SIZE, MIN_TEAM_SIZE } from './rules'
 
@@ -33,6 +33,16 @@ export function splitTeams(players: readonly PlayerId[], random: () => number): 
   if (people.length > MAX_TEAM_SIZE * 2) return { problem: `Two teams allow at most ${MAX_TEAM_SIZE * 2} people.` }
   const half = Math.ceil(people.length / 2)
   return { teams: [people.slice(0, half), people.slice(half)] }
+}
+
+/**
+ * The players to start with: as chosen, except that too few people for two teams (and no bots) get a casual bot team,
+ * so 2 or 3 people can still play.
+ */
+export function withBotTeam(players: readonly PlayerId[], random: () => number): PlayerId[] {
+  const people = players.filter((id) => !botFor(id))
+  if (people.length !== players.length || people.length < MIN_TEAM_SIZE || people.length >= MIN_TEAM_SIZE * 2) return [...players]
+  return [...players, ...botIds(MIN_TEAM_SIZE, 'casual', shuffledBotOrder('casual', random))]
 }
 
 /** How a bot team does in one race: whether it gets the clue, and how far through the race (0 to 1) it does. */
