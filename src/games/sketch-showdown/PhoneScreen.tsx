@@ -63,7 +63,7 @@ function howChosenText(view: PlayerView): string {
     case 'both':
       return 'You both picked it'
     case 'coin':
-      return view.options && view.myPick !== null && view.options[view.myPick] === view.clue ? 'Coin flip: your pick' : 'Coin flip: their pick'
+      return view.options && view.myPick !== null && view.options[view.myPick].answer === view.clue?.answer ? 'Coin flip: your pick' : 'Coin flip: their pick'
     case 'one':
       return view.myPick !== null ? 'Only you picked, so it is yours' : 'Only the other drawer picked'
     case 'random':

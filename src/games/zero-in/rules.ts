@@ -36,7 +36,7 @@ export const ROUND_COUNTS: readonly RoundCount[] = [5, 10, 15]
 export { PACES, type Pace }
 
 /** Seconds to guess at each pace. */
-export const PACE_SECONDS: Record<Pace, number> = { quick: 20, normal: 30, relaxed: 45 }
+export { PACE_SECONDS } from './paceSeconds'
 
 export interface ZeroInSettings {
   pace: Pace

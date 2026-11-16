@@ -480,7 +480,9 @@ export interface TvView {
 
 export function tvView(state: SketchShowdownState): TvView {
   const round = currentRound(state)
-  const wrong = (team: TeamIndex) => round.guesses[team].filter((g) => g !== round.winningGuess).length
+  // Compared by what they hold: after a host reload the winning guess is a copy, not the same object.
+  const won = round.winningGuess
+  const wrong = (team: TeamIndex) => round.guesses[team].filter((g) => !(won && g.player === won.player && g.at === won.at && g.text === won.text)).length
   return {
     phase: state.phase,
     roundNumber: state.rounds.length,

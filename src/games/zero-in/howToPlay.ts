@@ -2,7 +2,7 @@
 // ABOUTME: Keep in step with docs/games/03-zero-in.md and the room's settings in Together.tsx.
 import { paceHowToPlay } from '../../engine/pace'
 import type { HowToPlay } from '../types'
-import { PACE_SECONDS } from './rules'
+import { PACE_SECONDS } from './paceSeconds'
 
 export const howToPlay: HowToPlay = {
   intro: 'Guess a price, a year or a number. The closest guess wins the round, over or under. The final round flips it: don\'t go over.',

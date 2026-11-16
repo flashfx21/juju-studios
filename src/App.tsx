@@ -22,6 +22,7 @@ import { MeProvider } from './app/MeProvider'
 import { useMe } from './app/useMe'
 import { useMyStyle } from './app/useMyStyle'
 import { saveProfileStyle } from './engine/net/profiles'
+import { ErrorBoundary } from './ui/ErrorBoundary'
 import type { LobbyStyleId } from './ui/themes/lobbyStyles'
 import { LobbyStyleContext } from './ui/themes/useLobbyStyle'
 import { useScreenKind, type ScreenKind } from './ui/useScreenKind'
@@ -101,16 +102,18 @@ function App() {
 
   return (
     <LobbyStyleContext.Provider value={style}>
-      <MeProvider>
-        <CurrentScreen
-          route={route}
-          kind={kind}
-          settings={settings}
-          updateSettings={updateSettings}
-          style={style}
-          setStyle={setStyle}
-        />
-      </MeProvider>
+      <ErrorBoundary>
+        <MeProvider>
+          <CurrentScreen
+            route={route}
+            kind={kind}
+            settings={settings}
+            updateSettings={updateSettings}
+            style={style}
+            setStyle={setStyle}
+          />
+        </MeProvider>
+      </ErrorBoundary>
     </LobbyStyleContext.Provider>
   )
 }

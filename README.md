@@ -2,7 +2,7 @@
 
 Phone party games for family and friends. One shared screen (TV or laptop) hosts, and everyone joins on their phone with a room code.
 
-Live site: https://flashfx21.github.io/juju-studios/ (screens and sign-in for now: no rooms, no playable games yet).
+Live site: https://flashfx21.github.io/juju-studios/ (rooms and seven games are in testing for signed-in playtesters; no game is marked playable yet).
 
 ## What works so far
 

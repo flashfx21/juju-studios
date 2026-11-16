@@ -1,6 +1,6 @@
 // ABOUTME: The admin page (#/admin): your style, then tabs for players (profiles, Solo play, admins, points), scores, games and rooms.
 // ABOUTME: Shown only to admins; the database rules refuse these changes from anyone else.
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { standings } from '../engine/leaderboard'
 import {
   closeRoom,
@@ -82,7 +82,8 @@ interface AdminData {
 }
 
 /** Runs an admin change, turning a failure into a message on the page. */
-type Run = (action: () => Promise<void>, failure: string) => Promise<void>
+/** Runs an admin change; true when it saved. A failure shows at the top of the page. */
+type Run = (action: () => Promise<void>, failure: string) => Promise<boolean>
 
 function gameTitle(id: string): string {
   if (id === LOBBY) return "Tonight's lobby"
@@ -124,9 +125,11 @@ function AdminPage({ selfUid, style, onStyleChange }: { selfUid: string } & Admi
     setProblem('')
     try {
       await action()
+      return true
     } catch (error) {
       console.error(failure, error)
       setProblem(`${failure}. Check you're online and try again.`)
+      return false
     }
   }
 
@@ -289,8 +292,7 @@ function ProfileEditor({ uid, profile, run, onDone }: { uid: string; profile: Pr
   async function save(event: FormEvent) {
     event.preventDefault()
     if (draft.check(true)) return
-    await run(() => saveProfile(uid, { ...draft.toProfile(), style: theirStyle }), "The profile didn't save")
-    onDone()
+    if (await run(() => saveProfile(uid, { ...draft.toProfile(), style: theirStyle }), "The profile didn't save")) onDone()
   }
 
   return (
@@ -333,6 +335,7 @@ function PointsEditor({ uid, name, total, selfUid, run }: { uid: string; name: s
   const [points, setPoints] = useState('')
   const [reason, setReason] = useState('')
   const [errors, setErrors] = useState({ points: '', reason: '' })
+  const saving = useRef(false)
   const short = uid.slice(0, 6)
 
   async function add(event: FormEvent) {
@@ -343,8 +346,11 @@ function PointsEditor({ uid, name, total, selfUid, run }: { uid: string; name: s
       reason: reason.trim() === '' ? 'Say why, so the change makes sense later.' : reason.trim().length > 80 ? 'Keep it to 80 letters.' : '',
     }
     setErrors(found)
-    if (found.points || found.reason) return
-    await run(() => addScoreAdjustment(uid, value, reason.trim(), selfUid), "The points didn't save")
+    if (found.points || found.reason || saving.current) return
+    saving.current = true
+    const saved = await run(() => addScoreAdjustment(uid, value, reason.trim(), selfUid), "The points didn't save")
+    saving.current = false
+    if (!saved) return
     setPoints('')
     setReason('')
   }

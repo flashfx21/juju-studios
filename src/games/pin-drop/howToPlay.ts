@@ -2,7 +2,7 @@
 // ABOUTME: Keep in step with docs/games/06-pin-drop.md and the room's settings in Together.tsx.
 import { paceHowToPlay } from '../../engine/pace'
 import type { HowToPlay } from '../types'
-import { PACE_SECONDS } from './rules'
+import { PACE_SECONDS } from './paceSeconds'
 
 export const howToPlay: HowToPlay = {
   intro: 'A photo of a real place appears. Drop your pin where you think it is. Closest wins.',

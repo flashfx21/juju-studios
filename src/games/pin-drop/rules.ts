@@ -43,7 +43,7 @@ export const UNITS: readonly Units[] = ['mi', 'km']
 export { PACES, type Pace }
 
 /** Seconds per round at each pace. */
-export const PACE_SECONDS: Record<Pace, number> = { quick: 45, normal: 60, relaxed: 90 }
+export { PACE_SECONDS } from './paceSeconds'
 
 export interface PinDropSettings {
   scoring: Scoring

@@ -1,13 +1,18 @@
 // ABOUTME: The square drawing canvas: draws a list of strokes, and for the drawer turns one finger or a stylus into strokes.
 // ABOUTME: Points are fractions of the canvas, so the same strokes look the same on every phone, tablet and the TV.
 import { useEffect, useRef, type PointerEvent } from 'react'
-import { SWATCHES, type BrushSize, type Stroke, type Tool } from './rules'
+import { MAX_STROKE_POINTS, SWATCHES, type BrushSize, type Stroke, type Tool } from './rules'
 import './SketchCanvas.css'
 
 /** Brush widths as a fraction of the canvas width, so XL looks the same on a phone and a tablet. */
 const BRUSH_WIDTHS: Record<BrushSize, number> = { S: 0.008, M: 0.018, L: 0.035, XL: 0.07 }
 
 const PAPER = '#ffffff'
+
+/** The stroke as it is sent: points to four decimal places, which is finer than any screen. */
+function rounded(stroke: Stroke): Stroke {
+  return { ...stroke, points: stroke.points.map(([x, y]) => [Math.round(x * 10000) / 10000, Math.round(y * 10000) / 10000] as [number, number]) }
+}
 /** Skip points closer than this to the last one, so a slow finger doesn't send thousands. */
 const MIN_STEP = 0.003
 
@@ -112,6 +117,11 @@ export function SketchCanvas({ label, strokes, onStroke, tool = 'brush', color =
       const [lx, ly] = points[points.length - 1]
       if (Math.hypot(point[0] - lx, point[1] - ly) < MIN_STEP) return
       current.stroke = { ...current.stroke, points: [...points, point] }
+      // A stroke at the size the rules accept is sent, and the line carries on as a new stroke from the same point.
+      if (current.stroke.points.length >= MAX_STROKE_POINTS) {
+        onStroke?.(rounded(current.stroke))
+        current.stroke = { ...current.stroke, points: [point] }
+      }
     }
     redraw()
   }
@@ -120,8 +130,7 @@ export function SketchCanvas({ label, strokes, onStroke, tool = 'brush', color =
     const current = drawing.current
     if (!current || current.pointerId !== event.pointerId) return
     drawing.current = null
-    const rounded = current.stroke.points.map(([x, y]) => [Math.round(x * 10000) / 10000, Math.round(y * 10000) / 10000] as [number, number])
-    onStroke?.({ ...current.stroke, points: rounded })
+    onStroke?.(rounded(current.stroke))
   }
 
   return (

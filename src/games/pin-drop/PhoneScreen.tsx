@@ -130,7 +130,7 @@ function FlagButton({ state, player, onFlag }: Pick<PhoneScreenProps, 'state' | 
   if (flagged === round.photo.id) {
     return (
       <p className="pd-flag-note" role="status" data-testid="pd-flagged">
-        Photo flagged. It won't come up in future games.
+        Photo flagged.
       </p>
     )
   }

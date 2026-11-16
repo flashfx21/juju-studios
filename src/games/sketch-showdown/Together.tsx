@@ -378,7 +378,10 @@ function HostRunner({ room }: { room: Room }) {
       push(state, deadline)
     }
 
-    void Promise.all([loadDictionary(), readHostGame(code)]).then(([dictionary, saved]) => {
+    // The word list can fail to load on a weak signal; the runner keeps trying so the game doesn't hang.
+    let retry: ReturnType<typeof setTimeout> | undefined
+    const begin = () =>
+      void Promise.all([loadDictionary(), readHostGame(code)]).then(([dictionary, saved]) => {
       if (stopped || !saved) return
       const rules = sketchShowdownRules((word) => dictionary.has(word))
       latest.current = { state: saved as SketchShowdownState, deadline: seen.current.play?.deadline ?? null }
@@ -410,10 +413,15 @@ function HostRunner({ room }: { room: Room }) {
         }
         if (current.deadline !== null && Date.now() >= current.deadline) save(rules.onTimer(current.state, context()))
       }, 500)
+    }).catch((error) => {
+      console.error('Starting the game on the host failed', error)
+      if (!stopped) retry = setTimeout(begin, 3000)
     })
+    begin()
 
     return () => {
       stopped = true
+      clearTimeout(retry)
       stopInputs()
       if (timer) clearInterval(timer)
     }

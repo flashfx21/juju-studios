@@ -30,11 +30,7 @@ export const CATEGORY_CHOICES: readonly CategoryChoice[] = ['family', 'everythin
 export { PACES, type Pace }
 
 /** Seconds to race at each pace. */
-export const PACE_SECONDS: Record<Pace, number> = {
-  quick: 20,
-  normal: 30,
-  relaxed: 45,
-}
+export { PACE_SECONDS } from './paceSeconds'
 /** Seconds the category shows alone before the letter drops. */
 export const CATEGORY_SECONDS = 4
 /** Seconds to look over the answers and challenge. */

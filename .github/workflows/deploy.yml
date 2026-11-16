@@ -28,6 +28,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      - run: npm test
       - run: npm run build
         # Firebase web app settings (repo secrets, copied from .env.local); Vite builds them into the site.
         env:

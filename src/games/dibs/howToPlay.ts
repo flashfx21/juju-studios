@@ -2,7 +2,7 @@
 // ABOUTME: Keep in step with docs/games/13-dibs.md and the room's settings in Together.tsx.
 import { paceHowToPlay } from '../../engine/pace'
 import type { HowToPlay } from '../types'
-import { PACE_SECONDS } from './rules'
+import { PACE_SECONDS } from './paceSeconds'
 
 export const howToPlay: HowToPlay = {
   intro: 'A category, then a letter. Race to claim an answer that fits. First claim keeps it.',
