@@ -12,6 +12,7 @@ import {
   writeHostGame,
   writePlay,
   writePlayerView,
+  writeTvView,
   type Room,
 } from '../../engine/net/rooms'
 import { fromSharedTime, toSharedTime } from '../../engine/net/clock'
@@ -127,7 +128,7 @@ function SketchWaitingRoom({ room, isHost }: RoomScreenProps) {
           manifest.id,
           state.deck.slice(0, state.drawOrder[0].length * OPTIONS_PER_PICK).map((clue) => clue.answer),
         )
-        void publish(room, state, deadlineFor(state), true)
+        void publish(room, state, deadlineFor(state), { json: null }, true)
       }}
       settings={
         <>
@@ -149,12 +150,17 @@ function SketchWaitingRoom({ room, isHost }: RoomScreenProps) {
   )
 }
 
+/** The TV's view as last written, as JSON, so one that hasn't changed isn't written again. Null before the first. */
+interface TvSent {
+  json: string | null
+}
+
 /**
- * Host only: saves the full game where only the host can read it, gives each person their own view,
- * and puts only the teams and the phase in the room (every drawing once the game is over).
- * `starting` stamps a new game's start; a finished game is saved.
+ * Host only: saves the full game where only the host can read it, gives each person their own view and the TV its own
+ * (no drawing, guess or clue before the reveal), and puts only the teams and the phase in the room (every drawing once
+ * the game is over). `starting` stamps a new game's start; a finished game is saved.
  */
-async function publish(room: Room, state: SketchShowdownState, deadline: number | null, starting = false): Promise<void> {
+async function publish(room: Room, state: SketchShowdownState, deadline: number | null, tvSent: TvSent, starting = false): Promise<void> {
   await writeHostGame(room.code, state)
   for (const player of [...state.teams[0], ...state.teams[1]]) {
     if (botFor(player)) continue
@@ -162,11 +168,22 @@ async function publish(room: Room, state: SketchShowdownState, deadline: number 
     // The lockout's end goes out in server time; each phone reads it back on its own clock.
     await writePlayerView(room.code, player, { ...view, lockedUntil: toSharedTime(view.lockedUntil) })
   }
+  const tv = tvView(state)
+  const tvJson = JSON.stringify(tv)
+  if (tvSent.json !== tvJson) {
+    try {
+      await writeTvView(room.code, tv)
+      tvSent.json = tvJson
+    } catch (error) {
+      // The phones carry on without the TV; the next change tries again.
+      console.error('Publishing the TV view failed', error)
+    }
+  }
   const shared: SharedPlay = {
     teams: state.teams,
     phase: state.phase,
     roundNumber: state.rounds.length,
-    gallery: state.phase === 'over' ? tvView(state).gallery : null,
+    gallery: state.phase === 'over' ? tv.gallery : null,
   }
   await (starting ? startPlay : writePlay)(room.code, shared, deadline)
   if (DEALER.isOver(state) && !isPractice([...state.teams[0], ...state.teams[1]])) {
@@ -181,6 +198,7 @@ async function publish(room: Room, state: SketchShowdownState, deadline: number 
 function latestPublisher(room: () => Room) {
   let next: { state: SketchShowdownState; deadline: number | null } | null = null
   let running = false
+  const tvSent: TvSent = { json: null }
   return (state: SketchShowdownState, deadline: number | null) => {
     next = { state, deadline }
     if (running) return
@@ -190,7 +208,7 @@ function latestPublisher(room: () => Room) {
         const job = next
         next = null
         try {
-          await publish(room(), job.state, job.deadline)
+          await publish(room(), job.state, job.deadline, tvSent)
         } catch (error) {
           // A failed write is retried by the next change.
           console.error('Publishing the game failed', error)

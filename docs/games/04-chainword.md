@@ -1,7 +1,7 @@
 # Chainword (working name)
 
 **Game ID:** `chainword`  
-**Status:** Development. Launch phase 1 (first cartridge). Rules and phone screen done; chain-code playtest live; rooms on phones live (Nov 14): same chain on every phone from a chain code, live standings, host End game, bots. TV screen and Instructions to do  
+**Status:** Development. Launch phase 1 (first cartridge). Rules and phone screen done; chain-code playtest live; rooms on phones live (Nov 14): same chain on every phone from a chain code, live standings, host End game, bots. TV screen for rooms shown at `#/tv` and Instructions on the TV before the game built Nov 17: during play the clock and which word each player is on (no letters, marks, places or guess counts), then the final standings with each word's cost and the chain's words  
 **Players:** 2 to 10 (placeholder)  
 **Length:** 10 min (placeholder)  
 **Modes:** Individual race

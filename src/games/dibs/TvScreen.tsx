@@ -5,7 +5,6 @@ import { PlayerDot } from '../room/RoomPage'
 import type { PlayerLook } from '../room/usePlayerLooks'
 import type { PlayerId } from '../types'
 import { bounceText, reasonText, secondsAt } from './format'
-import { howToPlay } from './howToPlay'
 import { currentChallenge, currentRound, nearDuplicateOf, rules, totals, votersFor, type DibsState, type Round } from './rules'
 import '../../ui/TvGame.css'
 import './TvScreen.css'
@@ -388,17 +387,3 @@ export function TvScreen(props: TvScreenProps) {
   return <div className="db-tv-body">{body}</div>
 }
 
-/** Before the game: how it plays, while the host picks settings on their phone. */
-export function TvWaiting() {
-  return (
-    <div className="db-tv-waiting" data-testid="db-tv-waiting">
-      <span className="tv-label">How to play</span>
-      <ol className="db-tv-steps">
-        {howToPlay.steps.map((step) => (
-          <li key={step}>{step}</li>
-        ))}
-      </ol>
-      <p className="db-tv-note">Any good answer scores 2. The first three good answers score 5, 4 and 3.</p>
-    </div>
-  )
-}

@@ -14,3 +14,10 @@ export function distanceText(km: number, units: Units): string {
 export function creditText(photo: Photo): string {
   return `Photo: ${photo.author} · ${photo.license} · Wikimedia Commons`
 }
+
+const PLACES = ['1st', '2nd', '3rd']
+
+/** "1st", "2nd", "3rd", "4th". */
+export function placeText(place: number): string {
+  return PLACES[place - 1] ?? `${place}th`
+}

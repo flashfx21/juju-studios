@@ -1,8 +1,10 @@
 // ABOUTME: Chainword in a room: what each phone shares (word results, and guesses once a word is done), the standings, and bots.
 // ABOUTME: Pure, so tests can check the standings order and seed the bots.
+import type { Room } from '../../engine/net/rooms'
 import { seededRandom } from '../../engine/seededRandom'
 import type { BotSkill } from '../room/bots'
 import type { PlayerId } from '../types'
+import { readChainCode } from './chainCode'
 import { GUESSES_PER_WORD, MISSED_WORD_COST, totalGuesses, totalTime, type ChainwordState } from './rules'
 
 /** One finished word: how many guesses it cost (7 for a missed word) and, from people, the guesses themselves. */
@@ -95,6 +97,61 @@ export function finishingOrderOf(table: Standing[]): PlayerId[][] {
     else order.push([row.player])
   }
   return order
+}
+
+/** What the host writes to the room: the chain code (never the words), who plays, and when it started or was ended. */
+export interface ChainPlay {
+  chainCode: string
+  players: PlayerId[]
+  startedAt: number
+  endedAt: number | null
+}
+
+/** When the chain's clock runs out. */
+export function deadlineOf(play: ChainPlay): number {
+  return play.startedAt + chainTimeLimitMs(readChainCode(play.chainCode)!.settings.chainLength)
+}
+
+/** Phones get a few seconds after the clock runs out to share their last word before the game counts as over. */
+export const REPORT_GRACE_MS = 5000
+
+/**
+ * When the game stopped for everyone still playing: the host's End game, or the clock running out.
+ * Null while the game is still on.
+ */
+export function stoppedAt(play: ChainPlay, now: number): number | null {
+  if (play.endedAt !== null) return play.endedAt
+  const deadline = deadlineOf(play)
+  return now >= deadline ? deadline : null
+}
+
+/** Over once everyone has finished, or (for anyone whose phone has gone quiet) a moment after the game stopped. */
+export function gameOver(play: ChainPlay, shared: Record<PlayerId, Progress>, now: number): boolean {
+  const stopped = stoppedAt(play, now)
+  return everyoneFinished(play.players, shared) || (stopped !== null && now >= stopped + REPORT_GRACE_MS)
+}
+
+export function placeText(place: number): string {
+  const suffix = place % 10 === 1 && place !== 11 ? 'st' : place % 10 === 2 && place !== 12 ? 'nd' : place % 10 === 3 && place !== 13 ? 'rd' : 'th'
+  return `${place}${suffix}`
+}
+
+export function timeText(ms: number): string {
+  const seconds = Math.round(ms / 1000)
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
+}
+
+/** Every player's shared progress, read from the room. */
+export function sharedProgress(room: Room): Record<PlayerId, Progress> {
+  const shared: Record<PlayerId, Progress> = {}
+  for (const [id, json] of Object.entries(room.progress)) {
+    try {
+      shared[id] = JSON.parse(json) as Progress
+    } catch {
+      // A garbled entry is left out.
+    }
+  }
+  return shared
 }
 
 /** Chance of solving a word on guess 1 to 6, then of missing it. Sharp bots solve sooner and miss less. */

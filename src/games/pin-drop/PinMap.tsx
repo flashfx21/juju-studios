@@ -29,6 +29,10 @@ interface PinMapProps {
   /** The player whose pin taps and drags move. Omit for a map that only shows pins. */
   me?: PlayerId
   onPin?: (pin: Pin) => void
+  /** Draw only these players' pins; the map still frames everyone's. Omit to draw them all. */
+  shown?: readonly PlayerId[]
+  /** A map nobody can move, for a screen that only displays: no zoom buttons, dragging or keyboard. */
+  still?: boolean
 }
 
 const TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -66,7 +70,7 @@ function nearSide(lng: number, answerLng: number): number {
   return shifted
 }
 
-export function PinMap({ label, pins, players, answer, me, onPin }: PinMapProps) {
+export function PinMap({ label, pins, players, answer, me, onPin, shown, still = false }: PinMapProps) {
   const element = useRef<HTMLDivElement>(null)
   const map = useRef<L.Map | null>(null)
   const layer = useRef<L.LayerGroup | null>(null)
@@ -91,7 +95,13 @@ export function PinMap({ label, pins, players, answer, me, onPin }: PinMapProps)
         [85, 1080],
       ],
       maxBoundsViscosity: 1,
-      zoomControl: true,
+      zoomControl: !still,
+      dragging: !still,
+      scrollWheelZoom: !still,
+      doubleClickZoom: !still,
+      touchZoom: !still,
+      boxZoom: !still,
+      keyboard: !still,
     })
     created.attributionControl.setPrefix(false)
     L.tileLayer(TILES, { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(created)
@@ -106,6 +116,8 @@ export function PinMap({ label, pins, players, answer, me, onPin }: PinMapProps)
       created.remove()
       map.current = null
     }
+    // The map is built once: whether it can be moved is fixed for the life of the screen showing it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Tap to place; Enter or Space places at the center (the crosshair) when the map has keyboard focus.
@@ -154,8 +166,9 @@ export function PinMap({ label, pins, players, answer, me, onPin }: PinMapProps)
           onPinRef.current?.({ lat: moved.lat, lng: moved.lng })
         })
       }
-      group.addLayer(marker)
       points.push([pin.lat, lng])
+      if (shown && !shown.includes(player.id)) continue
+      group.addLayer(marker)
       if (answer) {
         group.addLayer(
           L.polyline(
@@ -175,14 +188,14 @@ export function PinMap({ label, pins, players, answer, me, onPin }: PinMapProps)
       // No animation: the results map is new each reveal, and Leaflet errors if a map is removed mid-zoom (the host can tap on quickly).
       current.fitBounds(L.latLngBounds(points), { padding: [40, 40], maxZoom: 12, animate: false })
     }
-  }, [pins, players, answer, me, editable])
+  }, [pins, players, answer, me, editable, shown])
 
   return (
     <div className="pd-map" data-editable={editable ? 'true' : undefined}>
       <div
         ref={element}
         className="pd-map__canvas"
-        role="application"
+        role={still ? 'img' : 'application'}
         aria-label={label}
         aria-describedby={editable ? 'pd-map-help' : undefined}
         data-testid="pd-map"

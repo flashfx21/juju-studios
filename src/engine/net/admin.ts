@@ -1,16 +1,19 @@
-// ABOUTME: Admin and playtester flags (admins/{uid}, playtesters/{uid}) and the admin's tools: profiles, rooms and saved games.
+// ABOUTME: Admin, host and playtester flags (admins/{uid}, hosts/{uid}, playtesters/{uid}) and the admin's tools: profiles, rooms and saved games.
 // ABOUTME: The first admin is added by hand in the Firebase console; the database rules, not the app, enforce what admins can do.
 
 import { onValue, ref, remove, set } from 'firebase/database'
 import { firebaseBackend } from './firebase'
 import { watchProfiles, type Profile } from './profiles'
 
-function flagRef(list: 'admins' | 'playtesters', uid: string) {
+/** The lists an admin keeps: who is an admin, who may open rooms, and who sees the games still in testing. */
+export type PlayerFlag = 'admins' | 'hosts' | 'playtesters'
+
+function flagRef(list: PlayerFlag, uid: string) {
   return ref(firebaseBackend().database, `${list}/${uid}`)
 }
 
 /** Calls back with whether this player is on the list, and again on every change. Returns a stop function. */
-export function watchFlag(list: 'admins' | 'playtesters', uid: string, onChange: (on: boolean) => void): () => void {
+export function watchFlag(list: PlayerFlag, uid: string, onChange: (on: boolean) => void): () => void {
   return onValue(
     flagRef(list, uid),
     (snapshot) => onChange(snapshot.val() === true),
@@ -18,35 +21,50 @@ export function watchFlag(list: 'admins' | 'playtesters', uid: string, onChange:
   )
 }
 
-/** Admin only: every saved profile and who may use Solo play, kept up to date. Returns a stop function. */
+/** Admin only: every saved profile, who sees the games in testing and who may host, kept up to date. Returns a stop function. */
 export function watchPlayers(
-  onChange: (profiles: Record<string, Profile>, playtesters: Record<string, boolean>) => void,
+  onChange: (profiles: Record<string, Profile>, playtesters: Record<string, boolean>, hosts: Record<string, boolean>) => void,
   onError: (error: Error) => void,
 ): () => void {
   let profiles: Record<string, Profile> = {}
   let playtesters: Record<string, boolean> = {}
+  let hosts: Record<string, boolean> = {}
   const { database } = firebaseBackend()
   const stopProfiles = watchProfiles((all) => {
     profiles = all
-    onChange(profiles, playtesters)
+    onChange(profiles, playtesters, hosts)
   }, onError)
   const stopPlaytesters = onValue(
     ref(database, 'playtesters'),
     (snapshot) => {
       playtesters = snapshot.val() ?? {}
-      onChange(profiles, playtesters)
+      onChange(profiles, playtesters, hosts)
+    },
+    onError,
+  )
+  const stopHosts = onValue(
+    ref(database, 'hosts'),
+    (snapshot) => {
+      hosts = snapshot.val() ?? {}
+      onChange(profiles, playtesters, hosts)
     },
     onError,
   )
   return () => {
     stopProfiles()
     stopPlaytesters()
+    stopHosts()
   }
 }
 
-/** Admin only: let a player use Solo play (games still in testing), or stop them. */
+/** Admin only: let a player see the games still in testing (Solo play, and in the lobbies they host), or stop them. */
 export function setPlaytester(uid: string, allowed: boolean): Promise<void> {
   return allowed ? set(flagRef('playtesters', uid), true) : remove(flagRef('playtesters', uid))
+}
+
+/** Admin only: let a player open rooms (and so save their results), or stop them. */
+export function setHost(uid: string, allowed: boolean): Promise<void> {
+  return allowed ? set(flagRef('hosts', uid), true) : remove(flagRef('hosts', uid))
 }
 
 /** Admin only: removes a player's profile, so they set it up again next time they open the site. */

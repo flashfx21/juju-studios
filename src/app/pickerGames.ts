@@ -1,6 +1,8 @@
 // ABOUTME: What each game in the picker can do right now: pickable "in testing" games and what picking one offers.
 // ABOUTME: A game is pickable when it has a Solo play page and this player may use Solo play; nothing here marks a game playable.
-import type { LineupGame } from '../games/lineup'
+import type { Room } from '../engine/net/rooms'
+import { LINEUP, type LineupGame } from '../games/lineup'
+import { roomPageFor } from '../games/room/roomPages'
 import type { PickerState } from '../ui/gameTileStates'
 import { PLAYTESTS } from './playtests'
 
@@ -9,6 +11,11 @@ export function pickerState(game: LineupGame, canPlaytest: boolean): PickerState
   return game.phase === 'development' || game.phase === 'solo-test' || game.phase === 'group-test'
     ? 'development'
     : 'coming-soon'
+}
+
+/** The games a room can vote on and play: released games, plus the games in testing when a playtester opened the room. */
+export function roomGames(room: Room): LineupGame[] {
+  return LINEUP.filter((game) => roomPageFor(game.id) && (game.status === 'playable' || room.testing))
 }
 
 export interface PickAction {

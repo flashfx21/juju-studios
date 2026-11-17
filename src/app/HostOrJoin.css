@@ -501,6 +501,11 @@
   gap: 10px;
 }
 
+/* Join alone (players who don't host) takes the full width. */
+.entry-phone__choice:only-child {
+  grid-column: 1 / -1;
+}
+
 .entry-phone__choice {
   display: flex;
   min-height: 170px;

@@ -5,7 +5,6 @@ import { PlayerDot } from '../room/RoomPage'
 import type { PlayerLook } from '../room/usePlayerLooks'
 import type { PlayerId } from '../types'
 import { amountText, numberText, placeText } from './format'
-import { howToPlay } from './howToPlay'
 import { layoutLine, type LinePoint } from './numberLine'
 import { currentRound, roundOrder, rules, totals, type Question, type ZeroInState } from './rules'
 import '../../ui/TvGame.css'
@@ -341,17 +340,3 @@ export function TvScreen(props: TvScreenProps) {
   return <div className="zi-tv-body">{body}</div>
 }
 
-/** Before the game: how it plays, while the host picks settings on their phone. */
-export function TvWaiting() {
-  return (
-    <div className="zi-tv-waiting" data-testid="zi-tv-waiting">
-      <span className="tv-label">How to play</span>
-      <ol className="zi-tv-steps">
-        {howToPlay.steps.map((step) => (
-          <li key={step}>{step}</li>
-        ))}
-      </ol>
-      <p className="zi-tv-hint">Closest scores 3, then 2 and 1. Exact hit: 2 more. The final round doubles everything.</p>
-    </div>
-  )
-}

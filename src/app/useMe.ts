@@ -8,14 +8,15 @@ export type Me =
   | { kind: 'checking' }
   | { kind: 'signed-out' }
   /**
-   * profile is undefined while it loads and null when this player has none yet. isAdmin and canPlaytest
-   * (Solo play) stay false until their flags load.
+   * profile is undefined while it loads and null when this player has none yet. isAdmin, canHost (open rooms) and
+   * canPlaytest (games in testing) stay false until their flags load; admins can always do both.
    */
   | {
       kind: 'signed-in'
       player: SignedInPlayer
       profile: Profile | null | undefined
       isAdmin: boolean
+      canHost: boolean
       canPlaytest: boolean
     }
 

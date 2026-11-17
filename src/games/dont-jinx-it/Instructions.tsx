@@ -1,13 +1,15 @@
-// ABOUTME: Don't Jinx It's instructions on the big screen, with the host's settings (pace, long game) and Start game.
-// ABOUTME: Individual mode only until teams exist; the length estimate is the handoff's placeholder math.
+// ABOUTME: Don't Jinx It's instructions: on a room's TV before the game (steps and who's in), and the solo playtest's
+// ABOUTME: version with the host's settings (pace, long game) and Start game. The length estimate is the handoff's placeholder math.
+import type { Room } from '../../engine/net/rooms'
 import { TvHeader } from '../../ui/TvHeader'
+import { TvInstructions } from '../room/TvInstructions'
 import { howToPlay } from './howToPlay'
 import { PACE_NAMES } from '../../engine/pace'
 import { PACE_SECONDS, PACES, type DontJinxItSettings, type Pace } from './rules'
 import './TvScreen.css'
 import './Instructions.css'
 
-interface InstructionsProps {
+interface HostInstructionsProps {
   playerCount: number
   settings: DontJinxItSettings
   onChange: (settings: DontJinxItSettings) => void
@@ -24,7 +26,18 @@ function lengthSummary(playerCount: number, settings: DontJinxItSettings): strin
   return `${playerCount} players · ${turns} turns · about ${minutes} min`
 }
 
-export function Instructions({ playerCount, settings, onChange, onStart }: InstructionsProps) {
+export function Instructions({ room }: { room: Room }) {
+  return (
+    <TvInstructions
+      room={room}
+      title="Don't Jinx It"
+      steps={howToPlay.steps}
+      scoring="Correct guess: the guesser gets 2, and every clue that survived gets 1. Table rule: react, but don't say any words."
+    />
+  )
+}
+
+export function HostInstructions({ playerCount, settings, onChange, onStart }: HostInstructionsProps) {
   return (
     <div className="tv-screen dji-tv">
       <TvHeader title="Don't Jinx It" />

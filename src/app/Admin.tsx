@@ -1,4 +1,4 @@
-// ABOUTME: The admin page (#/admin): your style, then tabs for players (profiles, Solo play, admins, points), scores, games and rooms.
+// ABOUTME: The admin page (#/admin): your style, then tabs for players (profiles, who hosts, who playtests, admins, points), scores, games and rooms.
 // ABOUTME: Shown only to admins; the database rules refuse these changes from anyone else.
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { standings } from '../engine/leaderboard'
@@ -7,6 +7,7 @@ import {
   deleteResult,
   resetProfile,
   setAdmin,
+  setHost,
   setPlaytester,
   watchAdmins,
   watchOpenRooms,
@@ -76,6 +77,7 @@ const TABS: { id: AdminTab; label: string }[] = [
 interface AdminData {
   profiles: Record<string, Profile>
   playtesters: Record<string, boolean>
+  hosts: Record<string, boolean>
   admins: Record<string, boolean>
   scores: Scores | null
   rooms: OpenRoom[]
@@ -101,7 +103,7 @@ function nameOf(data: AdminData, uid: string): string {
 function AdminPage({ selfUid, style, onStyleChange }: { selfUid: string } & AdminProps) {
   const [tab, setTab] = useState<AdminTab>('players')
   const [problem, setProblem] = useState('')
-  const [data, setData] = useState<AdminData>({ profiles: {}, playtesters: {}, admins: {}, scores: null, rooms: [] })
+  const [data, setData] = useState<AdminData>({ profiles: {}, playtesters: {}, hosts: {}, admins: {}, scores: null, rooms: [] })
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
@@ -110,8 +112,8 @@ function AdminPage({ selfUid, style, onStyleChange }: { selfUid: string } & Admi
       setProblem("Couldn't load everything. Check you're online.")
     }
     const stops = [
-      watchPlayers((profiles, playtesters) => {
-        setData((d) => ({ ...d, profiles, playtesters }))
+      watchPlayers((profiles, playtesters, hosts) => {
+        setData((d) => ({ ...d, profiles, playtesters, hosts }))
         setLoaded(true)
       }, failed),
       watchAdmins((admins) => setData((d) => ({ ...d, admins })), failed),
@@ -173,7 +175,8 @@ function PlayersPanel({ data, selfUid, run }: { data: AdminData; selfUid: string
   return (
     <>
       <p className="cue-card__text">
-        Everyone with a profile. Solo play lets a player into the games still in testing; admins always have it.
+        Everyone with a profile. Host lets a player open rooms and save their results. Playtest shows a player the games still in testing: Solo play, and in
+        the lobbies they host for everyone who joins. Admins always have both.
       </p>
       <ul className="admin-players" aria-label="Players">
         {rows.map(([uid, profile]) => (
@@ -183,6 +186,7 @@ function PlayersPanel({ data, selfUid, run }: { data: AdminData; selfUid: string
             profile={profile}
             isSelf={uid === selfUid}
             playtester={data.playtesters[uid] === true}
+            host={data.hosts[uid] === true}
             admin={data.admins[uid] === true}
             total={Math.round(totals.find((row) => row.uid === uid)?.total ?? 0)}
             selfUid={selfUid}
@@ -199,13 +203,14 @@ interface PlayerRowProps {
   profile: Profile
   isSelf: boolean
   playtester: boolean
+  host: boolean
   admin: boolean
   total: number
   selfUid: string
   run: Run
 }
 
-function PlayerRow({ uid, profile, isSelf, playtester, admin, total, selfUid, run }: PlayerRowProps) {
+function PlayerRow({ uid, profile, isSelf, playtester, host, admin, total, selfUid, run }: PlayerRowProps) {
   const style = useLobbyStyle()
   const [open, setOpen] = useState<'edit' | 'points' | null>(null)
   const short = uid.slice(0, 6)
@@ -227,14 +232,26 @@ function PlayerRow({ uid, profile, isSelf, playtester, admin, total, selfUid, ru
         <button
           type="button"
           className="admin-player__button"
+          aria-pressed={host || isSelf || admin}
+          aria-disabled={isSelf || admin || undefined}
+          data-testid={`admin-host-${short}`}
+          onClick={() => {
+            if (!isSelf && !admin) void run(() => setHost(uid, !host), "Host didn't change")
+          }}
+        >
+          Host {host || isSelf || admin ? 'on' : 'off'}
+        </button>
+        <button
+          type="button"
+          className="admin-player__button"
           aria-pressed={playtester || isSelf || admin}
           aria-disabled={isSelf || admin || undefined}
           data-testid={`admin-solo-play-${short}`}
           onClick={() => {
-            if (!isSelf && !admin) void run(() => setPlaytester(uid, !playtester), "Solo play didn't change")
+            if (!isSelf && !admin) void run(() => setPlaytester(uid, !playtester), "Playtest didn't change")
           }}
         >
-          Solo play {playtester || isSelf || admin ? 'on' : 'off'}
+          Playtest {playtester || isSelf || admin ? 'on' : 'off'}
         </button>
         {isSelf ? (
           <button type="button" className="admin-player__button" aria-pressed="true" aria-disabled="true" data-testid={`admin-admin-${short}`}>

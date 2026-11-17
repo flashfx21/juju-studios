@@ -1,0 +1,464 @@
+/* ABOUTME: Pin Drop TV styles inside the shared game panel (1200x458): the photo with the clock and lock lights, the results */
+/* ABOUTME: map beside the answer and distances, the standings table, and the final standings beside the photo credits. */
+
+.pd-tv-body {
+  height: 100%;
+}
+
+/* ---------- The photo round ---------- */
+.pd-tv-guessing {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 28px;
+}
+
+.pd-tv-figure {
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* The photo sits whole on black whatever its shape, the same in every style. */
+.pd-tv-photo {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  color: #ffffff;
+}
+
+.pd-tv-photo__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pd-tv-photo__failed {
+  margin: 0;
+  padding: 0 16px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.pd-tv-credit {
+  margin: 0;
+  flex: none;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pd-tv-side {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pd-tv-side__top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pd-tv-clock {
+  min-width: 96px;
+  font-size: 52px;
+}
+
+/* The last seconds: a heavier frame as well as the number, so it never relies on color. */
+.pd-tv-clock[data-low] {
+  outline: 5px solid var(--color-text-on-surface);
+  outline-offset: 3px;
+}
+
+.pd-tv-difficulty {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pd-tv-difficulty__name {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.pd-tv-locks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pd-tv-lock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 21px;
+  line-height: 1.2;
+  opacity: 0.55;
+}
+
+.pd-tv-lock[data-locked] {
+  opacity: 1;
+  font-weight: 700;
+}
+
+.pd-tv-locks[data-crowded] {
+  gap: 4px;
+}
+
+.pd-tv-locks[data-crowded] .pd-tv-lock {
+  font-size: 19px;
+}
+
+.pd-tv-lock__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pd-tv-lock__state {
+  font-family: var(--font-label);
+  letter-spacing: 0.06em;
+}
+
+/* ---------- The reveal: map on the left; the answer, distances and credit on the right ---------- */
+.pd-tv-reveal {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 450px;
+  gap: 24px;
+}
+
+.pd-tv-map {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+}
+
+.pd-tv-reveal__side {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pd-tv-answer {
+  flex: none;
+  height: 84px;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.pd-tv-answer .pd-tv-photo {
+  height: 84px;
+}
+
+.pd-tv-answer .pd-tv-photo__failed {
+  padding: 0 4px;
+  font-size: 12px;
+}
+
+.pd-tv-answer__words {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.pd-tv-answer__place {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.pd-tv-answer__closest {
+  margin: 0;
+  display: flex;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* A long name gives way so the distance after it always shows. */
+.pd-tv-answer__closest-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pd-tv-distances {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pd-tv-distance {
+  flex: none;
+  height: 34px;
+  display: grid;
+  grid-template-columns: 44px auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid currentColor;
+  font-size: 20px;
+  animation: pd-tv-drop 0.35s ease-out;
+}
+
+/* Match play adds the round's points at the end of each row. */
+.pd-tv-distances[data-points] .pd-tv-distance {
+  grid-template-columns: 44px auto minmax(0, 1fr) auto 40px;
+}
+
+.pd-tv-distances[data-crowded] .pd-tv-distance {
+  height: 27px;
+  font-size: 17px;
+}
+
+@keyframes pd-tv-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+}
+
+/* The closest pin's row is heavier, as well as first. */
+.pd-tv-distance[data-closest] {
+  font-weight: 700;
+  border-bottom-width: 3px;
+}
+
+.pd-tv-distance__place {
+  font-family: var(--font-label);
+}
+
+.pd-tv-distance__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pd-tv-distance__km,
+.pd-tv-distance__points {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.pd-tv-distance__points {
+  font-weight: 700;
+}
+
+.pd-tv-credit--full {
+  font-size: 13px;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* ---------- Standings ---------- */
+.pd-tv-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.pd-tv-table th,
+.pd-tv-table td {
+  padding: 3px 8px;
+  border-bottom: 1px solid currentColor;
+  text-align: left;
+  font-weight: 400;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.pd-tv-table thead th {
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom-width: 3px;
+}
+
+.pd-tv-table[data-crowded] {
+  font-size: 20px;
+}
+
+.pd-tv-table[data-crowded] th,
+.pd-tv-table[data-crowded] td {
+  padding: 2px 8px;
+}
+
+.pd-tv-table .pd-tv-table__place {
+  width: 130px;
+}
+
+.pd-tv-table__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pd-tv-table__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pd-tv-table .pd-tv-table__num {
+  width: 190px;
+  text-align: right;
+}
+
+/* The running total, set apart from this round by a rule and weight. */
+.pd-tv-table .pd-tv-table__total {
+  border-left: 3px solid currentColor;
+  font-weight: 700;
+}
+
+.pd-tv-table tr[data-top] th,
+.pd-tv-table tr[data-top] td {
+  font-weight: 700;
+}
+
+/* ---------- Final standings and photo credits ---------- */
+.pd-tv-final {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 32px;
+}
+
+.pd-tv-final__standings,
+.pd-tv-final__credits {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pd-tv-final__credits {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pd-tv-final .pd-tv-table .pd-tv-table__place {
+  width: 110px;
+}
+
+.pd-tv-final .pd-tv-table .pd-tv-table__num {
+  width: 170px;
+}
+
+.pd-tv-credits {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.pd-tv-credits__row {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* ---------- 90s arcade: pixel fonts run wide ---------- */
+:root[data-theme='arcade'] .pd-tv-difficulty__name {
+  font-size: 18px;
+}
+
+:root[data-theme='arcade'] .pd-tv-answer__place {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+:root[data-theme='arcade'] .pd-tv-lock__state,
+:root[data-theme='arcade'] .pd-tv-distance__place {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='arcade'] .pd-tv-table thead th {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+/* ---------- 70s rec room: typewriter labels run wide, and the handwritten body font runs small ---------- */
+:root[data-theme='rec-room'] .pd-tv-lock,
+:root[data-theme='rec-room'] .pd-tv-distance {
+  font-size: 18px;
+}
+
+:root[data-theme='rec-room'] .pd-tv-locks[data-crowded] .pd-tv-lock,
+:root[data-theme='rec-room'] .pd-tv-distances[data-crowded] .pd-tv-distance {
+  font-size: 16px;
+}
+
+:root[data-theme='rec-room'] .pd-tv-table {
+  font-size: 19px;
+}
+
+:root[data-theme='rec-room'] .pd-tv-credit {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+:root[data-theme='rec-room'] .pd-tv-credit--full,
+:root[data-theme='rec-room'] .pd-tv-credits {
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+:root[data-theme='rec-room'] .pd-tv-credits {
+  gap: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pd-tv-distance {
+    animation: none;
+  }
+}

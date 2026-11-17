@@ -389,7 +389,6 @@
   text-align: right;
 }
 
-/* ---------- Before the game ---------- */
 .db-tv-waiting {
   display: flex;
   flex-direction: column;
@@ -421,7 +420,6 @@
 }
 
 :root[data-theme='arcade'] .db-tv-table,
-:root[data-theme='arcade'] .db-tv-steps,
 :root[data-theme='arcade'] .db-tv-note,
 :root[data-theme='arcade'] .db-tv-effect {
   font-size: 15px;

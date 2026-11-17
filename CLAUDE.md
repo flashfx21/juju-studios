@@ -4,16 +4,16 @@ A suite of phone party games for family and friends, played like Jackbox: one sh
 
 ## How this repo is organized
 - One shared **engine** (the console) and many **games** (cartridges).
-- `src/engine/` rooms, joining, presence and connection bars, timer, voting, turn order, teams, pause/restart, scoring, results.
+- `src/engine/` scoring, leaderboard, pace, shared dictionary and word matching. `src/engine/net/` is the backend: sign-in, profiles, rooms, results, admin, shared clock.
 - `src/app/` routing (host vs. phone), sign-in, profile, settings.
 - `src/ui/` shared components and the three lobby styles: retro game show, 90s arcade, 70s rec room.
-- `src/games/<game-id>/` one folder per game. `src/games/_template/` is the starting point for a new game. `src/games/registry.ts` lists installed games.
+- `src/games/<game-id>/` one folder per game. `src/games/lineup.ts` lists every game with its lineup number and phase. `src/games/room/` holds what every room game shares: the room page, waiting room, bots, leave room, TV frame and TV instructions. `src/games/_template/` is empty for now.
 - `packs/<game-id>/` content packs (prompts, words, questions, photos). `packs/shared/` holds content any game can use, such as the English word list loaded by `src/engine/dictionary.ts`.
 - `docs/` requirements, tech stack, design handoffs. `docs/design/` exported designs and tokens.
 - Games keep their lineup number (`docs/games/<nn>-<id>.md`) whenever docs, notes and reports in this repo name them: "06 Pin Drop", "05 Sketch Showdown". Ids, folders and on-screen titles have no number.
 
 ## Rules for games (the cartridge contract)
-- Each game folder has: `manifest.ts` (title, pitch, tag, players, modes, status), `rules.ts` (pure logic: setup, onInput, onTimer, isOver, finishingOrder), `TvScreen.tsx`, `PhoneScreen.tsx`, `Instructions.tsx`, `howToPlay.ts` (the words on its How to play page, listed in `src/app/howToPlayPages.ts`), `rules.test.ts`.
+- Each game folder has: `manifest.ts` (title, pitch, tag, players, modes, status), `rules.ts` (pure logic: setup, onInput, onTimer, isOver, finishingOrder), `TvScreen.tsx` with `TvGame.tsx` (the room's TV, listed in `src/games/room/tvGames.ts`), `PhoneScreen.tsx`, `Together.tsx` (the room on phones, listed in `src/games/room/roomPages.ts`), `Instructions.tsx` (on the TV before the game), `howToPlay.ts` (the words on its How to play page, listed in `src/app/howToPlayPages.ts`), `rules.test.ts`.
 - Games never calculate leaderboard points. They report a finishing order; `src/engine/scoring` applies the rules.
 - New games start with status "coming soon" and only become "playable" after tests pass and a local playtest.
 - Every game is in one phase: Not Started, Design, Development, Solo test, Group test, Production. Definitions and exit rules: `docs/games/README.md`. Only Production sets `status: 'playable'` in code. Keep each spec's Status line and the README table current when a game changes phase.

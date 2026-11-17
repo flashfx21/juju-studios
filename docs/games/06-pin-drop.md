@@ -1,7 +1,7 @@
 # Pin Drop (working title)
 
 **Game ID:** `pin-drop`  
-**Status:** Development (rules final Nov 11, 2026). Launch phase 1. On branch `game/pin-drop`: rules, tests, 23-photo starter pack, phone screen with the world map and a solo playtest. TV screen, Instructions, arcade and rec room checks, and the full pack script to do  
+**Status:** Development (rules final Nov 11, 2026). Launch phase 1. Built: rules, tests, a 93-photo pack, phone screen with the world map, a solo playtest with bots, and rooms on phones with bots (the room hides where the photo is and everyone's pins until the reveal). TV screen for rooms shown at `#/tv` and Instructions on the TV before the game built Nov 17: the photo large with its credit and who has locked in, the reveal map with pins appearing farthest to closest and distances, standings, final standings with photo credits. The reveal close-up, labels-off maps, a real tile provider and the full pack script to do  
 **Players:** 2 to 10 (placeholder)  
 **Length:** about 12 min at 7 rounds (estimate; 5 rounds about 8, 9 rounds about 15)  
 **Modes:** Individual. Scoring modes: Match play (default), Stroke play

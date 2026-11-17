@@ -7,7 +7,7 @@ import { PhoneFrame } from '../../ui/PhoneFrame'
 import { useScreenKind } from '../../ui/useScreenKind'
 import { WaffleMenu } from '../../ui/WaffleMenu'
 import type { PlayerId, RulesContext } from '../types'
-import { Instructions } from './Instructions'
+import { HostInstructions } from './Instructions'
 import { DontJinxItTitle, PhoneScreen } from './PhoneScreen'
 import type { Seat } from './Pieces'
 import {
@@ -136,7 +136,7 @@ export function Playtest() {
     return (
       <main className="dji-desk" aria-label="Don't Jinx It playtest">
         <TvPreview>
-          <Instructions
+          <HostInstructions
             playerCount={playerCount}
             settings={settings}
             onChange={setSettings}

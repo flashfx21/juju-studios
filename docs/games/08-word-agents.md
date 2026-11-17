@@ -1,7 +1,7 @@
 # Word Agents
 
 **Game ID:** `word-agents`  
-**Status:** Not Started. Launch phase 3 (deep dive; Julian's twist pending)  
+**Status:** Design (Nov 17, 2026). Launch phase 3 (deep dive; Julian's twist pending)  
 **Players:** 4 to 10 (placeholder)  
 **Length:** 20 min (placeholder)  
 **Modes:** Teams

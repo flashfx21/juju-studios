@@ -3,13 +3,11 @@
 import { LOBBY, playerIds, sessionGames, sessionOver, sessionTotals, type Room } from '../engine/net/rooms'
 import { LINEUP } from '../games/lineup'
 import { PlayerDot } from '../games/room/RoomPage'
-import { roomPageFor } from '../games/room/roomPages'
 import { TvFrame } from '../games/room/TvFrame'
 import { usePlayerLooks } from '../games/room/usePlayerLooks'
 import { mostVoted } from './lobbyPick'
-import { pickerState } from './pickerGames'
+import { roomGames } from './pickerGames'
 import { siteAddress } from './siteAddress'
-import { useMe } from './useMe'
 import './LobbyTv.css'
 
 function pointsText(points: number): string {
@@ -37,12 +35,10 @@ function NightOver({ room }: { room: Room }) {
 }
 
 export function LobbyTv({ room }: { room: Room }) {
-  const me = useMe()
   const looks = usePlayerLooks(room)
   if (sessionOver(room.session) && room.game === LOBBY) return <NightOver room={room} />
 
-  const canPlaytest = me.kind === 'signed-in' && me.canPlaytest
-  const games = LINEUP.filter((game) => roomPageFor(game.id) && pickerState(game, canPlaytest) === 'ready')
+  const games = roomGames(room)
   const leaders = mostVoted(
     room.votes,
     games.map((game) => game.id),

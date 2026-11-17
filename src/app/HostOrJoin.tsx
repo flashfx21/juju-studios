@@ -233,6 +233,8 @@ export function HostOrJoinPhone() {
   const me = useMe()
   const signedIn = me.kind === 'signed-in'
   const canPlaytest = me.kind === 'signed-in' && me.canPlaytest
+  // Signed out, the Host card leads to sign-in; signed in, it shows only for players an admin has let host.
+  const showHost = me.kind === 'signed-out' || (me.kind === 'signed-in' && me.canHost)
   const isAdmin = me.kind === 'signed-in' && me.isAdmin
 
   return (
@@ -243,11 +245,13 @@ export function HostOrJoinPhone() {
       </div>
       <div className="entry-phone__choices">
         <PhoneChoice kind="join" copy={copy.join} to={href('join')} />
-        <PhoneChoice
-          kind="host"
-          copy={signedIn ? { ...copy.host, action: copy.hostSignedIn } : copy.host}
-          to={href(signedIn ? 'room' : 'sign-in')}
-        />
+        {showHost && (
+          <PhoneChoice
+            kind="host"
+            copy={signedIn ? { ...copy.host, action: copy.hostSignedIn } : copy.host}
+            to={href(signedIn ? 'room' : 'sign-in')}
+          />
+        )}
       </div>
       {signedIn && rememberedRoom(LOBBY) && (
         <a className="phone-button" href={href('room')} data-testid="back-to-room">

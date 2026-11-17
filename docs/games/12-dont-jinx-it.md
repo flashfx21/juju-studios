@@ -1,7 +1,7 @@
 # Don't Jinx It
 
 **Game ID:** `dont-jinx-it`  
-**Status:** Development. Launch phase 1 (individual mode; team mode follows teams in phase 2). Rules, phone, TV and Instructions done in the game-show style; solo playtest live; rooms on phones live (Nov 14): each phone gets only its own view, bots write clues from a list and guess, host Next turn. Arcade and rec room to do  
+**Status:** Development. Launch phase 1 (individual mode; team mode follows teams in phase 2). Rules, phone, TV and Instructions done; solo playtest live; rooms on phones live (Nov 14): each phone gets only its own view, bots write clues from a list and guess, host Next turn. TV screens in rooms at `#/tv` in all three styles and Instructions on the TV before the game built Nov 17. Phone screens in arcade and rec room to do  
 **Players:** 3 to 10 (placeholder)  
 **Length:** 15 min (placeholder)  
 **Modes:** Individual and Team (defense)

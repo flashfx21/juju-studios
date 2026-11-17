@@ -1,0 +1,300 @@
+/* ABOUTME: Chainword TV styles inside the shared game panel (1200x458): each player's place in the chain with the clock, */
+/* ABOUTME: then the final standings beside the chain's words. Green and gray are fixed across lobby styles, as on the phone. */
+
+.cw-tv-body {
+  --cw-green: #2f7a3a;
+  --cw-gray: #5c6066;
+  --cw-light-ink: #ffffff;
+  height: 100%;
+}
+
+.cw-tv-split {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 32px;
+}
+
+.cw-tv-main {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cw-tv-side {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.cw-tv-note {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.cw-tv-clock {
+  align-self: flex-start;
+  margin: 7px;
+  min-width: 170px;
+  font-size: 64px;
+}
+
+/* The last half minute: a frame around the clock as well as the number, so it never relies on color. */
+.cw-tv-clock[data-low] {
+  outline: 4px solid var(--color-text-on-surface);
+  outline-offset: 3px;
+}
+
+/* ---------- While the chain runs: one row per player, in the room's order ---------- */
+.cw-tv-racers {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-auto-rows: minmax(0, 46px);
+  align-content: center;
+  gap: 4px;
+}
+
+.cw-tv-racer {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto 170px;
+  align-items: center;
+  gap: 14px;
+  font-size: 22px;
+}
+
+.cw-tv-racer[data-finished] {
+  font-weight: 700;
+}
+
+.cw-tv-racer__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cw-tv-racer__state {
+  font-family: var(--font-label);
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.cw-tv-steps {
+  display: flex;
+  gap: 5px;
+}
+
+/* A word not reached is a faint box; the word in play has a heavy frame; a finished word is filled and checked. */
+.cw-tv-step {
+  width: 44px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid color-mix(in srgb, currentColor 40%, transparent);
+  font-family: var(--font-label);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cw-tv-step[data-status='current'] {
+  border: 4px solid currentColor;
+}
+
+.cw-tv-step[data-status='done'] {
+  border-color: var(--color-text-on-surface);
+  background: var(--color-text-on-surface);
+  color: var(--color-surface);
+}
+
+/* ---------- Game over: standings on the left, the chain's words on the right ---------- */
+.cw-tv-split--over {
+  align-items: center;
+}
+
+.cw-tv-split--over .cw-tv-side {
+  align-self: stretch;
+}
+
+.cw-tv-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 22px;
+}
+
+.cw-tv-table th,
+.cw-tv-table td {
+  padding: 2px 8px;
+  border-bottom: 1px solid currentColor;
+  text-align: left;
+  font-weight: 400;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Up to 6 players the rows have room to breathe. */
+.cw-tv-table:not([data-rows='7'], [data-rows='8'], [data-rows='9'], [data-rows='10']) tbody :is(th, td) {
+  padding-block: 8px;
+}
+
+.cw-tv-table thead th {
+  font-family: var(--font-label);
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom-width: 3px;
+}
+
+.cw-tv-table .cw-tv-table__place {
+  width: 68px;
+  font-family: var(--font-label);
+}
+
+.cw-tv-table .cw-tv-table__words {
+  width: calc(var(--cw-tv-words) * 42px + 12px);
+}
+
+.cw-tv-table .cw-tv-table__num {
+  width: 100px;
+  text-align: right;
+}
+
+.cw-tv-table .cw-tv-table__total,
+.cw-tv-table tr[data-top] :is(th, td) {
+  font-weight: 700;
+}
+
+.cw-tv-table__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cw-tv-table__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cw-tv-costs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 4px;
+}
+
+.cw-tv-cost {
+  width: 38px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid color-mix(in srgb, currentColor 40%, transparent);
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cw-tv-cost[data-status='solved'] {
+  border-color: var(--cw-green);
+  background: var(--cw-green);
+  color: var(--cw-light-ink);
+}
+
+.cw-tv-cost[data-status='missed'] {
+  border-color: var(--cw-gray);
+  background: var(--cw-gray);
+  color: var(--cw-light-ink);
+}
+
+.cw-tv-chain {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cw-tv-word {
+  display: grid;
+  grid-template-columns: repeat(var(--cw-tv-letters), 38px);
+  gap: 4px;
+}
+
+.cw-tv-tile {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cw-green);
+  color: var(--cw-light-ink);
+  font-family: var(--font-body);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* ---------- 90s arcade: pixel fonts run wide ---------- */
+:root[data-theme='arcade'] .cw-tv-note {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+:root[data-theme='arcade'] .cw-tv-table .cw-tv-table__place {
+  font-size: 13px;
+}
+
+:root[data-theme='arcade'] .cw-tv-clock {
+  font-size: 40px;
+}
+
+:root[data-theme='arcade'] .cw-tv-racer__state,
+:root[data-theme='arcade'] .cw-tv-table thead th {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+:root[data-theme='arcade'] .cw-tv-step {
+  font-size: 13px;
+}
+
+:root[data-theme='arcade'] .cw-tv-cost {
+  font-size: 22px;
+}
+
+:root[data-theme='arcade'] .cw-tv-tile {
+  font-size: 28px;
+}
+
+/* ---------- 70s rec room: the typewriter body font runs wide in rows and small in the little boxes ---------- */
+:root[data-theme='rec-room'] .cw-tv-racer,
+:root[data-theme='rec-room'] .cw-tv-table {
+  font-size: 20px;
+}
+
+:root[data-theme='rec-room'] .cw-tv-racer__state {
+  font-size: 17px;
+}
+
+:root[data-theme='rec-room'] .cw-tv-cost,
+:root[data-theme='rec-room'] .cw-tv-tile {
+  font-family: var(--font-label);
+}

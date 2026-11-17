@@ -12,13 +12,13 @@ import {
   writeHostGame,
   writePlay,
   writePlayerView,
+  writeTvView,
   type Room,
 } from '../../engine/net/rooms'
 import { recentlyDealt, rememberDealt } from '../../engine/recentlyDealt'
 import { PACE_NAMES } from '../../engine/pace'
 import { seededRandom } from '../../engine/seededRandom'
 import { OptionRow } from '../../ui/OptionRow'
-import { PLAYER_COLOR_IDS, type PlayerColorId } from '../../ui/playerColors'
 import { botFor } from '../room/bots'
 import { EndGameEarly } from '../room/EndGameEarly'
 import { isPractice, saveFinishedGame } from '../room/saveFinishedGame'
@@ -27,7 +27,6 @@ import { useSecondsLeft } from '../room/useSecondsLeft'
 import type { FinishingOrder, PlayerId, RulesContext } from '../types'
 import { manifest } from './manifest'
 import { DontJinxItTitle, PhoneScreen } from './PhoneScreen'
-import type { Seat } from './Pieces'
 import { botClues, botGuess } from './roomBots'
 import {
   cluesPerWriter,
@@ -41,6 +40,7 @@ import {
   rules,
   SKIP_WINDOW_SECONDS,
   survivors,
+  tvView,
   writersFor,
   type DontJinxItInput,
   type DontJinxItSettings,
@@ -48,6 +48,7 @@ import {
   type Phase,
   type PlayerView,
 } from './rules'
+import { useSeats } from './useSeats'
 
 const LONG_GAME = ['off', 'on'] as const
 const LONG_GAME_NAMES = { off: 'Once', on: 'Twice' }
@@ -129,8 +130,11 @@ function JinxWaitingRoom({ room, isHost }: RoomScreenProps) {
   )
 }
 
+/** The room code and TV view last sent from this phone, so a view that has not changed is not sent again. */
+let sentTvView = ''
+
 /**
- * Host only: saves the full game where only the host can read it, gives each person their own view,
+ * Host only: saves the full game where only the host can read it, gives each person their own view and the TV its view,
  * and puts only who is playing and the phase in the room. `starting` stamps a new game's start; a finished game is saved.
  */
 async function publish(room: Room, state: DontJinxItState, deadline: number | null, starting = false): Promise<void> {
@@ -138,6 +142,13 @@ async function publish(room: Room, state: DontJinxItState, deadline: number | nu
   const now = Date.now()
   for (const player of state.players) {
     if (!botFor(player)) await writePlayerView(room.code, player, playerView(state, player, now))
+  }
+  // The guesser watches the TV, so it gets tvView and nothing else.
+  const forTv = tvView(state)
+  const tvKey = `${room.code} ${JSON.stringify(forTv)}`
+  if (starting || tvKey !== sentTvView) {
+    sentTvView = tvKey
+    await writeTvView(room.code, forTv)
   }
   const shared: SharedPlay = {
     players: [...state.players],
@@ -147,21 +158,6 @@ async function publish(room: Room, state: DontJinxItState, deadline: number | nu
   }
   await (starting ? startPlay : writePlay)(room.code, shared, deadline)
   if (rules.isOver(state) && !isPractice(state.players)) saveFinishedGame(room, manifest.id, rules.finishingOrder(state))
-}
-
-/** How each player appears: people as their room entry, bots as their own look. */
-function useSeats(room: Room, players: readonly PlayerId[]): Record<PlayerId, Seat> {
-  const seats: Record<PlayerId, Seat> = {}
-  for (const id of players) {
-    const bot = botFor(id)
-    const person = room.players[id]
-    if (bot) seats[id] = { name: bot.look.name, color: bot.look.color }
-    else {
-      const color = person && PLAYER_COLOR_IDS.includes(person.color as PlayerColorId) ? (person.color as PlayerColorId) : 'silver'
-      seats[id] = { name: person?.username ?? 'Player', color }
-    }
-  }
-  return seats
 }
 
 function Game({ room, self, isHost }: RoomScreenProps) {

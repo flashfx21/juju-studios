@@ -23,11 +23,10 @@ import { OptionRow } from '../ui/OptionRow'
 import { useLobbyStyle } from '../ui/themes/useLobbyStyle'
 import { HowToPlayButton } from './HowToPlay'
 import { mostVoted, randomPick } from './lobbyPick'
-import { pickerState } from './pickerGames'
+import { roomGames } from './pickerGames'
 import { PlayerBadge } from './PlayerBadge'
 import { goTo, href } from './useHashRoute'
 import { siteAddress } from './siteAddress'
-import { useMe } from './useMe'
 import './GameVote.css'
 import './LobbyRoom.css'
 
@@ -136,11 +135,9 @@ function Recap({ room }: { room: Room }) {
 }
 
 function LobbyScreen({ room, self, isHost }: RoomScreenProps) {
-  const me = useMe()
   const style = useLobbyStyle()
-  const canPlaytest = me.kind === 'signed-in' && me.canPlaytest
   const looks = usePlayerLooks(room)
-  const games = LINEUP.filter((game) => roomPageFor(game.id) && pickerState(game, canPlaytest) === 'ready')
+  const games = roomGames(room)
   const myVote = room.votes[self.uid]
   const leaders = mostVoted(
     room.votes,
@@ -227,7 +224,9 @@ function LobbyScreen({ room, self, isHost }: RoomScreenProps) {
           )}
           <h2 className="lobby-room__heading">Vote for the next game</h2>
           {games.length === 0 ? (
-            <p className="cue-card__text">No games are ready for a room yet. Games in testing open for playtesters.</p>
+            <p className="cue-card__text" data-testid="lobby-no-games">
+              No games are ready for this room yet. Games in testing open when a playtester hosts.
+            </p>
           ) : (
             <ul className="game-vote__rows" aria-label="Games to vote for">
               {games.map((game) => {

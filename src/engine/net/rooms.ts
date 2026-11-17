@@ -35,6 +35,8 @@ export interface Room {
   game: string
   /** A room for the night: it starts in the lobby and moves from game to game. */
   lobby: boolean
+  /** The room was opened by a playtester, so it offers the games still in testing to everyone in it. */
+  testing: boolean
   /** In a lobby room, each player's vote for the next game (a game id). */
   votes: Record<string, string>
   /** By player id (the sign-in uid), in the order they joined. */
@@ -106,13 +108,16 @@ function joinAs(code: string, uid: string, player: RoomPlayer): Promise<void> {
   return set(roomRef(code, `players/${uid}`), { ...shownPlayer(player), joinedAt: serverTimestamp() })
 }
 
-/** Opens a new room hosted by this player and joins it. Tries new codes if one is taken. Pass LOBBY for a room for the night. */
-export async function createRoom(uid: string, game: string, player: RoomPlayer): Promise<string> {
+/**
+ * Opens a new room hosted by this player and joins it. Tries new codes if one is taken. Pass LOBBY for a room for the night.
+ * `testing` (playtesters only) lets the room play the games still in testing.
+ */
+export async function createRoom(uid: string, game: string, player: RoomPlayer, testing: boolean): Promise<string> {
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = newCode()
     try {
       // The rules only allow creating a room that doesn't exist yet, so a taken code is refused.
-      await set(roomRef(code), { host: uid, game, lobby: game === LOBBY, createdAt: serverTimestamp() })
+      await set(roomRef(code), { host: uid, game, lobby: game === LOBBY, testing, createdAt: serverTimestamp() })
     } catch {
       continue
     }
@@ -174,6 +179,7 @@ export function watchRoom(code: string, onChange: (room: Room | null) => void, o
         host: value.host,
         game: value.game,
         lobby: value.lobby === true,
+        testing: value.testing === true,
         votes: value.votes ?? {},
         players: value.players ?? {},
         play: value.play
@@ -268,6 +274,20 @@ export function writePlayerView(code: string, uid: string, view: unknown): Promi
 export function watchPlayerView(code: string, uid: string, onChange: (view: unknown) => void): () => void {
   return onValue(
     secretRef(code, `views/${uid}`),
+    (snapshot) => onChange(snapshot.exists() ? JSON.parse(String(snapshot.val())) : null),
+    () => onChange(null),
+  )
+}
+
+/** Host only: what the room's TV shows, for games whose TV screen needs more than the room's public game (a drawing, a pile of clues). */
+export function writeTvView(code: string, view: unknown): Promise<void> {
+  return set(secretRef(code, 'tv'), JSON.stringify(view))
+}
+
+/** What the host last published for the TV (null until there is one). Any signed-in screen may watch it. Returns a stop function. */
+export function watchTvView(code: string, onChange: (view: unknown) => void): () => void {
+  return onValue(
+    secretRef(code, 'tv'),
     (snapshot) => onChange(snapshot.exists() ? JSON.parse(String(snapshot.val())) : null),
     () => onChange(null),
   )

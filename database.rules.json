@@ -31,7 +31,7 @@
     "rooms": {
       "$code": {
         ".read": "auth != null && auth.token.email_verified === true",
-        ".write": "(auth != null && auth.token.email_verified === true && !data.exists() && newData.child('host').val() === auth.uid) || (auth != null && root.child('admins').child(auth.uid).val() === true && !newData.exists()) || (auth != null && data.child('host').val() === auth.uid && !newData.exists())",
+        ".write": "(auth != null && auth.token.email_verified === true && !data.exists() && newData.child('host').val() === auth.uid && (root.child('admins').child(auth.uid).val() === true || root.child('hosts').child(auth.uid).val() === true)) || (auth != null && root.child('admins').child(auth.uid).val() === true && !newData.exists()) || (auth != null && data.child('host').val() === auth.uid && !newData.exists())",
         ".validate": "$code.matches(/^[A-Z]{4}$/)",
         "players": {
           "$uid": {
@@ -117,6 +117,9 @@
         "lobby": {
           ".validate": "newData.isBoolean()"
         },
+        "testing": {
+          ".validate": "newData.isBoolean() && (newData.val() === false || root.child('admins').child(auth.uid).val() === true || root.child('playtesters').child(auth.uid).val() === true)"
+        },
         "createdAt": {
           ".validate": "newData.val() === now"
         },
@@ -169,6 +172,14 @@
         ".validate": "newData.isBoolean()"
       }
     },
+    "hosts": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+        ".validate": "newData.isBoolean()"
+      }
+    },
     "roomSecrets": {
       "$code": {
         ".write": "(auth != null && root.child('rooms').child($code).child('host').val() === auth.uid && !newData.exists()) || (auth != null && root.child('admins').child(auth.uid).val() === true && !newData.exists())",
@@ -183,6 +194,11 @@
             ".write": "auth != null && root.child('rooms').child($code).child('host').val() === auth.uid",
             ".validate": "newData.isString() && newData.val().length <= 1000000"
           }
+        },
+        "tv": {
+          ".read": "auth != null && auth.token.email_verified === true",
+          ".write": "auth != null && root.child('rooms').child($code).child('host').val() === auth.uid",
+          ".validate": "newData.isString() && newData.val().length <= 1000000"
         },
         "inputs": {
           ".read": "auth != null && root.child('rooms').child($code).child('host').val() === auth.uid",

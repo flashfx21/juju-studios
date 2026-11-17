@@ -1,7 +1,7 @@
 # Zero In
 
 **Game ID:** `zero-in` (was `closest-without-going-over`, working title Closest Without Going Over)  
-**Status:** Development (rules final Nov 16, 2026). Launch phase 3. Built Nov 16: rules and tests, the 32-question test pack (`packs/zero-in/questions.json`, answers unverified), phone screens, a solo playtest with bots, and rooms on phones with bots and End game. TV screens built Nov 16 for rooms shown at `#/tv` (question with lock lights, final intro card, ring reveal with points and totals, climb reveal, final standings); no Claude Design screens yet, so the look is extrapolated from the shared TV pieces. Pause overlay waits for pause in rooms  
+**Status:** Development (rules final Nov 16, 2026). Launch phase 3. Built Nov 16: rules and tests, the 32-question test pack (`packs/zero-in/questions.json`, answers unverified), phone screens, a solo playtest with bots, and rooms on phones with bots and End game. TV screens built Nov 16 for rooms shown at `#/tv` (question with lock lights, final intro card, ring reveal with points and totals, climb reveal, final standings); no Claude Design screens yet, so the look is extrapolated from the shared TV pieces. Instructions on the TV before the game built Nov 17. Pause overlay waits for pause in rooms  
 **Players:** 3 to 10  
 **Length:** about 10 min at 10 rounds (estimate, not playtested)  
 **Modes:** Individual

@@ -1,6 +1,6 @@
 // ABOUTME: Don't Jinx It on the big screen (individual mode), laid out from docs/handoffs/design_handoff_dont_jinx_it:
 // ABOUTME: turn intro, writing progress, the clue drop, survivors, the verdict, the full reveal and final standings.
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { TvHeader } from '../../ui/TvHeader'
 import type { FinishingOrder, PlayerId } from '../types'
 import { clock, jinxedBy, ordinal, pointsText } from './format'
@@ -22,6 +22,8 @@ interface TvScreenProps {
 
 /** How long the turn intro shows at the start of writing, while the guesser looks up at the TV. */
 const INTRO_MS = 5000
+/** A guesser's name longer than this is set smaller on the turn intro, so it stays beside their chip. */
+const LONG_NAME = 12
 const PANEL_WIDTH = 1120
 const CARD_GAP = 18
 
@@ -64,7 +66,9 @@ function TurnIntro({ view, seats }: { view: TvView; seats: Record<PlayerId, Seat
         <span className="dji-tv-label">Now guessing</span>
         <div className="dji-tv-intro__who">
           <Chip seat={guesser} size={140} ringed />
-          <span className="dji-tv-intro__name">{guesser.name}</span>
+          <span className="dji-tv-intro__name" data-long={guesser.name.length > LONG_NAME || undefined}>
+            {guesser.name}
+          </span>
         </div>
         <p className="dji-tv-strip dji-tv-strip--solid">{guesser.name}: eyes on the TV.</p>
         <p className="dji-tv-strip dji-tv-strip--outline">Everyone else: check your phone.</p>
@@ -276,7 +280,7 @@ function Survivors({ view, seats, secondsLeft }: Pick<TvScreenProps, 'view' | 's
       {words.length > 0 ? (
         <ul className={`dji-tv-survivors dji-tv-survivors--${size}`} aria-label="Surviving clues">
           {words.map((word, i) => (
-            <li key={`${word}-${i}`} className="dji-tv-survivor" style={{ '--i': i } as CSSProperties}>
+            <li key={`${word}-${i}`} className="dji-tv-survivor" style={{ '--i': i, '--letters': word.length } as CSSProperties}>
               {word}
             </li>
           ))}
@@ -323,10 +327,12 @@ function Reveal({ view, seats }: { view: TvView; seats: Record<PlayerId, Seat> }
               {writer && (
                 <span className="dji-tv-reveal-card__who">
                   <Chip seat={writer} size={28} />
-                  {writer.name} wrote
+                  <span className="dji-tv-reveal-card__name">{writer.name} wrote</span>
                 </span>
               )}
-              <span className="dji-tv-reveal-card__word">{card.word}</span>
+              <span className="dji-tv-reveal-card__word" style={{ '--letters': card.word?.length ?? 1 } as CSSProperties}>
+                {card.word}
+              </span>
               {card.fate === 'survived' ? (
                 <span className="dji-tv-tag dji-tv-tag--survived">✓ Survived</span>
               ) : (
@@ -385,14 +391,18 @@ function hostStatus(view: TvView, secondsLeft: number | null): string {
   }
 }
 
+/** The game panel's contents for the current phase, for the playtest's TV and a room's TV alike. */
+export function PhaseScreen({ view, seats, secondsLeft, standings }: Omit<TvScreenProps, 'onNext'>) {
+  if (view.phase === 'write') return <Writing key={view.turnIndex} view={view} seats={seats} secondsLeft={secondsLeft} />
+  if (view.phase === 'pile') return <ClueDrop key={view.turnIndex} view={view} seats={seats} />
+  if (view.phase === 'guess') return <Survivors view={view} seats={seats} secondsLeft={secondsLeft} />
+  if (view.phase === 'verdict') return <Verdict view={view} seats={seats} />
+  if (view.phase === 'reveal') return <Reveal view={view} seats={seats} />
+  return <GameOver view={view} seats={seats} standings={standings} />
+}
+
 export function TvScreen({ view, seats, secondsLeft, standings, onNext }: TvScreenProps) {
-  let body: ReactNode
-  if (view.phase === 'write') body = <Writing key={view.turnIndex} view={view} seats={seats} secondsLeft={secondsLeft} />
-  else if (view.phase === 'pile') body = <ClueDrop key={view.turnIndex} view={view} seats={seats} />
-  else if (view.phase === 'guess') body = <Survivors view={view} seats={seats} secondsLeft={secondsLeft} />
-  else if (view.phase === 'verdict') body = <Verdict view={view} seats={seats} />
-  else if (view.phase === 'reveal') body = <Reveal view={view} seats={seats} />
-  else body = <GameOver view={view} seats={seats} standings={standings} />
+  const body = <PhaseScreen view={view} seats={seats} secondsLeft={secondsLeft} standings={standings} />
 
   return (
     <div className="tv-screen dji-tv">

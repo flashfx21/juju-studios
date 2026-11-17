@@ -1,6 +1,6 @@
 # Games
 
-One spec per game. Source of truth for ideas and history: `../game-night-suite-ideas-2233.md`. Updated Nov 16, 2026.
+One spec per game. Source of truth for ideas and history: `../game-night-suite-ideas-2233.md`. Updated Nov 17, 2026.
 
 Games are named with their number in this repo's docs and notes ("06 Pin Drop"). Ids, folders and on-screen titles have no number.
 
@@ -29,9 +29,9 @@ Every game is in exactly one phase. It moves on when it meets that phase's exit 
 | 04 | Chainword (working name) | `04-chainword.md` | Development | 1 (first cartridge) |
 | 05 | Sketch Showdown | `05-sketch-showdown.md` | Development | 2 (the idea log says 3) |
 | 06 | Pin Drop (working title) | `06-pin-drop.md` | Development | 1 |
-| 07 | Hidden traitor game (working title) | `07-hidden-traitor.md` | Not Started | 3 (marquee candidate) |
-| 08 | Word Agents | `08-word-agents.md` | Not Started | 3 |
-| 09 | Curated board game (name open) | `09-board-game.md` | Not Started | 3 |
+| 07 | Hidden traitor game (working title) | `07-hidden-traitor.md` | Design | 3 (marquee candidate) |
+| 08 | Word Agents | `08-word-agents.md` | Design | 3 |
+| 09 | Curated board game (name open) | `09-board-game.md` | Design | 3 |
 | 10 | Maze chase (name open) | `10-maze-chase.md` | Not Started | 3 |
 | 11 | Snake arena (name open) | `11-snake-arena.md` | Not Started | 3, last |
 | 12 | Don't Jinx It | `12-dont-jinx-it.md` | Development | 1 (individual mode; team mode follows teams in phase 2) |

@@ -1,7 +1,7 @@
 # Sketch Showdown
 
 **Game ID:** `sketch-showdown`  
-**Status:** Development (rules final Nov 11, 2026). Launch phase 2 here; the idea log says phase 3 (see open questions). On branch `game/sketch-showdown`: rules, guess matching, views, tests, clue pack, drawing canvas, drawer and guesser phone screens, a drawer-only playtest, and rooms on phones (Nov 14): random teams (bots as their own team), strokes sent as each one is finished, private views per player, host End round and Next, gallery on phones. TV screen, Instructions, team swap and mid-stroke sync to do  
+**Status:** Development (rules final Nov 11, 2026). Launch phase 2 here; the idea log says phase 3 (see open questions). Built: rules, guess matching, views, tests, clue pack, drawing canvas, drawer and guesser phone screens, a drawer-only playtest, and rooms on phones (Nov 14): random teams (bots as their own team), strokes sent as each one is finished, private views per player, host End round and Next, gallery on phones. TV screen for rooms shown at `#/tv` and Instructions on the TV before the game built Nov 17: teams and drawers, the race with an ink meter and wrong-guess count per team (no drawing until the reveal), both drawings side by side at the reveal, and every round's drawings at the end. Team swap, mid-stroke sync, the first-drawer spin and a paged gallery to do  
 **Players:** 4 to 10 (2 teams of 2 to 5; uneven teams allowed). In a room, 2 or 3 people with no bots get 2 bots as the other team; 2 people is a practice game, not saved to the leaderboard  
 **Length:** about 5 to 10 min (3 v 3, draw once) up to 15 to 30 min (5 v 5, draw twice). Claude's estimate, not playtested  
 **Modes:** Teams

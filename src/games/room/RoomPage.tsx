@@ -78,6 +78,7 @@ export function RoomPage({ gameId, gameName, Title, intro, children, cardTag = '
     )
   }
   const self: RoomSelf = { uid: me.player.uid, ...me.profile }
+  const { canHost, canPlaytest } = me
 
   return (
     <PhoneFrame label={gameId === LOBBY ? gameName : `${gameName} with others`} cardTag={cardTag} fit={code !== '' && gameId !== LOBBY}>
@@ -86,7 +87,7 @@ export function RoomPage({ gameId, gameName, Title, intro, children, cardTag = '
           {children}
         </InRoom>
       ) : (
-        <StartOrJoin gameId={gameId} gameName={gameName} Title={Title} intro={intro} self={self} onEnter={enter} />
+        <StartOrJoin gameId={gameId} gameName={gameName} Title={Title} intro={intro} self={self} canHost={canHost} testing={canPlaytest} onEnter={enter} />
       )}
     </PhoneFrame>
   )
@@ -98,10 +99,14 @@ interface StartOrJoinProps {
   Title: ComponentType
   intro: string
   self: RoomSelf
+  /** Only players an admin has let host can open a room; everyone else joins one. */
+  canHost: boolean
+  /** A playtester's room offers the games still in testing. */
+  testing: boolean
   onEnter: (code: string) => void
 }
 
-function StartOrJoin({ gameId, gameName, Title, intro, self, onEnter }: StartOrJoinProps) {
+function StartOrJoin({ gameId, gameName, Title, intro, self, canHost, testing, onEnter }: StartOrJoinProps) {
   const [typed, setTyped] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -111,7 +116,7 @@ function StartOrJoin({ gameId, gameName, Title, intro, self, onEnter }: StartOrJ
     setBusy(true)
     setError('')
     try {
-      onEnter(await createRoom(self.uid, gameId, self))
+      onEnter(await createRoom(self.uid, gameId, self, testing))
     } catch (problem) {
       console.error('Starting a room failed', problem)
       setError("The room didn't open. Check you're online and try again.")
@@ -141,10 +146,18 @@ function StartOrJoin({ gameId, gameName, Title, intro, self, onEnter }: StartOrJ
   return (
     <>
       <Title />
-      <p className="cue-card__text">{intro}</p>
-      <button type="button" className="phone-button" aria-disabled={busy || undefined} data-testid="room-start-room" onClick={start}>
-        Start a room
-      </button>
+      {canHost ? (
+        <>
+          <p className="cue-card__text">{intro}</p>
+          <button type="button" className="phone-button" aria-disabled={busy || undefined} data-testid="room-start-room" onClick={start}>
+            Start a room
+          </button>
+        </>
+      ) : (
+        <p className="cue-card__text" data-testid="room-join-only">
+          Type the room code from the host to join. Opening a room is for hosts: ask an admin if you'd like to host.
+        </p>
+      )}
       <div className="cue-card">
         <Field id="room-code" label="Got a room code?" error={error}>
           <CodeBoxes

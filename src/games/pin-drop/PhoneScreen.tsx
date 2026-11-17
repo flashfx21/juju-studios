@@ -4,8 +4,9 @@ import { useMemo, useState, type ReactNode } from 'react'
 import type { PlayerSymbolId } from '../../ui/playerSymbols'
 import type { PlayerId } from '../types'
 import { distanceText } from './format'
-import { PinMap, type MapPlayer } from './PinMap'
+import { PinMap } from './PinMap'
 import { currentRound, rules, totals, type Pin, type PinDropState } from './rules'
+import { useMapPlayers } from './useMapPlayers'
 import '../../ui/PhoneForm.css'
 import './PhoneScreen.css'
 
@@ -50,12 +51,6 @@ export function PinDropTitle() {
       <h1 className="phone-top__title">Pin Drop</h1>
     </div>
   )
-}
-
-/** The players as the map draws them. The list only changes when a look does, so the map keeps its pins (and a drag in progress). */
-function useMapPlayers(state: PinDropState, looks: Record<PlayerId, PlayerLook>): MapPlayer[] {
-  const drawn = JSON.stringify(state.players.map((id) => ({ id, initials: looks[id].initials, color: looks[id].color, symbol: looks[id].symbol })))
-  return useMemo(() => JSON.parse(drawn) as MapPlayer[], [drawn])
 }
 
 /** The round clock and how many have locked in, in one line above the photo. */

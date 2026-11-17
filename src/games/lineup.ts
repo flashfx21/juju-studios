@@ -78,7 +78,7 @@ export const LINEUP: LineupGame[] = [
   {
     id: 'hidden-traitor',
     number: '07',
-    phase: 'not-started',
+    phase: 'design',
     title: 'Hidden traitor game',
     tag: 'Bluff',
     pitch: 'Grow the prize pot together while secret traitors sabotage. Banish them.',
@@ -88,7 +88,7 @@ export const LINEUP: LineupGame[] = [
   {
     id: 'word-agents',
     number: '08',
-    phase: 'not-started',
+    phase: 'design',
     title: 'Word Agents',
     tag: 'Teams',
     pitch: 'Two teams, one grid of words, spymasters give one-word clues.',
@@ -97,7 +97,7 @@ export const LINEUP: LineupGame[] = [
   {
     id: 'board-game',
     number: '09',
-    phase: 'not-started',
+    phase: 'design',
     title: 'Curated board game',
     tag: 'Family',
     pitch: 'Race start to finish with life choices, careers and events along the way.',

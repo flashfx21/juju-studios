@@ -1,8 +1,9 @@
 // ABOUTME: Solo play: the pages at #/playtest (games still in testing) and #/playtest/<game-id>, for admins and playtesters.
-// ABOUTME: Unknown game ids get a short message instead of a blank page.
+// ABOUTME: A room's game page opens for any signed-in player, so everyone in a room can play. Unknown ids get a short message.
 import { Suspense } from 'react'
 import { LOBBY } from '../engine/net/rooms'
 import { rememberedRoom } from '../engine/rememberedRoom'
+import { isRoomPage } from '../games/room/roomPages'
 import { MenuItems } from '../ui/FrameMenu'
 import { GameExitContext } from '../ui/gameExit'
 import { PhoneFrame } from '../ui/PhoneFrame'
@@ -102,7 +103,7 @@ export function PlaytestPage({ gameId }: { gameId: string }) {
 
   if (me.kind === 'checking') return <Loading />
   if (me.kind === 'signed-out') return <SignInFirst />
-  if (!me.canPlaytest) return <NotAPlaytester />
+  if (!me.canPlaytest && !isRoomPage(gameId)) return <NotAPlaytester />
 
   return (
     <>

@@ -17,3 +17,8 @@ export function roomPageFor(game: string): string | undefined {
 }
 
 export const ROOM_GAMES = Object.keys(ROOM_PAGES)
+
+/** Whether a Solo play page is a room's game page, which anyone in the room may open. */
+export function isRoomPage(page: string): boolean {
+  return Object.values(ROOM_PAGES).includes(page)
+}

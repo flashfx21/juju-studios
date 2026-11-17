@@ -18,84 +18,25 @@ import { ChainwordTitle, PhoneScreen, type OtherPlayer } from './PhoneScreen'
 import {
   botProgress,
   chainTimeLimitMs,
-  everyoneFinished,
+  deadlineOf,
   finishingOrderOf,
+  gameOver,
+  placeText,
   progressOf,
+  sharedProgress,
   standings,
-  type Progress,
+  stoppedAt,
+  timeText,
+  type ChainPlay,
 } from './roomProgress'
 import { CHAIN_LENGTHS, DEFAULT_SETTINGS, endGame, rules, WORD_LENGTHS, type ChainwordSettings, type ChainwordState } from './rules'
+import { useNow } from './useNow'
 import './Playtest.css'
 import './Together.css'
-
-/** What the host writes to the room: the chain code (never the words), who plays, and when it started or was ended. */
-interface ChainPlay {
-  chainCode: string
-  players: PlayerId[]
-  startedAt: number
-  endedAt: number | null
-}
-
-/** When the chain's clock runs out. */
-function deadlineOf(play: ChainPlay): number {
-  return play.startedAt + chainTimeLimitMs(readChainCode(play.chainCode)!.settings.chainLength)
-}
-
-/** Phones get a few seconds after the clock runs out to share their last word before the game counts as over. */
-const REPORT_GRACE_MS = 5000
-
-/**
- * When the game stopped for everyone still playing: the host's End game, or the clock running out.
- * Null while the game is still on.
- */
-function stoppedAt(play: ChainPlay, now: number): number | null {
-  if (play.endedAt !== null) return play.endedAt
-  const deadline = deadlineOf(play)
-  return now >= deadline ? deadline : null
-}
-
-/** Over once everyone has finished, or (for anyone whose phone has gone quiet) a moment after the game stopped. */
-function gameOver(play: ChainPlay, shared: Record<PlayerId, Progress>, now: number): boolean {
-  const stopped = stoppedAt(play, now)
-  return everyoneFinished(play.players, shared) || (stopped !== null && now >= stopped + REPORT_GRACE_MS)
-}
-
-/** The shared clock, ticking once a second: every phone sees the same time left, and finish times compare fairly. */
-function useNow(): number {
-  const [now, setNow] = useState(() => sharedNow())
-  useEffect(() => {
-    const timer = setInterval(() => setNow(sharedNow()), 1000)
-    return () => clearInterval(timer)
-  }, [])
-  return now
-}
 
 const WORD_LENGTH_NAMES = { 4: '4', 5: '5', 6: '6', 7: '7' }
 const CHAIN_LENGTH_NAMES = { 3: '3', 5: '5' }
 const HARD_MODE_NAMES = { off: 'Off', on: 'On' }
-
-function placeText(place: number): string {
-  const suffix = place % 10 === 1 && place !== 11 ? 'st' : place % 10 === 2 && place !== 12 ? 'nd' : place % 10 === 3 && place !== 13 ? 'rd' : 'th'
-  return `${place}${suffix}`
-}
-
-function timeText(ms: number): string {
-  const seconds = Math.round(ms / 1000)
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
-}
-
-/** Every player's shared progress, read from the room. */
-function sharedProgress(room: Room): Record<PlayerId, Progress> {
-  const shared: Record<PlayerId, Progress> = {}
-  for (const [id, json] of Object.entries(room.progress)) {
-    try {
-      shared[id] = JSON.parse(json) as Progress
-    } catch {
-      // A garbled entry is left out.
-    }
-  }
-  return shared
-}
 
 export function Together() {
   return (

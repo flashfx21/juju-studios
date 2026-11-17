@@ -1,0 +1,457 @@
+/* ABOUTME: Sketch Showdown TV styles inside the shared game panel (1200x458): a team each side with the step between them, */
+/* ABOUTME: the ink meters, the reveal's two drawings beside the answer, and the result beside the gallery of every round. */
+
+.ss-tv-body {
+  height: 100%;
+}
+
+.ss-tv-loading {
+  margin: 0;
+  font-size: 28px;
+}
+
+.ss-tv-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.ss-tv-headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1.1;
+}
+
+.ss-tv-note {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.ss-tv-clock {
+  min-width: 130px;
+  font-size: 72px;
+}
+
+/* The last seconds: a heavier frame as well as the number, so it never relies on color. */
+.ss-tv-clock[data-low] {
+  box-shadow: 0 0 0 5px currentColor;
+}
+
+.ss-tv-count {
+  font-family: var(--font-display);
+  font-size: 150px;
+  line-height: 1;
+}
+
+.ss-tv-score {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ss-tv-score__tally {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ---------- A team each side, the step in the middle ---------- */
+.ss-tv-versus {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 370px 1fr 370px;
+  gap: 24px;
+}
+
+.ss-tv-middle {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.ss-tv-team {
+  min-width: 0;
+  min-height: 0;
+  padding-top: 12px;
+  border-top: 8px solid var(--team);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.ss-tv-team__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ss-tv-team__wins {
+  font-family: var(--font-label);
+  font-size: 30px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ss-tv-members {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ss-tv-member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+}
+
+.ss-tv-member[data-drawer] {
+  font-weight: 700;
+}
+
+.ss-tv-member__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ss-tv-member__state {
+  font-family: var(--font-label);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.ss-tv-live {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 20px;
+}
+
+.ss-tv-ink {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* The meter is drawn in the text color, so it reads on every style's panel; the team is named above it. */
+.ss-tv-ink__track {
+  height: 26px;
+  border: 3px solid currentColor;
+}
+
+.ss-tv-ink__fill {
+  height: 100%;
+  background: currentColor;
+  transition: width 0.4s ease-out;
+}
+
+.ss-tv-misses {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.ss-tv-misses__count {
+  font-family: var(--font-label);
+  font-size: 34px;
+  line-height: 26px;
+}
+
+/* ---------- Reveal ---------- */
+.ss-tv-reveal {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 300px 300px 1fr;
+  gap: 24px;
+}
+
+.ss-tv-figure {
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ss-tv-figure__head {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+}
+
+.ss-tv-figure__drawer {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ss-tv-figure__drawing,
+.ss-tv-round__drawing {
+  position: relative;
+}
+
+/* The drawing that won its round carries a tick in its corner, on its team's color. */
+.ss-tv-won {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0 10px;
+  font-family: var(--font-body);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 32px;
+  white-space: nowrap;
+}
+
+.ss-tv-round__drawing .ss-tv-won {
+  padding: 0 6px;
+  font-size: 16px;
+  line-height: 22px;
+}
+
+/* The paper is white in every style, so the words on an empty one are always dark. */
+.ss-tv-paper {
+  position: relative;
+}
+
+.ss-tv-paper__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1f2124;
+  font-family: var(--font-body);
+  font-size: 22px;
+  text-align: center;
+}
+
+.ss-tv-wrong {
+  height: 48px;
+  font-size: 20px;
+  line-height: 24px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+}
+
+.ss-tv-outcome {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.ss-tv-answer__text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 58px;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  animation: ss-tv-drop 0.4s ease-out;
+}
+
+@keyframes ss-tv-drop {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+}
+
+.ss-tv-solver {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px;
+}
+
+.ss-tv-solver__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.ss-tv-solver__time {
+  white-space: nowrap;
+}
+
+/* ---------- Game over ---------- */
+.ss-tv-over {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+}
+
+.ss-tv-result {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.ss-tv-tally {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ss-tv-tally__row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.ss-tv-tally__wins {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1;
+}
+
+.ss-tv-gallery {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ss-tv-gallery .tv-label {
+  line-height: 28px;
+}
+
+/* --columns and --thumb come from the number of rounds, so they always fit the 808x378 box. */
+.ss-tv-rounds {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(var(--columns), auto);
+  justify-content: space-evenly;
+  align-content: center;
+  gap: 8px 16px;
+}
+
+.ss-tv-round__pair {
+  display: flex;
+  gap: 6px;
+}
+
+.ss-tv-round__drawing {
+  width: var(--thumb);
+}
+
+.ss-tv-round__drawing .ss-tv-paper__empty {
+  font-size: 15px;
+}
+
+.ss-tv-round__caption {
+  margin: 0;
+  width: calc(var(--thumb) * 2 + 6px);
+  height: 26px;
+  padding-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 17px;
+  line-height: 20px;
+}
+
+.ss-tv-round__answer {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- 90s arcade: pixel fonts run wide ---------- */
+:root[data-theme='arcade'] .ss-tv-headline {
+  font-size: 26px;
+}
+
+:root[data-theme='arcade'] .ss-tv-answer__text {
+  font-size: 32px;
+}
+
+:root[data-theme='arcade'] .ss-tv-count {
+  font-size: 110px;
+}
+
+:root[data-theme='arcade'] .ss-tv-clock {
+  font-size: 44px;
+}
+
+:root[data-theme='arcade'] .ss-tv-score__tally,
+:root[data-theme='arcade'] .ss-tv-tally__wins {
+  font-size: 24px;
+}
+
+:root[data-theme='arcade'] .ss-tv-team__wins,
+:root[data-theme='arcade'] .ss-tv-misses__count {
+  font-size: 16px;
+}
+
+:root[data-theme='arcade'] .ss-tv-member__state {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+/* ---------- 70s rec room: the typewriter face runs wide ---------- */
+:root[data-theme='rec-room'] .ss-tv-member {
+  font-size: 19px;
+}
+
+:root[data-theme='rec-room'] .ss-tv-figure__head,
+:root[data-theme='rec-room'] .ss-tv-wrong {
+  font-size: 17px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ss-tv-answer__text {
+    animation: none;
+  }
+
+  .ss-tv-ink__fill {
+    transition: none;
+  }
+}

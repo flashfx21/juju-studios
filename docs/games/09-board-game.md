@@ -1,7 +1,7 @@
 # Curated board game (name open)
 
 **Game ID:** `board-game`  
-**Status:** Not Started. Launch phase 3 (deep dive; biggest scope item)  
+**Status:** Design (Nov 17, 2026). Launch phase 3 (deep dive; biggest scope item)  
 **Players:** 2 to 8 (placeholder)  
 **Length:** 45 min (placeholder)  
 **Modes:** Individual
