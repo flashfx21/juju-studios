@@ -3,6 +3,7 @@
 
 /** Game id to its room page. Games not listed can't be played in a room yet. */
 const ROOM_PAGES: Record<string, string> = {
+  'no-filler': 'no-filler-together',
   'pin-drop': 'pin-drop-together',
   chainword: 'chainword-together',
   'dial-it-in': 'dial-it-in-together',

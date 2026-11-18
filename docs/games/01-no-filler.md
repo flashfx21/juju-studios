@@ -1,8 +1,8 @@
 # No Filler
 
 **Game ID:** `no-filler`  
-**Status:** Design. Launch phase 2. Rules pass of Nov 11, 2026 is the starting point (Julian, Nov 17): the Proposed rules below wait for his confirmation; nothing is built  
-**Players:** 4 to 10 (matches the physical game)  
+**Status:** Development (Nov 17, 2026). Built: rules and tests (the Proposed rules below, as written), a 90-card starter pack, phone screens and TV screens in all three lobby styles, Instructions on the TV, solo playtest (`#/playtest/no-filler`, stand-in players run from a Dev box), rooms (`#/playtest/no-filler-together`) with the host's Void turn, Skip turn and End game, How to play. Not built: prompt testing (card stats, Flag this card, test cards, CSV export), the No Filler brand look (black, Anton), pause, removing a player mid-game, offline detection, the printed deck. See Build decisions. Numbers marked placeholder get set at the first playtest. Launch phase 2  
+**Players:** 3 to 10 in a room (the physical game is 4 to 10; see Build decisions)  
 **Length:** 15 to 40 min, depending on group size (estimate, see "Game length")  
 **Modes:** Individual
 
@@ -149,6 +149,33 @@ Canvas sizes from `docs/design/components.md`: TV 1280x720, phone 390x844. All i
 12. Between turns: scores and up next
 
 Shared screens (instructions, pause, game over, leaderboard) come from the suite design; see open question 3.
+
+## Build decisions (Nov 17, 2026)
+Julian asked for the build on Nov 17. The Proposed rules above are built as written.
+1. **Rules:** Proposed rules 1 to 10. Blind pick, then a random card from that pile; turn order shuffled once; card and timer together; Done; everyone else votes; votes close when all are in or after 8 s; missing votes don't count; a tie or no votes goes to the speaker; Clean scores 1, 2 or 3, Filler 0; the round plays out at the target; highest score wins; a tie for first plays one sudden-death round (tied players, Hard only), then they share first; named vote reveal; no skipping by the speaker.
+2. **Settings:** Timer 5, 10 or 15 s (default 10) and Target score 10 or 15 (default 15), in the waiting room. Test cards is not built.
+3. **Pace:** the reveal moves on by itself after 5 s. The pick has no timer.
+4. **Host actions:** Void turn (no score, the speaker picks again and gets a different card) and Skip turn (the speaker keeps their score and waits for the next round), in the host's top-left menu beside End game. They go through inputs like every move, and the rules refuse them from anyone but the host.
+5. **Players:** 3 to 10 in a room. 3 is the floor because the edge case above keeps a game going at 3. No bots: the app can't hear anyone.
+6. **Secrets:** cards still in the piles never reach the room, and during the vote the room shows only who has voted. The host's phone keeps the full game at `roomSecrets/{code}/host`; a player's own vote comes back in their private view. Leak tests in `roomViews.test.ts`.
+7. **Look:** the three lobby styles, with the difficulty colors fixed across them (green Easy, yellow Medium, red Hard; green Clean, red Filler), always with a word or mark beside the color. No new fonts.
+8. **Content:** `packs/no-filler/cards.json`, a 90-card starter pack (30 per difficulty) written for this build. It stands in until the printed deck (the Canva CSV) is added, so card ids on screen don't match printed cards yet.
+9. **Not in this build** (each is in `docs/later.md`): prompt testing (card stats, Flag this card, test cards, CSV export), the No Filler brand look (black, Anton), pause, removing a player mid-game, and "Waiting for [Name]" offline detection (the host's Skip turn covers it by hand).
+10. **Phones:** the pick (three large buttons with points), speaking (prompt, timer, large Done), Eyes up with the prompt small, the vote (Clean and Filler full width, then "Vote in"), the result (outcome, named votes, points), and between turns the scores and who is up next.
+11. **TV:** scoreboard strip with the target and the speaker marked, "[Name] is choosing", the card with its timer (the last 3 seconds get a frame and the word Hurry), the votes-in count, the reveal with named votes and who is next, the Final round banner, the sudden-death intro and the final standings. Instructions show before the game.
+12. **How to play:** from the rules text above, with the suite's leaderboard line.
+13. **Scoring:** the rules report a finishing order only. End game early ranks by current score.
+
+Choices the spec left open:
+- Sudden-death points only break the tie for first. Scores stay as they were, so a tied 15 still reads 15.
+- In sudden death the speaker's pick screen has one button, Hard. Tapping it flips the card, so the speaker still chooses the moment.
+- Void turn works while the card is up, during the vote and on the reveal (it takes the points back). Skip turn works until the verdict is in.
+- "Up next" is left blank on the last turn of a round when that turn could end the game.
+- A pile that runs out is shuffled again without the card just dealt. The host's phone remembers each card it deals, so later games that night deal the others first.
+- A vote nobody cast in time is listed as "No vote" on the reveal.
+- The TV and voters' phones show when the speaker stopped ("Stopped at 6.4 s") or "Time ran out".
+- Someone who joins mid-game waits for the next game. Someone who leaves mid-game stays in the turn order; the host skips their turns.
+- A room host who hands the room on (Leave room) hands on Void turn and Skip turn with it.
 
 ## Open questions
 1. Physical timer: the landing page animates 0:05. What does the printed rulebook say? If it's 5, should the phone default to 5 to feel like the same game?

@@ -1,0 +1,18 @@
+/* ABOUTME: No Filler playtest dev box: the stand-ins' picks, Done and votes wrap onto a second row when they don't fit one. */
+/* ABOUTME: Sits inside the dashed dev box from PlaytestDev.css. */
+
+.nf-dev {
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nf-dev .playtest-dev__button {
+  flex: 1 1 auto;
+  padding: 0 8px;
+  font-size: 14px;
+}
+
+.nf-dev__note {
+  font-size: 14px;
+}

@@ -28,6 +28,11 @@ Ideas and features deliberately left out for now. Each line says why it waits.
 - **Chainword's phone clock** (Nov 17). `InfoLine` in `Together.tsx` compares a server-time deadline with the phone's own clock, so a phone with a wrong clock shows a wrong countdown (the game still ends on the shared clock). The TV converts with `fromSharedTime`; the phone needs the same.
 - **Sketch Showdown's end-of-game TV view** (Nov 17) carries every round's strokes; a long game of very heavy drawings could pass the 1,000,000 character limit, and the TV would then stay on its last screen while phones carry on.
 - **A shared step timer for TV reveals** (Nov 17). `useSteps` is copied in the Zero In, Dibs, Dial It In and Pin Drop TV screens.
+- **No Filler prompt testing** (No Filler, Nov 17). Card stats in the database (plays, pass rate, split votes, flags, voids), Flag this card on the result screen, test cards mixed in, and the CSV export. Waits for a first game night with the starter pack.
+- **No Filler brand look** (No Filler, Nov 17). Black with Anton, as on the printed cards. Anton would be a new font; the build uses the three lobby styles with the game's own green, yellow and red.
+- **No Filler pause** (No Filler, Nov 17). The spec voids a turn that is paused; the suite has no pause in rooms yet.
+- **No Filler: removing a player mid-game** (No Filler, Nov 17). The spec takes them out of the turn order at their current score. Until then the host skips their turns.
+- **No Filler "Waiting for [Name]"** (No Filler, Nov 17). Spotting an offline speaker after 20 s needs presence. The host's Skip turn covers it by hand.
 - **Pause on the TV.** Zero In's spec has a paused overlay; there's no pause in rooms yet.
 - **Phone lobby, waiting room, TV lobby, instructions, pause, game over, leaderboard, loading states, error screens, create account / password reset, picker spin and remote focus.** Designed in all three styles (Nov 11 design update), not built yet.
 - **Room Open / Locked** toggle in Host settings. Designed; built when rooms exist, since it has nothing to lock yet.

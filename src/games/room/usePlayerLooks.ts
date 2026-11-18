@@ -30,5 +30,9 @@ export function usePlayerLooks(room: Room, gamePlayers: readonly PlayerId[] = []
     const symbol = style !== 'arcade' && isPlayerSymbolId(player.symbol) ? player.symbol : undefined
     looks[uid] = { name: player.username, initials: player.initials, color, symbol }
   }
+  // Someone dealt into the game who has since left the room keeps a seat on screen.
+  for (const id of gamePlayers) {
+    looks[id] ??= { name: 'Player', initials: '', color: PLAYER_COLORS[style].silver }
+  }
   return looks
 }

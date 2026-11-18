@@ -1,0 +1,24 @@
+/* ABOUTME: No Filler's own colors, the same in every lobby style: green Easy, yellow Medium, red Hard; green Clean, red Filler. */
+/* ABOUTME: Each is a filled block with the dark ink on it (contrast 8.0, 13.0 and 4.5 to 1) and always carries its word, never color alone. */
+
+:root {
+  --nf-easy: #2dbe4e;
+  --nf-medium: #f5d000;
+  --nf-hard: #e5322b;
+  --nf-ink: #0b0b0b;
+}
+
+/* A filled block in a difficulty or verdict color. The ink border keeps its edge on any background (yellow on cream has none). */
+[data-difficulty='easy'],
+[data-vote='clean'] {
+  --nf-color: var(--nf-easy);
+}
+
+[data-difficulty='medium'] {
+  --nf-color: var(--nf-medium);
+}
+
+[data-difficulty='hard'],
+[data-vote='filler'] {
+  --nf-color: var(--nf-hard);
+}

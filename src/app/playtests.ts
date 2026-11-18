@@ -65,6 +65,15 @@ export const PLAYTESTS: Record<string, PlaytestEntry> = {
     Page: lazy(() => import('../games/dibs/Together').then((module) => ({ default: module.Together }))),
     onExit: () => rememberRoom('dibs', ''),
   },
+  'no-filler': {
+    title: 'No Filler',
+    Page: lazy(() => import('../games/no-filler/Playtest').then((module) => ({ default: module.Playtest }))),
+  },
+  'no-filler-together': {
+    title: 'No Filler with others (three or more phones)',
+    Page: lazy(() => import('../games/no-filler/Together').then((module) => ({ default: module.Together }))),
+    onExit: () => rememberRoom('no-filler', ''),
+  },
   'sketch-showdown-together': {
     title: 'Sketch Showdown with others (two teams of phones)',
     Page: lazy(() => import('../games/sketch-showdown/Together').then((module) => ({ default: module.Together }))),

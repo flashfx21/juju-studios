@@ -9,6 +9,8 @@ import { manifest as dibsManifest } from '../games/dibs/manifest'
 import { howToPlay as dontJinxIt } from '../games/dont-jinx-it/howToPlay'
 import { manifest as dontJinxItManifest } from '../games/dont-jinx-it/manifest'
 import { LINEUP } from '../games/lineup'
+import { howToPlay as noFiller } from '../games/no-filler/howToPlay'
+import { manifest as noFillerManifest } from '../games/no-filler/manifest'
 import { howToPlay as pinDrop } from '../games/pin-drop/howToPlay'
 import { manifest as pinDropManifest } from '../games/pin-drop/manifest'
 import { howToPlay as sketchShowdown } from '../games/sketch-showdown/howToPlay'
@@ -23,6 +25,7 @@ export interface HowToPlayPage {
 }
 
 const PAGES: Record<string, HowToPlayPage> = {
+  'no-filler': { manifest: noFillerManifest, words: noFiller },
   'dial-it-in': { manifest: dialItInManifest, words: dialItIn },
   'zero-in': { manifest: zeroInManifest, words: zeroIn },
   dibs: { manifest: dibsManifest, words: dibs },

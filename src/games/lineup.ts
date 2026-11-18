@@ -24,7 +24,7 @@ export const LINEUP: LineupGame[] = [
   {
     id: 'no-filler',
     number: '01',
-    phase: 'design',
+    phase: 'development',
     title: 'No Filler',
     tag: 'Party',
     pitch: 'Name 3 before time runs out. No um, no uh, no like.',

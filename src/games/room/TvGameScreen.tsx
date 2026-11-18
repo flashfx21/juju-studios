@@ -13,6 +13,7 @@ const SCREENS: Record<string, TvGame> = {
   'pin-drop': lazy(() => import('../pin-drop/TvGame').then((module) => ({ default: module.TvGame }))),
   'dont-jinx-it': lazy(() => import('../dont-jinx-it/TvGame').then((module) => ({ default: module.TvGame }))),
   dibs: lazy(() => import('../dibs/TvGame').then((module) => ({ default: module.TvGame }))),
+  'no-filler': lazy(() => import('../no-filler/TvGame').then((module) => ({ default: module.TvGame }))),
 }
 
 export function TvGameScreen({ room }: { room: Room }) {
